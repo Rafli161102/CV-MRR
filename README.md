@@ -1,17 +1,17 @@
-<h1 align="center">🌊 Portofolio Desain: Rafli Ramadhan 💧</h1>
-​<p align="center">
+<div align="center">
 <img src="https://www.google.com/search?q=https://images.unsplash.com/photo-1578632767115-351597cf2477%3Fauto%3Dformat%26fit%3Dcrop%26q%3D80%26w%3D1200%26h%3D350" alt="AquaNime Theme Banner" width="100%">
-</p>
-​<p align="center">
-<b>Website Portofolio Profesional bergaya Modern & Clean</b>
+​<h1>🌊 Portofolio Desain: Rafli Ramadhan 💧</h1>
+​<b>Website Portofolio Profesional bergaya Modern & Clean</b>
 
 <i>Terinspirasi dari nuansa sejuk komunitas AquaNime.</i>
-</p>
-​<p align="center">
-<img src="https://www.google.com/search?q=https://img.shields.io/badge/Next.js-000000%3Fstyle%3Dfor-the-badge%26logo%3Dnext.js%26logoColor%3Dwhite" alt="Next.js">
+​<img src="https://www.google.com/search?q=https://img.shields.io/badge/Next.js-000000%3Fstyle%3Dfor-the-badge%26logo%3Dnext.js%26logoColor%3Dwhite" alt="Next.js">
 <img src="https://www.google.com/search?q=https://img.shields.io/badge/Tailwind_CSS-38B2AC%3Fstyle%3Dfor-the-badge%26logo%3Dtailwind-css%26logoColor%3Dwhite" alt="Tailwind CSS">
 <img src="https://www.google.com/search?q=https://img.shields.io/badge/Vercel-Deploy-0077B5%3Fstyle%3Dfor-the-badge%26logo%3Dvercel%26logoColor%3Dwhite" alt="Deploy Vercel">
-</p>
+</div>
+​🎨 Tentang Proyek Ini
+​Ini adalah website portofolio yang dibangun menggunakan Next.js dan Tailwind CSS. Website ini dirancang agar sangat mudah diedit oleh desainer (tanpa perlu paham koding yang rumit). Semua teks, gambar, dan pengalaman kerja dipisahkan ke dalam satu file data sederhana.
+​📂 Struktur Website
+​Berikut adalah susunan folder proyek ini agar kamu tahu di mana letak file-file penting:</p>
 ​🎨 Tentang Proyek Ini
 ​Ini adalah website portofolio yang dibangun menggunakan Next.js dan Tailwind CSS. Website ini dirancang agar sangat mudah diedit oleh desainer (tanpa perlu paham bahasa pemograman yang rumit). Semua teks, gambar, dan pengalaman kerja dipisahkan ke dalam satu file data sederhana.
 ​🛠️ Cara Edit Konten (Tanpa Koding!)
