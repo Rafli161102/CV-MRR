@@ -1,13 +1,20 @@
-import React from 'react';
+import "./globals.css";
 
-const RootLayout = ({ children }) => {
-    return (
-        <html>
-            <body>
-                {children}
-            </body>
-        </html>
-    );
+export const metadata = {
+  title: "Rafli Ramadhan | Graphic Designer",
+  description: "Portofolio profesional Muhammad Rafli Ramadhan. Berpengalaman dalam desain cetak, digital, dan identitas merek.",
 };
 
-export default RootLayout;
+export default function RootLayout({ children }) {
+  return (
+    <html lang="en">
+      <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+      </head>
+      <body>
+        {children}
+      </body>
+    </html>
+  );
+}
