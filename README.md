@@ -106,5 +106,5 @@
 
 <hr>
 <p align="center" style="color: #64748b; font-size: 14px;">
-  <i>Dirancang & Dikembangkan oleh Muhammad Rafli Ramadhan © 2024. All Rights Reserved.</i>
+  <i>Dirancang & Dikembangkan oleh Muhammad Rafli Ramadhan © 2026. All Rights Reserved.</i>
 </p>
