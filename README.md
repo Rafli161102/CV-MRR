@@ -1,4 +1,4 @@
-```html
+html
 <div align="center" style="padding: 20px 0;">
   <img src="https://img.shields.io/badge/NEXT.JS-000000?style=for-the-badge&logo=nextdotjs&logoColor=white" alt="Next.js">
   <img src="https://img.shields.io/badge/TAILWIND_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS">
@@ -109,8 +109,3 @@
 <p align="center" style="color: #64748b; font-size: 14px;">
   <i>Dirancang & Dikembangkan oleh Muhammad Rafli Ramadhan © 2024. All Rights Reserved.</i>
 </p>
-
-```
-```
-
-```
