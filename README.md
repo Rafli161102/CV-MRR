@@ -1,158 +1,126 @@
-<div align="center" style="padding: 20px 0;">
-  <img src="https://img.shields.io/badge/NEXT.JS-000000?style=for-the-badge&logo=nextdotjs&logoColor=white" alt="Next.js">
-  <img src="https://img.shields.io/badge/TAILWIND_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS">
-  <img src="https://img.shields.io/badge/VERCEL-000000?style=for-the-badge&logo=vercel&logoColor=white" alt="Vercel">
-  <br><br>
+<img src="https://img.shields.io/badge/NEXT.JS-000000?style=for-the-badge&logo=nextdotjs&logoColor=white" alt="Next.js">
+<img src="https://img.shields.io/badge/TAILWIND_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS">
+<img src="https://img.shields.io/badge/VERCEL-000000?style=for-the-badge&logo=vercel&logoColor=white" alt="Vercel">
 
-  <h1 style="color: #0284c7;">Repositori Resmi & Portofolio Digital Saya</h1>
-  <h2>Muhammad Rafli Ramadhan (MRR)</h2>
-  <p><b>Graphic Designer & Founder Komunitas AquaNime</b></p>
-  <p>🌍 <b>Domain Utama:</b> <a href="https://mrr.my.id" style="color: #0284c7; text-decoration: none;">mrr.my.id</a></p>
-  <p><i>Meskipun saya murni seorang desainer dan nggak bisa koding, saya berhasil menyusun source code website portofolio canggih ini dengan sistem update "Drag & Play" (Tanpa Koding).</i></p>
-  <hr>
+
+
+​<h1 style="color: #0369a1; margin-bottom: 5px;">Repositori Resmi & Portofolio Digital Saya</h1>
+<h2 style="color: #0f172a; margin-top: 0;">Muhammad Rafli Ramadhan (MRR)</h2>
+<p style="font-size: 16px;"><b>Graphic Designer & Founder Komunitas AquaNime</b></p>
+<p style="font-size: 15px;">🌍 <b>Domain Utama:</b> <a href="https://www.google.com/search?q=https://mrr.my.id" style="color: #0284c7; text-decoration: none; font-weight: bold;">mrr.my.id</a></p>
+<p style="color: #475569; font-style: italic; max-width: 600px; margin: 0 auto;">"Meskipun saya murni seorang desainer grafis dan awam soal koding, saya berhasil merancang sistem website portofolio canggih ini dengan mekanisme update otomatis <b>Drag & Play</b>."</p>
 </div>
-
-<h2 style="color: #0284c7;">🎯 Senjata & Keahlian Saya (Tools)</h2>
-<p>Sebagai desainer serba bisa, saya terbiasa mengeksekusi ide visual dan mengurus dokumen administratif menggunakan software standar industri berikut:</p>
-
-<div style="padding: 10px 0;">
-  <p><b>🎨 Creative & Design Tools:</b></p>
-  <img src="https://img.shields.io/badge/Adobe%20Illustrator-%23FF9A00.svg?style=for-the-badge&logo=adobe%20illustrator&logoColor=white" alt="Adobe Illustrator">
-  <img src="https://img.shields.io/badge/Adobe%20Photoshop-%2331A8FF.svg?style=for-the-badge&logo=adobe%20photoshop&logoColor=white" alt="Adobe Photoshop">
-  <img src="https://img.shields.io/badge/Adobe%20InDesign-%23FF3366.svg?style=for-the-badge&logo=adobe%20indesign&logoColor=white" alt="Adobe InDesign">
-  <img src="https://img.shields.io/badge/Canva-%2300C4CC.svg?style=for-the-badge&logo=Canva&logoColor=white" alt="Canva">
+​<h2 style="color: #0284c7; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">🎯 Senjata & Keahlian Saya (Tools)</h2>
+<p>Sebagai desainer serba bisa, saya terbiasa mengeksekusi ide visual kompleks sekaligus mengurus dokumen administratif menggunakan perangkat lunak standar industri berikut:</p>
+​<div style="background-color: #f8fafc; padding: 15px; border-radius: 10px; border-left: 5px solid #0ea5e9;">
+<p style="margin-top: 0;"><b>🎨 Creative & Design Tools:</b></p>
+<img src="https://www.google.com/search?q=https://img.shields.io/badge/Adobe%2520Illustrator-%2523FF9A00.svg%3Fstyle%3Dfor-the-badge%26logo%3Dadobe%2520illustrator%26logoColor%3Dwhite" alt="Adobe Illustrator">
+<img src="https://www.google.com/search?q=https://img.shields.io/badge/Adobe%2520Photoshop-%252331A8FF.svg%3Fstyle%3Dfor-the-badge%26logo%3Dadobe%2520photoshop%26logoColor%3Dwhite" alt="Adobe Photoshop">
+<img src="https://www.google.com/search?q=https://img.shields.io/badge/Adobe%2520InDesign-%2523FF3366.svg%3Fstyle%3Dfor-the-badge%26logo%3Dadobe%2520indesign%26logoColor%3Dwhite" alt="Adobe InDesign">
+<img src="https://www.google.com/search?q=https://img.shields.io/badge/Canva-%252300C4CC.svg%3Fstyle%3Dfor-the-badge%26logo%3DCanva%26logoColor%3Dwhite" alt="Canva">
+​<p style="margin-bottom: 0; margin-top: 15px;"><b>📄 Office & Productivity Tools:</b></p>
+<img src="https://www.google.com/search?q=https://img.shields.io/badge/Microsoft%2520Word-2B579A%3Fstyle%3Dfor-the-badge%26logo%3Dmicrosoft%2520word%26logoColor%3Dwhite" alt="Microsoft Word">
+<img src="https://www.google.com/search?q=https://img.shields.io/badge/Microsoft%2520Excel-217346%3Fstyle%3Dfor-the-badge%26logo%3Dmicrosoft%2520excel%26logoColor%3Dwhite" alt="Microsoft Excel">
+<img src="https://www.google.com/search?q=https://img.shields.io/badge/Google%2520Docs-4285F4%3Fstyle%3Dfor-the-badge%26logo%3Dgoogle%2520docs%26logoColor%3Dwhite" alt="Google Docs">
+<img src="https://www.google.com/search?q=https://img.shields.io/badge/Google%2520Sheets-34A853%3Fstyle%3Dfor-the-badge%26logo%3Dgoogle%2520sheets%26logoColor%3Dwhite" alt="Google Sheets">
 </div>
-
-<div style="padding: 10px 0;">
-  <p><b>📄 Office & Productivity Tools:</b></p>
-  <img src="https://img.shields.io/badge/Microsoft%20Word-2B579A?style=for-the-badge&logo=microsoft%20word&logoColor=white" alt="Microsoft Word">
-  <img src="https://img.shields.io/badge/Microsoft%20Excel-217346?style=for-the-badge&logo=microsoft%20excel&logoColor=white" alt="Microsoft Excel">
-  <img src="https://img.shields.io/badge/Google%20Docs-4285F4?style=for-the-badge&logo=google%20docs&logoColor=white" alt="Google Docs">
-  <img src="https://img.shields.io/badge/Google%20Sheets-34A853?style=for-the-badge&logo=google%20sheets&logoColor=white" alt="Google Sheets">
+​<h2 style="color: #0284c7; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">🚀 Roadmap & Progress Update Website</h2>
+<p>Berikut adalah catatan sejauh mana saya telah membangun dan merapikan ekosistem digital ini. (<b>Update Saat Ini: Tahap Restrukturisasi Multipage</b>).</p>
+​<!-- Progress Bar -->
+​<div style="width: 100%; background-color: #e2e8f0; border-radius: 20px; overflow: hidden; margin-bottom: 15px;">
+<div style="width: 65%; background: linear-gradient(90deg, #0284c7, #06b6d4); color: white; padding: 5px 0; text-align: center; font-weight: bold; font-size: 12px; border-radius: 20px;">
+Total Progress Keseluruhan: 65%
 </div>
-<br>
-
-<h2 style="color: #0284c7;">🏗️ 1. Struktur Website & Folder</h2>
-<p>Website ini saya bangun memakai <b>Next.js App Router</b>. Kodingannya sengaja saya pisah antara bagian tampilan UI dan bagian data. Jadi, karena saya memang awam soal pemograman, kalau ke depannya mau nambahin project desain, saya nggak perlu takut bikin kodingan utamanya error.</p>
-
-<pre style="background-color: #0f172a; color: #e2e8f0; padding: 20px; border-radius: 8px; font-size: 14px; line-height: 1.6;">
+</div>
+​<table style="width: 100%; border-collapse: collapse; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+<tr style="background-color: #0f172a; color: white;">
+<th style="padding: 10px; text-align: center; width: 15%;">Status</th>
+<th style="padding: 10px; text-align: left;">Daftar Tugas (To-Do List)</th>
+<th style="padding: 10px; text-align: left;">Detail Pencapaian</th>
+</tr>
+<tr style="background-color: #f0fdf4;">
+<td style="padding: 10px; text-align: center; font-size: 18px;">✅</td>
+<td style="padding: 10px; color: #166534; font-weight: bold;">Fondasi & Server</td>
+<td style="padding: 10px;">Beli domain (mrr.my.id), hosting Vercel, HTTPS aktif.</td>
+</tr>
+<tr style="background-color: #f0fdf4;">
+<td style="padding: 10px; text-align: center; font-size: 18px;">✅</td>
+<td style="padding: 10px; color: #166534; font-weight: bold;">Google SEO</td>
+<td style="padding: 10px;">Konek ke Search Console, Sitemap & Robots.txt selesai.</td>
+</tr>
+<tr style="background-color: #fffbeb;">
+<td style="padding: 10px; text-align: center; font-size: 18px;">⏳</td>
+<td style="padding: 10px; color: #b45309; font-weight: bold;">Arsitektur Multipage</td>
+<td style="padding: 10px;">(Sedang Dikerjakan) Memecah web jadi Home, About, Projects.</td>
+</tr>
+<tr style="background-color: #fffbeb;">
+<td style="padding: 10px; text-align: center; font-size: 18px;">⏳</td>
+<td style="padding: 10px; color: #b45309; font-weight: bold;">Sistem CMS (store.js)</td>
+<td style="padding: 10px;">(Sedang Dikerjakan) Bikin data terpusat biar gampang di-update.</td>
+</tr>
+<tr style="background-color: #f8fafc;">
+<td style="padding: 10px; text-align: center; font-size: 18px;">📅</td>
+<td style="padding: 10px; color: #475569;">Upload Aset Final</td>
+<td style="padding: 10px;">Memasukkan foto project resolusi tinggi & logo brand.</td>
+</tr>
+<tr style="background-color: #f8fafc;">
+<td style="padding: 10px; text-align: center; font-size: 18px;">📅</td>
+<td style="padding: 10px; color: #475569;">Ekosistem AquaNime</td>
+<td style="padding: 10px;">Menghubungkan link komunitas ke domain/web khusus nantinya.</td>
+</tr>
+</table>
+​<h2 style="color: #0284c7; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">🏗️ 1. Struktur Website & Folder Utama</h2>
+<p>Kodingan web ini sengaja saya rancang untuk memisahkan bagian tampilan (UI) dan bagian data. Jadi, sebagai desainer saya nggak perlu takut bikin webnya <i>error</i> saat mau update CV.</p>
+​<pre style="background-color: #0f172a; color: #38bdf8; padding: 20px; border-radius: 8px; font-size: 14px; line-height: 1.6; border-left: 5px solid #0ea5e9;">
 📁 CV-MRR/ (Direktori Utama Saya)
 │
-├── 📁 public/                     [TEMPAT SAYA NARUH FOTO]
-│   ├── 📁 projects/               ├─ Folder foto high-res tiap karya desain saya
-│   ├── 📁 certificates/           ├─ Folder scan sertifikat & penghargaan saya
-│   ├── 📁 brands/                 ├─ Folder logo klien/brand yang pernah kerja bareng
-│   ├── 🖼️ profile.jpg             ├─ Foto profil saya
-│   └── ⚙️ sitemap.xml             └─ Peta web biar gampang dicari di Google
+├── 📁 public/                     <span style="color: #cbd5e1;">[TEMPAT SAYA NARUH FOTO FOTO]</span>
+│   ├── 📁 projects/               ├─ Folder aset foto high-res tiap desain
+│   ├── 📁 certificates/           ├─ Folder scan sertifikat & penghargaan
+│   ├── 📁 brands/                 ├─ Folder logo klien yang pernah kerja bareng
+│   ├── 🖼️ profile.jpg             ├─ Foto profil utama
+│   └── ⚙️ sitemap.xml             └─ Peta web biar gampang dibaca Google
 │
 ├── 📁 src/
-│   ├── 📁 data/                   [PUSAT UPDATE KONTEN]
-│   │   └── 📄 store.js            └─ ⚠️ TEMPAT SAYA NGEDIT TEKS & NAMBAH DESAIN BARU
+│   ├── 📁 data/                   <span style="color: #cbd5e1;">[PUSAT UPDATE KONTEN]</span>
+│   │   └── 📄 store.js            └─ ⚠️ <span style="color: #fde047; font-weight: bold;">TEMPAT SAYA NGEDIT TEKS & NAMBAH DESAIN BARU</span>
 │   │
-│   ├── 📁 components/             [POTONGAN TAMPILAN]
-│   │   ├── 🧩 Navbar.jsx          ├─ Menu atas
+│   ├── 📁 components/             <span style="color: #cbd5e1;">[POTONGAN TAMPILAN UI]</span>
+│   │   ├── 🧩 Navbar.jsx          ├─ Menu Navigasi Atas
 │   │   └── 🧩 Footer.jsx          └─ Bagian bawah (Sosmed dll)
 │   │
-│   └── 📁 app/                    [HALAMAN WEBSITE SAYA]
-│       ├── 📄 layout.jsx          ├─ Pengaturan dasar web (Font, Header, Footer)
-│       ├── 📄 page.jsx            ├─ (/) Halaman paling depan (Beranda)
-│       ├── 📁 about/              ├─ (/about) Halaman CV dan Profil saya
-│       ├── 📁 projects/           ├─ (/projects) Galeri lengkap hasil desain saya
-│       ├── 📁 projects/[slug]/    ├─ (/projects/detail) Halaman detail pas desain diklik
-│       └── 📁 aquanime/           └─ (/aquanime) Direct link ke ekosistem AquaNime
+│   └── 📁 app/                    <span style="color: #cbd5e1;">[HALAMAN WEBSITE MULTIPAGE]</span>
+│       ├── 📄 layout.jsx          ├─ Pengaturan dasar web
+│       ├── 📄 page.jsx            ├─ ( / ) Halaman paling depan (Home)
+│       ├── 📁 about/              ├─ ( /about ) Halaman Profil & CV saya
+│       ├── 📁 projects/           ├─ ( /projects ) Galeri semua hasil desain
+│       ├── 📁 projects/[slug]/    ├─ ( /projects/detail ) Halaman <i>Case Study</i>
+│       └── 📁 aquanime/           └─ ( /aquanime ) Direct link ke AquaNime
 </pre>
-
-<br>
-
-<h2 style="color: #0284c7;">📝 2. Sistem Update Simpel (Buku Panduan store.js)</h2>
-<p>Sebagai desainer yang nggak ngerti bahasa mesin, saya merancang sistem ini murni menjadi <b>"Drag & Play"</b>. Untuk mengubah seluruh isi teks dan foto di website, saya cuma butuh mengedit file <b><code>src/data/store.js</code></b>.</p>
-
-<p><b>Tutorial Lengkap Cara Saya Mengubah <code>store.js</code>:</b></p>
-<ol style="line-height: 1.8;">
-  <li>Buka file <code>src/data/store.js</code> di aplikasi/web GitHub, klik tombol <b>Edit (ikon pensil)</b>.</li>
-  <li>Di dalamnya, ada kerangka data seperti ini:<br>
-<pre style="background-color: #1e293b; color: #a5b4fc; padding: 15px; border-radius: 6px; margin: 10px 0;">
-export const PROJECT_LIST = [
-  {
-    id: "logo-best",
-    title: "Konstruksi Logo BEST",  // 👈 SAYA CUMA GANTI TEKS DI DALAM KUTIPAN INI
-    category: "Branding",
-    description: "Penjelasan lengkap tentang desain ini...",
-    images: ["/projects/logo-best/1.jpg", "/projects/logo-best/2.jpg"] // 👈 Sesuaikan nama foto
-  }
-];
-</pre>
-  </li>
-  <li>Aturan mainnya: <b>Saya dilarang menghapus tanda kurung kurawal <code>{}</code> atau tanda kutip <code>""</code></b>. Saya murni hanya mengganti teks hurufnya saja.</li>
-  <li>Kalau mau nambah karya baru, saya tinggal <i>copy-paste</i> satu blok dari <code>{</code> sampai <code>}</code>, lalu ganti isi teks dan nama fotonya. Persis kayak ngisi formulir biodata!</li>
+​<h2 style="color: #0284c7; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">📝 2. Panduan Eksekusi (Cara Saya Update Web dari HP)</h2>
+<p>Saya merancang sistem ini murni menjadi <b>"Drag & Play"</b>. Untuk nambah karya baru dari HP, saya nggak butuh aplikasi koding. Saya cuma butuh masuk ke GitHub via browser HP dan mengikuti 4 langkah mudah ini:</p>
+​<ol style="line-height: 1.8; background-color: #f8fafc; padding: 20px 20px 20px 40px; border-radius: 10px;">
+<li><b>Upload Visual:</b> Masuk ke folder <code>public/projects/</code> > klik <i>Add file/Upload</i> > pilih foto desain saya dari galeri HP.</li>
+<li><b>Edit Formulir Data:</b> Buka folder <code>src/data/</code> > edit file <code>store.js</code> (klik ikon pensil).</li>
+<li><b>Ketik Judul & Deskripsi:</b> Di dalam file itu, saya cuma perlu duplikat blok kurung kurawal <code>{ }</code> yang udah ada, lalu ganti teks di dalam tanda kutip <code>""</code> sesuai karya baru saya.</li>
+<li><b>Simpan & Tayang:</b> Scroll ke bawah, klik tombol hijau <b>Commit Changes</b>. Dalam hitungan detik, server Vercel otomatis <i>restart</i> dan web saya langsung berubah!</li>
 </ol>
-
-<table style="width: 100%; border-collapse: collapse; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-top: 15px;">
-  <tr style="background-color: #0284c7; color: white;">
-    <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Apa yang mau saya update?</th>
-    <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Gantinya di file <code>store.js</code></th>
-    <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Fotonya ditaruh di mana?</th>
-  </tr>
-  <tr style="background-color: #f8fafc;">
-    <td style="padding: 12px; border: 1px solid #ddd;"><b>Nambah Desain Baru</b></td>
-    <td style="padding: 12px; border: 1px solid #ddd;">Tambah Array di <code>PROJECT_LIST</code></td>
-    <td style="padding: 12px; border: 1px solid #ddd;"><code>public/projects/[nama]/</code></td>
-  </tr>
-  <tr style="background-color: #ffffff;">
-    <td style="padding: 12px; border: 1px solid #ddd;"><b>Nambah Pengalaman Kerja</b></td>
-    <td style="padding: 12px; border: 1px solid #ddd;">Tambah Baris di <code>WORK_EXPERIENCE</code></td>
-    <td style="padding: 12px; border: 1px solid #ddd;"><i>(Otomatis jadi tulisan)</i></td>
-  </tr>
-  <tr style="background-color: #f8fafc;">
-    <td style="padding: 12px; border: 1px solid #ddd;"><b>Nambah Sertifikat</b></td>
-    <td style="padding: 12px; border: 1px solid #ddd;">Tambah Data di <code>CERTIFICATES</code></td>
-    <td style="padding: 12px; border: 1px solid #ddd;"><code>public/certificates/</code></td>
-  </tr>
-</table>
-
-<br>
-
-<h2 style="color: #0284c7;">🚀 3. Eksekusi End-to-End (Cara Saya Update Web dari HP)</h2>
-<p>Karena web ini terhubung otomatis ke Vercel, langkah saya kalau mau nge-<i>publish</i> desain baru gampang banget (walau nggak punya aplikasi koding di HP):</p>
-<ul style="line-height: 1.8;">
-  <li><b>Langkah 1 (Upload Visual):</b> Buka GitHub di HP > masuk ke folder <code>public/projects/</code> > klik <i>Add file/Upload</i> > masukin foto desain saya.</li>
-  <li><b>Langkah 2 (Isi Formulir):</b> Buka folder <code>src/data/</code> > edit file <code>store.js</code> > ketik judul desain dan deskripsinya.</li>
-  <li><b>Langkah 3 (Simpan & Tayang):</b> Scroll ke bawah, klik tombol hijau <b>Commit Changes</b>. </li>
-  <li><b>Langkah 4 (Selesai!):</b> Saya tinggal nunggu 1 menit. Vercel bakal otomatis narik data dari GitHub saya dan web <a href="https://mrr.my.id" style="color: #0284c7;">mrr.my.id</a> bakal langsung berubah. Nggak perlu ribet!</li>
+​<h2 style="color: #0284c7; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">🌐 3. Daftar Halaman & Transisi (SPA)</h2>
+<p>Meski ini website <i>multipage</i>, teknologi Next.js membuat perpindahan antar halamannya <b>super mulus tanpa jeda loading (seperti di dalam aplikasi Android/iOS)</b>.</p>
+​<ul style="line-height: 1.8;">
+<li><b>🏠 Beranda (<code>/</code>):</b> Halaman sapaan awal, ringkasan <i>skill</i> desain saya, dan cuplikan karya terbaik.</li>
+<li><b>💼 Portofolio (<code>/projects</code>):</b> Galeri lengkap semua karya yang diarsip rapi, disiapkan khusus untuk klien dan HRD.</li>
+<li><b>🔍 Detail Proyek (<code>/projects/[nama]</code>):</b> Halaman anti-slider! Foto-foto desain saya render vertikal ke bawah biar detail resolusinya kelihatan jelas, lengkap dengan cerita <i>problem solving</i>-nya.</li>
+<li><b>👤 Tentang Saya (<code>/about</code>):</b> Timeline pengalaman, logo <i>brand partner</i>, dan pameran sertifikat sah.</li>
+<li><b>💧 Jembatan AquaNime (<code>/aquanime</code>):</b> Jalan pintas (direct link) yang akan langsung mengalihkan pengunjung dari web portofolio pribadi saya ke ekosistem komunitas AquaNime.</li>
 </ul>
-
-<br>
-
-<h2 style="color: #0284c7;">🖼️ 4. Tampilan Detail Karya (Anti Slider)</h2>
-<p>Sebagai desainer grafis, saya kurang suka melihat portofolio yang pakai fitur <i>slider</i> karena bikin detail karya susah dilihat utuh. Makanya, web ini saya rancang biar merender foto desain secara vertikal memanjang (seperti format presentasi di Behance). Kalau 1 project punya 5 konsep:</p>
-<ol style="line-height: 1.8;">
-  <li>Bikin folder baru, contoh: <code>public/projects/kemasan-kopi/</code>.</li>
-  <li>Masukin semua fotonya ke situ (namain aja <code>1.jpg</code>, <code>2.jpg</code>, dst).</li>
-  <li>Daftarin fotonya di <code>store.js</code>, dan web otomatis nyusun fotonya ke bawah dengan rapi, lengkap dengan cerita proses kreatifnya.</li>
-</ol>
-
-<br>
-
-<h2 style="color: #0284c7;">🌐 5. Daftar Halaman & Transisi (Multipage SPA)</h2>
-<p>Meski ini website <i>multipage</i>, tapi saat pengunjung mengklik menu, <b>website tidak akan loading melainkan transisi super mulus layaknya sebuah aplikasi handphone (Single Page Application/SPA)</b> berkat bantuan teknologi Next.js. Berikut daftarnya:</p>
+​<h2 style="color: #0284c7; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">🔒 4. Keamanan & Performa Web</h2>
 <ul style="line-height: 1.8;">
-  <li><b>🏠 Beranda (<code>/</code>):</b> Halaman sapaan awal, ringkasan <i>skill</i> desain saya, dan cuplikan sedikit karya terbaik.</li>
-  <li><b>💼 Portofolio (<code>/projects</code>):</b> Galeri lengkap semua karya yang siap dipamerin ke klien dan manajer HRD.</li>
-  <li><b>🔍 Detail Proyek (<code>/projects/[nama]</code>):</b> Halaman khusus pas project-nya diklik. Isinya <i>problem solving</i> dari masalah klien sampai jadi visual akhir.</li>
-  <li><b>👤 Tentang Saya (<code>/about</code>):</b> Timeline pengalaman, brand yang pernah saya bantu, dan pameran sertifikat sah.</li>
-  <li><b>💧 Jembatan AquaNime (<code>/aquanime</code>):</b> Ini adalah <i>direct link</i> atau jalan pintas yang langsung mengalihkan pengunjung ke ekosistem komunitas AquaNime yang saya bangun. Nanti AquaNime bakal punya rumah website (domain) tersendiri.</li>
+<li><b>Kebal Hacker:</b> Web saya bersifat statis dan serverless (tanpa database SQL), jadi 100% aman dari peretasan web tradisional.</li>
+<li><b>Gembok Hijau (HTTPS):</b> Jalur datanya terkunci otomatis dan di-<i>host</i> secara global oleh Vercel.</li>
+<li><b>Ramah Google:</b> Berkat sitemap dan optimasi Meta Tag, pencarian namaku di Google dijamin mengarah langsung ke <a href="https://www.google.com/search?q=https://mrr.my.id" style="color: #0284c7; font-weight: bold;">mrr.my.id</a>.</li>
 </ul>
-
-<br>
-
-<h2 style="color: #0284c7;">🔒 6. Keamanan & Performa Web</h2>
-<ul style="line-height: 1.8;">
-  <li><b>Aman dari Hacker:</b> Karena web ini sifatnya statis (tanpa database ribet SQL), web saya 100% aman dari orang iseng atau <i>hacker</i>.</li>
-  <li><b>Gembok Hijau:</b> Jalur datanya udah otomatis dikunci pakai HTTPS dari server Vercel.</li>
-  <li><b>Ramah Google:</b> Udah dilengkapi Meta Tag, <code>robots.txt</code>, dan sitemap supaya web portofolio ini (<a href="https://mrr.my.id" style="color: #0284c7;">mrr.my.id</a>) gampang dicari lewat pencarian Google.</li>
-</ul>
-
-<hr>
-<p align="center" style="color: #64748b; font-size: 14px;">
-  <i>Dirancang & Dikembangkan dengan bangga oleh Muhammad Rafli Ramadhan © 2026. All Rights Reserved.</i>
+​<hr>
+<p align="center" style="color: #475569; font-size: 14px;">
+<i>Dirancang & Dikembangkan secara mandiri oleh <b>Muhammad Rafli Ramadhan</b> © 2026. All Rights Reserved.</i>
 </p>
