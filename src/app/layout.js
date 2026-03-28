@@ -1,5 +1,13 @@
-export const metadata = {
-  title: "Rafli Ramadhan | Graphic Designer",
-  description: "Portofolio profesional Muhammad Rafli Ramadhan. Berpengalaman dalam desain cetak, digital, dan identitas merek.",
+import React from 'react';
+
+const RootLayout = ({ children }) => {
+    return (
+        <html>
+            <body>
+                {children}
+            </body>
+        </html>
+    );
 };
 
+export default RootLayout;
