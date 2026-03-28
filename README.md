@@ -5,91 +5,86 @@
 
 
 
-​<h1 style="color: #0284c7;">Arsitektur Digital & Repositori Resmi Saya</h1>
+​<h1 style="color: #0284c7;">Repositori Resmi & Portofolio Digital Saya</h1>
 <h2>Muhammad Rafli Ramadhan (MRR)</h2>
-<p><b>Platform Portofolio Desain Grafis Interaktif & Pusat Komunitas AquaNime</b></p>
-<p><i>Sistem website multipage yang saya rancang dengan basis Data-Driven dan fitur update tanpa koding.</i></p>
+<p><b>Graphic Designer & Founder Komunitas AquaNime</b></p>
+<p><i>Source code website portofolio pribadi saya yang dibikin dengan sistem update "Tanpa Koding".</i></p>
 <hr>
 </div>
-​<h2 style="color: #0284c7;">🏗️ 1. Topologi & Hierarki Sistem (Arsitektur Folder)</h2>
-<p>Infrastruktur website ini <b>saya bangun sendiri</b> menggunakan teknologi mutakhir <b>Next.js App Router</b>. Desain sistemnya sengaja saya rancang untuk memisahkan lapisan antarmuka (UI/Frontend) dengan lapisan data (Content/Backend). Pendekatan ini memungkinkan saya untuk melakukan pembaruan konten berskala besar kapan saja, tanpa perlu menyentuh bahasa pemrograman dasarnya lagi.</p>
+​<h2 style="color: #0284c7;">🏗️ 1. Struktur Website & Folder</h2>
+<p>Website ini saya bangun sendiri pakai <b>Next.js App Router</b>. Kodingannya sengaja saya pisah antara bagian tampilan (UI) dan bagian data. Jadi, kalau ke depannya saya mau nambahin project desain atau update CV, saya nggak perlu takut merusak kodingan utamanya.</p>
 ​<pre style="background-color: #0f172a; color: #e2e8f0; padding: 20px; border-radius: 8px; font-size: 14px; line-height: 1.6;">
 📁 CV-MRR/ (Direktori Utama Saya)
 │
-├── 📁 public/                     [DATABASE ASET VISUAL SAYA]
-│   ├── 📁 projects/               ├─ Folder aset resolusi tinggi tiap karya desain saya
-│   ├── 📁 certificates/           ├─ Direktori pindaian sertifikat & penghargaan saya
-│   ├── 📁 brands/                 ├─ Direktori logo identitas mitra/klien saya
-│   ├── 🖼️ profile.jpg             ├─ Potret profil profesional
-│   └── ⚙️ sitemap.xml             └─ Peta indeks untuk optimasi pencarian Google
+├── 📁 public/                     [TEMPAT SAYA NARUH FOTO]
+│   ├── 📁 projects/               ├─ Folder foto high-res tiap karya desain saya
+│   ├── 📁 certificates/           ├─ Folder scan sertifikat & penghargaan saya
+│   ├── 📁 brands/                 ├─ Folder logo klien/brand yang pernah kerja bareng
+│   ├── 🖼️ profile.jpg             ├─ Foto profil saya
+│   └── ⚙️ sitemap.xml             └─ Peta web biar gampang dicari di Google
 │
 ├── 📁 src/
-│   ├── 📁 data/                   [PUSAT KENDALI KONTEN - DRAG & PLAY]
-│   │   └── 📄 store.js            └─ ⚠️ SAYA UPDATE SELURUH TEKS & DATA PROYEK DI SINI
+│   ├── 📁 data/                   [PUSAT UPDATE KONTEN]
+│   │   └── 📄 store.js            └─ ⚠️ TEMPAT SAYA NGEDIT TEKS & NAMBAH DESAIN BARU
 │   │
-│   ├── 📁 components/             [MODUL ANTARMUKA]
-│   │   ├── 🧩 Navbar.jsx          ├─ Modul Navigasi Utama
-│   │   └── 🧩 Footer.jsx          └─ Modul Kredensial & Tautan Sosial Media Saya
+│   ├── 📁 components/             [POTONGAN TAMPILAN]
+│   │   ├── 🧩 Navbar.jsx          ├─ Menu atas
+│   │   └── 🧩 Footer.jsx          └─ Bagian bawah (Sosmed dll)
 │   │
-│   └── 📁 app/                    [SISTEM ROUTING HALAMAN]
-│       ├── 📄 layout.jsx          ├─ Konfigurasi Induk (Header, Footer, Metadata SEO)
-│       ├── 📄 page.jsx            ├─ (/) Landing Page Utama
-│       ├── 📁 about/              ├─ (/about) Eksebisi Profil & Curriculum Vitae Saya
-│       ├── 📁 projects/           ├─ (/projects) Galeri Portofolio Komprehensif
-│       ├── 📁 projects/[slug]/    ├─ (/projects/detail) Generator Halaman Studi Kasus
-│       └── 📁 aquanime/           └─ (/aquanime) Hub & Jembatan Komunitas AquaNime
+│   └── 📁 app/                    [HALAMAN WEBSITE SAYA]
+│       ├── 📄 layout.jsx          ├─ Pengaturan dasar web (Font, Header, Footer)
+│       ├── 📄 page.jsx            ├─ (/) Halaman paling depan (Beranda)
+│       ├── 📁 about/              ├─ (/about) Halaman CV dan Profil saya
+│       ├── 📁 projects/           ├─ (/projects) Galeri lengkap hasil desain saya
+│       ├── 📁 projects/[slug]/    ├─ (/projects/detail) Halaman detail pas desain diklik
+│       └── 📁 aquanime/           └─ (/aquanime) Direct link ke ekosistem AquaNime
 </pre>
-​<h2 style="color: #0284c7;">📝 2. Sistem Manajemen Konten (CMS) Pribadi</h2>
-<p>Saya mengadaptasi sistem <b>"Drag & Play"</b> untuk website ini. Saya tidak perlu lagi pusing mengedit file <code>.jsx</code> setiap kali ada karya baru. Seluruh pembaruan narasi, penambahan proyek desain, hingga rekam jejak karir, cukup saya atur secara terpusat melalui satu file andalan saya: <b><code>src/data/store.js</code></b>.</p>
+​<h2 style="color: #0284c7;">📝 2. Sistem Update Simpel (Tanpa Koding)</h2>
+<p>Saya bikin website ini supaya gampang di-update tanpa bikin pusing. Jadi, saya nggak perlu ngedit file <code>.jsx</code> sama sekali. Kalau ada karya baru, cukup buka satu file andalan saya: <b><code>src/data/store.js</code></b>. Tinggal ketik-ketik di situ kayak ngisi formulir, website langsung otomatis berubah!</p>
 ​<table style="width: 100%; border-collapse: collapse; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
 <tr style="background-color: #0284c7; color: white;">
-<th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Aktivitas Pembaruan</th>
-<th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Modifikasi di File <code>store.js</code></th>
-<th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Tujuan Upload Visual Saya</th>
+<th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Apa yang mau di-update?</th>
+<th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Gantinya di file <code>store.js</code></th>
+<th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Fotonya ditaruh di mana?</th>
 </tr>
 <tr style="background-color: #f8fafc;">
-<td style="padding: 12px; border: 1px solid #ddd;"><b>Publikasi Karya Baru</b></td>
-<td style="padding: 12px; border: 1px solid #ddd;">Saya tambah Array di <code>PROJECT_LIST</code></td>
+<td style="padding: 12px; border: 1px solid #ddd;"><b>Nambah Desain Baru</b></td>
+<td style="padding: 12px; border: 1px solid #ddd;">Tambah Array di <code>PROJECT_LIST</code></td>
 <td style="padding: 12px; border: 1px solid #ddd;"><code>public/projects/[nama]/</code></td>
 </tr>
 <tr style="background-color: #ffffff;">
-<td style="padding: 12px; border: 1px solid #ddd;"><b>Update Histori Karir</b></td>
-<td style="padding: 12px; border: 1px solid #ddd;">Saya tambah Baris di <code>WORK_EXPERIENCE</code></td>
-<td style="padding: 12px; border: 1px solid #ddd;"><i>(Otomatis dirender sistem)</i></td>
+<td style="padding: 12px; border: 1px solid #ddd;"><b>Nambah Pengalaman Kerja</b></td>
+<td style="padding: 12px; border: 1px solid #ddd;">Tambah Baris di <code>WORK_EXPERIENCE</code></td>
+<td style="padding: 12px; border: 1px solid #ddd;"><i>(Otomatis jadi tulisan)</i></td>
 </tr>
 <tr style="background-color: #f8fafc;">
-<td style="padding: 12px; border: 1px solid #ddd;"><b>Validasi Sertifikat</b></td>
-<td style="padding: 12px; border: 1px solid #ddd;">Saya tambah Data di <code>CERTIFICATES</code></td>
+<td style="padding: 12px; border: 1px solid #ddd;"><b>Nambah Sertifikat</b></td>
+<td style="padding: 12px; border: 1px solid #ddd;">Tambah Data di <code>CERTIFICATES</code></td>
 <td style="padding: 12px; border: 1px solid #ddd;"><code>public/certificates/</code></td>
 </tr>
-<tr style="background-color: #ffffff;">
-<td style="padding: 12px; border: 1px solid #ddd;"><b>Pembaruan AquaNime</b></td>
-<td style="padding: 12px; border: 1px solid #ddd;">Saya ubah Variabel di <code>AQUANIME_STATS</code></td>
-<td style="padding: 12px; border: 1px solid #ddd;"><i>(Otomatis dirender sistem)</i></td>
-</tr>
 </table>
-​<h2 style="color: #0284c7;">🖼️ 3. Mekanisme Rendering Studi Kasus Visual Saya</h2>
-<p>Sebagai desainer, saya menghindari penggunaan <i>slider</i> yang sering menyembunyikan detail karya. Oleh karena itu, saya merancang website ini agar dapat merender seluruh proses <i>Problem Solving</i> saya secara vertikal. Jika satu proyek saya memiliki 5 variasi desain:</p>
+​<h2 style="color: #0284c7;">🖼️ 3. Tampilan Detail Karya (Anti Slider)</h2>
+<p>Sebagai desainer, saya jujur kurang suka fitur <i>slider</i> (geser-geser gambar) karena bikin detail karya susah dilihat. Makanya, saya rancang website ini supaya nampilin karya secara vertikal memanjang. Kalau 1 project saya punya 5 konsep:</p>
 <ol style="line-height: 1.8;">
-<li>Saya cukup membuat direktori baru, contoh: <code>public/projects/kemasan-kopi/</code>.</li>
-<li>Saya mengunggah seluruh aset dengan penamaan terstruktur (misal: <code>konsep-1.jpg</code>, <code>konsep-2.jpg</code>).</li>
-<li>Lalu mendeklarasikan array gambar di <code>store.js</code>. Sistem yang saya bangun akan otomatis menyusunnya menjadi presentasi visual yang elegan dengan narasi di setiap halamannya.</li>
+<li>Tinggal bikin folder baru, contoh: <code>public/projects/kemasan-kopi/</code>.</li>
+<li>Masukin semua fotonya ke situ (namain aja <code>1.jpg</code>, <code>2.jpg</code>, dst).</li>
+<li>Daftarin urutan fotonya di <code>store.js</code>, dan web bakal otomatis nyusun fotonya ke bawah dengan rapi, lengkap sama cerita desainnya.</li>
 </ol>
-​<h2 style="color: #0284c7;">🌐 4. Pemetaan Rute Multipage & Fungsionalitas</h2>
+​<h2 style="color: #0284c7;">🌐 4. Daftar Halaman (Multipage)</h2>
 <ul style="line-height: 1.8;">
-<li><b>🏠 Main Hub (<code>/</code>):</b> Menyajikan identitas eksklusif saya (Graphic Designer & Founder), rangkuman karir, serta cuplikan mahakarya tertinggi saya.</li>
-<li><b>💼 Portfolio Grid (<code>/projects</code>):</b> Galeri komprehensif seluruh karya yang saya arsipkan rapi, dioptimalkan untuk kemudahan inspeksi HRD dan Klien.</li>
-<li><b>🔍 Deep Dive Project (<code>/projects/[nama]</code>):</b> Halaman dinamis yang menyajikan bedah desain saya secara mendalam (Latar Belakang Masalah & Solusi Visual).</li>
-<li><b>👤 Professional Identity (<code>/about</code>):</b> Menampilkan kronologi pengalaman kerja saya, kolaborasi merek (Brand Partners), dan pembuktian legal melalui Sertifikasi.</li>
-<li><b>💧 AquaNime Ecosystem (<code>/aquanime</code>):</b> Pintu gerbang utama komunitas yang saya dirikan. Menampilkan filosofi pergerakan, dokumentasi acara, metrik anggota, dan integrasi pendaftaran.</li>
+<li><b>🏠 Beranda (<code>/</code>):</b> Halaman sapaan awal, ringkasan siapa saya, dan nampilin sedikit mahakarya terbaik saya.</li>
+<li><b>💼 Portofolio (<code>/projects</code>):</b> Galeri lengkap semua karya yang saya tata rapi. Siap buat dipamerin ke klien dan HRD.</li>
+<li><b>🔍 Detail Proyek (<code>/projects/[nama]</code>):</b> Halaman khusus pas project-nya diklik. Isinya cerita masalah dari klien dan gimana saya bikin solusi visualnya.</li>
+<li><b>👤 Tentang Saya (<code>/about</code>):</b> Timeline pengalaman kerja, brand yang pernah kolaborasi bareng saya, sampai pameran sertifikat.</li>
+<li><b>💧 Jembatan AquaNime (<code>/aquanime</code>):</b> Karena ke depannya AquaNime bakal punya website sendiri, menu ini bakal berfungsi sebagai <i>direct link</i> atau jalan pintas yang langsung ngelempar pengunjung ke ekosistem komunitas saya.</li>
 </ul>
-​<h2 style="color: #0284c7;">🔒 5. Infrastruktur Keamanan & Skalabilitas</h2>
+​<h2 style="color: #0284c7;">🔒 5. Keamanan & Performa Web</h2>
 <ul style="line-height: 1.8;">
-<li><b>Serverless Architecture:</b> Generasi statis yang saya terapkan mengeliminasi kebutuhan database relasional, membuat sistem portofolio ini 100% kebal terhadap injeksi <i>Malware</i> atau peretasan konvensional.</li>
-<li><b>Enkripsi Tingkat Militer:</b> Distribusi jaringan website saya dijamin oleh protokol SSL/HTTPS otomatis dari edge network Vercel.</li>
-<li><b>SEO Readiness:</b> Penempatan meta tag strategis, kompilasi <code>robots.txt</code>, dan arsitektur sitemap otomatis yang saya siapkan untuk memastikan nama saya mendominasi kata kunci di pencarian Google.</li>
+<li><b>Aman dari Hacker:</b> Karena web ini sifatnya statis (tanpa database ribet), web saya 100% aman dari orang iseng atau <i>hacker</i>.</li>
+<li><b>Gembok Hijau:</b> Jalur datanya udah otomatis dikunci pakai HTTPS dari server Vercel.</li>
+<li><b>Ramah Google:</b> Udah saya lengkapi pakai Meta Tag, <code>robots.txt</code>, dan sitemap supaya namaku gampang nongkrong di halaman depan Google.</li>
 </ul>
 ​<hr>
 <p align="center" style="color: #64748b; font-size: 14px;">
-<i>Dirancang & Dikembangkan oleh Muhammad Rafli Ramadhan © 2026. All Rights Reserved.</i>
+<i>Dirancang & Dikembangkan dengan bangga oleh Muhammad Rafli Ramadhan © 2026. All Rights Reserved.</i>
 </p>
