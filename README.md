@@ -12,10 +12,43 @@
 ​Ini adalah website portofolio yang dibangun menggunakan Next.js dan Tailwind CSS. Website ini dirancang agar sangat mudah diedit oleh desainer (tanpa perlu paham koding yang rumit). Semua teks, gambar, dan pengalaman kerja dipisahkan ke dalam satu file data sederhana.
 ​📂 Struktur Website
 ​Berikut adalah susunan folder proyek ini agar kamu tahu di mana letak file-file penting:</p>
+
+rafli-portfolio/
+├── public/                 # 🖼️ Taruh SEMUA gambar di sini (foto profil, karya)
+│   ├── profile.jpg
+│   └── projects/
+│       ├── box-pertamina.jpg
+│       └── logo-best.jpg
+├── src/
+│   ├── app/
+│   │   ├── layout.jsx      # ⚙️ Kerangka utama website
+│   │   ├── page.jsx        # 🖥️ Halaman utama portofolio (Desain UI)
+│   │   └── globals.css     # 🎨 File CSS & Tailwind
+│   └── data/
+│       └── cv.js           # 📝 TEMPAT KAMU MENGEDIT DATA CV (Teks & Link)
+├── package.json
+└── tailwind.config.js
+rafli-portfolio/
+├── public/                 # 🖼️ Taruh SEMUA gambar di sini (foto profil, karya)
+│   ├── profile.jpg
+│   └── projects/
+│       ├── box-pertamina.jpg
+│       └── logo-best.jpg
+├── src/
+│   ├── app/
+│   │   ├── layout.jsx      # ⚙️ Kerangka utama website
+│   │   ├── page.jsx        # 🖥️ Halaman utama portofolio (Desain UI)
+│   │   └── globals.css     # 🎨 File CSS & Tailwind
+│   └── data/
+│       └── cv.js           # 📝 TEMPAT KAMU MENGEDIT DATA CV (Teks & Link)
+├── package.json
+└── tailwind.config.js
+
 ​🎨 Tentang Proyek Ini
 ​Ini adalah website portofolio yang dibangun menggunakan Next.js dan Tailwind CSS. Website ini dirancang agar sangat mudah diedit oleh desainer (tanpa perlu paham bahasa pemograman yang rumit). Semua teks, gambar, dan pengalaman kerja dipisahkan ke dalam satu file data sederhana.
 ​🛠️ Cara Edit Konten (Tanpa Koding!)
 ​Jika kamu ingin memperbarui pengalaman kerja, mengganti gambar portofolio, atau mengubah nomor WhatsApp, kamu tidak perlu membongkar desain website.
+
 ​Buka folder src/data/
 ​Klik file cv.js
 ​Klik tombol Edit (ikon pensil) di GitHub.
