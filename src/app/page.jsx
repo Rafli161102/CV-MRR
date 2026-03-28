@@ -2,10 +2,18 @@
 /* eslint-disable @next/next/no-img-element */
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Mail, Phone, Linkedin, Briefcase, PenTool, GraduationCap } from 'lucide-react';
 
 // =========================================================================
-// 🌟 DATA CV RAFLI RAMADHAN
+// 🛠️ IKON MANDIRI (Bebas Error Vercel)
+// =========================================================================
+const IconMail = ({ className }) => (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>);
+const IconPhone = ({ className }) => (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>);
+const IconLinkedin = ({ className }) => (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>);
+const IconBriefcase = ({ className }) => (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>);
+const IconGraduation = ({ className }) => (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>);
+
+// =========================================================================
+// 🌟 DATA CV (PERSIS 100% DENGAN FILE PDF)
 // =========================================================================
 const cvData = {
   personal: {
@@ -13,123 +21,139 @@ const cvData = {
     role: "Graphic Designer",
     summary: "Desainer grafis berpengalaman lebih dari 1 tahun dengan keahlian dalam menciptakan desain visual yang menarik dan efektif. Memiliki keahlian dalam penggunaan perangkat lunak desain seperti Adobe Creative Suite (Photoshop, Illustrator, InDesign) dan mampu mengoperasikan kamera DLSR dengan baik. Berpengalaman dalam desain cetak dan digital, termasuk pembuatan logo, dan materi pemasaran.",
     email: "raflisoenter@gmail.com",
-    phone: "6285155020363",
-    linkedin: "https://linkedin.com/in/muhammad-rafli-ramadhan-0209b1211",
+    phone: "085155020363",
+    linkedin: "linkedin.com/in/muhammad-rafli-ramadhan-0209b1211",
     profileImage: "/profile.jpg",
-  },
-  skills: {
-    design: ["Adobe Illustrator", "Adobe Photoshop", "Adobe InDesign", "DSLR Photography", "Print Design", "Digital Design", "Brand Identity"],
-    office: ["Microsoft Word", "Microsoft Excel"]
   },
   experience: [
     {
-      id: 1,
-      title: "Graphic Design Printing",
       company: "PT Wellen Brother",
-      period: "Sep 2024 - Sep 2025",
-      description: ["Mendesain banner, brosur, flyer, kartu nama, stiker, poster, dan merchandise.", "Menyiapkan file siap cetak (CMYK, bleed, crop marks, 300 DPI).", "Melakukan quality control dan proofing sebelum proses pencetakan."]
+      title: "Design Graphic Printing",
+      period: "September 2024 - September 2025",
+      description: [
+        "Designed banners, brochures, flyers, business cards, stickers, posters, and merchandise. Created designs based on client briefs and brand identity.",
+        "Prepared print-ready files (CMYK, bleed, crop marks, 300 DPI).",
+        "Performed quality control and proofing before printing.",
+        "Coordinated with production team and handled client revisions.",
+        "Selected appropriate materials (paper, vinyl, finishing) based on project needs.",
+        "Ensured color accuracy and print consistency across different print formats."
+      ]
     },
     {
-      id: 2,
-      title: "Business Development Officer",
       company: "PT Megatama Jaya Makmur",
-      period: "Feb 2024 - Agu 2024",
-      description: ["Mengidentifikasi dan mengembangkan peluang B2B dengan klien korporat.", "Menyiapkan proposal bisnis, presentasi, dan penawaran komersial.", "Membuat materi visual dan mockup untuk mendukung presentasi klien."]
+      title: "Bussiness Development Officer",
+      period: "Februari 2024 - Agustus 2024",
+      description: [
+        "Identified and developed B2B opportunities with corporate clients and partners.",
+        "Analyzed client needs and translated them into business and creative solutions.",
+        "Prepared business proposals, presentations, and commercial offers.",
+        "Created visual materials and mockups to support pitches and client presentations.",
+        "Coordinated with design and production teams to deliver client projects.",
+        "Conducted pricing, budgeting, and cost efficiency analysis.",
+        "Maintained long-term relationships with clients and monitored project satisfaction."
+      ]
     },
     {
-      id: 3,
-      title: "Freelance Designer",
       company: "Bstation Indonesia",
-      period: "Des 2023 - Jan 2024",
-      description: ["Ketua tim koordinasi perlengkapan.", "Desainer grafis flyer event untuk media sosial Bstation pada event Anime Carnival 2023 di Mall Artha Gading."]
+      title: "Freelance Designer",
+      period: "Desember 2023 - Januari 2024",
+      description: [
+        "As head of the equipment coordination team",
+        "as a graphic designer who designed event flyers on Bstation social media at the 2023 Anime Carnival event located at Artha Gading Mall On January 13-14 2024"
+      ]
     },
     {
-      id: 4,
-      title: "Customer Service Associate",
       company: "MineskiInfinity Sunter",
-      period: "Mar 2023 - Des 2023",
-      description: ["Melayani transaksi pelanggan untuk top-up kartu member.", "Melayani pelanggan untuk pembelian makanan dan minuman.", "Menjaga kebersihan warnet saat pergantian shift malam."]
+      title: "Costumer Service Associate",
+      period: "Maret 2023 - Desember 2023",
+      description: [
+        "Serving transactions to customers who want to top up member cards",
+        "Serve customers who want to make purchases of food and drinks",
+        "when entering the night shift, cleaning the internet cafe"
+      ]
     },
     {
-      id: 5,
+      company: "PT Berlian Busana Cemerlang.",
       title: "Counter Retail",
-      company: "PT Berlian Busana Cemerlang",
-      period: "Jan 2022 - Des 2022",
-      description: ["Melakukan pengecekan pakaian kotor pelanggan.", "Melayani transaksi pelanggan saat membayar dan mengambil pakaian bersih."]
+      period: "Januari 2022 - Desember 2022",
+      description: [
+        "Checking customers' dirty clothes",
+        "Serving customer transactions when paying and collecting clean clothes",
+        "Move the clothes that are ready to the rack near the counter"
+      ]
     }
   ],
   education: [
     {
-      id: 1,
       school: "Universitas Indraprasta PGRI",
       major: "Desain Komunikasi Visual",
-      period: "Sep 2022 - Jan 2024 (Tidak Selesai)",
+      period: "September 2022 - Januari 2024 (Tidak Selesai)",
       highlights: []
     },
     {
-      id: 2,
       school: "SMK Hang Tuah 2 Jakarta",
       major: "Teknik Komputer dan Jaringan",
-      period: "Jun 2018 - Jul 2021",
-      highlights: ["Wakil Ketua OSIS (2020 - 2021)", "Lulusan Terbaik (2021)"]
+      period: "Juni 2018 - Juli 2021",
+      highlights: [
+        "Wakil Ketua Osis tahun 2020 - 2021",
+        "Lulusan terbaik tahun 2021"
+      ]
     }
   ],
+  skills: {
+    design: ["Ai Illustrator", "Ps Photoshop", "Id Indesign"],
+    office: ["W Word", "X Excel"]
+  },
   projects: [
     {
-      id: 1,
-      title: "Pertamina Packing Box",
-      category: "Packaging Design",
-      description: "Desain kotak souvenir untuk Pertamina One Solution.",
-      image: "/projects/box-pertamina.jpg",
+      title: "KONTRUKSI LOGO",
+      company: "Bumi Eka Sukses Tridaya",
+      description: "Create a Bumi Eka Sukses Tridaya \"BEST\" Logo Company",
+      image: "/projects/logo-best.jpg"
     },
     {
-      id: 2,
-      title: "Cover Buku Langganan Bunker",
-      category: "Print Design",
-      description: "Desain cover buku Langganan Bunker BBM Subsidi untuk Pertamina Patra Niaga.",
-      image: "/projects/buku-bunker.jpg",
+      title: "Packing Box",
+      company: "Pertamina One Solution",
+      description: "Designing Pertamina one solution souvenir boxes",
+      image: "/projects/box-pertamina.jpg"
     },
     {
-      id: 3,
-      title: "Logo BEST",
-      category: "Brand Identity",
-      description: "Pembuatan konstruksi logo dan identitas merek untuk perusahaan Bumi Eka Sukses Tridaya.",
-      image: "/projects/logo-best.jpg",
+      title: "Cover Book",
+      company: "Pertamina Patra Niaga",
+      description: "Designing Pertamina Patra Niaga cover books Langganan Bunker BBM Subsidi",
+      image: "/projects/buku-bunker.jpg"
     },
     {
-      id: 4,
-      title: "Event Kumpul Wibu",
-      category: "Social Media Design",
-      description: "Desain pamflet promosi untuk event Kumpul Wibu di Bella Terra Lifestyle Center.",
-      image: "/projects/kumpul-wibu.jpg",
+      title: "Pamflet Design",
+      company: "Event Kumpul Wibu",
+      description: "Designing Pamflet Event Kumpul Wibu. 1-3 November 2023 Bella Terra Lifestyle Center",
+      image: "/projects/kumpul-wibu.jpg"
     },
     {
-      id: 5,
-      title: "Bstation Anime Carnival",
-      category: "Social Media Design",
-      description: "Visual promosi media sosial untuk publikasi acara Anime Carnival 2023 di Bstation.",
-      image: "/projects/anime-carnival.jpg",
+      title: "Pamflet Design",
+      company: "Anime Carnival 2023",
+      description: "Social Media Designer at Event Bstation Anime Carnival 2023",
+      image: "/projects/anime-carnival.jpg"
     },
     {
-      id: 6,
-      title: "AquaNime Community",
-      category: "Community Design",
-      description: "Desain identitas visual, maskot, dan layout media sosial untuk komunitas AquaNime.",
-      image: "/projects/aquanime.jpg",
+      title: "AquaNime",
+      company: "Community Founder",
+      description: "founder of the AquaNime community and composing and designing its social media",
+      image: "/projects/aquanime.jpg"
     }
   ]
 };
 
 // =========================================================================
-// 🚀 KOMPONEN EFEK ENKRIPSI
+// 🚀 KOMPONEN EFEK ENKRIPSI (MUTLAK ANTI-LONCAT / ZERO LAYOUT SHIFT)
 // =========================================================================
-const DecryptText = ({ text, className = "" }) => {
+const DecryptText = ({ text, className = "", as: Tag = "span" }) => {
   const [displayText, setDisplayText] = useState(text);
   const [isDecrypted, setIsDecrypted] = useState(false);
   const ref = useRef(null);
 
   useEffect(() => {
-    if (!text) return; 
+    if (!text) return;
     let animationFrameId;
 
     const checkPosition = () => {
@@ -141,16 +165,19 @@ const DecryptText = ({ text, className = "" }) => {
       const viewCenter = viewHeight / 2;
       const distance = Math.abs(elementCenter - viewCenter) / (viewHeight / 2);
 
-      if (distance < 0.25) {
-        setDisplayText(text);
-        setIsDecrypted(true);
+      // Zona baca sangat lega (75% layar aman)
+      if (distance < 0.75) {
+        if (!isDecrypted) {
+          setDisplayText(text);
+          setIsDecrypted(true);
+        }
       } else {
         setIsDecrypted(false);
-        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%&*+/?';
-        const scrambleIntensity = Math.min((distance - 0.25) * 2, 1); 
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#%&*+?';
+        const scrambleIntensity = Math.min((distance - 0.75) * 1.5, 1); 
 
         const scrambled = text.split('').map(char => {
-          if (char === ' ') return ' '; 
+          if (char === ' ' || char === '\n') return char; 
           if (Math.random() < scrambleIntensity) {
             return chars[Math.floor(Math.random() * chars.length)];
           }
@@ -175,148 +202,286 @@ const DecryptText = ({ text, className = "" }) => {
       window.removeEventListener('resize', handleScroll);
       cancelAnimationFrame(animationFrameId);
     };
-  }, [text]);
+  }, [text, isDecrypted]);
 
   return (
-    <span ref={ref} className={`transition-all duration-100 ${isDecrypted ? 'text-black drop-shadow-sm' : 'font-mono text-cyan-600/80 tracking-widest blur-[0.5px]'} ${className}`}>
-      {displayText}
-      {!isDecrypted && <span className="animate-pulse text-cyan-400">_</span>}
-    </span>
+    // 'inline-block' dengan 'max-w-full' memastikan teks membungkus (wrap) dengan benar
+    <Tag ref={ref} className={`relative inline-block max-w-full align-top ${className}`}>
+      
+      {/* 🧱 BATU BATA TRANSPARAN: 
+          Teks asli dirender di sini tapi tidak terlihat (opacity-0). 
+          Fungsinya HANYA untuk menahan ukuran layout 100% akurat 
+          sehingga elemen MUSTAHIL loncat/bergetar saat diacak! */}
+      <span className="opacity-0 pointer-events-none block whitespace-pre-wrap select-none">
+        {text}
+      </span>
+
+      {/* 🎭 OVERLAY EFEK:
+          Teks acak diletakkan secara melayang (absolute) menutupi batu bata di atas.
+          Karena sifatnya absolute, perubahan ukurannya tidak akan mendorong layout lain. */}
+      <span className={`absolute top-0 left-0 w-full h-full overflow-hidden block whitespace-pre-wrap transition-colors duration-300 ${
+        isDecrypted 
+          ? 'text-inherit' // Mengikuti warna asli bawaan parent
+          : 'font-mono text-cyan-400 opacity-90 drop-shadow-[0_0_8px_rgba(6,182,212,0.6)] encrypted-zone'
+      }`}>
+        {displayText}
+      </span>
+    </Tag>
   );
 };
 
 // =========================================================================
-// 🎨 DESAIN UI UTAMA
+// 🖱️ CUSTOM CURSOR GLITCH
+// =========================================================================
+const CustomCursor = () => {
+  const [pos, setPos] = useState({ x: -100, y: -100 });
+  const [isGlitching, setIsGlitching] = useState(false);
+
+  useEffect(() => {
+    const updateCursor = (e) => {
+      setPos({ x: e.clientX, y: e.clientY });
+      if (e.target.closest('.encrypted-zone')) {
+        setIsGlitching(true);
+      } else {
+        setIsGlitching(false);
+      }
+    };
+
+    window.addEventListener('mousemove', updateCursor);
+    return () => window.removeEventListener('mousemove', updateCursor);
+  }, []);
+
+  return (
+    <div className="fixed top-0 left-0 pointer-events-none z-[100] hidden md:block" style={{ transform: `translate3d(${pos.x}px, ${pos.y}px, 0)` }}>
+      <div className={`absolute -translate-x-1/2 -translate-y-1/2 w-6 h-6 rounded-full border border-cyan-400 transition-all duration-300 ease-out ${isGlitching ? 'opacity-0 scale-50' : 'opacity-100 scale-100 shadow-[0_0_15px_rgba(6,182,212,0.4)] bg-cyan-500/5'}`}></div>
+      <div className={`absolute -translate-x-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-cyan-400 transition-all duration-300 ${isGlitching ? 'opacity-0' : 'opacity-100'}`}></div>
+      {isGlitching && (
+        <div className="relative">
+          <div className="absolute -translate-x-1/2 -translate-y-1/2 w-8 h-8 border-2 border-cyan-400 translate-x-[3px] translate-y-[-3px] mix-blend-screen animate-pulse"></div>
+          <div className="absolute -translate-x-1/2 -translate-y-1/2 w-8 h-8 border-2 border-rose-500 translate-x-[-4px] translate-y-[4px] mix-blend-screen animate-ping opacity-70"></div>
+          <div className="absolute -translate-x-1/2 -translate-y-1/2 w-2 h-2 bg-white skew-x-12 animate-bounce"></div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// =========================================================================
+// 🎨 DESAIN UI UTAMA (Golden Ratio & Ruang Baca Ekstra Lega)
 // =========================================================================
 export default function PortfolioNextJS() {
   return (
-    <div className="min-h-screen bg-[#fafafa] text-zinc-900 font-sans selection:bg-cyan-500 selection:text-white pb-32 relative overflow-hidden">
+    <div className="min-h-screen bg-[#060D1F] text-slate-300 font-sans selection:bg-cyan-500 selection:text-white pb-40 overflow-hidden md:cursor-none">
       
-      {/* 🟢 ZONA SCANNER FOKUS TENGAH */}
-      <div className="fixed top-1/2 left-0 w-full h-[200px] -translate-y-1/2 bg-gradient-to-b from-transparent via-cyan-500/5 to-transparent border-y border-cyan-500/20 pointer-events-none z-0 flex flex-col justify-between py-2">
-        <div className="text-[10px] text-cyan-500/50 font-mono font-bold tracking-[0.3em] pl-4">DATA DECRYPTION ZONE // START</div>
-        <div className="text-[10px] text-cyan-500/50 font-mono font-bold tracking-[0.3em] pl-4">DATA DECRYPTION ZONE // END</div>
-      </div>
+      <CustomCursor />
 
-      <nav className="fixed top-0 w-full z-50 bg-white/70 backdrop-blur-xl border-b border-zinc-200/50">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex justify-between items-center">
-          <div className="text-xl font-bold tracking-tighter z-10 relative">
+      {/* Latar Belakang Clean Deep Cyber Space */}
+      <div className="fixed inset-0 bg-gradient-to-br from-[#060D1F] via-[#0D1836] to-[#060D1F] pointer-events-none z-0"></div>
+
+      {/* NAVBAR */}
+      <nav className="fixed top-0 w-full z-50 bg-[#060D1F]/80 backdrop-blur-2xl border-b border-white/5">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12 h-24 flex justify-between items-center">
+          <div className="text-3xl font-extrabold tracking-tighter text-white">
             RAFLI<span className="text-cyan-500">.</span>
           </div>
-          <div className="flex items-center space-x-2 z-10 relative">
-            <span className="w-2 h-2 rounded-full bg-cyan-500 animate-pulse"></span>
-            <span className="text-[10px] font-mono text-cyan-600 tracking-widest border border-cyan-200 bg-cyan-50 px-3 py-1 rounded-full hidden sm:block">
-              SYSTEM ACTIVE : SCROLL TO DECRYPT
+          <div className="flex items-center space-x-3 bg-white/5 px-5 py-2.5 rounded-full border border-white/10 shadow-lg">
+            <span className="w-2.5 h-2.5 rounded-full bg-cyan-500 animate-pulse shadow-[0_0_12px_#06b6d4]"></span>
+            <span className="text-xs font-bold tracking-[0.2em] uppercase text-cyan-400 hidden sm:block">
+              System Active
             </span>
           </div>
         </div>
       </nav>
 
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-40 space-y-48 relative z-10">
+      {/* KONTEN UTAMA */}
+      <main className="max-w-7xl mx-auto px-6 lg:px-12 pt-48 relative z-10">
         
-        <section id="about" className="min-h-[60vh] flex items-center">
-          <div className="grid md:grid-cols-12 gap-12 items-center w-full">
-            <div className="md:col-span-8 space-y-8">
-              <div className="inline-block">
-                <span className="text-xs font-mono font-bold text-cyan-500 tracking-widest uppercase mb-2 block">
-                  // IDENTITY VERIFIED
-                </span>
-                <h1 className="text-5xl sm:text-7xl font-extrabold tracking-tight leading-[1.1]">
+        {/* HERO SECTION (Margin super lega, Proporsi 62% Kiri) */}
+        <section className="min-h-[80vh] flex items-center mb-32 md:mb-56">
+          <div className="flex flex-col-reverse lg:flex-row gap-16 lg:gap-8 items-center w-full">
+            <div className="w-full lg:w-[61.8%] space-y-12">
+              <div className="space-y-6">
+                <h1 className="text-5xl sm:text-7xl lg:text-8xl font-black tracking-tight leading-[1.1] text-white drop-shadow-xl">
                   <DecryptText text={cvData.personal.name} />
                 </h1>
+                <h2 className="text-2xl sm:text-4xl text-cyan-400 font-medium tracking-wide">
+                  <DecryptText text={cvData.personal.role} />
+                </h2>
               </div>
-              <p className="text-2xl text-zinc-500 font-medium">
-                <DecryptText text={cvData.personal.role} />
-              </p>
-              <p className="text-lg text-zinc-600 leading-relaxed max-w-2xl bg-white/50 backdrop-blur-sm p-4 rounded-xl border border-zinc-100 shadow-sm text-justify">
-                {cvData.personal.summary}
+              
+              <p className="text-lg sm:text-xl text-slate-400 leading-[2.2] text-justify max-w-2xl font-light">
+                <DecryptText text={cvData.personal.summary} className="w-full" />
               </p>
               
-              <div className="flex flex-wrap gap-4 pt-4">
-                <a href={`mailto:${cvData.personal.email}`} className="flex items-center px-6 py-3 bg-black text-white rounded-full hover:bg-zinc-800 transition-colors shadow-lg shadow-cyan-500/20 text-sm font-medium">
-                  <Mail className="w-4 h-4 mr-2" /> Hubungi via Email
+              <div className="flex flex-wrap gap-5 pt-8">
+                <a href={`mailto:${cvData.personal.email}`} className="group flex items-center px-8 py-5 bg-white text-slate-900 rounded-2xl hover:bg-cyan-400 transition-all shadow-[0_0_30px_rgba(6,182,212,0.2)] text-base font-bold tracking-wide">
+                  <IconMail className="w-5 h-5 mr-3 group-hover:scale-110 transition-transform" />
+                  <DecryptText text="Email" className="text-slate-900" />
                 </a>
-                <a href={cvData.personal.linkedin} target="_blank" rel="noreferrer" className="flex items-center px-6 py-3 bg-white border border-zinc-200 text-zinc-700 rounded-full hover:bg-zinc-50 transition-colors text-sm font-medium">
-                  <Linkedin className="w-4 h-4 mr-2 text-[#0A66C2]" /> LinkedIn
-                </a>
-                <a href={`https://wa.me/${cvData.personal.phone}`} target="_blank" rel="noreferrer" className="flex items-center px-6 py-3 bg-white border border-zinc-200 text-zinc-700 rounded-full hover:bg-zinc-50 transition-colors text-sm font-medium">
-                  <Phone className="w-4 h-4 mr-2 text-[#25D366]" /> WhatsApp
+                <a href={`https://${cvData.personal.linkedin}`} target="_blank" rel="noreferrer" className="flex items-center px-8 py-5 bg-white/5 border border-cyan-500/30 text-slate-200 rounded-2xl hover:bg-white/10 hover:border-cyan-400 transition-all text-base font-bold tracking-wide">
+                  <IconLinkedin className="w-5 h-5 mr-3 text-cyan-500" />
+                  <DecryptText text="LinkedIn" />
                 </a>
               </div>
             </div>
             
-            <div className="hidden md:flex md:col-span-4 justify-end">
-              <div className="relative w-72 h-72 rounded-[2rem] overflow-hidden bg-zinc-100 shadow-2xl rotate-3 hover:rotate-0 transition-transform duration-500 border-4 border-white flex items-center justify-center">
-                {/* Ganti /profile.jpg dengan nama fotomu di folder public */}
-                <img src={cvData.personal.profileImage} alt="Rafli Ramadhan" className="object-cover w-full h-full" onError={(e) => { e.target.style.display = 'none'; }} />
-                <PenTool className="absolute w-20 h-20 text-zinc-300 -z-10" />
-                <div className="absolute inset-0 bg-cyan-500/10 mix-blend-overlay pointer-events-none"></div>
+            <div className="w-full lg:w-[38.2%] flex justify-center lg:justify-end">
+              <div className="relative w-80 h-80 sm:w-[32rem] sm:h-[32rem] rounded-[5rem] overflow-hidden bg-[#0A1329] shadow-[0_0_60px_rgba(6,182,212,0.15)] rotate-3 hover:rotate-0 transition-transform duration-700 border border-white/5">
+                <img src={cvData.personal.profileImage} alt="Rafli Ramadhan" className="object-cover w-full h-full grayscale hover:grayscale-0 transition-all duration-1000" onError={(e) => { e.target.style.display = 'none'; }} />
+                <div className="absolute inset-0 bg-gradient-to-tr from-cyan-500/30 to-transparent mix-blend-overlay pointer-events-none"></div>
               </div>
             </div>
           </div>
         </section>
 
-        <section id="projects" className="space-y-16">
-          <div className="flex flex-col space-y-4">
-            <h2 className="text-4xl font-extrabold tracking-tight">
-              <DecryptText text="Karya Desain Unggulan" />
+        {/* PENGALAMAN KERJA (Margin Antar Elemen Diperlebar Ekstrem) */}
+        <section className="py-24 md:py-32 mb-32 md:mb-56">
+          <div className="flex items-center space-x-6 border-b border-white/10 pb-10 mb-20 md:mb-32">
+            <IconBriefcase className="w-12 h-12 text-cyan-500" />
+            <h2 className="text-4xl sm:text-6xl font-black tracking-tight text-white">
+              <DecryptText text="Pengalaman Kerja" />
             </h2>
-            <p className="text-zinc-500 max-w-xl text-lg">Arahkan item ke zona tengah layar untuk mendekripsi detail proyek.</p>
           </div>
           
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {cvData.projects.map((project) => (
-              <div key={project.id} className="group flex flex-col bg-white p-3 rounded-3xl shadow-sm border border-zinc-100 hover:shadow-xl hover:border-cyan-200 transition-all duration-300">
-                <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-zinc-100 mb-5 flex items-center justify-center">
-                  <img src={project.image} alt={project.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-in-out" onError={(e) => { e.target.style.display = 'none'; }} />
-                  <Briefcase className="absolute w-12 h-12 text-zinc-200 -z-10" />
-                </div>
-                <div className="px-3 pb-4">
-                  <div className="text-[10px] font-mono font-bold tracking-widest text-cyan-500 uppercase mb-2">
-                    {project.category}
-                  </div>
-                  <h3 className="text-xl font-bold mb-3 min-h-[3.5rem]">
-                    <DecryptText text={project.title} />
+          <div className="grid gap-24 md:gap-40"> {/* Jarak antar pekerjaan super lega */}
+            {cvData.experience.map((exp, idx) => (
+              <div key={idx} className="flex flex-col lg:flex-row gap-10 lg:gap-20 group relative">
+                {/* Garis dekorasi timeline */}
+                <div className="hidden lg:block absolute left-[38.2%] top-0 bottom-[-160px] w-px bg-white/5 group-last:bg-transparent"></div>
+                <div className="hidden lg:block absolute left-[38.2%] top-4 w-3 h-3 -translate-x-1.5 rounded-full bg-cyan-500 shadow-[0_0_15px_#06b6d4]"></div>
+
+                <div className="w-full lg:w-[35%] space-y-6">
+                  <h3 className="text-3xl sm:text-4xl font-bold text-white leading-tight">
+                    <DecryptText text={exp.title} />
                   </h3>
-                  <p className="text-sm text-zinc-500 line-clamp-2">{project.description}</p>
+                  <div className="text-cyan-400 font-semibold text-xl tracking-wide">
+                    <DecryptText text={exp.company} />
+                  </div>
+                  <div className="inline-block mt-4">
+                    <div className="text-sm font-bold tracking-widest text-slate-400 bg-[#0A1329] px-6 py-3 rounded-xl border border-white/10 shadow-lg">
+                      <DecryptText text={exp.period} />
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="w-full lg:w-[60%] lg:pl-10">
+                  <ul className="space-y-10 md:space-y-12"> {/* Jarak antar list point sangat lega */}
+                    {exp.description.map((item, index) => (
+                      <li key={index} className="flex items-start">
+                         <span className="mr-6 mt-1.5 text-cyan-500 opacity-80 select-none text-xl">✦</span>
+                         <p className="text-lg sm:text-xl text-slate-300 leading-[2.2] font-light flex-1">
+                           <DecryptText text={item} className="w-full text-slate-300" />
+                         </p>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               </div>
             ))}
           </div>
         </section>
 
-        <section id="experience" className="space-y-16">
-          <div className="flex items-center space-x-4">
-            <div className="p-3 bg-black text-cyan-400 rounded-2xl shadow-lg shadow-cyan-500/20"><Briefcase className="w-6 h-6" /></div>
-            <h2 className="text-4xl font-extrabold tracking-tight">
-              <DecryptText text="Pengalaman Profesional" />
+        {/* PROYEK / PORTOFOLIO */}
+        <section className="py-24 md:py-32 mb-32 md:mb-56">
+          <div className="flex items-center space-x-6 border-b border-white/10 pb-10 mb-20 md:mb-24">
+            <h2 className="text-4xl sm:text-6xl font-black tracking-tight text-white">
+              <DecryptText text="Projek" />
             </h2>
           </div>
           
-          <div className="grid md:grid-cols-12 gap-8 md:gap-12">
-            <div className="md:col-span-10 lg:col-span-9 space-y-12 border-l-2 border-zinc-200 pl-6 sm:pl-10 ml-2">
-              {cvData.experience.map((exp) => (
-                <div key={exp.id} className="relative group bg-white p-6 rounded-3xl border border-zinc-100 shadow-sm hover:border-cyan-200 transition-colors">
-                  <span className="absolute -left-[35px] sm:-left-[51px] top-8 w-4 h-4 rounded-full border-4 border-white bg-cyan-500 shadow-sm group-hover:scale-150 transition-transform"></span>
-                  
-                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-baseline mb-2">
-                    <h3 className="text-2xl font-bold">
-                       <DecryptText text={exp.title} />
-                    </h3>
-                    <span className="text-xs font-mono font-bold text-cyan-600 mt-2 sm:mt-0 px-3 py-1 bg-cyan-50 border border-cyan-100 rounded-full">{exp.period}</span>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-12 md:gap-16">
+            {cvData.projects.map((project, idx) => (
+              <div key={idx} className="group flex flex-col bg-[#0A1329]/80 backdrop-blur-sm p-6 rounded-[3rem] border border-white/5 hover:border-cyan-500/40 hover:bg-[#0D1836] transition-all duration-500 shadow-2xl">
+                <div className="relative aspect-[4/3] rounded-[2.5rem] overflow-hidden bg-[#060D1F] mb-10">
+                  <img src={project.image} alt={project.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 ease-out opacity-80 group-hover:opacity-100" onError={(e) => { e.target.style.display = 'none'; }} />
+                  <IconBriefcase className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 text-white/5 -z-10" />
+                </div>
+                <div className="px-4 pb-6 flex flex-col flex-grow">
+                  <div className="text-xs font-bold tracking-[0.25em] text-cyan-400 uppercase mb-5">
+                    <DecryptText text={project.title} />
                   </div>
-                  <h4 className="text-lg font-bold text-zinc-500 mb-6">{exp.company}</h4>
+                  <h3 className="text-3xl font-bold text-white mb-6 leading-tight">
+                    <DecryptText text={project.company} />
+                  </h3>
+                  <p className="text-slate-400 text-lg leading-[2] font-light mt-auto">
+                    <DecryptText text={project.description} className="w-full text-slate-400" />
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* PENDIDIKAN & KEAHLIAN (Split 50/50, Margin Lega) */}
+        <section className="grid lg:grid-cols-2 gap-24 md:gap-32 pt-20 border-t border-white/10">
+          
+          {/* PENDIDIKAN */}
+          <div className="space-y-20">
+            <div className="flex items-center space-x-6">
+              <IconGraduation className="w-12 h-12 text-cyan-500" />
+              <h2 className="text-4xl sm:text-5xl font-black text-white">
+                <DecryptText text="Pendidikan" />
+              </h2>
+            </div>
+            
+            <div className="space-y-24">
+              {cvData.education.map((edu, idx) => (
+                <div key={idx} className="space-y-6 relative pl-12 before:absolute before:left-2 before:top-4 before:bottom-0 before:w-px before:bg-white/10">
+                  <span className="absolute left-0 top-3 w-4 h-4 rounded-full bg-cyan-500 shadow-[0_0_20px_#06b6d4]"></span>
+                  <h3 className="text-3xl font-bold text-white"><DecryptText text={edu.school} /></h3>
+                  <div className="text-cyan-400 text-2xl font-medium"><DecryptText text={edu.major} /></div>
+                  <div className="text-sm font-bold tracking-widest text-slate-500"><DecryptText text={edu.period} /></div>
                   
-                  <ul className="space-y-3">
-                    {exp.description.map((item, index) => (
-                      <li key={index} className="flex items-start text-zinc-600">
-                         <span className="mr-3 font-mono text-cyan-400 mt-0.5 text-sm">{'>'}</span>
-                         <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
+                  {edu.highlights.length > 0 && (
+                    <ul className="pt-8 space-y-5 bg-[#0A1329] p-8 rounded-[2rem] border border-white/5 shadow-xl mt-6">
+                      {edu.highlights.map((hl, i) => (
+                        <li key={i} className="text-slate-300 text-lg leading-relaxed font-light flex items-start">
+                          <span className="mr-5 text-cyan-500 font-bold opacity-80">»</span>
+                          <DecryptText text={hl} className="text-slate-300" />
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </div>
               ))}
+            </div>
+          </div>
+
+          {/* KEAHLIAN */}
+          <div className="space-y-20">
+            <div className="flex items-center space-x-6">
+              <IconBriefcase className="w-12 h-12 text-cyan-500" />
+              <h2 className="text-4xl sm:text-5xl font-black text-white">
+                <DecryptText text="Keahlian" />
+              </h2>
+            </div>
+            
+            <div className="bg-[#0A1329]/80 backdrop-blur-sm p-12 sm:p-16 rounded-[4rem] border border-white/5 space-y-16 shadow-2xl">
+              <div>
+                <div className="text-sm font-bold tracking-[0.25em] text-cyan-500 uppercase mb-10">
+                  <DecryptText text="Design Tools" />
+                </div>
+                <div className="flex flex-wrap gap-5">
+                  {cvData.skills.design.map((skill, idx) => (
+                    <span key={idx} className="px-8 py-5 bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 rounded-2xl text-base font-bold tracking-wider shadow-sm">
+                      <DecryptText text={skill} />
+                    </span>
+                  ))}
+                </div>
+              </div>
+              
+              <div className="pt-12 border-t border-white/10">
+                <div className="text-sm font-bold tracking-[0.25em] text-slate-500 uppercase mb-10">
+                  <DecryptText text="Office Tools" />
+                </div>
+                <div className="flex flex-wrap gap-5">
+                  {cvData.skills.office.map((skill, idx) => (
+                    <span key={idx} className="px-8 py-5 bg-white/5 border border-white/10 text-slate-300 rounded-2xl text-base font-bold tracking-wider">
+                      <DecryptText text={skill} />
+                    </span>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         </section>
