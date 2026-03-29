@@ -61,4 +61,3 @@ export const WORK_EXPERIENCE = [
 export const CERTIFICATES = [
   // Data ini akan kita aktifkan saat mengerjakan halaman About nanti
 ];
-
