@@ -7,7 +7,7 @@ export default function CVMaker() {
   const [lang, setLang] = useState('id'); 
   const [isTranslating, setIsTranslating] = useState(false);
 
-  // KAMUS BAHASA & PLACEHOLDER JELAS
+  // KAMUS BAHASA & PLACEHOLDER
   const t = {
     id: {
       personal: "Informasi Dasar", exp: "PENGALAMAN KERJA", edu: "PENDIDIKAN", proj: "PROYEK", cert: "SERTIFIKASI", summary: "PROFIL SINGKAT", skills: "KEAHLIAN DAN KOMPETENSI",
@@ -150,6 +150,7 @@ export default function CVMaker() {
           body * { visibility: hidden; }
           #cv-preview, #cv-preview * { visibility: visible; }
           #cv-preview { position: absolute; left: 0; top: 0; width: 100%; max-width: 100%; padding: 0 !important; margin: 0 !important; box-shadow: none !important; border: none !important; }
+          /* MENGATUR DEFAULT MARGIN KERTAS PDF SAAT PRINT */
           @page { size: A4; margin: 1.5cm; }
           .no-print { display: none !important; }
         }
@@ -158,6 +159,45 @@ export default function CVMaker() {
       <div className="max-w-[1400px] mx-auto">
         <div className="text-center mb-8 no-print">
           <h1 className="text-4xl font-black text-white mb-2">ATS <span className="text-cyan-500">CV Maker</span></h1>
+        </div>
+
+        {/* ========================================================= */}
+        {/* KARTU PANDUAN & TUTORIAL (BARU)                             */}
+        {/* ========================================================= */}
+        <div className="w-full bg-[#0A1329] border border-cyan-500/20 p-6 sm:p-8 rounded-[2rem] no-print mb-8 shadow-[0_0_20px_rgba(6,182,212,0.05)]">
+          <div className="flex flex-col md:flex-row gap-8">
+            <div className="flex-1">
+              <h2 className="text-xl font-bold text-cyan-400 mb-3 flex items-center gap-2"><span>🚀</span> Selamat Datang!</h2>
+              <p className="text-slate-400 text-sm leading-relaxed mb-4">
+                Saya membuat *tool* pembuat CV gratis ini untuk membantu teman-teman profesional menciptakan resume berstandar <b>Applicant Tracking System (ATS)</b> yang sering digunakan oleh HRD dan perusahaan multinasional. Format di sini sudah dioptimalkan agar mudah dibaca oleh mesin seleksi (tanpa ikon aneh, margin presisi, font bersih).
+              </p>
+              <div className="bg-[#060D1F] p-4 rounded-xl border border-white/5">
+                <h3 className="text-sm font-bold text-white mb-2">📌 Cara Print / Save ke PDF yang Benar:</h3>
+                <ul className="text-xs text-slate-400 space-y-2 list-disc list-inside">
+                  <li>Klik tombol <b className="text-cyan-400">Cetak / Simpan PDF</b> di bagian bawah formulir.</li>
+                  <li>Di jendela Print (Chrome/Safari), ubah pilihan "Printer" menjadi <b className="text-cyan-400">Save as PDF</b>.</li>
+                  <li>Penting! Buka opsi <b>More Settings</b>, lalu ubah <b>Margins</b> menjadi <b>Default</b> atau <b>None</b> (tergantung browser) agar format kertas A4 presisi dan tidak terpotong.</li>
+                  <li>Pastikan opsi <b>Background graphics</b> dicentang jika Anda menggunakan template yang memiliki garis abu-abu/warna.</li>
+                </ul>
+              </div>
+            </div>
+            
+            {/* Panduan Khusus Mode Jepang muncul jika template Jepang dipilih */}
+            {isJapanese && (
+              <div className="flex-1 bg-[#1A0B16] border border-red-500/30 p-5 rounded-xl shadow-inner mt-4 md:mt-0">
+                <h3 className="text-red-400 font-bold text-sm mb-3 flex items-center gap-2"><span>🇯🇵</span> Panduan CV Jepang (JIS 履歴書)</h3>
+                <ul className="list-disc list-inside text-xs text-red-200/80 space-y-2">
+                  <li><b>Format Resmi:</b> CV Jepang sangat kaku. Sistem ini sudah mengikuti standar tabel Nasional (JIS) yang wajib digunakan di Jepang.</li>
+                  <li><b>Furigana:</b> Wajib diisi dengan huruf Katakana untuk cara baca nama asli Anda.</li>
+                  <li><b>Foto 3x4:</b> Jangan di-upload di sini. Cetak PDF-nya, lalu tempelkan pas foto jas rapi di kotak kanan atas secara manual.</li>
+                  <li><b>Tahun Masehi:</b> Gunakan angka Masehi (Cth: 2023). Jangan ketik bulan/hari lagi di kolom karena tabel sudah memisahkannya secara otomatis.</li>
+                  {template === 'jp-asing' && (
+                    <li className="text-red-300"><b>Pekerja Asing (Tokutei Ginou/SSW):</b> Wajib mengisi <b>Kewarganegaraan</b> dan <b>Status Visa</b>. Tempatkan sertifikat <b>JLPT / JFT</b> di baris paling atas form Sertifikasi!</li>
+                  )}
+                </ul>
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="flex flex-col xl:flex-row gap-8 items-start">
@@ -176,7 +216,7 @@ export default function CVMaker() {
               </div>
               <h2 className="text-xs font-bold text-cyan-400 uppercase tracking-wider mb-2">Template ATS</h2>
               <div className="grid grid-cols-2 gap-2">
-                <button onClick={() => {setTemplate('normal'); if(lang==='jp') setLang('id');}} className={`py-2 px-2 text-[11px] font-bold rounded border transition-all ${template === 'normal' ? 'bg-cyan-600 border-cyan-400 text-white' : 'border-white/10 text-slate-400 hover:border-cyan-500/50'}`}>1. Normal (Professional)</button>
+                <button onClick={() => {setTemplate('normal'); if(lang==='jp') setLang('id');}} className={`py-2 px-2 text-[11px] font-bold rounded border transition-all ${template === 'normal' ? 'bg-cyan-600 border-cyan-400 text-white' : 'border-white/10 text-slate-400 hover:border-cyan-500/50'}`}>1. Normal (Huda Clone)</button>
                 <button onClick={() => {setTemplate('modern'); if(lang==='jp') setLang('id');}} className={`py-2 px-2 text-[11px] font-bold rounded border transition-all ${template === 'modern' ? 'bg-cyan-600 border-cyan-400 text-white' : 'border-white/10 text-slate-400 hover:border-cyan-500/50'}`}>2. Modern Pro</button>
                 <button onClick={() => {setTemplate('harvard'); if(lang==='jp') setLang('id');}} className={`py-2 px-2 text-[11px] font-bold rounded border transition-all ${template === 'harvard' ? 'bg-cyan-600 border-cyan-400 text-white' : 'border-white/10 text-slate-400 hover:border-cyan-500/50'}`}>3. Harvard (Serif)</button>
                 <button onClick={() => {setTemplate('executive'); if(lang==='jp') setLang('id');}} className={`py-2 px-2 text-[11px] font-bold rounded border transition-all ${template === 'executive' ? 'bg-cyan-600 border-cyan-400 text-white' : 'border-white/10 text-slate-400 hover:border-cyan-500/50'}`}>4. Tech Executive</button>
@@ -186,26 +226,6 @@ export default function CVMaker() {
             </div>
 
             {isTranslating && <div className="mb-4 text-center text-xs font-bold text-cyan-400 animate-pulse">Sedang menerjemahkan isi CV secara otomatis...</div>}
-
-            {/* PANDUAN PINTAR KHUSUS JEPANG */}
-            {isJapanese && (
-              <div className="mb-6 p-4 bg-[#1A0B16] border border-red-500/30 rounded-xl shadow-inner">
-                <h3 className="text-red-400 font-bold text-sm mb-2 flex items-center gap-2">
-                  <span>💡</span> Panduan Pengisian CV Jepang (JIS)
-                </h3>
-                <ul className="list-disc list-inside text-[11px] text-red-200/80 space-y-1.5">
-                  <li><b>Furigana:</b> Wajib diisi dengan huruf Katakana untuk cara baca nama asli Anda.</li>
-                  <li><b>Foto 3x4:</b> Standar Jepang mewajibkan menempel pas foto jas/formal di sudut kanan atas pada kertas yang sudah dicetak.</li>
-                  <li><b>Tahun:</b> Gunakan angka Masehi (Cth: 2023). Jangan ketik teks bulan/hari karena tabel sudah memisahkannya.</li>
-                  {template === 'jp-asing' && (
-                    <>
-                      <li className="text-red-300"><b>Pekerja Asing:</b> Sangat krusial untuk mengisi <b>Kewarganegaraan</b> dan <b>Status Visa</b>.</li>
-                      <li className="text-red-300"><b>Sertifikasi:</b> Selalu posisikan sertifikat bahasa (JLPT/JFT) di baris pertama form sertifikasi.</li>
-                    </>
-                  )}
-                </ul>
-              </div>
-            )}
 
             {/* FORM: DATA PRIBADI */}
             <div className="mb-6">
@@ -256,7 +276,7 @@ export default function CVMaker() {
                   <input type="text" value={exp.company} onChange={(e) => handleArrayChange(setExperiences, experiences, index, 'company', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:outline-none mb-1" placeholder={t.placeholders.expComp} />
                   <input type="text" value={exp.role} onChange={(e) => handleArrayChange(setExperiences, experiences, index, 'role', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:outline-none mb-1" placeholder={t.placeholders.expRole} />
                   <input type="text" value={exp.period} onChange={(e) => handleArrayChange(setExperiences, experiences, index, 'period', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:outline-none mb-1" placeholder={t.placeholders.expDate} />
-                  {!isJapanese && <textarea value={exp.description} onChange={(e) => handleArrayChange(setExperiences, experiences, index, 'description', e.target.value)} rows="3" className="w-full mt-1 bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:outline-none" placeholder="- Ketik strip untuk membuat bullet point..."></textarea>}
+                  {!isJapanese && <textarea value={exp.description} onChange={(e) => handleArrayChange(setExperiences, experiences, index, 'description', e.target.value)} rows="3" className="w-full mt-1 bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:outline-none" placeholder="- Tulis tanggung jawab utama..."></textarea>}
                 </div>
               ))}
             </div>
@@ -450,17 +470,17 @@ export default function CVMaker() {
                   /* 2. JIKA TEMPLATE UMUM (NORMAL, MODERN, DLL)               */
                   /* --------------------------------------------------------- */
                   <>
-                    {/* TEMA 1: NORMAL (Professional) - 100% Persis PDF (Rata Kiri, Non-Center) */}
+                    {/* TEMA 1: NORMAL (Huda ATS Clone) - 100% Persis PDF (Rata Kiri) */}
                     {template === 'normal' && (
                       <div className="pb-2 text-left">
-                        {/* Judul Capitalize Standard */}
-                        <h1 className="text-[20pt] font-bold mb-1 tracking-tight capitalize leading-none text-black">{basics.name || t.placeholders.name.split(' (')[0]}</h1>
+                        {/* Judul Font Standard Arial */}
+                        <h1 className="text-[20pt] font-bold mb-1 tracking-tight capitalize leading-none text-black">{basics.name || "Muhamad Syaepul Huda"}</h1>
                         
                         <p className="text-[10.5pt] text-black flex flex-wrap gap-x-1.5 mt-1.5 mb-3">
                           {[basics.location, basics.phone, basics.email, basics.linkedin].filter(Boolean).join(' | ')}
                         </p>
                         
-                        {/* Summary rata kiri-kanan persis PDF */}
+                        {/* Summary rata kiri-kanan tanpa judul */}
                         {basics.summary && <div className="text-[10.5pt] leading-[1.6] text-justify text-black mb-4 break-words">{basics.summary}</div>}
                       </div>
                     )}
@@ -522,7 +542,7 @@ export default function CVMaker() {
                           {educations.filter(e => e.institution.trim() !== "").map((edu, idx) => (
                             <div key={idx} className="mb-2.5 break-inside-avoid">
                               <div className="flex justify-between items-start">
-                                <h3 className={`text-[10.5pt] text-black font-bold`}>{edu.institution}</h3>
+                                <h3 className={`text-[10.5pt] text-black ${template === 'normal' ? 'uppercase font-bold' : 'font-bold'}`}>{edu.institution}</h3>
                                 <span className="text-[10.5pt] text-black whitespace-nowrap">{edu.period}</span>
                               </div>
                               <div className="text-[10.5pt] text-black">{edu.major}</div>
