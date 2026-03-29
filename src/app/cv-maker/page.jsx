@@ -7,7 +7,7 @@ export default function CVMaker() {
   const [lang, setLang] = useState('id'); 
   const [isTranslating, setIsTranslating] = useState(false);
 
-  // KAMUS BAHASA & PLACEHOLDER
+  // KAMUS BAHASA & PLACEHOLDER JELAS
   const t = {
     id: {
       personal: "Informasi Dasar", exp: "PENGALAMAN KERJA", edu: "PENDIDIKAN", proj: "PROYEK", cert: "SERTIFIKASI", summary: "PROFIL SINGKAT", skills: "KEAHLIAN DAN KOMPETENSI",
@@ -141,6 +141,25 @@ export default function CVMaker() {
 
   const isJapanese = template === 'jp-umum' || template === 'jp-asing';
 
+  // KOMPONEN IKON SVG MINIMALIS
+  const MagicIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 text-cyan-400">
+      <path fillRule="evenodd" d="M9 4.5a.75.75 0 01.721.544l.813 2.846a3.75 3.75 0 002.576 2.576l2.846.813a.75.75 0 010 1.442l-2.846.813a3.75 3.75 0 00-2.576 2.576l-.813 2.846a.75.75 0 01-1.442 0l-.813-2.846a3.75 3.75 0 00-2.576-2.576l-2.846-.813a.75.75 0 010-1.442l2.846-.813A3.75 3.75 0 007.466 7.89l.813-2.846A.75.75 0 019 4.5zM18 1.5a.75.75 0 01.728.568l.258 1.036c.236.94.97 1.674 1.91 1.91l1.036.258a.75.75 0 010 1.456l-1.036.258c-.94.236-1.674.97-1.91 1.91l-.258 1.036a.75.75 0 01-1.456 0l-.258-1.036a2.625 2.625 0 00-1.91-1.91l-1.036-.258a.75.75 0 010-1.456l1.036-.258a2.625 2.625 0 001.91-1.91l.258-1.036A.75.75 0 0118 1.5zM16.5 15a.75.75 0 01.712.513l.394 1.183c.15.447.5.799.948.948l1.183.395a.75.75 0 010 1.422l-1.183.395c-.447.15-.799.5-.948.948l-.395 1.183a.75.75 0 01-1.422 0l-.395-1.183a1.5 1.5 0 00-.948-.948l-1.183-.395a.75.75 0 010-1.422l1.183-.395c.447-.15.799-.5.948-.948l.395-1.183A.75.75 0 0116.5 15z" clipRule="evenodd" />
+    </svg>
+  );
+
+  const InfoIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 text-cyan-400 shrink-0">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+    </svg>
+  );
+
+  const PrintIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M6.72 13.829c-.24.03-.48.062-.724.092m6.524-4.31a1.125 1.125 0 11-2.25 0 1.125 1.125 0 012.25 0zm-1.895-3.32a.5.5 0 00-.5.5v2.25c0 .276.224.5.5.5h2.25a.5.5 0 00.5-.5v-2.25a.5.5 0 00-.5-.5h-2.25zM12 21.75c3.55 0 6.544-2.185 7.91-5.326m-15.82 0A8.966 8.966 0 0112 2.25a8.964 8.964 0 017.91 5.326m-15.82 0a8.964 8.964 0 00-7.91 5.326M12 21.75a8.965 8.965 0 007.91-5.326m0 0H21m-9 0v-4.5" />
+    </svg>
+  );
+
   return (
     <div className="min-h-screen pt-28 pb-20 px-4 md:px-8 bg-[#060D1F] relative z-10 selection:bg-cyan-500 selection:text-white font-sans">
       
@@ -150,7 +169,6 @@ export default function CVMaker() {
           body * { visibility: hidden; }
           #cv-preview, #cv-preview * { visibility: visible; }
           #cv-preview { position: absolute; left: 0; top: 0; width: 100%; max-width: 100%; padding: 0 !important; margin: 0 !important; box-shadow: none !important; border: none !important; }
-          /* MENGATUR DEFAULT MARGIN KERTAS PDF SAAT PRINT */
           @page { size: A4; margin: 1.5cm; }
           .no-print { display: none !important; }
         }
@@ -161,78 +179,105 @@ export default function CVMaker() {
           <h1 className="text-4xl font-black text-white mb-2">ATS <span className="text-cyan-500">CV Maker</span></h1>
         </div>
 
-        {/* ========================================================= */}
-        {/* KARTU PANDUAN & TUTORIAL (BARU)                             */}
-        {/* ========================================================= */}
-        <div className="w-full bg-[#0A1329] border border-cyan-500/20 p-6 sm:p-8 rounded-[2rem] no-print mb-8 shadow-[0_0_20px_rgba(6,182,212,0.05)]">
-          <div className="flex flex-col md:flex-row gap-8">
-            <div className="flex-1">
-              <h2 className="text-xl font-bold text-cyan-400 mb-3 flex items-center gap-2"><span>🚀</span> Selamat Datang!</h2>
-              <p className="text-slate-400 text-sm leading-relaxed mb-4">
-                Saya membuat *tool* pembuat CV gratis ini untuk membantu teman-teman profesional menciptakan resume berstandar <b>Applicant Tracking System (ATS)</b> yang sering digunakan oleh HRD dan perusahaan multinasional. Format di sini sudah dioptimalkan agar mudah dibaca oleh mesin seleksi (tanpa ikon aneh, margin presisi, font bersih).
-              </p>
-              <div className="bg-[#060D1F] p-4 rounded-xl border border-white/5">
-                <h3 className="text-sm font-bold text-white mb-2">📌 Cara Print / Save ke PDF yang Benar:</h3>
-                <ul className="text-xs text-slate-400 space-y-2 list-disc list-inside">
-                  <li>Klik tombol <b className="text-cyan-400">Cetak / Simpan PDF</b> di bagian bawah formulir.</li>
-                  <li>Di jendela Print (Chrome/Safari), ubah pilihan "Printer" menjadi <b className="text-cyan-400">Save as PDF</b>.</li>
-                  <li>Penting! Buka opsi <b>More Settings</b>, lalu ubah <b>Margins</b> menjadi <b>Default</b> atau <b>None</b> (tergantung browser) agar format kertas A4 presisi dan tidak terpotong.</li>
-                  <li>Pastikan opsi <b>Background graphics</b> dicentang jika Anda menggunakan template yang memiliki garis abu-abu/warna.</li>
-                </ul>
-              </div>
-            </div>
-            
-            {/* Panduan Khusus Mode Jepang muncul jika template Jepang dipilih */}
-            {isJapanese && (
-              <div className="flex-1 bg-[#1A0B16] border border-red-500/30 p-5 rounded-xl shadow-inner mt-4 md:mt-0">
-                <h3 className="text-red-400 font-bold text-sm mb-3 flex items-center gap-2"><span>🇯🇵</span> Panduan CV Jepang (JIS 履歴書)</h3>
-                <ul className="list-disc list-inside text-xs text-red-200/80 space-y-2">
-                  <li><b>Format Resmi:</b> CV Jepang sangat kaku. Sistem ini sudah mengikuti standar tabel Nasional (JIS) yang wajib digunakan di Jepang.</li>
-                  <li><b>Furigana:</b> Wajib diisi dengan huruf Katakana untuk cara baca nama asli Anda.</li>
-                  <li><b>Foto 3x4:</b> Jangan di-upload di sini. Cetak PDF-nya, lalu tempelkan pas foto jas rapi di kotak kanan atas secara manual.</li>
-                  <li><b>Tahun Masehi:</b> Gunakan angka Masehi (Cth: 2023). Jangan ketik bulan/hari lagi di kolom karena tabel sudah memisahkannya secara otomatis.</li>
-                  {template === 'jp-asing' && (
-                    <li className="text-red-300"><b>Pekerja Asing (Tokutei Ginou/SSW):</b> Wajib mengisi <b>Kewarganegaraan</b> dan <b>Status Visa</b>. Tempatkan sertifikat <b>JLPT / JFT</b> di baris paling atas form Sertifikasi!</li>
-                  )}
-                </ul>
-              </div>
-            )}
-          </div>
-        </div>
-
         <div className="flex flex-col xl:flex-row gap-8 items-start">
           
           {/* KOLOM KIRI: FORMULIR ISIAN */}
           <div className="w-full xl:w-5/12 bg-[#0A1329] border border-white/10 p-6 rounded-[2rem] no-print xl:sticky xl:top-32 h-fit max-h-none xl:max-h-[80vh] overflow-visible xl:overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-cyan-600 [&::-webkit-scrollbar-thumb]:rounded-full">
             
-            <div className="mb-6 p-5 bg-[#060D1F] border border-cyan-500/30 rounded-xl">
-              <div className="flex justify-between items-center mb-4 border-b border-white/10 pb-3">
-                <h2 className="text-xs font-bold text-cyan-400 uppercase tracking-wider">Magic Translate ✨</h2>
-                <div className="flex bg-[#0A1329] rounded border border-white/10 overflow-hidden">
-                  <button onClick={() => handleMagicTranslate('id')} disabled={isTranslating} className={`px-3 py-1 text-xs font-bold transition-colors ${lang === 'id' ? 'bg-cyan-600 text-white' : 'text-slate-500 hover:text-white'}`}>ID</button>
-                  <button onClick={() => handleMagicTranslate('en')} disabled={isTranslating} className={`px-3 py-1 text-xs font-bold transition-colors ${lang === 'en' ? 'bg-cyan-600 text-white' : 'text-slate-500 hover:text-white'}`}>EN</button>
-                  <button onClick={() => { handleMagicTranslate('jp'); setTemplate('jp-umum'); }} disabled={isTranslating} className={`px-3 py-1 text-xs font-bold transition-colors ${lang === 'jp' ? 'bg-cyan-600 text-white' : 'text-slate-500 hover:text-white'}`}>JP</button>
+            {/* ======================================================= */}
+            {/* PANEL PANDUAN / TUTORIAL (BARU & ELEGAN)                */}
+            {/* ======================================================= */}
+            <div className="mb-6 p-5 rounded-xl border border-cyan-500/20 bg-gradient-to-br from-cyan-900/10 to-[#0A1329] shadow-inner relative overflow-hidden group">
+              <div className="absolute top-0 left-0 w-1 h-full bg-cyan-500"></div>
+              
+              <div className="flex items-start gap-3 mb-3">
+                <InfoIcon />
+                <div>
+                  <h3 className="text-cyan-400 font-bold text-sm mb-1">Panduan Membuat CV Profesional</h3>
+                  <p className="text-slate-400 text-xs leading-relaxed">
+                    Aplikasi ini dirancang untuk menciptakan CV berstandar mesin seleksi HRD (ATS). Sistem akan mengatur <i>margin</i> dan struktur secara otomatis.
+                  </p>
                 </div>
               </div>
-              <h2 className="text-xs font-bold text-cyan-400 uppercase tracking-wider mb-2">Template ATS</h2>
+              
+              <ul className="space-y-2 ml-8 text-[11px] text-slate-300">
+                <li className="flex items-start gap-2">
+                  <span className="text-cyan-500 font-bold">1.</span>
+                  <span>Isi formulir menggunakan <b>Bahasa Indonesia</b> terlebih dahulu untuk memudahkan Anda.</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-cyan-500 font-bold">2.</span>
+                  <span>Gunakan tombol <b>Magic Translate (EN)</b> di bawah ini. Mesin AI kami akan menerjemahkan seluruh teks panjang Anda ke bahasa Inggris formal dalam sekejap!</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-cyan-500 font-bold">3.</span>
+                  <span><b>SANGAT PENTING:</b> Saat menekan tombol Cetak/PDF, pastikan pengaturan <b>Margin/Batas Tepi kertas diset ke "None" atau "Tidak Ada"</b>. (Standar jaraknya sudah kami tanamkan di dalam kertas putih).</span>
+                </li>
+              </ul>
+            </div>
+
+            {/* PANEL KONTROL (TEMA & TRANSLATE) */}
+            <div className="mb-6 p-5 bg-[#060D1F] border border-cyan-500/30 rounded-xl shadow-md">
+              <div className="flex justify-between items-center mb-4 border-b border-white/10 pb-3">
+                <div className="flex items-center gap-1.5">
+                  <MagicIcon />
+                  <h2 className="text-xs font-bold text-cyan-400 uppercase tracking-wider">Magic Translate</h2>
+                </div>
+                <div className="flex bg-[#0A1329] rounded border border-white/10 overflow-hidden shadow-inner">
+                  <button onClick={() => handleMagicTranslate('id')} disabled={isTranslating} className={`px-4 py-1.5 text-xs font-bold transition-colors ${lang === 'id' ? 'bg-cyan-600 text-white' : 'text-slate-500 hover:bg-white/5 hover:text-white'}`}>ID</button>
+                  <button onClick={() => handleMagicTranslate('en')} disabled={isTranslating} className={`px-4 py-1.5 text-xs font-bold transition-colors ${lang === 'en' ? 'bg-cyan-600 text-white' : 'text-slate-500 hover:bg-white/5 hover:text-white'}`}>EN</button>
+                  <button onClick={() => { handleMagicTranslate('jp'); setTemplate('jp-umum'); }} disabled={isTranslating} className={`px-4 py-1.5 text-xs font-bold transition-colors ${lang === 'jp' ? 'bg-cyan-600 text-white' : 'text-slate-500 hover:bg-white/5 hover:text-white'}`}>JP</button>
+                </div>
+              </div>
+              <h2 className="text-xs font-bold text-cyan-400 uppercase tracking-wider mb-3">Pilih Template ATS</h2>
               <div className="grid grid-cols-2 gap-2">
-                <button onClick={() => {setTemplate('normal'); if(lang==='jp') setLang('id');}} className={`py-2 px-2 text-[11px] font-bold rounded border transition-all ${template === 'normal' ? 'bg-cyan-600 border-cyan-400 text-white' : 'border-white/10 text-slate-400 hover:border-cyan-500/50'}`}>1. Normal (Huda Clone)</button>
-                <button onClick={() => {setTemplate('modern'); if(lang==='jp') setLang('id');}} className={`py-2 px-2 text-[11px] font-bold rounded border transition-all ${template === 'modern' ? 'bg-cyan-600 border-cyan-400 text-white' : 'border-white/10 text-slate-400 hover:border-cyan-500/50'}`}>2. Modern Pro</button>
-                <button onClick={() => {setTemplate('harvard'); if(lang==='jp') setLang('id');}} className={`py-2 px-2 text-[11px] font-bold rounded border transition-all ${template === 'harvard' ? 'bg-cyan-600 border-cyan-400 text-white' : 'border-white/10 text-slate-400 hover:border-cyan-500/50'}`}>3. Harvard (Serif)</button>
-                <button onClick={() => {setTemplate('executive'); if(lang==='jp') setLang('id');}} className={`py-2 px-2 text-[11px] font-bold rounded border transition-all ${template === 'executive' ? 'bg-cyan-600 border-cyan-400 text-white' : 'border-white/10 text-slate-400 hover:border-cyan-500/50'}`}>4. Tech Executive</button>
-                <button onClick={() => {setTemplate('jp-umum'); setLang('jp');}} className={`py-2 px-2 text-[11px] font-bold rounded border transition-all ${template === 'jp-umum' ? 'bg-red-600 border-red-400 text-white' : 'border-white/10 text-slate-400 hover:border-red-500/50'}`}>5a. JP Rirekisho (Umum)</button>
-                <button onClick={() => {setTemplate('jp-asing'); setLang('jp');}} className={`py-2 px-2 text-[11px] font-bold rounded border transition-all ${template === 'jp-asing' ? 'bg-red-600 border-red-400 text-white' : 'border-white/10 text-slate-400 hover:border-red-500/50'}`}>5b. JP Tokutei (Magang/Asing)</button>
+                <button onClick={() => {setTemplate('normal'); if(lang==='jp') setLang('id');}} className={`py-2 px-2 text-[11px] font-bold rounded border transition-all ${template === 'normal' ? 'bg-cyan-600 border-cyan-400 text-white shadow-lg' : 'border-white/10 text-slate-400 hover:bg-white/5 hover:border-cyan-500/30'}`}>1. Normal (Standar ATS)</button>
+                <button onClick={() => {setTemplate('modern'); if(lang==='jp') setLang('id');}} className={`py-2 px-2 text-[11px] font-bold rounded border transition-all ${template === 'modern' ? 'bg-cyan-600 border-cyan-400 text-white shadow-lg' : 'border-white/10 text-slate-400 hover:bg-white/5 hover:border-cyan-500/30'}`}>2. Modern Pro</button>
+                <button onClick={() => {setTemplate('harvard'); if(lang==='jp') setLang('id');}} className={`py-2 px-2 text-[11px] font-bold rounded border transition-all ${template === 'harvard' ? 'bg-cyan-600 border-cyan-400 text-white shadow-lg' : 'border-white/10 text-slate-400 hover:bg-white/5 hover:border-cyan-500/30'}`}>3. Harvard (Serif)</button>
+                <button onClick={() => {setTemplate('executive'); if(lang==='jp') setLang('id');}} className={`py-2 px-2 text-[11px] font-bold rounded border transition-all ${template === 'executive' ? 'bg-cyan-600 border-cyan-400 text-white shadow-lg' : 'border-white/10 text-slate-400 hover:bg-white/5 hover:border-cyan-500/30'}`}>4. Tech Executive</button>
+                <button onClick={() => {setTemplate('jp-umum'); setLang('jp');}} className={`py-2 px-2 text-[11px] font-bold rounded border transition-all ${template === 'jp-umum' ? 'bg-red-600/90 border-red-400 text-white shadow-lg' : 'border-white/10 text-slate-400 hover:bg-white/5 hover:border-red-500/30'}`}>5a. JP Rirekisho (Umum)</button>
+                <button onClick={() => {setTemplate('jp-asing'); setLang('jp');}} className={`py-2 px-2 text-[11px] font-bold rounded border transition-all ${template === 'jp-asing' ? 'bg-red-600/90 border-red-400 text-white shadow-lg' : 'border-white/10 text-slate-400 hover:bg-white/5 hover:border-red-500/30'}`}>5b. JP Tokutei (Asing)</button>
               </div>
             </div>
 
-            {isTranslating && <div className="mb-4 text-center text-xs font-bold text-cyan-400 animate-pulse">Sedang menerjemahkan isi CV secara otomatis...</div>}
+            {isTranslating && (
+              <div className="mb-4 flex justify-center items-center gap-2 text-xs font-bold text-cyan-400">
+                <svg className="animate-spin h-4 w-4 text-cyan-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Mesin AI sedang memproses terjemahan...
+              </div>
+            )}
+
+            {/* PANDUAN PINTAR KHUSUS JEPANG */}
+            {isJapanese && (
+              <div className="mb-6 p-4 rounded-xl border border-red-500/20 bg-gradient-to-br from-red-900/10 to-[#0A1329] shadow-inner relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-1 h-full bg-red-500"></div>
+                <h3 className="text-red-400 font-bold text-sm mb-2 flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4"><path fillRule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zM12 8.25a.75.75 0 01.75.75v3.75a.75.75 0 01-1.5 0V9a.75.75 0 01.75-.75zm0 8.25a.75.75 0 100-1.5.75.75 0 000 1.5z" clipRule="evenodd" /></svg>
+                  Aturan Baku CV Jepang (JIS)
+                </h3>
+                <ul className="list-disc list-inside text-[11px] text-red-200/80 space-y-1.5">
+                  <li><b>Furigana:</b> Wajib diisi (huruf Katakana cara baca nama Anda).</li>
+                  <li><b>Tahun:</b> Gunakan angka (Cth: 2023). Sistem otomatis memasukkannya ke kolom yang benar.</li>
+                  {template === 'jp-asing' && (
+                    <>
+                      <li className="text-red-300 font-medium"><b>Pekerja Asing:</b> Isi Kewarganegaraan dan Status Visa Anda.</li>
+                      <li className="text-red-300 font-medium"><b>Sertifikasi:</b> Taruh level JLPT / JFT Anda di kolom pertama form.</li>
+                    </>
+                  )}
+                </ul>
+              </div>
+            )}
 
             {/* FORM: DATA PRIBADI */}
             <div className="mb-6">
               <h2 className="text-lg font-bold text-cyan-400 mb-3 border-b border-white/10 pb-1">{t.personal}</h2>
               <div className="space-y-2">
-                <input type="text" name="name" value={basics.name} onChange={handleBasicsChange} className="w-full bg-[#060D1F] border border-white/5 p-2.5 rounded text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder={t.placeholders.name} />
+                <input type="text" name="name" value={basics.name} onChange={handleBasicsChange} className="w-full bg-[#060D1F] border border-white/5 p-2.5 rounded text-white text-sm focus:border-cyan-500 focus:outline-none transition-colors" placeholder={t.placeholders.name} />
                 
+                {/* Input Khusus Jepang */}
                 {isJapanese && (
                   <div className="flex gap-2">
                     <input type="text" name="furigana" value={basics.furigana} onChange={handleBasicsChange} className="w-1/2 bg-[#060D1F] border border-white/5 p-2.5 rounded text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder="ふりがな (Furigana Nama)" />
@@ -250,17 +295,17 @@ export default function CVMaker() {
                   </div>
                 )}
 
-                <input type="text" name="role" value={basics.role} onChange={handleBasicsChange} className="w-full bg-[#060D1F] border border-white/5 p-2.5 rounded text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder={t.placeholders.role} />
+                <input type="text" name="role" value={basics.role} onChange={handleBasicsChange} className="w-full bg-[#060D1F] border border-white/5 p-2.5 rounded text-white text-sm focus:border-cyan-500 focus:outline-none transition-colors" placeholder={t.placeholders.role} />
                 <div className="grid grid-cols-2 gap-2">
-                  <input type="text" name="location" value={basics.location} onChange={handleBasicsChange} className="w-full bg-[#060D1F] border border-white/5 p-2.5 rounded text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder={t.placeholders.loc} />
-                  <input type="text" name="phone" value={basics.phone} onChange={handleBasicsChange} className="w-full bg-[#060D1F] border border-white/5 p-2.5 rounded text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder={t.placeholders.phone} />
+                  <input type="text" name="location" value={basics.location} onChange={handleBasicsChange} className="w-full bg-[#060D1F] border border-white/5 p-2.5 rounded text-white text-sm focus:border-cyan-500 focus:outline-none transition-colors" placeholder={t.placeholders.loc} />
+                  <input type="text" name="phone" value={basics.phone} onChange={handleBasicsChange} className="w-full bg-[#060D1F] border border-white/5 p-2.5 rounded text-white text-sm focus:border-cyan-500 focus:outline-none transition-colors" placeholder={t.placeholders.phone} />
                 </div>
                 <div className="grid grid-cols-2 gap-2">
-                  <input type="email" name="email" value={basics.email} onChange={handleBasicsChange} className="w-full bg-[#060D1F] border border-white/5 p-2.5 rounded text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder={t.placeholders.email} />
-                  {!isJapanese && <input type="text" name="linkedin" value={basics.linkedin} onChange={handleBasicsChange} className="w-full bg-[#060D1F] border border-white/5 p-2.5 rounded text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder={t.placeholders.linkedin} />}
+                  <input type="email" name="email" value={basics.email} onChange={handleBasicsChange} className="w-full bg-[#060D1F] border border-white/5 p-2.5 rounded text-white text-sm focus:border-cyan-500 focus:outline-none transition-colors" placeholder={t.placeholders.email} />
+                  {!isJapanese && <input type="text" name="linkedin" value={basics.linkedin} onChange={handleBasicsChange} className="w-full bg-[#060D1F] border border-white/5 p-2.5 rounded text-white text-sm focus:border-cyan-500 focus:outline-none transition-colors" placeholder={t.placeholders.linkedin} />}
                 </div>
-                <textarea name="summary" value={basics.summary} onChange={handleBasicsChange} rows={isJapanese ? 2 : 4} className="w-full bg-[#060D1F] border border-white/5 p-2.5 rounded text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder={t.placeholders.summary}></textarea>
-                <textarea name="skills" value={basics.skills} onChange={handleBasicsChange} rows="3" className="w-full bg-[#060D1F] border border-white/5 p-2.5 rounded text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder={t.placeholders.skills}></textarea>
+                <textarea name="summary" value={basics.summary} onChange={handleBasicsChange} rows={isJapanese ? 2 : 4} className="w-full bg-[#060D1F] border border-white/5 p-2.5 rounded text-white text-sm focus:border-cyan-500 focus:outline-none transition-colors" placeholder={t.placeholders.summary}></textarea>
+                <textarea name="skills" value={basics.skills} onChange={handleBasicsChange} rows="3" className="w-full bg-[#060D1F] border border-white/5 p-2.5 rounded text-white text-sm focus:border-cyan-500 focus:outline-none transition-colors" placeholder={t.placeholders.skills}></textarea>
               </div>
             </div>
 
@@ -268,15 +313,15 @@ export default function CVMaker() {
             <div className="mb-6">
               <div className="flex justify-between items-center mb-3 border-b border-white/10 pb-1">
                 <h2 className="text-lg font-bold text-cyan-400">{t.exp}</h2>
-                <button onClick={() => addField(setExperiences, experiences, { role: "", company: "", period: "", description: "" })} className="text-[10px] bg-cyan-600 text-white px-2 py-1 rounded">{t.add}</button>
+                <button onClick={() => addField(setExperiences, experiences, { role: "", company: "", period: "", description: "" })} className="text-[10px] font-bold bg-cyan-600/20 hover:bg-cyan-600 text-cyan-400 hover:text-white px-2 py-1 rounded transition-colors">{t.add}</button>
               </div>
               {experiences.map((exp, index) => (
-                <div key={exp.id} className="bg-[#060D1F] p-3 rounded mb-3 relative">
-                  <button onClick={() => removeField(setExperiences, experiences, index)} className="absolute top-2 right-2 text-red-400 hover:text-red-300 text-[10px]">{t.del}</button>
-                  <input type="text" value={exp.company} onChange={(e) => handleArrayChange(setExperiences, experiences, index, 'company', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:outline-none mb-1" placeholder={t.placeholders.expComp} />
-                  <input type="text" value={exp.role} onChange={(e) => handleArrayChange(setExperiences, experiences, index, 'role', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:outline-none mb-1" placeholder={t.placeholders.expRole} />
-                  <input type="text" value={exp.period} onChange={(e) => handleArrayChange(setExperiences, experiences, index, 'period', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:outline-none mb-1" placeholder={t.placeholders.expDate} />
-                  {!isJapanese && <textarea value={exp.description} onChange={(e) => handleArrayChange(setExperiences, experiences, index, 'description', e.target.value)} rows="3" className="w-full mt-1 bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:outline-none" placeholder="- Tulis tanggung jawab utama..."></textarea>}
+                <div key={exp.id} className="bg-[#060D1F] p-4 rounded-xl mb-3 relative border border-white/5 hover:border-white/10 transition-colors">
+                  <button onClick={() => removeField(setExperiences, experiences, index)} className="absolute top-3 right-3 text-red-400 hover:text-red-300 text-[10px] font-bold px-2 py-1 bg-red-400/10 rounded">{t.del}</button>
+                  <input type="text" value={exp.company} onChange={(e) => handleArrayChange(setExperiences, experiences, index, 'company', e.target.value)} className="w-11/12 bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:border-cyan-500 focus:outline-none mb-2" placeholder={t.placeholders.expComp} />
+                  <input type="text" value={exp.role} onChange={(e) => handleArrayChange(setExperiences, experiences, index, 'role', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:border-cyan-500 focus:outline-none mb-2" placeholder={t.placeholders.expRole} />
+                  <input type="text" value={exp.period} onChange={(e) => handleArrayChange(setExperiences, experiences, index, 'period', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:border-cyan-500 focus:outline-none mb-2" placeholder={t.placeholders.expDate} />
+                  {!isJapanese && <textarea value={exp.description} onChange={(e) => handleArrayChange(setExperiences, experiences, index, 'description', e.target.value)} rows="3" className="w-full mt-2 bg-transparent border border-white/5 rounded p-2 text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder="- Tulis deskripsi (Gunakan strip untuk membuat peluru / bullet point)..."></textarea>}
                 </div>
               ))}
             </div>
@@ -285,16 +330,16 @@ export default function CVMaker() {
             <div className="mb-6">
               <div className="flex justify-between items-center mb-3 border-b border-white/10 pb-1">
                 <h2 className="text-lg font-bold text-cyan-400">{t.edu}</h2>
-                <button onClick={() => addField(setEducations, educations, { institution: "", major: "", period: "", gpa: "" })} className="text-[10px] bg-cyan-600 text-white px-2 py-1 rounded">{t.add}</button>
+                <button onClick={() => addField(setEducations, educations, { institution: "", major: "", period: "", gpa: "" })} className="text-[10px] font-bold bg-cyan-600/20 hover:bg-cyan-600 text-cyan-400 hover:text-white px-2 py-1 rounded transition-colors">{t.add}</button>
               </div>
               {educations.map((edu, index) => (
-                <div key={edu.id} className="bg-[#060D1F] p-3 rounded mb-3 relative">
-                  <button onClick={() => removeField(setEducations, educations, index)} className="absolute top-2 right-2 text-red-400 hover:text-red-300 text-[10px]">{t.del}</button>
-                  <input type="text" value={edu.institution} onChange={(e) => handleArrayChange(setEducations, educations, index, 'institution', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:outline-none mb-1" placeholder={t.placeholders.eduInst} />
-                  <input type="text" value={edu.major} onChange={(e) => handleArrayChange(setEducations, educations, index, 'major', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:outline-none mb-1" placeholder={t.placeholders.eduMaj} />
-                  <div className="grid grid-cols-2 gap-2 mt-1">
-                    <input type="text" value={edu.period} onChange={(e) => handleArrayChange(setEducations, educations, index, 'period', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:outline-none" placeholder={t.placeholders.eduDate} />
-                    {!isJapanese && <input type="text" value={edu.gpa} onChange={(e) => handleArrayChange(setEducations, educations, index, 'gpa', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:outline-none" placeholder="GPA / IPK" />}
+                <div key={edu.id} className="bg-[#060D1F] p-4 rounded-xl mb-3 relative border border-white/5 hover:border-white/10 transition-colors">
+                  <button onClick={() => removeField(setEducations, educations, index)} className="absolute top-3 right-3 text-red-400 hover:text-red-300 text-[10px] font-bold px-2 py-1 bg-red-400/10 rounded">{t.del}</button>
+                  <input type="text" value={edu.institution} onChange={(e) => handleArrayChange(setEducations, educations, index, 'institution', e.target.value)} className="w-11/12 bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:border-cyan-500 focus:outline-none mb-2" placeholder={t.placeholders.eduInst} />
+                  <input type="text" value={edu.major} onChange={(e) => handleArrayChange(setEducations, educations, index, 'major', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:border-cyan-500 focus:outline-none mb-2" placeholder={t.placeholders.eduMaj} />
+                  <div className="grid grid-cols-2 gap-3 mt-1">
+                    <input type="text" value={edu.period} onChange={(e) => handleArrayChange(setEducations, educations, index, 'period', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder={t.placeholders.eduDate} />
+                    {!isJapanese && <input type="text" value={edu.gpa} onChange={(e) => handleArrayChange(setEducations, educations, index, 'gpa', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder="GPA / IPK" />}
                   </div>
                 </div>
               ))}
@@ -304,16 +349,16 @@ export default function CVMaker() {
             <div className="mb-6">
               <div className="flex justify-between items-center mb-3 border-b border-white/10 pb-1">
                 <h2 className="text-lg font-bold text-cyan-400">{t.proj}</h2>
-                <button onClick={() => addField(setProjects, projects, { name: "", period: "", description: "" })} className="text-[10px] bg-cyan-600 text-white px-2 py-1 rounded">{t.add}</button>
+                <button onClick={() => addField(setProjects, projects, { name: "", period: "", description: "" })} className="text-[10px] font-bold bg-cyan-600/20 hover:bg-cyan-600 text-cyan-400 hover:text-white px-2 py-1 rounded transition-colors">{t.add}</button>
               </div>
               {projects.map((proj, index) => (
-                <div key={proj.id} className="bg-[#060D1F] p-3 rounded mb-3 relative">
-                  <button onClick={() => removeField(setProjects, projects, index)} className="absolute top-2 right-2 text-red-400 hover:text-red-300 text-[10px]">{t.del}</button>
-                  <div className="grid grid-cols-2 gap-2 mb-1">
-                    <input type="text" value={proj.name} onChange={(e) => handleArrayChange(setProjects, projects, index, 'name', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:outline-none" placeholder={t.placeholders.projName} />
-                    <input type="text" value={proj.period} onChange={(e) => handleArrayChange(setProjects, projects, index, 'period', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:outline-none" placeholder={t.placeholders.projDate} />
+                <div key={proj.id} className="bg-[#060D1F] p-4 rounded-xl mb-3 relative border border-white/5 hover:border-white/10 transition-colors">
+                  <button onClick={() => removeField(setProjects, projects, index)} className="absolute top-3 right-3 text-red-400 hover:text-red-300 text-[10px] font-bold px-2 py-1 bg-red-400/10 rounded">{t.del}</button>
+                  <div className="grid grid-cols-2 gap-3 mb-2 pr-12">
+                    <input type="text" value={proj.name} onChange={(e) => handleArrayChange(setProjects, projects, index, 'name', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder={t.placeholders.projName} />
+                    <input type="text" value={proj.period} onChange={(e) => handleArrayChange(setProjects, projects, index, 'period', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder={t.placeholders.projDate} />
                   </div>
-                  <textarea value={proj.description} onChange={(e) => handleArrayChange(setProjects, projects, index, 'description', e.target.value)} rows="3" className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:outline-none mt-1" placeholder="- Deskripsi proyek..."></textarea>
+                  <textarea value={proj.description} onChange={(e) => handleArrayChange(setProjects, projects, index, 'description', e.target.value)} rows="3" className="w-full mt-2 bg-transparent border border-white/5 rounded p-2 text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder="- Deskripsi proyek..."></textarea>
                 </div>
               ))}
             </div>
@@ -322,28 +367,31 @@ export default function CVMaker() {
             <div className="mb-4">
               <div className="flex justify-between items-center mb-3 border-b border-white/10 pb-1">
                 <h2 className="text-lg font-bold text-cyan-400">{t.cert}</h2>
-                <button onClick={() => addField(setCerts, certs, { name: "", issuer: "", period: "", description: "" })} className="text-[10px] bg-cyan-600 text-white px-2 py-1 rounded">{t.add}</button>
+                <button onClick={() => addField(setCerts, certs, { name: "", issuer: "", period: "", description: "" })} className="text-[10px] font-bold bg-cyan-600/20 hover:bg-cyan-600 text-cyan-400 hover:text-white px-2 py-1 rounded transition-colors">{t.add}</button>
               </div>
               {certs.map((cert, index) => (
-                <div key={cert.id} className="bg-[#060D1F] p-3 rounded mb-3 relative">
-                  <button onClick={() => removeField(setCerts, certs, index)} className="absolute top-2 right-2 text-red-400 hover:text-red-300 text-[10px]">{t.del}</button>
-                  <div className="grid grid-cols-2 gap-2 mb-1">
-                    <input type="text" value={cert.name} onChange={(e) => handleArrayChange(setCerts, certs, index, 'name', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:outline-none" placeholder={template === 'jp-asing' ? "JLPT N3 / JFT Basic" : t.placeholders.certName} />
-                    <input type="text" value={cert.period} onChange={(e) => handleArrayChange(setCerts, certs, index, 'period', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:outline-none" placeholder={t.placeholders.certDate} />
+                <div key={cert.id} className="bg-[#060D1F] p-4 rounded-xl mb-3 relative border border-white/5 hover:border-white/10 transition-colors">
+                  <button onClick={() => removeField(setCerts, certs, index)} className="absolute top-3 right-3 text-red-400 hover:text-red-300 text-[10px] font-bold px-2 py-1 bg-red-400/10 rounded">{t.del}</button>
+                  <div className="grid grid-cols-2 gap-3 mb-2 pr-12">
+                    <input type="text" value={cert.name} onChange={(e) => handleArrayChange(setCerts, certs, index, 'name', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder={template === 'jp-asing' ? "JLPT N3 / JFT Basic" : t.placeholders.certName} />
+                    <input type="text" value={cert.period} onChange={(e) => handleArrayChange(setCerts, certs, index, 'period', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder={t.placeholders.certDate} />
                   </div>
-                  <input type="text" value={cert.issuer} onChange={(e) => handleArrayChange(setCerts, certs, index, 'issuer', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:outline-none mb-1" placeholder="Penerbit (Cth: Google)" />
-                  {!isJapanese && <textarea value={cert.description} onChange={(e) => handleArrayChange(setCerts, certs, index, 'description', e.target.value)} rows="2" className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:outline-none mt-1" placeholder="- Topik yang dipelajari..."></textarea>}
+                  <input type="text" value={cert.issuer} onChange={(e) => handleArrayChange(setCerts, certs, index, 'issuer', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:border-cyan-500 focus:outline-none mb-2" placeholder="Penerbit (Cth: Google, Dicoding)" />
+                  {!isJapanese && <textarea value={cert.description} onChange={(e) => handleArrayChange(setCerts, certs, index, 'description', e.target.value)} rows="2" className="w-full mt-1 bg-transparent border border-white/5 rounded p-2 text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder="- Topik yang dipelajari..."></textarea>}
                 </div>
               ))}
             </div>
 
-            <button onClick={() => window.print()} className="w-full mt-4 py-4 bg-cyan-600 hover:bg-cyan-500 text-white font-bold rounded-lg transition-all">{t.print}</button>
+            <button onClick={() => window.print()} className="w-full mt-6 py-4 bg-cyan-600 hover:bg-cyan-500 text-white font-bold rounded-xl transition-all shadow-[0_0_20px_rgba(6,182,212,0.4)] uppercase tracking-widest text-sm flex justify-center items-center gap-2">
+              <PrintIcon />
+              {t.print}
+            </button>
           </div>
 
           {/* ========================================================= */}
           {/* KOLOM KANAN: PREVIEW KERTAS CV MULTI-TEMPLATE               */}
           {/* ========================================================= */}
-          <div className="w-full xl:w-7/12 bg-[#0A1329]/50 p-4 sm:p-6 rounded-[2rem] overflow-x-auto [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-thumb]:bg-cyan-600 [&::-webkit-scrollbar-thumb]:rounded-full">
+          <div className="w-full xl:w-7/12 bg-[#0A1329]/50 p-4 sm:p-6 rounded-[2rem] overflow-x-auto [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-thumb]:bg-cyan-600 [&::-webkit-scrollbar-thumb]:rounded-full shadow-inner border border-white/5">
             <div className="w-fit mx-auto">
               
               <div id="cv-preview" className={`w-[21cm] min-w-[21cm] min-h-[29.7cm] bg-white text-black py-10 px-12 sm:px-14 shadow-2xl shrink-0 border border-gray-200 
@@ -470,17 +518,15 @@ export default function CVMaker() {
                   /* 2. JIKA TEMPLATE UMUM (NORMAL, MODERN, DLL)               */
                   /* --------------------------------------------------------- */
                   <>
-                    {/* TEMA 1: NORMAL (Huda ATS Clone) - 100% Persis PDF (Rata Kiri) */}
+                    {/* TEMA 1: NORMAL (Professional) - 100% Persis PDF (Rata Kiri, Non-Center) */}
                     {template === 'normal' && (
                       <div className="pb-2 text-left">
-                        {/* Judul Font Standard Arial */}
-                        <h1 className="text-[20pt] font-bold mb-1 tracking-tight capitalize leading-none text-black">{basics.name || "Muhamad Syaepul Huda"}</h1>
+                        <h1 className="text-[20pt] font-bold mb-1 tracking-tight capitalize leading-none text-black">{basics.name || t.placeholders.name.split(' (')[0]}</h1>
                         
                         <p className="text-[10.5pt] text-black flex flex-wrap gap-x-1.5 mt-1.5 mb-3">
                           {[basics.location, basics.phone, basics.email, basics.linkedin].filter(Boolean).join(' | ')}
                         </p>
                         
-                        {/* Summary rata kiri-kanan tanpa judul */}
                         {basics.summary && <div className="text-[10.5pt] leading-[1.6] text-justify text-black mb-4 break-words">{basics.summary}</div>}
                       </div>
                     )}
@@ -542,7 +588,7 @@ export default function CVMaker() {
                           {educations.filter(e => e.institution.trim() !== "").map((edu, idx) => (
                             <div key={idx} className="mb-2.5 break-inside-avoid">
                               <div className="flex justify-between items-start">
-                                <h3 className={`text-[10.5pt] text-black ${template === 'normal' ? 'uppercase font-bold' : 'font-bold'}`}>{edu.institution}</h3>
+                                <h3 className={`text-[10.5pt] text-black font-bold`}>{edu.institution}</h3>
                                 <span className="text-[10.5pt] text-black whitespace-nowrap">{edu.period}</span>
                               </div>
                               <div className="text-[10.5pt] text-black">{edu.major}</div>
@@ -579,7 +625,7 @@ export default function CVMaker() {
                                 <h3 className={`text-[10.5pt] text-black font-bold`}>{exp.company}</h3>
                                 <span className="text-[10.5pt] text-black whitespace-nowrap">{exp.period}</span>
                               </div>
-                              <div className={`text-[10.5pt] text-black mb-1 ${template === 'modern' ? 'font-bold text-gray-800' : 'font-normal'}`}>{exp.role}</div>
+                              <div className={`text-[10.5pt] text-black mb-1 ${template === 'modern' ? 'font-bold text-gray-800' : 'font-medium'}`}>{exp.role}</div>
                               <div className={`${template === 'normal' ? 'ml-0' : 'pl-3'}`}>
                                  {formatDescription(exp.description, template === 'normal')}
                               </div>
