@@ -68,30 +68,52 @@ export const PROJECT_LIST = [
 
 export const WORK_EXPERIENCE = [
   {
-    year: "2023 - Sekarang",
-    role: "Founder & Creative Director",
-    company: "AquaNime Community",
-    description: "Mendirikan dan memimpin komunitas kreatif. Bertanggung jawab atas seluruh identitas visual, branding, dan strategi publikasi."
+    year: "Sep 2024 - Sep 2025", // Asumsi ini adalah target atau kontrak saat ini
+    role: "Design Graphic Printing",
+    company: "PT Wellen Brother",
+    description: "Merancang banner, brosur, pamflet, kartu nama, stiker, poster, dan merchandise berdasarkan brief klien dan identitas merek. Menyiapkan file siap cetak (CMYK, bleed, crop marks, 300 DPI) dan melakukan kontrol kualitas (proofing). Berkoordinasi dengan tim produksi, memilih material yang tepat, serta memastikan akurasi warna dan konsistensi cetak."
   },
   {
-    year: "2022 - 2023",
-    role: "Graphic Designer",
+    year: "Feb 2024 - Agt 2024",
+    role: "Bussiness Development Officer",
+    company: "PT Megatama Jaya Makmur",
+    description: "Mengidentifikasi peluang B2B dengan klien korporat. Menganalisis kebutuhan klien dan menerjemahkannya menjadi solusi bisnis dan kreatif. Menyusun proposal bisnis, materi presentasi, dan mockup visual. Berkoordinasi dengan tim desain dan produksi, serta melakukan analisis efisiensi biaya."
+  },
+  {
+    year: "Des 2023 - Jan 2024",
+    role: "Freelance Designer & Head of Equipment",
     company: "Bstation Indonesia",
-    description: "Merancang aset visual promosi untuk media sosial dan event offline (Bstation Anime Carnival)."
+    description: "Sebagai desainer grafis yang merancang pamflet promosi acara di media sosial Bstation untuk event Anime Carnival 2023 di Mall Artha Gading. Sekaligus bertindak sebagai kepala tim koordinasi perlengkapan."
   },
   {
-    year: "2021 - 2022",
-    role: "Freelance Designer",
-    company: "Berbagai Klien",
-    description: "Menyediakan layanan desain grafis mulai dari logo, packaging, hingga materi cetak untuk UMKM dan perusahaan seperti Pertamina."
+    year: "Mar 2023 - Des 2023",
+    role: "Customer Service Associate",
+    company: "Mineski Infinity Sunter",
+    description: "Melayani transaksi top up member card, pembelian makanan dan minuman, serta bertanggung jawab atas kebersihan area pada shift malam."
+  },
+  {
+    year: "Jan 2022 - Des 2022",
+    role: "Counter Retail",
+    company: "PT Berlian Busana Cemerlang",
+    description: "Melayani transaksi pelanggan, melakukan pengecekan pakaian, dan mengelola rak penyortiran."
   }
 ];
 
-// ... (Bagian CERTIFICATES biarkan saja) ...
-
-
-export const CERTIFICATES = [
-  // Data ini akan kita aktifkan saat mengerjakan halaman About nanti
+export const EDUCATION = [
+  {
+    year: "Sep 2022 - Jan 2024",
+    degree: "Desain Komunikasi Visual (Tidak Selesai)",
+    institution: "Universitas Indraprasta PGRI"
+  },
+  {
+    year: "Jun 2018 - Jul 2021",
+    degree: "Teknik Komputer dan Jaringan",
+    institution: "SMK Hang Tuah 2 Jakarta",
+    description: "Wakil Ketua OSIS (2020-2021) | Lulusan Terbaik (2021)"
+  }
 ];
 
+export const CERTIFICATES = [
+  // ... (Kosongkan dulu atau isi jika ada)
+];
 
