@@ -22,7 +22,7 @@ export const PROJECT_LIST = [
     company: "Pertamina One Solution",
     category: "Packaging Design",
     description: "Desain kotak souvenir untuk Pertamina One Solution.",
-    image: "/projects/box-pertamina.jpg"
+    image: "/projects/box-pertamina/1.jpg"
   },
   {
     id: "bunker-buku",
@@ -30,7 +30,7 @@ export const PROJECT_LIST = [
     company: "Pertamina Patra Niaga",
     category: "Print Design",
     description: "Desain cover buku Langganan Bunker BBM Subsidi.",
-    image: "/projects/buku-bunker.jpg"
+    image: "/projects/buku-bunker/1.jpg"
   },
   {
     id: "kumpul-wibu",
