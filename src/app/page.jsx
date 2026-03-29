@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { PROJECT_LIST } from '../data/store';
 
 export default function Home() {
+  // Mengambil 3 karya pertama dari store.js untuk dipajang di Beranda
   const featuredProjects = PROJECT_LIST.slice(0, 3);
   
   // Ganti dengan nomor WhatsApp aslimu (format: 628...)
@@ -44,15 +45,14 @@ export default function Home() {
               {/* TOMBOL CALL TO ACTION (DIPERBARUI) */}
               <div className="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start">
                 
-                {/* Tombol Download CV (Mengarah ke folder public) */}
-                <a 
-                  href="/CV_Muhammad_Rafli_Ramadhan.pdf" 
-                  download 
+                {/* Tombol Lihat & Download CV (Mengarah ke CV Auto-Generate) */}
+                <Link 
+                  href="/cv-print" 
                   className="w-full sm:w-auto px-8 py-4 bg-cyan-600 hover:bg-cyan-500 text-white font-bold rounded-full transition-all shadow-[0_0_20px_rgba(6,182,212,0.4)] hover:shadow-[0_0_40px_rgba(6,182,212,0.6)] hover:scale-105 tracking-wide text-center flex justify-center items-center gap-2"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
-                  Download CV
-                </a>
+                  Lihat & Download CV
+                </Link>
 
                 {/* Tombol Hubungi WhatsApp */}
                 <a 
@@ -136,4 +136,3 @@ export default function Home() {
     </div>
   );
 }
-
