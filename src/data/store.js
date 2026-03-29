@@ -10,8 +10,11 @@ export const PROJECT_LIST = [
     company: "PT Bumi Eka Sukses",
     category: "Brand Identity",
     description: "Pembuatan konstruksi logo dan identitas merek perusahaan.",
-    image: "/projects/logo-best.jpg" // Pastikan foto dengan nama ini ada di public/projects/
-  },
+    images: [
+    "/projects/logo-best-1.jpg", 
+    "/projects/logo-best-2.jpg", 
+    "/projects/logo-best-3.jpg"
+  ]
   {
     id: "packing-box",
     title: "Packing Box",
