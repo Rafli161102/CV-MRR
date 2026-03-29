@@ -1,3 +1,5 @@
+"use client";
+
 import { PROJECT_LIST } from '../../data/store'
 import Link from 'next/link'
 
@@ -35,7 +37,7 @@ export default function Projects() {
                     src={project.image} 
                     alt={project.title} 
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 ease-out opacity-80 group-hover:opacity-100"
-                    onError={(e) => { e.target.src = '[https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop](https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop)'; }} 
+                    onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop'; }} 
                   />
                   
                   {/* Efek Gelap Saat Hover */}
