@@ -7,47 +7,67 @@ export default function CVMaker() {
   const [lang, setLang] = useState('id'); 
   const [isTranslating, setIsTranslating] = useState(false);
 
-  // KAMUS BAHASA & PLACEHOLDER
+  // KAMUS BAHASA & PLACEHOLDER JELAS
   const t = {
     id: {
       personal: "Informasi Dasar", exp: "PENGALAMAN KERJA", edu: "PENDIDIKAN", proj: "PROYEK", cert: "SERTIFIKASI", summary: "PROFIL SINGKAT", skills: "KEAHLIAN DAN KOMPETENSI",
       add: "+ Tambah", del: "Hapus", print: "Cetak / Simpan PDF",
       placeholders: { 
-        name: "Nama Lengkap", role: "Posisi Dilamar", loc: "Kota, Provinsi", phone: "Nomor Telepon", email: "Alamat Email", linkedin: "URL LinkedIn / Portofolio",
-        summary: "Tuliskan ringkasan profil Anda secara profesional...", skills: "Keahlian (Cth: HTML, CSS, Figma)", 
-        expRole: "Nama Jabatan", expComp: "Nama Perusahaan", expDate: "Tahun - Tahun (Cth: 2021 - 2023)", 
-        eduInst: "Nama Kampus / Sekolah", eduMaj: "Jurusan / Gelar", eduDate: "Tahun Lulus",
-        projName: "Nama Proyek", projDate: "Tahun", certName: "Nama Sertifikasi", certDate: "Tahun"
+        name: "Nama Lengkap (Contoh: Budi Santoso)", 
+        role: "Posisi Dilamar (Opsional, Cth: UI/UX Designer)", 
+        loc: "Kota, Provinsi (Contoh: Jakarta, Indonesia)", 
+        phone: "Nomor Telepon (Contoh: 08123456789)",
+        email: "Alamat Email (Contoh: budi@email.com)",
+        linkedin: "URL Portofolio / LinkedIn (Opsional)",
+        summary: "Tuliskan ringkasan profil Anda secara singkat dan profesional. Contoh: Lulusan Desain Grafis dengan pengalaman 3 tahun dalam merancang identitas visual...", 
+        skills: "Keahlian 1, Keahlian 2, Keahlian 3 (Pisahkan dengan koma)", 
+        expRole: "Nama Jabatan (Contoh: Graphic Designer)", 
+        expComp: "Nama Perusahaan (Contoh: PT Kreatif Maju)", 
+        expDate: "Bulan Tahun - Bulan Tahun (Cth: Jan 2021 - Des 2023)", 
+        eduInst: "Nama Kampus / Sekolah (Cth: Universitas Indonesia)", 
+        eduMaj: "Jurusan / Gelar (Cth: S1 Desain Komunikasi Visual)", 
+        eduDate: "Bulan Tahun Lulus (Cth: Agustus 2020)",
+        projName: "Nama Proyek (Contoh: Rebranding Logo Perusahaan)", 
+        projDate: "Bulan Tahun (Contoh: Maret 2023)",
+        certName: "Nama Sertifikasi (Contoh: Google UX Design)",
+        certDate: "Bulan Tahun (Contoh: Juli 2023)"
       }
     },
     en: {
       personal: "Basic Information", exp: "EXPERIENCE", edu: "EDUCATION", proj: "PROJECTS", cert: "CERTIFICATION", summary: "PROFESSIONAL SUMMARY", skills: "SKILL AND COMPETENCIES",
       add: "+ Add New", del: "Remove", print: "Print / Save as PDF",
       placeholders: { 
-        name: "Full Name", role: "Targeted Role", loc: "City, Country", phone: "Phone Number", email: "Email Address", linkedin: "LinkedIn URL",
-        summary: "Write your professional summary here...", skills: "Core Skills (e.g. HTML, CSS)", 
-        expRole: "Job Title", expComp: "Company Name", expDate: "Year - Year", 
-        eduInst: "University / School Name", eduMaj: "Major / Degree", eduDate: "Graduation Year",
-        projName: "Project Name", projDate: "Year", certName: "Certification Name", certDate: "Year"
+        name: "Full Name (e.g. John Doe)", 
+        role: "Targeted Role (Optional, e.g. UI/UX Designer)", 
+        loc: "City, Country (e.g. Jakarta, Indonesia)", 
+        phone: "Phone Number",
+        email: "Email Address",
+        linkedin: "LinkedIn / Portfolio URL (Optional)",
+        summary: "Write your professional summary here. Example: A highly motivated Graphic Designer with 3 years of experience in visual identity...", 
+        skills: "Core Skills (e.g. HTML, CSS, Figma - separated by comma)", 
+        expRole: "Job Title (e.g. Graphic Designer)", 
+        expComp: "Company Name (e.g. Creative Corp)", 
+        expDate: "Month Year - Month Year (e.g. Jan 2021 - Dec 2023)", 
+        eduInst: "University / School Name", 
+        eduMaj: "Major / Degree (e.g. Bachelor of Arts)", 
+        eduDate: "Graduation Date (e.g. August 2020)",
+        projName: "Project Name (e.g. Corporate Rebranding)", 
+        projDate: "Month Year (e.g. March 2023)",
+        certName: "Certification Name (e.g. Google UX Design)",
+        certDate: "Month Year (e.g. July 2023)"
       }
     },
     jp: {
-      personal: "基本情報", exp: "職務経歴", edu: "学歴", proj: "プロジェクト", cert: "免許・資格", summary: "自己PR / 志望動機", skills: "特技・スキル",
+      personal: "基本情報", exp: "職務経歴", edu: "学歴", proj: "プロジェクト", cert: "資格・免許", summary: "自己PR / 職務要約", skills: "スキル・知識",
       add: "+ 追加", del: "削除", print: "PDFとして保存",
-      placeholders: { 
-        name: "氏名 (Nama)", role: "希望職種 (Posisi)", loc: "現住所 (Alamat)", phone: "電話番号 (No HP)", email: "メールアドレス (Email)", linkedin: "リンク (Link)",
-        summary: "自己PRや志望動機を入力してください (Motivasi/PR)...", skills: "特技 (Keahlian)", 
-        expRole: "役職 (Jabatan)", expComp: "会社名 (Perusahaan)", expDate: "入社年 - 退社年", 
-        eduInst: "学校名 (Sekolah)", eduMaj: "学部・学科 (Jurusan)", eduDate: "卒業年",
-        projName: "プロジェクト名", projDate: "年", certName: "資格名 (Sertifikat/JLPT)", certDate: "取得年"
-      }
+      placeholders: { name: "氏名", role: "希望職種", loc: "住所", phone: "電話番号", email: "メールアドレス", linkedin: "リンク", summary: "自己PRを入力してください...", skills: "スキル (HTML, CSS...)", expRole: "役職", expComp: "会社名", expDate: "年月 - 年月", eduInst: "学校名", eduMaj: "学部・学科", eduDate: "卒業年月", projName: "プロジェクト名", projDate: "年月", certName: "資格名", certDate: "取得年月" }
     }
   }[lang];
 
-  // STATE FORMULIR UTAMA
+  // STATE FORMULIR KOSONG
   const [basics, setBasics] = useState({ 
     name: "", furigana: "", role: "", location: "", phone: "", email: "", linkedin: "", summary: "", skills: "",
-    birthdate: "", age: "", gender: "男", nationality: "", visa: "" // Field Khusus Jepang
+    birthdate: "", age: "", gender: "男", nationality: "", visa: "" 
   });
   const [experiences, setExperiences] = useState([{ id: 1, role: "", company: "", period: "", description: "" }]);
   const [educations, setEducations] = useState([{ id: 1, institution: "", major: "", period: "", gpa: "" }]);
@@ -64,14 +84,19 @@ export default function CVMaker() {
   const handleMagicTranslate = async (targetLangCode) => {
     setIsTranslating(true);
     setLang(targetLangCode); 
+    
     const apiLang = targetLangCode === 'jp' ? 'ja' : targetLangCode;
+    
     const translateText = async (text) => {
       if (!text || text.trim() === "") return text;
       try {
         const res = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${apiLang}&dt=t&q=${encodeURIComponent(text)}`);
         const data = await res.json();
         return data[0].map(item => item[0]).join(''); 
-      } catch (err) { return text; }
+      } catch (err) {
+        console.error("Translate error:", err);
+        return text;
+      }
     };
 
     const tRole = await translateText(basics.role);
@@ -79,15 +104,19 @@ export default function CVMaker() {
     const tSkills = await translateText(basics.skills);
     setBasics(prev => ({ ...prev, role: tRole, summary: tSummary, skills: tSkills }));
 
-    const translatedExp = await Promise.all(experiences.map(async (exp) => ({ ...exp, role: await translateText(exp.role), description: await translateText(exp.description) })));
+    const translatedExp = await Promise.all(experiences.map(async (exp) => ({
+      ...exp, role: await translateText(exp.role), description: await translateText(exp.description)
+    })));
     setExperiences(translatedExp);
-    const translatedProj = await Promise.all(projects.map(async (proj) => ({ ...proj, description: await translateText(proj.description) })));
+
+    const translatedProj = await Promise.all(projects.map(async (proj) => ({
+      ...proj, description: await translateText(proj.description)
+    })));
     setProjects(translatedProj);
 
     setIsTranslating(false);
   };
 
-  // HELPER UNTUK TABEL JEPANG (Membuat baris kosong agar tabel penuh seperti form asli)
   const generateJpRows = (items, type) => {
     const rows = [];
     rows.push({ period: '', content: type === 'edu' ? '学歴' : type === 'exp' ? '職歴' : '', center: true });
@@ -147,10 +176,10 @@ export default function CVMaker() {
               </div>
               <h2 className="text-xs font-bold text-cyan-400 uppercase tracking-wider mb-2">Template ATS</h2>
               <div className="grid grid-cols-2 gap-2">
-                <button onClick={() => {setTemplate('normal'); if(lang==='jp') setLang('en');}} className={`py-2 px-2 text-[11px] font-bold rounded border transition-all ${template === 'normal' ? 'bg-cyan-600 border-cyan-400 text-white' : 'border-white/10 text-slate-400 hover:border-cyan-500/50'}`}>1. Normal (Professional)</button>
-                <button onClick={() => {setTemplate('modern'); if(lang==='jp') setLang('en');}} className={`py-2 px-2 text-[11px] font-bold rounded border transition-all ${template === 'modern' ? 'bg-cyan-600 border-cyan-400 text-white' : 'border-white/10 text-slate-400 hover:border-cyan-500/50'}`}>2. Modern Pro</button>
-                <button onClick={() => {setTemplate('harvard'); if(lang==='jp') setLang('en');}} className={`py-2 px-2 text-[11px] font-bold rounded border transition-all ${template === 'harvard' ? 'bg-cyan-600 border-cyan-400 text-white' : 'border-white/10 text-slate-400 hover:border-cyan-500/50'}`}>3. Harvard (Serif)</button>
-                <button onClick={() => {setTemplate('executive'); if(lang==='jp') setLang('en');}} className={`py-2 px-2 text-[11px] font-bold rounded border transition-all ${template === 'executive' ? 'bg-cyan-600 border-cyan-400 text-white' : 'border-white/10 text-slate-400 hover:border-cyan-500/50'}`}>4. Executive</button>
+                <button onClick={() => {setTemplate('normal'); if(lang==='jp') setLang('id');}} className={`py-2 px-2 text-[11px] font-bold rounded border transition-all ${template === 'normal' ? 'bg-cyan-600 border-cyan-400 text-white' : 'border-white/10 text-slate-400 hover:border-cyan-500/50'}`}>1. Normal (Professional)</button>
+                <button onClick={() => {setTemplate('modern'); if(lang==='jp') setLang('id');}} className={`py-2 px-2 text-[11px] font-bold rounded border transition-all ${template === 'modern' ? 'bg-cyan-600 border-cyan-400 text-white' : 'border-white/10 text-slate-400 hover:border-cyan-500/50'}`}>2. Modern Pro</button>
+                <button onClick={() => {setTemplate('harvard'); if(lang==='jp') setLang('id');}} className={`py-2 px-2 text-[11px] font-bold rounded border transition-all ${template === 'harvard' ? 'bg-cyan-600 border-cyan-400 text-white' : 'border-white/10 text-slate-400 hover:border-cyan-500/50'}`}>3. Harvard (Serif)</button>
+                <button onClick={() => {setTemplate('executive'); if(lang==='jp') setLang('id');}} className={`py-2 px-2 text-[11px] font-bold rounded border transition-all ${template === 'executive' ? 'bg-cyan-600 border-cyan-400 text-white' : 'border-white/10 text-slate-400 hover:border-cyan-500/50'}`}>4. Tech Executive</button>
                 <button onClick={() => {setTemplate('jp-umum'); setLang('jp');}} className={`py-2 px-2 text-[11px] font-bold rounded border transition-all ${template === 'jp-umum' ? 'bg-red-600 border-red-400 text-white' : 'border-white/10 text-slate-400 hover:border-red-500/50'}`}>5a. JP Rirekisho (Umum)</button>
                 <button onClick={() => {setTemplate('jp-asing'); setLang('jp');}} className={`py-2 px-2 text-[11px] font-bold rounded border transition-all ${template === 'jp-asing' ? 'bg-red-600 border-red-400 text-white' : 'border-white/10 text-slate-400 hover:border-red-500/50'}`}>5b. JP Tokutei (Magang/Asing)</button>
               </div>
@@ -158,13 +187,32 @@ export default function CVMaker() {
 
             {isTranslating && <div className="mb-4 text-center text-xs font-bold text-cyan-400 animate-pulse">Sedang menerjemahkan isi CV secara otomatis...</div>}
 
+            {/* PANDUAN PINTAR KHUSUS JEPANG */}
+            {isJapanese && (
+              <div className="mb-6 p-4 bg-[#1A0B16] border border-red-500/30 rounded-xl shadow-inner">
+                <h3 className="text-red-400 font-bold text-sm mb-2 flex items-center gap-2">
+                  <span>💡</span> Panduan Pengisian CV Jepang (JIS)
+                </h3>
+                <ul className="list-disc list-inside text-[11px] text-red-200/80 space-y-1.5">
+                  <li><b>Furigana:</b> Wajib diisi dengan huruf Katakana untuk cara baca nama asli Anda.</li>
+                  <li><b>Foto 3x4:</b> Standar Jepang mewajibkan menempel pas foto jas/formal di sudut kanan atas pada kertas yang sudah dicetak.</li>
+                  <li><b>Tahun:</b> Gunakan angka Masehi (Cth: 2023). Jangan ketik teks bulan/hari karena tabel sudah memisahkannya.</li>
+                  {template === 'jp-asing' && (
+                    <>
+                      <li className="text-red-300"><b>Pekerja Asing:</b> Sangat krusial untuk mengisi <b>Kewarganegaraan</b> dan <b>Status Visa</b>.</li>
+                      <li className="text-red-300"><b>Sertifikasi:</b> Selalu posisikan sertifikat bahasa (JLPT/JFT) di baris pertama form sertifikasi.</li>
+                    </>
+                  )}
+                </ul>
+              </div>
+            )}
+
             {/* FORM: DATA PRIBADI */}
             <div className="mb-6">
               <h2 className="text-lg font-bold text-cyan-400 mb-3 border-b border-white/10 pb-1">{t.personal}</h2>
               <div className="space-y-2">
                 <input type="text" name="name" value={basics.name} onChange={handleBasicsChange} className="w-full bg-[#060D1F] border border-white/5 p-2.5 rounded text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder={t.placeholders.name} />
                 
-                {/* Input Khusus Jepang */}
                 {isJapanese && (
                   <div className="flex gap-2">
                     <input type="text" name="furigana" value={basics.furigana} onChange={handleBasicsChange} className="w-1/2 bg-[#060D1F] border border-white/5 p-2.5 rounded text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder="ふりがな (Furigana Nama)" />
@@ -192,27 +240,36 @@ export default function CVMaker() {
                   {!isJapanese && <input type="text" name="linkedin" value={basics.linkedin} onChange={handleBasicsChange} className="w-full bg-[#060D1F] border border-white/5 p-2.5 rounded text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder={t.placeholders.linkedin} />}
                 </div>
                 <textarea name="summary" value={basics.summary} onChange={handleBasicsChange} rows={isJapanese ? 2 : 4} className="w-full bg-[#060D1F] border border-white/5 p-2.5 rounded text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder={t.placeholders.summary}></textarea>
-                <textarea name="skills" value={basics.skills} onChange={handleBasicsChange} rows="2" className="w-full bg-[#060D1F] border border-white/5 p-2.5 rounded text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder={t.placeholders.skills}></textarea>
+                <textarea name="skills" value={basics.skills} onChange={handleBasicsChange} rows="3" className="w-full bg-[#060D1F] border border-white/5 p-2.5 rounded text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder={t.placeholders.skills}></textarea>
               </div>
             </div>
 
-            {/* FORM: PENGALAMAN & PENDIDIKAN DIBUAT SINGKAT ... */}
+            {/* FORM: PENGALAMAN */}
             <div className="mb-6">
-              <div className="flex justify-between items-center mb-3 border-b border-white/10 pb-1"><h2 className="text-lg font-bold text-cyan-400">{t.exp}</h2><button onClick={() => addField(setExperiences, experiences, { role: "", company: "", period: "", description: "" })} className="text-[10px] bg-cyan-600 text-white px-2 py-1 rounded">{t.add}</button></div>
+              <div className="flex justify-between items-center mb-3 border-b border-white/10 pb-1">
+                <h2 className="text-lg font-bold text-cyan-400">{t.exp}</h2>
+                <button onClick={() => addField(setExperiences, experiences, { role: "", company: "", period: "", description: "" })} className="text-[10px] bg-cyan-600 text-white px-2 py-1 rounded">{t.add}</button>
+              </div>
               {experiences.map((exp, index) => (
-                <div key={exp.id} className="bg-[#060D1F] p-3 rounded mb-3 relative"><button onClick={() => removeField(setExperiences, experiences, index)} className="absolute top-2 right-2 text-red-400 text-[10px]">{t.del}</button>
+                <div key={exp.id} className="bg-[#060D1F] p-3 rounded mb-3 relative">
+                  <button onClick={() => removeField(setExperiences, experiences, index)} className="absolute top-2 right-2 text-red-400 hover:text-red-300 text-[10px]">{t.del}</button>
                   <input type="text" value={exp.company} onChange={(e) => handleArrayChange(setExperiences, experiences, index, 'company', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:outline-none mb-1" placeholder={t.placeholders.expComp} />
                   <input type="text" value={exp.role} onChange={(e) => handleArrayChange(setExperiences, experiences, index, 'role', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:outline-none mb-1" placeholder={t.placeholders.expRole} />
                   <input type="text" value={exp.period} onChange={(e) => handleArrayChange(setExperiences, experiences, index, 'period', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:outline-none mb-1" placeholder={t.placeholders.expDate} />
-                  {!isJapanese && <textarea value={exp.description} onChange={(e) => handleArrayChange(setExperiences, experiences, index, 'description', e.target.value)} rows="3" className="w-full mt-1 bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:outline-none" placeholder="- Tulis tanggung jawab utama..."></textarea>}
+                  {!isJapanese && <textarea value={exp.description} onChange={(e) => handleArrayChange(setExperiences, experiences, index, 'description', e.target.value)} rows="3" className="w-full mt-1 bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:outline-none" placeholder="- Ketik strip untuk membuat bullet point..."></textarea>}
                 </div>
               ))}
             </div>
 
+            {/* FORM: PENDIDIKAN */}
             <div className="mb-6">
-              <div className="flex justify-between items-center mb-3 border-b border-white/10 pb-1"><h2 className="text-lg font-bold text-cyan-400">{t.edu}</h2><button onClick={() => addField(setEducations, educations, { institution: "", major: "", period: "", gpa: "" })} className="text-[10px] bg-cyan-600 text-white px-2 py-1 rounded">{t.add}</button></div>
+              <div className="flex justify-between items-center mb-3 border-b border-white/10 pb-1">
+                <h2 className="text-lg font-bold text-cyan-400">{t.edu}</h2>
+                <button onClick={() => addField(setEducations, educations, { institution: "", major: "", period: "", gpa: "" })} className="text-[10px] bg-cyan-600 text-white px-2 py-1 rounded">{t.add}</button>
+              </div>
               {educations.map((edu, index) => (
-                <div key={edu.id} className="bg-[#060D1F] p-3 rounded mb-3 relative"><button onClick={() => removeField(setEducations, educations, index)} className="absolute top-2 right-2 text-red-400 text-[10px]">{t.del}</button>
+                <div key={edu.id} className="bg-[#060D1F] p-3 rounded mb-3 relative">
+                  <button onClick={() => removeField(setEducations, educations, index)} className="absolute top-2 right-2 text-red-400 hover:text-red-300 text-[10px]">{t.del}</button>
                   <input type="text" value={edu.institution} onChange={(e) => handleArrayChange(setEducations, educations, index, 'institution', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:outline-none mb-1" placeholder={t.placeholders.eduInst} />
                   <input type="text" value={edu.major} onChange={(e) => handleArrayChange(setEducations, educations, index, 'major', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:outline-none mb-1" placeholder={t.placeholders.eduMaj} />
                   <div className="grid grid-cols-2 gap-2 mt-1">
@@ -223,15 +280,38 @@ export default function CVMaker() {
               ))}
             </div>
 
-            {/* SERTIFIKASI (JLPT PENTING UNTUK JEPANG) */}
+            {/* FORM: PROYEK */}
+            <div className="mb-6">
+              <div className="flex justify-between items-center mb-3 border-b border-white/10 pb-1">
+                <h2 className="text-lg font-bold text-cyan-400">{t.proj}</h2>
+                <button onClick={() => addField(setProjects, projects, { name: "", period: "", description: "" })} className="text-[10px] bg-cyan-600 text-white px-2 py-1 rounded">{t.add}</button>
+              </div>
+              {projects.map((proj, index) => (
+                <div key={proj.id} className="bg-[#060D1F] p-3 rounded mb-3 relative">
+                  <button onClick={() => removeField(setProjects, projects, index)} className="absolute top-2 right-2 text-red-400 hover:text-red-300 text-[10px]">{t.del}</button>
+                  <div className="grid grid-cols-2 gap-2 mb-1">
+                    <input type="text" value={proj.name} onChange={(e) => handleArrayChange(setProjects, projects, index, 'name', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:outline-none" placeholder={t.placeholders.projName} />
+                    <input type="text" value={proj.period} onChange={(e) => handleArrayChange(setProjects, projects, index, 'period', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:outline-none" placeholder={t.placeholders.projDate} />
+                  </div>
+                  <textarea value={proj.description} onChange={(e) => handleArrayChange(setProjects, projects, index, 'description', e.target.value)} rows="3" className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:outline-none mt-1" placeholder="- Deskripsi proyek..."></textarea>
+                </div>
+              ))}
+            </div>
+
+            {/* FORM: SERTIFIKASI */}
             <div className="mb-4">
-              <div className="flex justify-between items-center mb-3 border-b border-white/10 pb-1"><h2 className="text-lg font-bold text-cyan-400">{t.cert}</h2><button onClick={() => addField(setCerts, certs, { name: "", issuer: "", period: "", description: "" })} className="text-[10px] bg-cyan-600 text-white px-2 py-1 rounded">{t.add}</button></div>
+              <div className="flex justify-between items-center mb-3 border-b border-white/10 pb-1">
+                <h2 className="text-lg font-bold text-cyan-400">{t.cert}</h2>
+                <button onClick={() => addField(setCerts, certs, { name: "", issuer: "", period: "", description: "" })} className="text-[10px] bg-cyan-600 text-white px-2 py-1 rounded">{t.add}</button>
+              </div>
               {certs.map((cert, index) => (
-                <div key={cert.id} className="bg-[#060D1F] p-3 rounded mb-3 relative"><button onClick={() => removeField(setCerts, certs, index)} className="absolute top-2 right-2 text-red-400 text-[10px]">{t.del}</button>
+                <div key={cert.id} className="bg-[#060D1F] p-3 rounded mb-3 relative">
+                  <button onClick={() => removeField(setCerts, certs, index)} className="absolute top-2 right-2 text-red-400 hover:text-red-300 text-[10px]">{t.del}</button>
                   <div className="grid grid-cols-2 gap-2 mb-1">
                     <input type="text" value={cert.name} onChange={(e) => handleArrayChange(setCerts, certs, index, 'name', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:outline-none" placeholder={template === 'jp-asing' ? "JLPT N3 / JFT Basic" : t.placeholders.certName} />
                     <input type="text" value={cert.period} onChange={(e) => handleArrayChange(setCerts, certs, index, 'period', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:outline-none" placeholder={t.placeholders.certDate} />
                   </div>
+                  <input type="text" value={cert.issuer} onChange={(e) => handleArrayChange(setCerts, certs, index, 'issuer', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:outline-none mb-1" placeholder="Penerbit (Cth: Google)" />
                   {!isJapanese && <textarea value={cert.description} onChange={(e) => handleArrayChange(setCerts, certs, index, 'description', e.target.value)} rows="2" className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:outline-none mt-1" placeholder="- Topik yang dipelajari..."></textarea>}
                 </div>
               ))}
@@ -374,13 +454,13 @@ export default function CVMaker() {
                     {template === 'normal' && (
                       <div className="pb-2 text-left">
                         {/* Judul Capitalize Standard */}
-                        <h1 className="text-[20pt] font-bold mb-1 tracking-tight capitalize leading-none">{basics.name || "Nama Lengkap"}</h1>
+                        <h1 className="text-[20pt] font-bold mb-1 tracking-tight capitalize leading-none text-black">{basics.name || t.placeholders.name.split(' (')[0]}</h1>
                         
-                        <p className="text-[10pt] text-black flex flex-wrap gap-x-1.5 mt-1.5 mb-3">
+                        <p className="text-[10.5pt] text-black flex flex-wrap gap-x-1.5 mt-1.5 mb-3">
                           {[basics.location, basics.phone, basics.email, basics.linkedin].filter(Boolean).join(' | ')}
                         </p>
                         
-                        {/* Summary langsung paragraf rata kiri-kanan (justify) tanpa margin aneh */}
+                        {/* Summary rata kiri-kanan persis PDF */}
                         {basics.summary && <div className="text-[10.5pt] leading-[1.6] text-justify text-black mb-4 break-words">{basics.summary}</div>}
                       </div>
                     )}
@@ -442,7 +522,7 @@ export default function CVMaker() {
                           {educations.filter(e => e.institution.trim() !== "").map((edu, idx) => (
                             <div key={idx} className="mb-2.5 break-inside-avoid">
                               <div className="flex justify-between items-start">
-                                <h3 className={`text-[10.5pt] text-black ${template === 'normal' ? 'uppercase font-bold' : 'font-bold'}`}>{edu.institution}</h3>
+                                <h3 className={`text-[10.5pt] text-black font-bold`}>{edu.institution}</h3>
                                 <span className="text-[10.5pt] text-black whitespace-nowrap">{edu.period}</span>
                               </div>
                               <div className="text-[10.5pt] text-black">{edu.major}</div>
@@ -456,9 +536,14 @@ export default function CVMaker() {
                         <div className="mb-3 break-inside-avoid">
                           <SectionTitle title={t.skills} />
                           {template === 'normal' ? (
-                            <ul className="list-disc list-inside text-[10.5pt] text-black grid grid-cols-2 gap-x-4 mt-1">
-                              {basics.skills.split(',').map((skill, i) => <li key={i} className="pl-1">{skill.trim()}</li>)}
-                            </ul>
+                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-1 mt-1 text-[10.5pt] text-black">
+                              {basics.skills.split(',').map((skill, i) => (
+                                <div key={i} className="flex items-start">
+                                  <span className="mr-2 font-bold">•</span>
+                                  <span>{skill.trim()}</span>
+                                </div>
+                              ))}
+                            </div>
                           ) : (
                             <p className="text-[10.5pt] text-black leading-relaxed whitespace-pre-wrap break-words">{basics.skills}</p>
                           )}
@@ -471,10 +556,10 @@ export default function CVMaker() {
                           {experiences.filter(e => e.company.trim() !== "").map((exp, idx) => (
                             <div key={idx} className="mb-3.5 break-inside-avoid">
                               <div className="flex justify-between items-start">
-                                <h3 className={`text-[10.5pt] text-black ${template === 'normal' ? 'font-bold' : 'font-bold'}`}>{exp.company}</h3>
+                                <h3 className={`text-[10.5pt] text-black font-bold`}>{exp.company}</h3>
                                 <span className="text-[10.5pt] text-black whitespace-nowrap">{exp.period}</span>
                               </div>
-                              <div className={`text-[10.5pt] text-black mb-1 ${template === 'modern' ? 'font-bold text-gray-800' : 'font-medium'}`}>{exp.role}</div>
+                              <div className={`text-[10.5pt] text-black mb-1 ${template === 'modern' ? 'font-bold text-gray-800' : 'font-normal'}`}>{exp.role}</div>
                               <div className={`${template === 'normal' ? 'ml-0' : 'pl-3'}`}>
                                  {formatDescription(exp.description, template === 'normal')}
                               </div>
