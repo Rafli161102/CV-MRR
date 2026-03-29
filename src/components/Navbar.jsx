@@ -6,12 +6,13 @@ import { useState } from 'react'
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  // Link Navigasi (AquaNime diubah jadi External Link)
+  // Link Navigasi
   const navLinks = [
     { name: 'Home', href: '/', isExternal: false },
     { name: 'Projects', href: '/projects', isExternal: false },
     { name: 'About', href: '/about', isExternal: false },
-    { name: 'AquaNime', href: 'https://aqua-nime.vercel.app/', isExternal: true }, // <--- DIRECT LINK
+    { name: 'CV Maker', href: '/cv-maker', isExternal: false }, // 👈 INI TAMBAHANNYA
+    { name: 'AquaNime', href: 'https://aqua-nime.vercel.app/', isExternal: true },
   ];
 
   return (
