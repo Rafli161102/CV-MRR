@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 export default function CVMaker() {
   // 1. STATE TEMA & BAHASA
-  const [template, setTemplate] = useState('basic'); // basic, modern, harvard, executive, japanese
+  const [template, setTemplate] = useState('normal'); // normal, modern, harvard, executive, japanese
   const [lang, setLang] = useState('en'); // id, en, jp
   const [isTranslating, setIsTranslating] = useState(false);
 
@@ -44,25 +44,27 @@ export default function CVMaker() {
   const addField = (setter, state, emptyObj) => setter([...state, { id: Date.now(), ...emptyObj }]);
   const removeField = (setter, state, index) => setter(state.filter((_, i) => i !== index));
 
-  // --- FUNGSI MAGIC TRANSLATE (GOOGLE API HACK) ---
+  // --- FUNGSI MAGIC TRANSLATE (DIPERBAIKI UNTUK JEPANG) ---
   const handleMagicTranslate = async (targetLangCode) => {
     setIsTranslating(true);
-    setLang(targetLangCode); // Ubah UI dan Header Kertas langsung
+    setLang(targetLangCode); 
     
-    // Fungsi pemanggil Google Translate (Bypass CORS)
+    // BUG FIX: API Google membaca Jepang sebagai 'ja', bukan 'jp'
+    const apiLang = targetLangCode === 'jp' ? 'ja' : targetLangCode;
+    
     const translateText = async (text) => {
       if (!text || text.trim() === "") return text;
       try {
-        const res = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${targetLangCode}&dt=t&q=${encodeURIComponent(text)}`);
+        const res = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${apiLang}&dt=t&q=${encodeURIComponent(text)}`);
         const data = await res.json();
-        return data[0].map(item => item[0]).join(''); // Menggabungkan paragraf
+        return data[0].map(item => item[0]).join(''); 
       } catch (err) {
         console.error("Translate error:", err);
         return text;
       }
     };
 
-    // Terjemahkan Field Panjang Secara Real-Time
+    // Terjemahkan Field
     const tRole = await translateText(basics.role);
     const tSummary = await translateText(basics.summary);
     const tSkills = await translateText(basics.skills);
@@ -121,7 +123,7 @@ export default function CVMaker() {
 
               <h2 className="text-xs font-bold text-cyan-400 uppercase tracking-wider mb-2">Template ATS</h2>
               <div className="grid grid-cols-2 gap-2">
-                <button onClick={() => setTemplate('huda')} className={`py-2 px-2 text-[11px] font-bold rounded border transition-all ${template === 'huda' ? 'bg-cyan-600 border-cyan-400 text-white' : 'border-white/10 text-slate-400 hover:border-cyan-500/50'}`}>1. Huda (Normal ATS)</button>
+                <button onClick={() => setTemplate('normal')} className={`py-2 px-2 text-[11px] font-bold rounded border transition-all ${template === 'normal' ? 'bg-cyan-600 border-cyan-400 text-white' : 'border-white/10 text-slate-400 hover:border-cyan-500/50'}`}>1. Normal (Standard ATS)</button>
                 <button onClick={() => setTemplate('modern')} className={`py-2 px-2 text-[11px] font-bold rounded border transition-all ${template === 'modern' ? 'bg-cyan-600 border-cyan-400 text-white' : 'border-white/10 text-slate-400 hover:border-cyan-500/50'}`}>2. Modern Pro</button>
                 <button onClick={() => setTemplate('harvard')} className={`py-2 px-2 text-[11px] font-bold rounded border transition-all ${template === 'harvard' ? 'bg-cyan-600 border-cyan-400 text-white' : 'border-white/10 text-slate-400 hover:border-cyan-500/50'}`}>3. Harvard (Serif)</button>
                 <button onClick={() => setTemplate('executive')} className={`py-2 px-2 text-[11px] font-bold rounded border transition-all ${template === 'executive' ? 'bg-cyan-600 border-cyan-400 text-white' : 'border-white/10 text-slate-400 hover:border-cyan-500/50'}`}>4. Tech Executive</button>
@@ -239,16 +241,17 @@ export default function CVMaker() {
                 {/* 1. HEADER RENDERER */}
                 {/* --------------------------------------------------------- */}
                 
-                {/* TEMA 1: HUDA STRICT (Sesuai PDF Asli) */}
-                {template === 'huda' && (
+                {/* TEMA 1: NORMAL (100% BEBAS IKON, PEMISAH | PRESISI) */}
+                {template === 'normal' && (
                   <div className="text-center pb-2">
-                    <h1 className="text-2xl sm:text-3xl font-bold mb-2 tracking-wide" style={{ textTransform: 'capitalize' }}>{basics.name || "Muhamad Syaepul Huda"}</h1>
-                    {(basics.location || basics.phone || basics.email) && (
-                      <p className="text-[13px] text-gray-900 mb-4 font-medium">
-                        {basics.location} {basics.phone && `| ${basics.phone}`} {basics.email && `| ${basics.email}`} {basics.linkedin && `| ${basics.linkedin}`}
-                      </p>
-                    )}
-                    {/* Huda PDF = Summary TANPA HEADER */}
+                    <h1 className="text-[26px] font-bold uppercase mb-1 tracking-wide">{basics.name || "YOUR NAME"}</h1>
+                    
+                    {/* Render kontak dinamis tanpa ikon, pisahkan dengan | */}
+                    <p className="text-[13px] text-gray-900 mb-4 font-medium flex flex-wrap justify-center gap-x-1">
+                      {[basics.location, basics.phone, basics.email, basics.linkedin].filter(Boolean).join(' | ')}
+                    </p>
+                    
+                    {/* Summary tanpa judul persis seperti PDF */}
                     {basics.summary && <p className="text-[13px] leading-relaxed text-justify text-gray-900 mb-4">{basics.summary}</p>}
                   </div>
                 )}
@@ -265,13 +268,12 @@ export default function CVMaker() {
                   </div>
                 )}
 
-                {/* TEMA 3 & 4 */}
+                {/* TEMA 3 & 4: HARVARD & EXECUTIVE */}
                 {(template === 'harvard' || template === 'executive') && (
                   <div className={`text-center mb-6 ${template==='executive' ? 'border-b-2 border-gray-300 pb-4' : ''}`}>
                     <h1 className={`${template==='harvard' ? 'text-3xl font-normal' : 'text-4xl font-black tracking-tight'} uppercase mb-2`}>{basics.name || "YOUR NAME"}</h1>
-                    <p className="text-[13px] text-gray-900 flex justify-center flex-wrap gap-1">
-                      {basics.role && <span className="font-bold">{basics.role} | </span>}
-                      {basics.location} {basics.phone && `• ${basics.phone}`} {basics.email && `• ${basics.email}`}
+                    <p className="text-[13px] text-gray-900 flex justify-center flex-wrap gap-x-1 font-medium">
+                      {[basics.role ? `${basics.role} |` : null, basics.location, basics.phone, basics.email].filter(Boolean).join(' • ')}
                     </p>
                     {basics.summary && (
                       template === 'harvard' 
@@ -310,9 +312,11 @@ export default function CVMaker() {
                 
                 {(() => {
                   const SectionTitle = ({ title }) => {
-                    if (template === 'huda' || template === 'executive') return <h2 className="text-[13px] font-bold uppercase border-b border-gray-300 mb-2 pb-1 text-gray-900 tracking-wide mt-2">{title}</h2>;
-                    if (template === 'modern') return <h2 className="text-[16px] font-black uppercase text-gray-900 border-b-2 border-gray-800 mb-3 pb-1">{title}</h2>;
-                    if (template === 'harvard') return <h2 className="text-[14px] font-bold uppercase text-center border-b border-black mb-3 pb-1 tracking-widest">{title}</h2>;
+                    // Normal style persis seperti PDF yang diberikan
+                    if (template === 'normal') return <h2 className="text-[13px] font-bold uppercase border-b-[1.5px] border-black mb-2 pb-1 text-gray-900 tracking-wide mt-3">{title}</h2>;
+                    if (template === 'executive') return <h2 className="text-[13px] font-bold uppercase border-b border-gray-400 mb-2 pb-1 text-gray-900 tracking-wide mt-2">{title}</h2>;
+                    if (template === 'modern') return <h2 className="text-[16px] font-black uppercase text-gray-900 border-b-2 border-gray-800 mb-3 pb-1 mt-4">{title}</h2>;
+                    if (template === 'harvard') return <h2 className="text-[14px] font-bold uppercase text-center border-b border-black mb-3 pb-1 tracking-widest mt-4">{title}</h2>;
                     if (template === 'japanese') return <h2 className="text-[14px] font-bold border-l-4 border-gray-800 pl-2 mb-2 mt-4 bg-gray-100 py-1">{title}</h2>;
                   };
 
@@ -322,11 +326,11 @@ export default function CVMaker() {
                       {educations.filter(e => e.institution.trim() !== "").map((edu, idx) => (
                         <div key={idx} className="mb-2 break-inside-avoid">
                           <div className="flex justify-between items-start">
-                            <h3 className={`text-[13px] text-gray-900 ${template === 'huda' ? 'uppercase font-bold' : 'font-bold'}`}>{edu.institution}</h3>
+                            <h3 className={`text-[13px] text-gray-900 ${template === 'normal' ? 'uppercase font-bold' : 'font-bold'}`}>{edu.institution}</h3>
                             <span className="text-[12px] font-medium text-gray-800 whitespace-nowrap">{edu.period}</span>
                           </div>
                           <div className="text-[13px] text-gray-800">{edu.major}</div>
-                          {edu.gpa && <div className="text-[13px] text-gray-600">{template === 'huda' ? `Graduated with a GPA of ${edu.gpa}.` : edu.gpa}</div>}
+                          {edu.gpa && <div className="text-[13px] text-gray-600">{template === 'normal' && lang === 'en' ? `Graduated with a GPA of ${edu.gpa}.` : edu.gpa}</div>}
                         </div>
                       ))}
                     </div>
@@ -335,7 +339,7 @@ export default function CVMaker() {
                   const RenderSkills = () => basics.skills.trim() !== "" && (
                     <div className="mb-3 break-inside-avoid">
                       <SectionTitle title={t.skills} />
-                      {template === 'huda' ? (
+                      {template === 'normal' ? (
                         <ul className="list-disc list-inside text-[13px] text-gray-800 grid grid-cols-2 gap-x-2">
                           {basics.skills.split(',').map((skill, i) => <li key={i}>{skill.trim()}</li>)}
                         </ul>
@@ -351,11 +355,11 @@ export default function CVMaker() {
                       {experiences.filter(e => e.company.trim() !== "").map((exp, idx) => (
                         <div key={idx} className="mb-3 break-inside-avoid">
                           <div className="flex justify-between items-start mb-0.5">
-                            <h3 className={`text-[13px] font-bold text-gray-900 ${template === 'huda' ? '' : ''}`}>{exp.company}</h3>
+                            <h3 className={`text-[13px] font-bold text-gray-900`}>{exp.company}</h3>
                             <span className="text-[12px] font-medium text-gray-800 whitespace-nowrap">{exp.period}</span>
                           </div>
-                          <div className={`text-[13px] text-gray-800 mb-1 ${template === 'modern' ? 'font-bold text-cyan-700' : 'font-medium'}`}>{template === 'huda' ? exp.role : exp.role}</div>
-                          <div className={`text-[13px] leading-relaxed text-gray-800 whitespace-pre-line text-justify ${template === 'huda' ? 'ml-0' : 'pl-3'}`}>{exp.description}</div>
+                          <div className={`text-[13px] text-gray-800 mb-1 ${template === 'modern' ? 'font-bold text-cyan-700' : 'font-medium'}`}>{exp.role}</div>
+                          <div className={`text-[13px] leading-relaxed text-gray-800 whitespace-pre-line text-justify ${template === 'normal' ? 'ml-0' : 'pl-3'}`}>{exp.description}</div>
                         </div>
                       ))}
                     </div>
@@ -393,8 +397,8 @@ export default function CVMaker() {
                   );
 
                   // URUTAN SESUAI TEMA
-                  // HUDA PDF EXACT ORDER: Edu -> Skills -> Exp -> Proj -> Certs
-                  if (template === 'huda') return <>{RenderEducation()}{RenderSkills()}{RenderExperience()}{RenderProjects()}{RenderCerts()}</>;
+                  // NORMAL ATS (Persis PDF): Edu -> Skills -> Exp -> Proj -> Certs
+                  if (template === 'normal') return <>{RenderEducation()}{RenderSkills()}{RenderExperience()}{RenderProjects()}{RenderCerts()}</>;
                   
                   // MODERN & JAPANESE: Exp -> Edu -> Skills -> Proj -> Certs
                   if (template === 'modern' || template === 'japanese') return <>{RenderExperience()}{RenderEducation()}{RenderSkills()}{RenderProjects()}{RenderCerts()}</>;
