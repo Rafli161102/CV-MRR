@@ -125,8 +125,9 @@ export const PROJECT_LIST = [
     images: ["/projects/logo-best/1.jpg", "/projects/logo-best/2.jpg"] // 👈 Sesuaikan nama foto
   }
 ];
-```
 </li>
+```
+  
 <li>Aturan mainnya: <b>Saya dilarang menghapus tanda kurung kurawal <code>{}</code> atau tanda kutip <code>""</code></b>. Saya murni hanya mengganti teks hurufnya saja.</li>
 <li>Kalau mau nambah karya baru, saya tinggal <i>copy-paste</i> satu blok dari <code>{</code> sampai <code>}</code>, lalu ganti isi teks dan nama fotonya. Persis kayak ngisi formulir biodata!</li>
 </ol>
