@@ -370,7 +370,7 @@ export default function CVMaker() {
                   /* 2. JIKA TEMPLATE UMUM (NORMAL, MODERN, DLL)               */
                   /* --------------------------------------------------------- */
                   <>
-                    {/* TEMA 1: NORMAL (Profesional) - 100% Persis PDF (Rata Kiri, Non-Center) */}
+                    {/* TEMA 1: NORMAL (Professional) - 100% Persis PDF (Rata Kiri, Non-Center) */}
                     {template === 'normal' && (
                       <div className="pb-2 text-left">
                         {/* Judul Capitalize Standard */}
