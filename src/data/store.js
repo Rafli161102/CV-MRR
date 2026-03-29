@@ -11,7 +11,7 @@ export const PROJECT_LIST = [
     category: "Brand Identity",
     description: "Proyek corporate branding menyeluruh untuk Bumi Eka Sukses Tridaya (BEST). Desain identitas visual ini dirancang untuk memancarkan kesan profesional, stabil, dan inovatif. Logo menggabungkan inisial B, E, S, T dengan bentuk globe (oval) yang melambangkan visi perusahaan sebagai mitra usaha berskala nasional dan internasional. Proyek ini juga mencakup perancangan Brand Guidelines lengkap, mulai dari filosofi warna, penggunaan tipografi Montserrat yang modern, hingga aturan ruang kosong (clear space) dan grid konstruksi logo.",
 
-    images "/projects/logo-best/1.jpg", 
+    image: "/projects/logo-best/1.jpg", 
 
     images: [
     "/projects/logo-best/1.jpg", 
