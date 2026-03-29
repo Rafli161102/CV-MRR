@@ -115,6 +115,7 @@
 <ol>
 <li>Buka file <code>src/data/store.js</code> di aplikasi/web GitHub, klik tombol <b>Edit (ikon pensil)</b>.</li>
 <li>Di dalamnya, ada kerangka data seperti ini:
+  
 ​```javascript
 export const PROJECT_LIST = [
 {
@@ -126,6 +127,7 @@ images: ["/projects/logo-best/1.jpg", "/projects/logo-best/2.jpg"] // 👈 Sesua
 }
 ];
 ```
+
 </li>  
 <li>Aturan mainnya: <b>Saya dilarang menghapus tanda kurung kurawal <code>{}</code> atau tanda kutip <code>""</code></b>. Saya murni hanya mengganti teks hurufnya saja.</li>
 <li>Kalau mau nambah karya baru, saya tinggal <i>copy-paste</i> satu blok dari <code>{</code> sampai <code>}</code>, lalu ganti isi teks dan nama fotonya. Persis kayak ngisi formulir biodata!</li>
