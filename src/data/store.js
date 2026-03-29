@@ -15,6 +15,7 @@ export const PROJECT_LIST = [
     "/projects/logo-best-2.jpg", 
     "/projects/logo-best-3.jpg"
   ]
+}, 
   {
     id: "packing-box",
     title: "Packing Box",
