@@ -2,9 +2,6 @@
 <img src="https://img.shields.io/badge/NEXT.JS-000000?style=for-the-badge&logo=nextdotjs&logoColor=white" alt="Next.js">
 <img src="https://img.shields.io/badge/TAILWIND_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS">
 <img src="https://img.shields.io/badge/VERCEL-000000?style=for-the-badge&logo=vercel&logoColor=white" alt="Vercel">
-
-
-
 ​<h1 style="color: #0284c7;">Repositori Resmi & Portofolio Digital Saya</h1>
 <h2>Muhammad Rafli Ramadhan (MRR)</h2>
 <p><b>Graphic Designer & Founder Komunitas AquaNime</b></p>
@@ -28,8 +25,6 @@
 <img src="https://img.shields.io/badge/Google%20Docs-4285F4?style=for-the-badge&logo=google%20docs&logoColor=white" alt="Google Docs">
 <img src="https://img.shields.io/badge/Google%20Sheets-34A853?style=for-the-badge&logo=google%20sheets&logoColor=white" alt="Google Sheets">
 </div>
-
-
 ​<h2 style="color: #0284c7;">🚀 Roadmap & Tracker Progres (To-Do List)</h2>
 <p>Ini adalah papan kendali (Tracker) sejauh mana saya telah membangun file-file website ini. Jika satu file sudah selesai, saya cukup mengubah statusnya menjadi ✅.</p>
 ​<table style="width: 100%; border-collapse: collapse; box-shadow: 0 4px 6px rgba(0,0,0,0.1); font-size: 14px;">
@@ -85,7 +80,7 @@
 <p style="font-size: 12px; color: #64748b;"><i>Keterangan: ✅ = Selesai | ⏳ = Sedang Dikerjakan | ⬜ = Belum Mulai</i></p>
 ​<h2 style="color: #0284c7;">🏗️ 1. Struktur Website & Folder</h2>
 <p>Website ini saya bangun memakai <b>Next.js App Router</b>. Kodingannya sengaja saya pisah antara bagian tampilan UI dan bagian data. Jadi, karena saya memang awam soal pemograman, kalau ke depannya mau nambahin project desain, saya nggak perlu takut bikin kodingan utamanya error.</p>
-​<pre style="background-color: #0f172a; color: #e2e8f0; padding: 20px; border-radius: 8px; font-size: 14px; line-height: 1.6;">
+​<pre style="background-color: #0f172a; color: #e2e8f0; padding: 20px; border-radius: 8px; font-size: 14px; line-height: 1.6; overflow-x: auto;">
 📁 CV-MRR/ (Direktori Utama Saya)
 │
 ├── 📁 public/                     [TEMPAT SAYA NARUH FOTO]
@@ -109,6 +104,7 @@
 │       ├── 📁 about/              ├─ (/about) Halaman CV dan Profil saya
 │       ├── 📁 projects/           ├─ (/projects) Galeri lengkap hasil desain saya
 │       ├── 📁 projects/[slug]/    ├─ (/projects/detail) Halaman detail pas desain diklik
+│       ├── 📁 cv-maker/           ├─ (/cv-maker) Alat pembuat CV ATS otomatis & gratis
 │       └── 📁 aquanime/           └─ (/aquanime) Direct link ke ekosistem AquaNime
 </pre>
 ​<h2 style="color: #0284c7;">📝 2. Sistem Update Simpel (Buku Panduan store.js)</h2>
@@ -117,8 +113,7 @@
 <ol style="line-height: 1.8;">
 <li>Buka file <code>src/data/store.js</code> di aplikasi/web GitHub, klik tombol <b>Edit (ikon pensil)</b>.</li>
 <li>Di dalamnya, ada kerangka data seperti ini:
-
-<pre style="background-color: #1e293b; color: #a5b4fc; padding: 15px; border-radius: 6px; margin: 10px 0;">
+​<pre style="background-color: #1e293b; color: #a5b4fc; padding: 15px; border-radius: 6px; margin: 10px 0; overflow-x: auto;">
 export const PROJECT_LIST = [
 {
 id: "logo-best",
@@ -129,7 +124,7 @@ images: ["/projects/logo-best/1.jpg", "/projects/logo-best/2.jpg"] // 👈 Sesua
 }
 ];
 </pre>
-</li>
+​</li>
 <li>Aturan mainnya: <b>Saya dilarang menghapus tanda kurung kurawal <code>{}</code> atau tanda kutip <code>""</code></b>. Saya murni hanya mengganti teks hurufnya saja.</li>
 <li>Kalau mau nambah karya baru, saya tinggal <i>copy-paste</i> satu blok dari <code>{</code> sampai <code>}</code>, lalu ganti isi teks dan nama fotonya. Persis kayak ngisi formulir biodata!</li>
 </ol>
@@ -162,7 +157,8 @@ images: ["/projects/logo-best/1.jpg", "/projects/logo-best/2.jpg"] // 👈 Sesua
 <li><b>💼 Portofolio (<code>/projects</code>):</b> Galeri lengkap semua karya yang siap dipamerin ke klien dan manajer HRD.</li>
 <li><b>🔍 Detail Proyek (<code>/projects/[nama]</code>):</b> Halaman khusus pas project-nya diklik. Isinya <i>problem solving</i> dari masalah klien sampai jadi visual akhir.</li>
 <li><b>👤 Tentang Saya (<code>/about</code>):</b> Timeline pengalaman, brand yang pernah saya bantu, dan pameran sertifikat sah.</li>
-<li><b>💧 Jembatan AquaNime (<code>/aquanime</code>):</b> Ini adalah <i>direct link</i> atau jalan pintas yang langsung mengalihkan pengunjung ke ekosistem komunitas AquaNime yang saya bangun. Nanti AquaNime bakal punya rumah website (domain) tersendiri.</li>
+<li><b>📄 Alat Pembuat CV (<code>/cv-maker</code>):</b> Aplikasi <i>micro-SaaS</i> gratis buatan saya untuk mempermudah pengunjung membuat CV standar ATS dengan auto-translate.</li>
+<li><b>💧 Jembatan AquaNime (<code>/aquanime</code>):</b> Ini adalah <i>direct link</i> atau jalan pintas yang langsung mengalihkan pengunjung ke ekosistem komunitas AquaNime yang saya bangun.</li>
 </ul>
 ​<h2 style="color: #0284c7;">🔒 7. Keamanan & Performa Web</h2>
 <ul style="line-height: 1.8;">
