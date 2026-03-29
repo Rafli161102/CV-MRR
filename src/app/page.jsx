@@ -1,3 +1,5 @@
+"use client";
+
 import Link from 'next/link';
 import { PROJECT_LIST } from '../data/store';
 
@@ -67,7 +69,7 @@ export default function Home() {
                     src="/profile.jpg" 
                     alt="M. Rafli Ramadhan" 
                     className="w-full h-full object-cover object-center grayscale hover:grayscale-0 transition-all duration-700"
-                    onError={(e) => { e.target.src = '[https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop](https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop)'; }}
+                    onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop'; }}
                   />
                 </div>
                 
@@ -104,7 +106,7 @@ export default function Home() {
                       src={project.image} 
                       alt={project.title} 
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 opacity-80 group-hover:opacity-100"
-                      onError={(e) => { e.target.src = '[https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop](https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop)'; }} 
+                      onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop'; }} 
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#060D1F] to-transparent opacity-0 group-hover:opacity-80 transition-opacity duration-500"></div>
                   </div>
