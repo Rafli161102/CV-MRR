@@ -114,7 +114,7 @@ export default function CVMaker() {
               </div>
               <h2 className="text-xs font-bold text-cyan-400 uppercase tracking-wider mb-2">Template ATS</h2>
               <div className="grid grid-cols-2 gap-2">
-                <button onClick={() => setTemplate('normal')} className={`py-2 px-2 text-[11px] font-bold rounded border transition-all ${template === 'normal' ? 'bg-cyan-600 border-cyan-400 text-white' : 'border-white/10 text-slate-400 hover:border-cyan-500/50'}`}>1. Normal (Huda ATS)</button>
+                <button onClick={() => setTemplate('normal')} className={`py-2 px-2 text-[11px] font-bold rounded border transition-all ${template === 'normal' ? 'bg-cyan-600 border-cyan-400 text-white' : 'border-white/10 text-slate-400 hover:border-cyan-500/50'}`}>1. Normal (Standar ATS)</button>
                 <button onClick={() => setTemplate('modern')} className={`py-2 px-2 text-[11px] font-bold rounded border transition-all ${template === 'modern' ? 'bg-cyan-600 border-cyan-400 text-white' : 'border-white/10 text-slate-400 hover:border-cyan-500/50'}`}>2. Modern Pro</button>
                 <button onClick={() => setTemplate('harvard')} className={`py-2 px-2 text-[11px] font-bold rounded border transition-all ${template === 'harvard' ? 'bg-cyan-600 border-cyan-400 text-white' : 'border-white/10 text-slate-400 hover:border-cyan-500/50'}`}>3. Harvard (Serif)</button>
                 <button onClick={() => setTemplate('executive')} className={`py-2 px-2 text-[11px] font-bold rounded border transition-all ${template === 'executive' ? 'bg-cyan-600 border-cyan-400 text-white' : 'border-white/10 text-slate-400 hover:border-cyan-500/50'}`}>4. Tech Executive</button>
@@ -232,17 +232,17 @@ export default function CVMaker() {
                 {/* 1. HEADER RENDERER */}
                 {/* --------------------------------------------------------- */}
                 
-                {/* TEMA 1: NORMAL (HUDA ATS) - 100% Bersih & Rapi */}
+                {/* TEMA 1: NORMAL (Standar ATS) - 100% Bersih & Rapi */}
                 {template === 'normal' && (
                   <div className="text-center pb-2">
                     <h1 className="text-[24px] font-bold mb-1 tracking-wide uppercase">{basics.name || "YOUR NAME"}</h1>
                     
-                    [span_0](start_span){/* Render kontak dinamis dengan pemisah | persis seperti PDF[span_0](end_span) */}
+                    {/* Render kontak dinamis dengan pemisah | persis seperti PDF */}
                     <p className="text-[13px] text-gray-900 mb-4 font-medium flex flex-wrap justify-center gap-x-1">
                       {[basics.location, basics.phone, basics.email, basics.linkedin].filter(Boolean).join(' | ')}
                     </p>
                     
-                    [span_1](start_span){/* Summary tanpa judul[span_1](end_span) */}
+                    {/* Summary tanpa judul */}
                     {basics.summary && <p className="text-[13px] leading-relaxed text-justify text-gray-900 mb-4">{basics.summary}</p>}
                   </div>
                 )}
@@ -317,7 +317,7 @@ export default function CVMaker() {
                       {educations.filter(e => e.institution.trim() !== "").map((edu, idx) => (
                         <div key={idx} className="mb-2 break-inside-avoid">
                           <div className="flex justify-between items-start">
-                            [span_2](start_span){/* Instansi Uppercase di mode Normal[span_2](end_span) */}
+                            {/* Instansi Uppercase di mode Normal */}
                             <h3 className={`text-[13px] text-gray-900 ${template === 'normal' ? 'uppercase font-bold' : 'font-bold'}`}>{edu.institution}</h3>
                             <span className="text-[12px] font-medium text-gray-800 whitespace-nowrap">{edu.period}</span>
                           </div>
