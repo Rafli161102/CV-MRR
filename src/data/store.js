@@ -13,7 +13,10 @@ export const PROJECT_LIST = [
     images: [
     "/projects/logo-best/1.jpg", 
     "/projects/logo-best/2.jpg", 
-    "/projects/logo-best/3.jpg"
+    "/projects/logo-best/3.jpg",
+    "/projects/logo-best/4.jpg",
+    "/projects/logo-best/5.jpg",
+    "/projects/logo-best/6.jpg", 
   ]
 }, 
   {
