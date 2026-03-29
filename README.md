@@ -81,6 +81,7 @@
 ​<h2>🏗️ 1. Struktur Website & Folder</h2>
 <p>Website ini saya bangun memakai <b>Next.js App Router</b>. Kodingannya sengaja saya pisah antara bagian tampilan UI dan bagian data. Jadi, karena saya memang awam soal pemograman, kalau ke depannya mau nambahin project desain, saya nggak perlu takut bikin kodingan utamanya error.</p>
 
+```
 📁 CV-MRR/ (Direktori Utama Saya)
 │
 ├── 📁 public/                     [TEMPAT SAYA NARUH FOTO]
@@ -106,6 +107,7 @@
 │       ├── 📁 projects/[slug]/    ├─ (/projects/detail) Halaman detail pas desain diklik
 │       ├── 📁 cv-maker/           ├─ (/cv-maker) Alat pembuat CV ATS otomatis & gratis
 │       └── 📁 aquanime/           └─ (/aquanime) Direct link ke ekosistem AquaNime
+```
 
 <h2>📝 2. Sistem Update Simpel (Buku Panduan store.js)</h2>
 <p>Sebagai desainer yang nggak ngerti bahasa mesin, saya merancang sistem ini murni menjadi <b>"Drag & Play"</b>. Untuk mengubah seluruh isi teks dan foto di website, saya cuma butuh mengedit file <b><code>src/data/store.js</code></b>.</p>
@@ -113,7 +115,7 @@
 <ol>
 <li>Buka file <code>src/data/store.js</code> di aplikasi/web GitHub, klik tombol <b>Edit (ikon pensil)</b>.</li>
 <li>Di dalamnya, ada kerangka data seperti ini:
-
+```
 export const PROJECT_LIST = [
   {
     id: "logo-best",
@@ -123,7 +125,7 @@ export const PROJECT_LIST = [
     images: ["/projects/logo-best/1.jpg", "/projects/logo-best/2.jpg"] // 👈 Sesuaikan nama foto
   }
 ];
-
+```
 </li>
 <li>Aturan mainnya: <b>Saya dilarang menghapus tanda kurung kurawal <code>{}</code> atau tanda kutip <code>""</code></b>. Saya murni hanya mengganti teks hurufnya saja.</li>
 <li>Kalau mau nambah karya baru, saya tinggal <i>copy-paste</i> satu blok dari <code>{</code> sampai <code>}</code>, lalu ganti isi teks dan nama fotonya. Persis kayak ngisi formulir biodata!</li>
