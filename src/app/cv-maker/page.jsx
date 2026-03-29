@@ -149,7 +149,7 @@ export default function CVMaker() {
   );
 
   const InfoIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 text-cyan-400 shrink-0">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5">
       <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
     </svg>
   );
@@ -157,6 +157,12 @@ export default function CVMaker() {
   const PrintIcon = () => (
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
       <path strokeLinecap="round" strokeLinejoin="round" d="M6.72 13.829c-.24.03-.48.062-.724.092m6.524-4.31a1.125 1.125 0 11-2.25 0 1.125 1.125 0 012.25 0zm-1.895-3.32a.5.5 0 00-.5.5v2.25c0 .276.224.5.5.5h2.25a.5.5 0 00.5-.5v-2.25a.5.5 0 00-.5-.5h-2.25zM12 21.75c3.55 0 6.544-2.185 7.91-5.326m-15.82 0A8.966 8.966 0 0112 2.25a8.964 8.964 0 017.91 5.326m-15.82 0a8.964 8.964 0 00-7.91 5.326M12 21.75a8.965 8.965 0 007.91-5.326m0 0H21m-9 0v-4.5" />
+    </svg>
+  );
+
+  const LockIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 text-emerald-400">
+      <path fillRule="evenodd" d="M12 1.5a5.25 5.25 0 00-5.25 5.25v3a3 3 0 00-3 3v6.75a3 3 0 003 3h10.5a3 3 0 003-3v-6.75a3 3 0 00-3-3v-3c0-2.9-2.35-5.25-5.25-5.25zm3.75 8.25v-3a3.75 3.75 0 10-7.5 0v3h7.5z" clipRule="evenodd" />
     </svg>
   );
 
@@ -185,35 +191,35 @@ export default function CVMaker() {
           <div className="w-full xl:w-5/12 bg-[#0A1329] border border-white/10 p-6 rounded-[2rem] no-print xl:sticky xl:top-32 h-fit max-h-none xl:max-h-[80vh] overflow-visible xl:overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-cyan-600 [&::-webkit-scrollbar-thumb]:rounded-full">
             
             {/* ======================================================= */}
-            {/* PANEL PANDUAN / TUTORIAL (BARU & ELEGAN)                */}
+            {/* PANEL PANDUAN & PRIVASI (BARU & ELEGAN)                 */}
             {/* ======================================================= */}
-            <div className="mb-6 p-5 rounded-xl border border-cyan-500/20 bg-gradient-to-br from-cyan-900/10 to-[#0A1329] shadow-inner relative overflow-hidden group">
+            <div className="mb-6 rounded-xl border border-cyan-500/20 bg-gradient-to-br from-cyan-900/10 to-[#0A1329] shadow-inner overflow-hidden relative">
               <div className="absolute top-0 left-0 w-1 h-full bg-cyan-500"></div>
               
-              <div className="flex items-start gap-3 mb-3">
-                <InfoIcon />
-                <div>
-                  <h3 className="text-cyan-400 font-bold text-sm mb-1">Panduan Membuat CV Profesional</h3>
-                  <p className="text-slate-400 text-xs leading-relaxed">
-                    Aplikasi ini dirancang untuk menciptakan CV berstandar mesin seleksi HRD (ATS). Sistem akan mengatur <i>margin</i> dan struktur secara otomatis.
-                  </p>
+              <div className="p-5 border-b border-white/5">
+                <div className="flex items-start gap-3">
+                  <InfoIcon />
+                  <div>
+                    <h3 className="text-cyan-400 font-bold text-sm mb-1">Panduan Cetak PDF Bebas Terpotong</h3>
+                    <p className="text-slate-400 text-xs leading-relaxed mb-3">
+                      Aplikasi ini dirancang untuk menciptakan CV berstandar mesin seleksi HRD (ATS) secara gratis. Ikuti langkah berikut agar hasilnya sempurna:
+                    </p>
+                    <ul className="space-y-2 ml-4 text-[11px] text-slate-300 list-decimal list-outside">
+                      <li>Isi formulir menggunakan <b>Bahasa Indonesia</b> terlebih dahulu untuk memudahkan Anda.</li>
+                      <li>Gunakan tombol <b>Magic Translate</b> di bawah untuk menerjemahkan ke Bahasa Inggris.</li>
+                      <li className="text-cyan-300 font-medium">SANGAT PENTING: Saat menekan tombol Cetak/PDF, pastikan pengaturan <span className="underline">Margin (Batas Tepi) diset ke "Tidak Ada" atau "None"</span>. Jarak tepi yang benar sudah tertanam otomatis di dalam sistem.</li>
+                    </ul>
+                  </div>
                 </div>
               </div>
-              
-              <ul className="space-y-2 ml-8 text-[11px] text-slate-300">
-                <li className="flex items-start gap-2">
-                  <span className="text-cyan-500 font-bold">1.</span>
-                  <span>Isi formulir menggunakan <b>Bahasa Indonesia</b> terlebih dahulu untuk memudahkan Anda.</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-cyan-500 font-bold">2.</span>
-                  <span>Gunakan tombol <b>Magic Translate (EN)</b> di bawah ini. Mesin AI kami akan menerjemahkan seluruh teks panjang Anda ke bahasa Inggris formal dalam sekejap!</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-cyan-500 font-bold">3.</span>
-                  <span><b>SANGAT PENTING:</b> Saat menekan tombol Cetak/PDF, pastikan pengaturan <b>Margin/Batas Tepi kertas diset ke "None" atau "Tidak Ada"</b>. (Standar jaraknya sudah kami tanamkan di dalam kertas putih).</span>
-                </li>
-              </ul>
+
+              {/* Deklarasi Privasi */}
+              <div className="px-5 py-3 bg-[#060D1F]/50 flex items-center gap-2">
+                <LockIcon />
+                <p className="text-[10px] text-emerald-400/80 font-medium tracking-wide">
+                  Privasi Aman: Kami tidak merekam, menyimpan, atau melacak data pribadi Anda.
+                </p>
+              </div>
             </div>
 
             {/* PANEL KONTROL (TEMA & TRANSLATE) */}
@@ -255,10 +261,10 @@ export default function CVMaker() {
               <div className="mb-6 p-4 rounded-xl border border-red-500/20 bg-gradient-to-br from-red-900/10 to-[#0A1329] shadow-inner relative overflow-hidden">
                 <div className="absolute top-0 left-0 w-1 h-full bg-red-500"></div>
                 <h3 className="text-red-400 font-bold text-sm mb-2 flex items-center gap-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4"><path fillRule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zM12 8.25a.75.75 0 01.75.75v3.75a.75.75 0 01-1.5 0V9a.75.75 0 01.75-.75zm0 8.25a.75.75 0 100-1.5.75.75 0 000 1.5z" clipRule="evenodd" /></svg>
+                  <InfoIcon />
                   Aturan Baku CV Jepang (JIS)
                 </h3>
-                <ul className="list-disc list-inside text-[11px] text-red-200/80 space-y-1.5">
+                <ul className="list-disc list-inside text-[11px] text-red-200/80 space-y-1.5 ml-1">
                   <li><b>Furigana:</b> Wajib diisi (huruf Katakana cara baca nama Anda).</li>
                   <li><b>Tahun:</b> Gunakan angka (Cth: 2023). Sistem otomatis memasukkannya ke kolom yang benar.</li>
                   {template === 'jp-asing' && (
@@ -521,12 +527,14 @@ export default function CVMaker() {
                     {/* TEMA 1: NORMAL (Professional) - 100% Persis PDF (Rata Kiri, Non-Center) */}
                     {template === 'normal' && (
                       <div className="pb-2 text-left">
+                        {/* Judul Capitalize Standard */}
                         <h1 className="text-[20pt] font-bold mb-1 tracking-tight capitalize leading-none text-black">{basics.name || t.placeholders.name.split(' (')[0]}</h1>
                         
                         <p className="text-[10.5pt] text-black flex flex-wrap gap-x-1.5 mt-1.5 mb-3">
                           {[basics.location, basics.phone, basics.email, basics.linkedin].filter(Boolean).join(' | ')}
                         </p>
                         
+                        {/* Summary rata kiri-kanan persis PDF */}
                         {basics.summary && <div className="text-[10.5pt] leading-[1.6] text-justify text-black mb-4 break-words">{basics.summary}</div>}
                       </div>
                     )}
