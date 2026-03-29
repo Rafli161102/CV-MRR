@@ -42,7 +42,7 @@ export default function Home() {
                 Halo, saya Rafli. Membantu brand dan entitas mencapai potensi maksimalnya melalui identitas visual yang presisi, estetis, dan strategis.
               </p>
               
-              {/* TOMBOL CALL TO ACTION (DIPERBARUI) */}
+              {/* TOMBOL CALL TO ACTION */}
               <div className="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start">
                 
                 {/* Tombol Lihat & Download CV (Mengarah ke CV Auto-Generate) */}
@@ -66,6 +66,20 @@ export default function Home() {
                 </a>
 
               </div>
+
+              {/* ======================================================== */}
+              {/* PORTAL KE CV MAKER PUBLIK (BARU)                           */}
+              {/* ======================================================== */}
+              <div className="mt-8 text-center lg:text-left">
+                <p className="text-sm text-slate-500 font-medium">
+                  Terpesona dengan CV ATS saya?{' '}
+                  <Link href="/cv-maker" className="text-cyan-400 hover:text-cyan-300 transition-colors inline-flex items-center gap-1 group">
+                    <span className="underline underline-offset-4 decoration-cyan-500/30 group-hover:decoration-cyan-400">Buat CV-mu sendiri secara gratis</span>
+                    <span className="group-hover:translate-x-1 transition-transform duration-300">→</span>
+                  </Link>
+                </p>
+              </div>
+
             </div>
 
             {/* Bagian Visual Frame */}
