@@ -370,11 +370,11 @@ export default function CVMaker() {
                   /* 2. JIKA TEMPLATE UMUM (NORMAL, MODERN, DLL)               */
                   /* --------------------------------------------------------- */
                   <>
-                    {/* TEMA 1: NORMAL (Huda Clone) - 100% Persis PDF (Rata Kiri, Non-Center) */}
+                    {/* TEMA 1: NORMAL (Profesional) - 100% Persis PDF (Rata Kiri, Non-Center) */}
                     {template === 'normal' && (
                       <div className="pb-2 text-left">
                         {/* Judul Capitalize Standard */}
-                        <h1 className="text-[20pt] font-bold mb-1 tracking-tight capitalize leading-none">{basics.name || "Muhamad Syaepul Huda"}</h1>
+                        <h1 className="text-[20pt] font-bold mb-1 tracking-tight capitalize leading-none">{basics.name || "Nama Lengkap"}</h1>
                         
                         <p className="text-[10pt] text-black flex flex-wrap gap-x-1.5 mt-1.5 mb-3">
                           {[basics.location, basics.phone, basics.email, basics.linkedin].filter(Boolean).join(' | ')}
