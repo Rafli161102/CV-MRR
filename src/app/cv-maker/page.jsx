@@ -73,13 +73,14 @@ export default function CVMaker() {
           <p className="text-slate-400">Buat CV ramah sistem HRD dengan format profesional. Tambahkan pengalaman tanpa batas!</p>
         </div>
 
-        {/* LAYOUT DIPERBAIKI: Flex-col di Mobile, Flex-row di Desktop Luas */}
+        {/* LAYOUT: Flex-col di Layar Kecil (Mobile), Flex-row di Layar Lebar (PC) */}
         <div className="flex flex-col xl:flex-row gap-8 items-start">
           
           {/* ========================================================= */}
-          {/* KOLOM KIRI: FORMULIR ISIAN (DIBUAT BISA DI-SCROLL)        */}
+          {/* KOLOM KIRI: FORMULIR ISIAN                                  */}
           {/* ========================================================= */}
-          <div className="w-full xl:w-5/12 bg-[#0A1329] border border-white/10 p-6 md:p-8 rounded-[2rem] no-print sticky top-32 max-h-[80vh] overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-cyan-600 [&::-webkit-scrollbar-thumb]:rounded-full">
+          {/* BUG FIX: 'sticky' hanya aktif di PC (xl:sticky). Di HP dia normal (static) sehingga mendorong kertas ke bawah. */}
+          <div className="w-full xl:w-5/12 bg-[#0A1329] border border-white/10 p-6 md:p-8 rounded-[2rem] no-print xl:sticky xl:top-32 h-fit max-h-none xl:max-h-[80vh] overflow-visible xl:overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-cyan-600 [&::-webkit-scrollbar-thumb]:rounded-full mb-4 xl:mb-0">
             
             {/* DATA PRIBADI */}
             <div className="mb-8">
@@ -87,11 +88,11 @@ export default function CVMaker() {
               <div className="space-y-3">
                 <input type="text" name="name" value={basics.name} onChange={handleBasicsChange} className="w-full bg-[#060D1F] border border-white/5 p-3 rounded-lg text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder="Nama Lengkap" />
                 <input type="text" name="role" value={basics.role} onChange={handleBasicsChange} className="w-full bg-[#060D1F] border border-white/5 p-3 rounded-lg text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder="Posisi Dilamar" />
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <input type="text" name="location" value={basics.location} onChange={handleBasicsChange} className="w-full bg-[#060D1F] border border-white/5 p-3 rounded-lg text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder="Lokasi (Kota, Negara)" />
                   <input type="text" name="phone" value={basics.phone} onChange={handleBasicsChange} className="w-full bg-[#060D1F] border border-white/5 p-3 rounded-lg text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder="No HP" />
                 </div>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <input type="email" name="email" value={basics.email} onChange={handleBasicsChange} className="w-full bg-[#060D1F] border border-white/5 p-3 rounded-lg text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder="Email" />
                   <input type="text" name="linkedin" value={basics.linkedin} onChange={handleBasicsChange} className="w-full bg-[#060D1F] border border-white/5 p-3 rounded-lg text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder="LinkedIn Link" />
                 </div>
@@ -110,7 +111,7 @@ export default function CVMaker() {
                 <div key={exp.id} className="bg-[#060D1F] p-4 rounded-lg mb-4 border border-white/5 relative">
                   <button onClick={() => removeField(setExperiences, experiences, index)} className="absolute top-2 right-2 text-red-400 hover:text-red-300 text-xs">Hapus</button>
                   <input type="text" value={exp.role} onChange={(e) => handleArrayChange(setExperiences, experiences, index, 'role', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-2 text-white text-sm mb-2 focus:outline-none" placeholder="Jabatan" />
-                  <div className="grid grid-cols-2 gap-2 mb-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2">
                     <input type="text" value={exp.company} onChange={(e) => handleArrayChange(setExperiences, experiences, index, 'company', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-2 text-white text-sm focus:outline-none" placeholder="Perusahaan" />
                     <input type="text" value={exp.period} onChange={(e) => handleArrayChange(setExperiences, experiences, index, 'period', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-2 text-white text-sm focus:outline-none" placeholder="Periode (Cth: 2021 - 2023)" />
                   </div>
@@ -130,7 +131,7 @@ export default function CVMaker() {
                   <button onClick={() => removeField(setEducations, educations, index)} className="absolute top-2 right-2 text-red-400 hover:text-red-300 text-xs">Hapus</button>
                   <input type="text" value={edu.institution} onChange={(e) => handleArrayChange(setEducations, educations, index, 'institution', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-2 text-white text-sm mb-2 focus:outline-none" placeholder="Nama Kampus / Sekolah" />
                   <input type="text" value={edu.major} onChange={(e) => handleArrayChange(setEducations, educations, index, 'major', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-2 text-white text-sm mb-2 focus:outline-none" placeholder="Jurusan / Gelar" />
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     <input type="text" value={edu.period} onChange={(e) => handleArrayChange(setEducations, educations, index, 'period', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-2 text-white text-sm focus:outline-none" placeholder="Periode" />
                     <input type="text" value={edu.gpa} onChange={(e) => handleArrayChange(setEducations, educations, index, 'gpa', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-2 text-white text-sm focus:outline-none" placeholder="Info Tambahan (IPK / Nilai)" />
                   </div>
@@ -147,7 +148,7 @@ export default function CVMaker() {
               {projects.map((proj, index) => (
                 <div key={proj.id} className="bg-[#060D1F] p-4 rounded-lg mb-4 border border-white/5 relative">
                   <button onClick={() => removeField(setProjects, projects, index)} className="absolute top-2 right-2 text-red-400 hover:text-red-300 text-xs">Hapus</button>
-                  <div className="grid grid-cols-2 gap-2 mb-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2">
                     <input type="text" value={proj.name} onChange={(e) => handleArrayChange(setProjects, projects, index, 'name', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-2 text-white text-sm focus:outline-none" placeholder="Nama Proyek" />
                     <input type="text" value={proj.period} onChange={(e) => handleArrayChange(setProjects, projects, index, 'period', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-2 text-white text-sm focus:outline-none" placeholder="Periode" />
                   </div>
@@ -165,103 +166,104 @@ export default function CVMaker() {
           {/* ========================================================= */}
           {/* KOLOM KANAN: PREVIEW KERTAS CV (LIVE)                     */}
           {/* ========================================================= */}
-          
-          {/* Bungkus ini memperbaiki BUG OVERLAP di layar kecil */}
-          <div className="w-full xl:w-7/12 bg-[#0A1329]/50 p-4 sm:p-8 rounded-[2rem] overflow-x-auto [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-thumb]:bg-cyan-600 [&::-webkit-scrollbar-thumb]:rounded-full flex justify-center">
+          <div className="w-full xl:w-7/12 bg-[#0A1329]/50 p-4 sm:p-6 rounded-[2rem] overflow-x-auto [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-thumb]:bg-cyan-600 [&::-webkit-scrollbar-thumb]:rounded-full shadow-inner border border-white/5">
             
-            {/* KERTAS A4 STRICT WIDTH */}
-            <div id="cv-preview" className="w-[21cm] min-w-[21cm] min-h-[29.7cm] bg-white text-black py-12 px-14 shadow-2xl font-sans shrink-0 border border-gray-200">
-              
-              {/* HEADER - FORMAT HUDA STYLE */}
-              <div className="border-b-2 border-black pb-4 mb-4">
-                <h1 className="text-3xl font-bold uppercase mb-1">{basics.name}</h1>
-                <p className="text-[14px] text-gray-800 mb-2">{basics.location} | {basics.phone} | {basics.email} {basics.linkedin && `| ${basics.linkedin}`}</p>
-                <p className="text-[13px] leading-relaxed text-justify text-gray-800">{basics.summary}</p>
+            {/* BUG FIX: 'w-fit mx-auto' memastikan scroll horizontal tidak terpotong di HP */}
+            <div className="w-fit mx-auto">
+              {/* KERTAS A4 STRICT WIDTH */}
+              <div id="cv-preview" className="w-[21cm] min-w-[21cm] min-h-[29.7cm] bg-white text-black py-12 px-10 sm:px-14 shadow-2xl font-sans shrink-0 border border-gray-200">
+                
+                {/* HEADER - FORMAT HUDA STYLE */}
+                <div className="border-b-2 border-black pb-4 mb-4">
+                  <h1 className="text-3xl font-bold uppercase mb-1">{basics.name || "Nama Lengkap"}</h1>
+                  <p className="text-[14px] font-medium text-gray-800 mb-2">{basics.location} | {basics.phone} | {basics.email} {basics.linkedin && `| ${basics.linkedin}`}</p>
+                  <p className="text-[13px] leading-relaxed text-justify text-gray-800">{basics.summary}</p>
+                </div>
+
+                {/* EDUCATION */}
+                {educations.length > 0 && educations[0].institution !== "" && (
+                  <div className="mb-4">
+                    <h2 className="text-[15px] font-bold uppercase border-b border-gray-300 mb-2 pb-1 text-gray-900 tracking-wide">Education</h2>
+                    <div className="flex flex-col gap-2">
+                      {educations.map((edu, idx) => (
+                        <div key={idx} className="break-inside-avoid">
+                          <div className="flex justify-between items-start">
+                            <h3 className="text-[14px] font-bold text-gray-900 uppercase">{edu.institution}</h3>
+                            <span className="text-[13px] font-medium text-gray-800 whitespace-nowrap">{edu.period}</span>
+                          </div>
+                          <div className="text-[13px] text-gray-800">{edu.major}</div>
+                          {edu.gpa && <div className="text-[13px] text-gray-600">{edu.gpa}</div>}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* SKILLS */}
+                {basics.skills && (
+                  <div className="mb-4 break-inside-avoid">
+                    <h2 className="text-[15px] font-bold uppercase border-b border-gray-300 mb-2 pb-1 text-gray-900 tracking-wide">Skill and Competencies</h2>
+                    <p className="text-[13px] text-gray-800 leading-relaxed">{basics.skills}</p>
+                  </div>
+                )}
+
+                {/* EXPERIENCE */}
+                {experiences.length > 0 && experiences[0].role !== "" && (
+                  <div className="mb-4">
+                    <h2 className="text-[15px] font-bold uppercase border-b border-gray-300 mb-2 pb-1 text-gray-900 tracking-wide">Experience</h2>
+                    <div className="flex flex-col gap-3">
+                      {experiences.map((exp, idx) => (
+                        <div key={idx} className="break-inside-avoid">
+                          <div className="flex justify-between items-start">
+                            <h3 className="text-[14px] font-bold text-gray-900">{exp.company}</h3>
+                            <span className="text-[13px] font-medium text-gray-800 whitespace-nowrap">{exp.period}</span>
+                          </div>
+                          <div className="text-[13px] font-medium italic text-gray-700 mb-1">{exp.role}</div>
+                          <div className="text-[13px] leading-relaxed text-gray-800 whitespace-pre-line text-justify ml-3">{exp.description}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* PROJECTS */}
+                {projects.length > 0 && projects[0].name !== "" && (
+                  <div className="mb-4">
+                    <h2 className="text-[15px] font-bold uppercase border-b border-gray-300 mb-2 pb-1 text-gray-900 tracking-wide">Projects</h2>
+                    <div className="flex flex-col gap-3">
+                      {projects.map((proj, idx) => (
+                        <div key={idx} className="break-inside-avoid">
+                          <div className="flex justify-between items-start">
+                            <h3 className="text-[14px] font-bold text-gray-900">{proj.name}</h3>
+                            <span className="text-[13px] font-medium text-gray-800 whitespace-nowrap">{proj.period}</span>
+                          </div>
+                          <div className="text-[13px] leading-relaxed text-gray-800 whitespace-pre-line text-justify ml-3">{proj.description}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* CERTIFICATIONS */}
+                {certs.length > 0 && certs[0].name !== "" && (
+                  <div className="mb-4">
+                    <h2 className="text-[15px] font-bold uppercase border-b border-gray-300 mb-2 pb-1 text-gray-900 tracking-wide">Certification</h2>
+                    <div className="flex flex-col gap-3">
+                      {certs.map((cert, idx) => (
+                        <div key={idx} className="break-inside-avoid">
+                          <div className="flex justify-between items-start">
+                            <h3 className="text-[14px] font-bold text-gray-900">{cert.name}</h3>
+                            <span className="text-[13px] font-medium text-gray-800 whitespace-nowrap">{cert.period}</span>
+                          </div>
+                          <div className="text-[13px] text-gray-700 italic mb-1">{cert.issuer}</div>
+                          <div className="text-[13px] leading-relaxed text-gray-800 whitespace-pre-line text-justify ml-3">{cert.description}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
               </div>
-
-              {/* EDUCATION */}
-              {educations.length > 0 && educations[0].institution !== "" && (
-                <div className="mb-4">
-                  <h2 className="text-[15px] font-bold uppercase border-b border-gray-300 mb-2 pb-1 text-gray-900 tracking-wide">Education</h2>
-                  <div className="flex flex-col gap-2">
-                    {educations.map((edu, idx) => (
-                      <div key={idx} className="break-inside-avoid">
-                        <div className="flex justify-between items-start">
-                          <h3 className="text-[14px] font-bold text-gray-900 uppercase">{edu.institution}</h3>
-                          <span className="text-[13px] font-medium text-gray-800 whitespace-nowrap">{edu.period}</span>
-                        </div>
-                        <div className="text-[13px] text-gray-800">{edu.major}</div>
-                        {edu.gpa && <div className="text-[13px] text-gray-600">{edu.gpa}</div>}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* SKILLS */}
-              {basics.skills && (
-                <div className="mb-4 break-inside-avoid">
-                  <h2 className="text-[15px] font-bold uppercase border-b border-gray-300 mb-2 pb-1 text-gray-900 tracking-wide">Skill and Competencies</h2>
-                  <p className="text-[13px] text-gray-800 leading-relaxed">{basics.skills}</p>
-                </div>
-              )}
-
-              {/* EXPERIENCE */}
-              {experiences.length > 0 && experiences[0].role !== "" && (
-                <div className="mb-4">
-                  <h2 className="text-[15px] font-bold uppercase border-b border-gray-300 mb-2 pb-1 text-gray-900 tracking-wide">Experience</h2>
-                  <div className="flex flex-col gap-3">
-                    {experiences.map((exp, idx) => (
-                      <div key={idx} className="break-inside-avoid">
-                        <div className="flex justify-between items-start">
-                          <h3 className="text-[14px] font-bold text-gray-900">{exp.company}</h3>
-                          <span className="text-[13px] font-medium text-gray-800 whitespace-nowrap">{exp.period}</span>
-                        </div>
-                        <div className="text-[13px] font-medium italic text-gray-700 mb-1">{exp.role}</div>
-                        <div className="text-[13px] leading-relaxed text-gray-800 whitespace-pre-line text-justify ml-3">{exp.description}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* PROJECTS */}
-              {projects.length > 0 && projects[0].name !== "" && (
-                <div className="mb-4">
-                  <h2 className="text-[15px] font-bold uppercase border-b border-gray-300 mb-2 pb-1 text-gray-900 tracking-wide">Projects</h2>
-                  <div className="flex flex-col gap-3">
-                    {projects.map((proj, idx) => (
-                      <div key={idx} className="break-inside-avoid">
-                        <div className="flex justify-between items-start">
-                          <h3 className="text-[14px] font-bold text-gray-900">{proj.name}</h3>
-                          <span className="text-[13px] font-medium text-gray-800 whitespace-nowrap">{proj.period}</span>
-                        </div>
-                        <div className="text-[13px] leading-relaxed text-gray-800 whitespace-pre-line text-justify ml-3">{proj.description}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* CERTIFICATIONS */}
-              {certs.length > 0 && certs[0].name !== "" && (
-                <div className="mb-4">
-                  <h2 className="text-[15px] font-bold uppercase border-b border-gray-300 mb-2 pb-1 text-gray-900 tracking-wide">Certification</h2>
-                  <div className="flex flex-col gap-3">
-                    {certs.map((cert, idx) => (
-                      <div key={idx} className="break-inside-avoid">
-                        <div className="flex justify-between items-start">
-                          <h3 className="text-[14px] font-bold text-gray-900">{cert.name}</h3>
-                          <span className="text-[13px] font-medium text-gray-800 whitespace-nowrap">{cert.period}</span>
-                        </div>
-                        <div className="text-[13px] text-gray-700 italic mb-1">{cert.issuer}</div>
-                        <div className="text-[13px] leading-relaxed text-gray-800 whitespace-pre-line text-justify ml-3">{cert.description}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
             </div>
           </div>
 
