@@ -3,59 +3,23 @@
 import { useState } from 'react';
 
 export default function CVMaker() {
-  // 1. STATE TEMA & BAHASA
   const [template, setTemplate] = useState('normal'); 
   const [lang, setLang] = useState('id'); 
   const [isTranslating, setIsTranslating] = useState(false);
 
-  // 2. KAMUS BAHASA & PLACEHOLDER JELAS
   const t = {
     id: {
       personal: "Informasi Dasar", exp: "PENGALAMAN KERJA", edu: "PENDIDIKAN", proj: "PROYEK", cert: "SERTIFIKASI", summary: "PROFIL SINGKAT", skills: "KEAHLIAN DAN KOMPETENSI",
       add: "+ Tambah", del: "Hapus", print: "Cetak / Simpan PDF",
       placeholders: { 
-        name: "Nama Lengkap (Contoh: Budi Santoso)", 
-        role: "Posisi Dilamar (Opsional, Cth: UI/UX Designer)", 
-        loc: "Kota, Provinsi (Contoh: Jakarta, Indonesia)", 
-        phone: "Nomor Telepon (Contoh: 08123456789)",
-        email: "Alamat Email (Contoh: budi@email.com)",
-        linkedin: "URL Portofolio / LinkedIn (Opsional)",
-        summary: "Tuliskan ringkasan profil Anda secara singkat dan profesional. Contoh: Lulusan Desain Grafis dengan pengalaman 3 tahun dalam merancang identitas visual...", 
-        skills: "Keahlian 1, Keahlian 2, Keahlian 3 (Pisahkan dengan koma)", 
-        expRole: "Nama Jabatan (Contoh: Graphic Designer)", 
-        expComp: "Nama Perusahaan (Contoh: PT Kreatif Maju)", 
-        expDate: "Bulan Tahun - Bulan Tahun (Cth: Jan 2021 - Des 2023)", 
-        eduInst: "Nama Kampus / Sekolah (Cth: Universitas Indonesia)", 
-        eduMaj: "Jurusan / Gelar (Cth: S1 Desain Komunikasi Visual)", 
-        eduDate: "Bulan Tahun Lulus (Cth: Agustus 2020)",
-        projName: "Nama Proyek (Contoh: Rebranding Logo Perusahaan)", 
-        projDate: "Bulan Tahun (Contoh: Maret 2023)",
-        certName: "Nama Sertifikasi (Contoh: Google UX Design)",
-        certDate: "Bulan Tahun (Contoh: Juli 2023)"
+        name: "Nama Lengkap (Contoh: Budi Santoso)", role: "Posisi Dilamar (Cth: UI/UX Designer)", loc: "Kota, Provinsi (Cth: Jakarta, Indonesia)", phone: "Nomor Telepon", email: "Alamat Email", linkedin: "URL Portofolio / LinkedIn", summary: "Tuliskan ringkasan profil Anda secara singkat dan profesional...", skills: "Keahlian 1, Keahlian 2, Keahlian 3", expRole: "Nama Jabatan", expComp: "Nama Perusahaan", expDate: "Cth: Jan 2021 - Des 2023", eduInst: "Nama Kampus / Sekolah", eduMaj: "Jurusan / Gelar", eduDate: "Bulan Tahun Lulus", projName: "Nama Proyek", projDate: "Bulan Tahun", certName: "Nama Sertifikasi", certDate: "Bulan Tahun"
       }
     },
     en: {
       personal: "Basic Information", exp: "EXPERIENCE", edu: "EDUCATION", proj: "PROJECTS", cert: "CERTIFICATION", summary: "PROFESSIONAL SUMMARY", skills: "SKILL AND COMPETENCIES",
       add: "+ Add New", del: "Remove", print: "Print / Save as PDF",
       placeholders: { 
-        name: "Full Name (e.g. John Doe)", 
-        role: "Targeted Role (Optional, e.g. UI/UX Designer)", 
-        loc: "City, Country (e.g. Jakarta, Indonesia)", 
-        phone: "Phone Number",
-        email: "Email Address",
-        linkedin: "LinkedIn / Portfolio URL (Optional)",
-        summary: "Write your professional summary here. Example: A highly motivated Graphic Designer with 3 years of experience in visual identity...", 
-        skills: "Core Skills (e.g. HTML, CSS, Figma - separated by comma)", 
-        expRole: "Job Title (e.g. Graphic Designer)", 
-        expComp: "Company Name (e.g. Creative Corp)", 
-        expDate: "Month Year - Month Year (e.g. Jan 2021 - Dec 2023)", 
-        eduInst: "University / School Name", 
-        eduMaj: "Major / Degree (e.g. Bachelor of Arts)", 
-        eduDate: "Graduation Date (e.g. August 2020)",
-        projName: "Project Name (e.g. Corporate Rebranding)", 
-        projDate: "Month Year (e.g. March 2023)",
-        certName: "Certification Name (e.g. Google UX Design)",
-        certDate: "Month Year (e.g. July 2023)"
+        name: "Full Name", role: "Targeted Role", loc: "City, Country", phone: "Phone Number", email: "Email Address", linkedin: "LinkedIn / Portfolio", summary: "Write your professional summary here...", skills: "Core Skills (e.g. HTML, CSS, Figma)", expRole: "Job Title", expComp: "Company Name", expDate: "Month Year - Month Year", eduInst: "University / School Name", eduMaj: "Major / Degree", eduDate: "Graduation Date", projName: "Project Name", projDate: "Month Year", certName: "Certification Name", certDate: "Month Year"
       }
     },
     jp: {
@@ -65,7 +29,6 @@ export default function CVMaker() {
     }
   }[lang];
 
-  // 3. STATE FORMULIR KOSONG
   const [basics, setBasics] = useState({ name: "", role: "", location: "", phone: "", email: "", linkedin: "", summary: "", skills: "" });
   const [experiences, setExperiences] = useState([{ id: 1, role: "", company: "", period: "", description: "" }]);
   const [educations, setEducations] = useState([{ id: 1, institution: "", major: "", period: "", gpa: "" }]);
@@ -84,7 +47,6 @@ export default function CVMaker() {
   const handleMagicTranslate = async (targetLangCode) => {
     setIsTranslating(true);
     setLang(targetLangCode); 
-    
     const apiLang = targetLangCode === 'jp' ? 'ja' : targetLangCode;
     
     const translateText = async (text) => {
@@ -152,11 +114,12 @@ export default function CVMaker() {
               </div>
               <h2 className="text-xs font-bold text-cyan-400 uppercase tracking-wider mb-2">Template ATS</h2>
               <div className="grid grid-cols-2 gap-2">
-                <button onClick={() => setTemplate('normal')} className={`py-2 px-2 text-[11px] font-bold rounded border transition-all ${template === 'normal' ? 'bg-cyan-600 border-cyan-400 text-white' : 'border-white/10 text-slate-400 hover:border-cyan-500/50'}`}>1. Normal (Standar ATS)</button>
+                <button onClick={() => setTemplate('normal')} className={`py-2 px-2 text-[11px] font-bold rounded border transition-all ${template === 'normal' ? 'bg-cyan-600 border-cyan-400 text-white' : 'border-white/10 text-slate-400 hover:border-cyan-500/50'}`}>1. Normal (Huda ATS)</button>
                 <button onClick={() => setTemplate('modern')} className={`py-2 px-2 text-[11px] font-bold rounded border transition-all ${template === 'modern' ? 'bg-cyan-600 border-cyan-400 text-white' : 'border-white/10 text-slate-400 hover:border-cyan-500/50'}`}>2. Modern Pro</button>
                 <button onClick={() => setTemplate('harvard')} className={`py-2 px-2 text-[11px] font-bold rounded border transition-all ${template === 'harvard' ? 'bg-cyan-600 border-cyan-400 text-white' : 'border-white/10 text-slate-400 hover:border-cyan-500/50'}`}>3. Harvard (Serif)</button>
                 <button onClick={() => setTemplate('executive')} className={`py-2 px-2 text-[11px] font-bold rounded border transition-all ${template === 'executive' ? 'bg-cyan-600 border-cyan-400 text-white' : 'border-white/10 text-slate-400 hover:border-cyan-500/50'}`}>4. Tech Executive</button>
-                <button onClick={() => setTemplate('japanese')} className={`col-span-2 py-2 px-2 text-[11px] font-bold rounded border transition-all ${template === 'japanese' ? 'bg-red-600 border-red-400 text-white' : 'border-white/10 text-slate-400 hover:border-red-500/50'}`}>5. Japanese (職務経歴書)</button>
+                <button onClick={() => setTemplate('jp_rirekisho')} className={`py-2 px-2 text-[11px] font-bold rounded border transition-all ${template === 'jp_rirekisho' ? 'bg-red-600 border-red-400 text-white' : 'border-white/10 text-slate-400 hover:border-red-500/50'}`}>5. JP Umum (履歴書)</button>
+                <button onClick={() => setTemplate('jp_shokumu')} className={`py-2 px-2 text-[11px] font-bold rounded border transition-all ${template === 'jp_shokumu' ? 'bg-red-600 border-red-400 text-white' : 'border-white/10 text-slate-400 hover:border-red-500/50'}`}>6. JP Detail (職務経歴書)</button>
               </div>
             </div>
 
@@ -264,88 +227,185 @@ export default function CVMaker() {
             <div className="w-fit mx-auto">
               
               <div id="cv-preview" className={`w-[21cm] min-w-[21cm] min-h-[29.7cm] bg-white text-black py-10 px-12 sm:px-14 shadow-2xl shrink-0 border border-gray-200 
-                ${template === 'normal' ? 'font-[Arial,Helvetica,sans-serif]' : template === 'harvard' || template === 'japanese' ? 'font-serif' : 'font-sans'}`}>
+                ${template === 'normal' ? 'font-[Arial,Helvetica,sans-serif]' : (template === 'harvard' || template.startsWith('jp_')) ? 'font-serif' : 'font-sans'}`}>
                 
                 {/* --------------------------------------------------------- */}
-                {/* 1. HEADER RENDERER */}
+                {/* 1. HEADER RENDERER KHUSUS SELAIN JEPANG UMUM */}
                 {/* --------------------------------------------------------- */}
                 
-                {/* TEMA 1: NORMAL (Standar ATS / Sesuai PDF Huda) */}
+                {/* TEMA 1: NORMAL (Persis Huda ATS) */}
                 {template === 'normal' && (
                   <div className="pb-2 text-left">
                     <h1 className="text-[22pt] font-bold mb-1 tracking-wide uppercase leading-none">{basics.name || "NAMA LENGKAP"}</h1>
-                    
-                    <p className="text-[10pt] text-black flex flex-wrap gap-x-1.5 mt-2 mb-3">
+                    <p className="text-[10pt] text-black flex flex-wrap gap-x-1.5 mt-2 mb-3 font-medium">
                       {[basics.location, basics.phone, basics.email, basics.linkedin].filter(Boolean).join(' | ')}
                     </p>
-                    
-                    {basics.summary && <p className="text-[10.5pt] leading-relaxed text-justify text-black mb-4">{basics.summary}</p>}
+                    {basics.summary && <p className="text-[10.5pt] leading-relaxed text-justify text-black mb-4 whitespace-pre-wrap">{basics.summary}</p>}
                   </div>
                 )}
 
                 {/* TEMA 2: MODERN PRO */}
                 {template === 'modern' && (
-                  <div className="border-b-[3px] border-gray-900 pb-4 mb-4 text-left">
-                    <h1 className="text-3xl font-black text-gray-900 mb-1 uppercase tracking-tight">{basics.name || "NAMA LENGKAP"}</h1>
-                    {basics.role && <h2 className="text-[15px] font-bold text-gray-600 mb-2 uppercase tracking-wide">{basics.role}</h2>}
-                    <p className="text-[13px] text-gray-700 flex flex-wrap gap-x-3 gap-y-1 font-medium">
+                  <div className="border-b-[2px] border-gray-900 pb-4 mb-4 text-left">
+                    <h1 className="text-[26pt] font-black text-gray-900 mb-1 uppercase tracking-tight leading-none">{basics.name || "NAMA LENGKAP"}</h1>
+                    {basics.role && <h2 className="text-[13pt] font-bold text-gray-600 mb-2 uppercase tracking-wide">{basics.role}</h2>}
+                    <p className="text-[10pt] text-gray-700 flex flex-wrap gap-x-3 gap-y-1 font-medium">
                       {[basics.location, basics.phone, basics.email, basics.linkedin].filter(Boolean).join(' • ')}
                     </p>
-                    {basics.summary && <p className="text-[13px] leading-relaxed text-gray-800 mt-3 border-l-2 border-gray-400 pl-3">{basics.summary}</p>}
+                    {basics.summary && <p className="text-[10.5pt] leading-relaxed text-gray-800 mt-3 text-justify">{basics.summary}</p>}
                   </div>
                 )}
 
-                {/* TEMA 3 & 4: HARVARD & EXECUTIVE */}
-                {(template === 'harvard' || template === 'executive') && (
-                  <div className={`text-center mb-6 ${template==='executive' ? 'border-b border-gray-400 pb-4' : ''}`}>
-                    <h1 className={`${template==='harvard' ? 'text-3xl font-normal' : 'text-3xl font-black tracking-tight'} uppercase mb-1`}>{basics.name || "NAMA LENGKAP"}</h1>
-                    <p className="text-[13px] text-gray-900 flex justify-center flex-wrap gap-x-1 font-medium">
+                {/* TEMA 3: HARVARD */}
+                {template === 'harvard' && (
+                  <div className="text-center mb-6">
+                    <h1 className="text-[26pt] font-normal uppercase mb-1 tracking-wide">{basics.name || "NAMA LENGKAP"}</h1>
+                    {basics.role && <p className="text-[12pt] italic text-gray-800 mb-1">{basics.role}</p>}
+                    <p className="text-[10.5pt] text-gray-900 flex justify-center flex-wrap gap-x-2">
+                      {[basics.location, basics.phone, basics.email, basics.linkedin].filter(Boolean).join(' • ')}
+                    </p>
+                    {basics.summary && <p className="text-[10.5pt] leading-relaxed text-justify text-gray-900 mt-4">{basics.summary}</p>}
+                  </div>
+                )}
+
+                {/* TEMA 4: EXECUTIVE */}
+                {template === 'executive' && (
+                  <div className="text-center border-b border-gray-400 pb-4 mb-6">
+                    <h1 className="text-[24pt] font-black tracking-tight uppercase mb-1">{basics.name || "NAMA LENGKAP"}</h1>
+                    <p className="text-[10.5pt] text-gray-900 flex justify-center flex-wrap gap-x-2 font-medium">
                       {[basics.role ? `${basics.role} |` : null, basics.location, basics.phone, basics.email, basics.linkedin].filter(Boolean).join(' • ')}
                     </p>
                     {basics.summary && (
-                      template === 'harvard' 
-                      ? <p className="text-[13px] leading-relaxed text-justify text-gray-900 mt-3">{basics.summary}</p>
-                      : <div className="mt-4"><h2 className="text-[13px] font-bold uppercase tracking-widest text-center mb-2">Profile</h2><p className="text-[13px] leading-relaxed text-justify text-gray-800">{basics.summary}</p></div>
+                      <div className="mt-4"><h2 className="text-[11pt] font-bold uppercase tracking-widest text-center mb-2">Profile</h2><p className="text-[10.5pt] leading-relaxed text-justify text-gray-800">{basics.summary}</p></div>
                     )}
                   </div>
                 )}
 
-                {/* TEMA 5: JAPANESE (職務経歴書) */}
-                {template === 'japanese' && (
+                {/* TEMA 6: JP DETAIL (職務経歴書) */}
+                {template === 'jp_shokumu' && (
                   <div className="mb-6">
                     <h1 className="text-center text-2xl tracking-[0.5em] font-bold border-b-2 border-gray-800 pb-2 mb-4">職務経歴書</h1>
-                    <div className="flex justify-between items-end mb-4 text-[13px] text-gray-900">
-                      <div>
-                        {basics.role && <p className="font-bold border-b border-gray-400 inline-block px-2 mb-1">希望職種: {basics.role}</p>}
-                      </div>
+                    <div className="flex justify-between items-end mb-4 text-[10.5pt] text-gray-900">
+                      <div>{basics.role && <p className="font-bold border-b border-gray-400 inline-block px-2 mb-1">希望職種: {basics.role}</p>}</div>
                       <div className="text-right">
-                        <p className="text-[15px] font-bold tracking-wide mb-1">氏名: {basics.name || "氏名"}</p>
+                        <p className="text-[13pt] font-bold tracking-wide mb-1">氏名: {basics.name || "氏名"}</p>
                         <p>住所: {basics.location}</p>
                         <p>電話: {basics.phone} | Email: {basics.email}</p>
                       </div>
                     </div>
                     {basics.summary && (
                       <div className="mb-4">
-                        <h2 className="text-[14px] font-bold border-l-4 border-gray-800 pl-2 mb-2 bg-gray-100 py-1">{t.summary}</h2>
-                        <p className="text-[13px] leading-relaxed text-gray-900 pl-2 whitespace-pre-wrap break-words">{basics.summary}</p>
+                        <h2 className="text-[11pt] font-bold border-l-4 border-gray-800 pl-2 mb-2 bg-gray-100 py-1">{t.summary}</h2>
+                        <p className="text-[10.5pt] leading-relaxed text-gray-900 pl-2 whitespace-pre-wrap break-words">{basics.summary}</p>
                       </div>
                     )}
                   </div>
                 )}
 
                 {/* --------------------------------------------------------- */}
-                {/* 2. MESIN PARSER BULLET POINT (BARU) */}
+                {/* TEMA 5 KHUSUS: JAPANESE RIREKISHO (CV UMUM KOTAK-KOTAK)   */}
                 {/* --------------------------------------------------------- */}
-                {/* Fungsi ini mengubah tanda strip "-" dari form menjadi bullet bulat "•" dengan indentasi rapi */}
-                {(() => {
-                  const formatDescription = (text, normalTemplate) => {
+                {template === 'jp_rirekisho' && (
+                  <div className="text-black">
+                    <div className="flex justify-between items-end mb-2">
+                      <h1 className="text-[20pt] font-bold tracking-[1em] ml-4">履歴書</h1>
+                      <span className="text-[10pt]">年　　月　　日 現在</span>
+                    </div>
+
+                    {/* Tabel Info Dasar */}
+                    <table className="w-full border-collapse border-[1.5px] border-black text-[10.5pt] mb-4">
+                      <tbody>
+                        <tr>
+                          <td className="border border-black p-1.5 w-24 bg-gray-50 text-center">氏名</td>
+                          <td className="border border-black p-2 text-[14pt] font-bold" colSpan="3">{basics.name || "名前をここに入力"}</td>
+                        </tr>
+                        <tr>
+                          <td className="border border-black p-1.5 bg-gray-50 text-center">住所</td>
+                          <td className="border border-black p-2" colSpan="3">{basics.location || "住所をここに入力"}</td>
+                        </tr>
+                        <tr>
+                          <td className="border border-black p-1.5 bg-gray-50 text-center">電話</td>
+                          <td className="border border-black p-2 w-1/3">{basics.phone}</td>
+                          <td className="border border-black p-1.5 w-24 bg-gray-50 text-center">Email</td>
+                          <td className="border border-black p-2">{basics.email}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+
+                    {/* Tabel Pendidikan & Pengalaman */}
+                    <table className="w-full border-collapse border-[1.5px] border-black text-[10.5pt] mb-4">
+                      <thead>
+                        <tr>
+                          <th className="border border-black p-1 w-32 bg-gray-50 font-normal">年 月</th>
+                          <th className="border border-black p-1 bg-gray-50 font-normal">学歴・職歴</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr><td className="border border-black p-1"></td><td className="border border-black p-1 text-center tracking-[1em] font-bold">学歴</td></tr>
+                        {educations.map((edu, i) => edu.institution && (
+                          <tr key={'e'+i}>
+                            <td className="border border-black p-1.5 text-center">{edu.period}</td>
+                            <td className="border border-black p-1.5 pl-4">{edu.institution} {edu.major} 入学/卒業</td>
+                          </tr>
+                        ))}
+                        <tr><td className="border border-black p-1"></td><td className="border border-black p-1 text-center tracking-[1em] font-bold mt-2">職歴</td></tr>
+                        {experiences.map((exp, i) => exp.company && (
+                          <tr key={'x'+i}>
+                            <td className="border border-black p-1.5 text-center">{exp.period}</td>
+                            <td className="border border-black p-1.5 pl-4">{exp.company} 入社 ({exp.role})</td>
+                          </tr>
+                        ))}
+                        <tr><td className="border border-black p-1"></td><td className="border border-black p-1.5 pr-4 text-right font-bold">以上</td></tr>
+                      </tbody>
+                    </table>
+
+                    {/* Tabel Sertifikasi */}
+                    <table className="w-full border-collapse border-[1.5px] border-black text-[10.5pt] mb-4">
+                      <thead>
+                        <tr>
+                          <th className="border border-black p-1 w-32 bg-gray-50 font-normal">年 月</th>
+                          <th className="border border-black p-1 bg-gray-50 font-normal">免許・資格</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {certs.map((cert, i) => cert.name && (
+                          <tr key={'c'+i}>
+                            <td className="border border-black p-1.5 text-center">{cert.period}</td>
+                            <td className="border border-black p-1.5 pl-4">{cert.name} 取得</td>
+                          </tr>
+                        ))}
+                        {certs.length === 0 && <tr><td className="border border-black p-4"></td><td className="border border-black p-4"></td></tr>}
+                      </tbody>
+                    </table>
+
+                    {/* Tabel PR */}
+                    <table className="w-full border-collapse border-[1.5px] border-black text-[10.5pt]">
+                      <tbody>
+                        <tr>
+                          <td className="p-3 align-top min-h-[150px] inline-block w-full">
+                            <div className="font-bold mb-2 text-gray-800 border-b border-gray-300 inline-block">自己PR・志望動機・スキル (Self PR / Motivation / Skills)</div>
+                            <div className="whitespace-pre-wrap mt-1">{basics.summary}</div>
+                            {basics.skills && <div className="mt-3 font-bold">スキル: <span className="font-normal">{basics.skills}</span></div>}
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+
+                {/* --------------------------------------------------------- */}
+                {/* 2. RENDERER UNTUK TEMPLATE SELAIN JP_RIREKISHO */}
+                {/* --------------------------------------------------------- */}
+                
+                {template !== 'jp_rirekisho' && (() => {
+                  const formatDescription = (text) => {
                     if (!text) return null;
                     return text.split('\n').map((line, i) => {
                       const isBullet = line.trim().startsWith('-');
                       return (
                         <div key={i} className={`flex ${isBullet ? 'mt-1' : ''}`}>
                           {isBullet && <span className="mr-2 font-bold">•</span>}
-                          <span className={`${isBullet ? 'flex-1' : ''} ${normalTemplate ? 'text-[10.5pt]' : 'text-[13px]'} leading-relaxed text-black text-justify`}>
+                          <span className={`${isBullet ? 'flex-1' : ''} text-[10.5pt] leading-relaxed text-black text-justify`}>
                             {isBullet ? line.replace(/^-/, '').trim() : line}
                           </span>
                         </div>
@@ -355,10 +415,10 @@ export default function CVMaker() {
 
                   const SectionTitle = ({ title }) => {
                     if (template === 'normal') return <h2 className="text-[11pt] font-bold uppercase border-b-[1.5px] border-black mb-2.5 pb-0.5 text-black tracking-wide mt-4">{title}</h2>;
-                    if (template === 'executive') return <h2 className="text-[12px] font-bold uppercase border-b border-gray-300 mb-2 pb-1 text-gray-900 tracking-widest mt-3">{title}</h2>;
-                    if (template === 'modern') return <h2 className="text-[15px] font-black uppercase text-gray-900 border-b-2 border-gray-800 mb-3 pb-1 mt-4">{title}</h2>;
-                    if (template === 'harvard') return <h2 className="text-[13px] font-bold uppercase text-center border-b border-black mb-3 pb-1 tracking-widest mt-4">{title}</h2>;
-                    if (template === 'japanese') return <h2 className="text-[14px] font-bold border-l-4 border-gray-800 pl-2 mb-2 mt-4 bg-gray-100 py-1">{title}</h2>;
+                    if (template === 'executive') return <h2 className="text-[11pt] font-bold uppercase border-b border-gray-300 mb-2 pb-1 text-gray-900 tracking-widest mt-3">{title}</h2>;
+                    if (template === 'modern') return <h2 className="text-[13pt] font-black uppercase text-gray-900 border-b-2 border-gray-800 mb-3 pb-1 mt-4">{title}</h2>;
+                    if (template === 'harvard') return <h2 className="text-[11pt] font-bold uppercase text-center border-b border-black mb-3 pb-1 tracking-widest mt-4">{title}</h2>;
+                    if (template === 'jp_shokumu') return <h2 className="text-[11pt] font-bold border-l-4 border-gray-800 pl-2 mb-2 mt-4 bg-gray-100 py-1">{title}</h2>;
                   };
 
                   const RenderEducation = () => educations.some(e => e.institution.trim() !== "") && (
@@ -367,7 +427,6 @@ export default function CVMaker() {
                       {educations.filter(e => e.institution.trim() !== "").map((edu, idx) => (
                         <div key={idx} className="mb-2.5 break-inside-avoid">
                           <div className="flex justify-between items-start">
-                            {/* Instansi Uppercase di mode Normal */}
                             <h3 className={`text-[10.5pt] text-black ${template === 'normal' ? 'uppercase font-bold' : 'font-bold'}`}>{edu.institution}</h3>
                             <span className="text-[10.5pt] text-black whitespace-nowrap">{edu.period}</span>
                           </div>
@@ -382,7 +441,7 @@ export default function CVMaker() {
                     <div className="mb-3 break-inside-avoid">
                       <SectionTitle title={t.skills} />
                       {template === 'normal' ? (
-                        <ul className="list-disc list-inside text-[10.5pt] text-black grid grid-cols-1 sm:grid-cols-2 gap-x-2 mt-1">
+                        <ul className="list-disc list-inside text-[10.5pt] text-black grid grid-cols-2 sm:grid-cols-3 gap-x-2 mt-1">
                           {basics.skills.split(',').map((skill, i) => <li key={i}>{skill.trim()}</li>)}
                         </ul>
                       ) : (
@@ -397,12 +456,12 @@ export default function CVMaker() {
                       {experiences.filter(e => e.company.trim() !== "").map((exp, idx) => (
                         <div key={idx} className="mb-3.5 break-inside-avoid">
                           <div className="flex justify-between items-start">
-                            <h3 className={`text-[10.5pt] text-black ${template === 'normal' ? 'font-bold' : 'font-bold'}`}>{exp.company}</h3>
+                            <h3 className={`text-[10.5pt] text-black font-bold`}>{exp.company}</h3>
                             <span className="text-[10.5pt] text-black whitespace-nowrap">{exp.period}</span>
                           </div>
                           <div className={`text-[10.5pt] text-black mb-1 ${template === 'normal' ? 'font-normal' : 'font-bold text-gray-800'}`}>{exp.role}</div>
                           <div className={`${template === 'normal' ? 'ml-0' : 'pl-3'}`}>
-                             {formatDescription(exp.description, template === 'normal')}
+                             {formatDescription(exp.description)}
                           </div>
                         </div>
                       ))}
@@ -419,7 +478,7 @@ export default function CVMaker() {
                             <span className="text-[10.5pt] text-black whitespace-nowrap">{proj.period}</span>
                           </div>
                           <div className={`mt-1 ${template === 'normal' ? 'ml-0' : 'pl-3'}`}>
-                            {formatDescription(proj.description, template === 'normal')}
+                            {formatDescription(proj.description)}
                           </div>
                         </div>
                       ))}
@@ -437,16 +496,15 @@ export default function CVMaker() {
                           </div>
                           <div className="text-[10.5pt] text-black italic mb-1">{cert.issuer}</div>
                           <div className={`${template === 'normal' ? 'ml-0' : 'pl-3'}`}>
-                            {formatDescription(cert.description, template === 'normal')}
+                            {formatDescription(cert.description)}
                           </div>
                         </div>
                       ))}
                     </div>
                   );
 
-                  // URUTAN SESUAI TEMA
                   if (template === 'normal') return <>{RenderEducation()}{RenderSkills()}{RenderExperience()}{RenderProjects()}{RenderCerts()}</>;
-                  if (template === 'modern' || template === 'japanese') return <>{RenderExperience()}{RenderEducation()}{RenderSkills()}{RenderProjects()}{RenderCerts()}</>;
+                  if (template === 'modern' || template === 'jp_shokumu') return <>{RenderExperience()}{RenderEducation()}{RenderSkills()}{RenderProjects()}{RenderCerts()}</>;
                   return <>{RenderEducation()}{RenderExperience()}{RenderProjects()}{RenderCerts()}{RenderSkills()}</>;
                   
                 })()}
