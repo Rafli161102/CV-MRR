@@ -21,9 +21,11 @@ export default function Projects() {
     <div className="min-h-screen pt-32 pb-48 relative">
       <div className="max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
         
-        {/* HEADER GALERI */}
-        <div className="mb-20 md:mb-28 max-w-3xl">
-          <h1 className="text-5xl sm:text-7xl font-black tracking-tight text-white mb-8 drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]">
+        {/* =========================================================================
+           HEADER GALERI
+           ========================================================================= */}
+        <div className="mb-10 md:mb-16 max-w-3xl">
+          <h1 className="text-5xl sm:text-7xl font-black tracking-tight text-white mb-6 drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]">
             Galeri <span className="text-cyan-500">Portofolio</span>
           </h1>
           <p className="text-xl sm:text-2xl text-slate-400 font-light leading-relaxed">
@@ -31,30 +33,38 @@ export default function Projects() {
           </p>
         </div>
 
-        {/* KATEGORI FILTER */}
-        <div className="mb-20 md:mb-24 flex flex-wrap gap-4 items-center bg-[#0A1329]/50 backdrop-blur-sm p-3 rounded-full border border-white/5 selection:bg-cyan-500">
-          <span className="text-xs font-bold tracking-widest text-slate-500 uppercase px-4 hidden md:block">Filter:</span>
-          {availableCategories.map((category, index) => (
-            <button
-              key={index}
-              onClick={() => setActiveCategory(category)}
-              className={`px-6 py-3 rounded-full text-sm font-semibold tracking-wide transition-all duration-300 whitespace-nowrap border ${
-                activeCategory === category
-                  ? 'bg-cyan-600 text-white border-cyan-500 shadow-[0_0_20px_rgba(6,182,212,0.5)] scale-105'
-                  : 'bg-[#060D1F] text-slate-300 border-white/10 hover:border-cyan-500/30 hover:text-white'
-              }`}
-            >
-              {category}
-              {activeCategory === category && (
-                <span className="ml-2 text-xs opacity-70">({
-                  category === "All" ? PROJECT_LIST.length : PROJECT_LIST.filter(p => p.category === category).length
-                })</span>
-              )}
-            </button>
-          ))}
+        {/* =========================================================================
+           KATEGORI FILTER (BEHANCE STYLE - HORIZONTAL SWIPE)
+           ========================================================================= */}
+        {/* Trik -mx-6 agar scroll bisa tembus ke ujung layar HP */}
+        <div className="-mx-6 px-6 lg:mx-0 lg:px-0 mb-12 md:mb-20">
+          <div className="flex flex-nowrap gap-3 md:gap-4 overflow-x-auto snap-x pb-4 items-center [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+            <span className="text-xs font-bold tracking-widest text-slate-500 uppercase pr-2 hidden md:block shrink-0">Filter:</span>
+            
+            {availableCategories.map((category, index) => (
+              <button
+                key={index}
+                onClick={() => setActiveCategory(category)}
+                className={`snap-start shrink-0 px-6 py-2.5 rounded-full text-sm font-bold tracking-wide transition-all duration-300 border ${
+                  activeCategory === category
+                    ? 'bg-cyan-600 text-white border-cyan-500 shadow-[0_0_15px_rgba(6,182,212,0.4)]'
+                    : 'bg-[#0A1329]/80 backdrop-blur-sm text-slate-400 border-white/5 hover:bg-[#0D1836] hover:text-white'
+                }`}
+              >
+                {category}
+                {activeCategory === category && (
+                  <span className="ml-2 text-xs opacity-80 font-medium">({
+                    category === "All" ? PROJECT_LIST.length : PROJECT_LIST.filter(p => p.category === category).length
+                  })</span>
+                )}
+              </button>
+            ))}
+          </div>
         </div>
         
-        {/* GRID PORTOFOLIO */}
+        {/* =========================================================================
+           GRID PORTOFOLIO
+           ========================================================================= */}
         {filteredProjects.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 md:gap-14 transition-all duration-500 ease-in-out">
             {filteredProjects.map((project) => (
@@ -97,7 +107,6 @@ export default function Projects() {
           </div>
         ) : (
           <div className="text-center py-24 bg-[#0A1329] rounded-[3rem] border border-slate-800 selection:bg-cyan-500">
-            {/* Komentar sudah saya amankan di dalam div ini */}
             <div className="text-6xl mb-6">🔍</div>
             <h3 className="text-2xl font-bold text-white mb-2">Belum ada karya.</h3>
             <p className="text-slate-500">Kategori <span className="text-cyan-400 font-medium">{activeCategory}</span> belum memiliki project yang di-upload.</p>
