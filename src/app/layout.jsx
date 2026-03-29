@@ -22,93 +22,83 @@ export default function RootLayout({ children }) {
         <title>MRR | Graphic Designer & Community Founder</title>
         <meta name="description" content="Portofolio Profesional Muhammad Rafli Ramadhan (MRR). Spesialis Brand Identity, Packaging, dan Social Media Design." />
       </head>
-      <body className="bg-[#060D1F] text-slate-300 font-sans selection:bg-cyan-500 selection:text-white overflow-x-hidden relative">
+      <body className="bg-[#060D1F] text-slate-300 font-sans selection:bg-cyan-500 selection:text-white overflow-x-hidden relative min-h-screen flex flex-col">
         
-        {/* Latar Belakang Clean Deep Cyber Space (Global) */}
+        {/* Latar Belakang Clean Deep Cyber Space */}
         <div className="fixed inset-0 bg-gradient-to-br from-[#060D1F] via-[#0D1836] to-[#060D1F] pointer-events-none z-0"></div>
 
         {/* =========================================================================
-           HEADER & NAVBAR DENGAN GOLDEN RATIO & UNIK HAMBURGER
+           HEADER & NAVBAR (z-50)
            ========================================================================= */}
-        <nav className="fixed top-0 left-0 w-full z-50 bg-[#060D1F]/80 backdrop-blur-lg border-b border-white/5 selection:bg-cyan-500">
-          <div className="max-w-7xl mx-auto px-6 py-5 md:py-6 flex justify-between items-center relative">
+        <nav className="fixed top-0 left-0 w-full z-50 bg-[#060D1F]/90 backdrop-blur-md border-b border-white/5">
+          <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
             
-            {/* Logo MRR (Golden Ratio Sizing) */}
-            <Link href="/" className="group relative z-50">
+            {/* Logo MRR */}
+            <Link href="/" className="group relative z-[60]">
               <span className="text-3xl font-extrabold tracking-tighter text-white group-hover:text-cyan-400 transition-colors duration-300">
                 MRR<span className="text-cyan-500 group-hover:text-white">.</span>
               </span>
-              <div className="absolute -bottom-1 left-0 w-0 h-0.5 bg-cyan-500 group-hover:w-full transition-all duration-300"></div>
             </Link>
 
-            {/* DEKSTOP MENU (Hide on Mobile) */}
-            <div className="hidden md:flex items-center gap-8 lg:gap-10 font-medium text-sm tracking-widest uppercase">
+            {/* DEKSTOP MENU (Sembunyi di HP) */}
+            <div className="hidden md:flex items-center gap-8 lg:gap-10 font-medium text-sm tracking-widest uppercase relative z-[60]">
               {navLinks.map((link, index) => (
-                <Link key={index} href={link.href} className="relative group text-slate-200 hover:text-white transition-colors duration-300">
+                <Link key={index} href={link.href} className="text-slate-200 hover:text-cyan-400 transition-colors duration-300">
                   {link.name}
-                  <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-1 h-1 bg-cyan-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-[0_0_10px_rgba(6,182,212,1)]"></div>
                 </Link>
               ))}
             </div>
 
             {/* =========================================================================
-               TOMBOL HAMBURGER UNIK & KEREN (Mobile Only)
+               TOMBOL HAMBURGER PRESISI (z-60 agar selalu di atas menu)
                ========================================================================= */}
             <button 
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="md:hidden relative z-50 w-10 h-10 flex flex-col justify-center items-center group bg-[#0A1329] rounded-full border border-white/10 hover:border-cyan-500/50 hover:shadow-[0_0_15px_rgba(6,182,212,0.3)] transition-all duration-300"
-              aria-label="Toggle Menu"
+              className="md:hidden relative z-[60] w-12 h-12 flex flex-col justify-center items-end gap-1.5 focus:outline-none"
             >
-              {/* Garis Hamburger Atas */}
-              <div className={`w-5 h-0.5 bg-cyan-400 rounded-full transition-all duration-500 ease-out ${isMenuOpen ? 'rotate-45 translate-y-1.5' : 'mb-1.5'}`}></div>
-              {/* Garis Hamburger Tengah (Fade Out) */}
-              <div className={`w-5 h-0.5 bg-cyan-400 rounded-full transition-all duration-500 ease-out ${isMenuOpen ? 'opacity-0 scale-0' : 'opacity-100'}`}></div>
-              {/* Garis Hamburger Bawah */}
-              <div className={`w-5 h-0.5 bg-cyan-400 rounded-full transition-all duration-500 ease-out ${isMenuOpen ? '-rotate-45 -translate-y-1.5' : 'mt-1.5'}`}></div>
-              
-              {/* Efek Cahaya Saat Hover */}
-              <div className="absolute inset-0 rounded-full bg-cyan-500 opacity-0 group-hover:opacity-10 blur-md transition-opacity duration-300"></div>
+              <span className={`block h-0.5 bg-cyan-400 rounded-full transition-all duration-400 ease-in-out ${isMenuOpen ? 'w-7 rotate-45 translate-y-2' : 'w-7'}`}></span>
+              <span className={`block h-0.5 bg-cyan-400 rounded-full transition-all duration-400 ease-in-out ${isMenuOpen ? 'w-0 opacity-0' : 'w-5'}`}></span>
+              <span className={`block h-0.5 bg-cyan-400 rounded-full transition-all duration-400 ease-in-out ${isMenuOpen ? 'w-7 -rotate-45 -translate-y-2' : 'w-7'}`}></span>
             </button>
 
-          </div>
-
-          {/* =========================================================================
-             MOBILE MENU OVERLAY (Slide & Fade Animation)
-             ========================================================================= */}
-          <div className={`fixed inset-0 bg-[#060D1F]/98 backdrop-blur-xl z-40 transition-all duration-700 ease-in-out ${isMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible'}`}>
-            <div className="flex flex-col items-center justify-center h-full gap-8 p-10 font-bold text-3xl sm:text-4xl tracking-tight selection:bg-cyan-500 selection:text-white">
-              {navLinks.map((link, index) => (
-                <Link 
-                  key={index} 
-                  href={link.href} 
-                  onClick={() => setIsMenuOpen(false)} // Tutup menu saat link diklik
-                  className={`text-white hover:text-cyan-400 transition-all duration-500 transform ${isMenuOpen ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}
-                  style={{ transitionDelay: `${index * 100}ms` }} // Efek muncul bergantian
-                >
-                  {link.name}<span className="text-cyan-500">.</span>
-                </Link>
-              ))}
-              
-              {/* Garis Dekorasi Golden Ratio Mobile */}
-              <div className="w-16 h-0.5 bg-cyan-800 rounded-full mt-10"></div>
-            </div>
           </div>
         </nav>
 
         {/* =========================================================================
-           KONTEN HALAMAN (children)
+           MOBILE MENU OVERLAY (PINDAH KE LUAR NAVBAR)
            ========================================================================= */}
-        <main className="relative z-10 pt-10 selection:bg-cyan-500 selection:text-white overflow-x-hidden">
+        <div className={`fixed inset-0 bg-[#060D1F]/98 backdrop-blur-2xl z-40 transition-all duration-500 ease-in-out flex flex-col items-center justify-center ${isMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'}`}>
+          <div className="flex flex-col items-center gap-10 text-4xl font-black tracking-tight">
+            {navLinks.map((link, index) => (
+              <Link 
+                key={index} 
+                href={link.href} 
+                onClick={() => setIsMenuOpen(false)} // Tutup menu otomatis saat diklik
+                className={`text-white hover:text-cyan-400 transition-all duration-500 ${isMenuOpen ? 'translate-y-0 opacity-100' : 'translate-y-12 opacity-0'}`}
+                style={{ transitionDelay: `${index * 75}ms` }} // Efek muncul berurutan (Cascade)
+              >
+                {link.name}<span className="text-cyan-500">.</span>
+              </Link>
+            ))}
+          </div>
+          {/* Garis Dekorasi Bawah Menu */}
+          <div className={`w-16 h-1 bg-cyan-800 rounded-full mt-12 transition-all duration-700 delay-300 ${isMenuOpen ? 'scale-100 opacity-100' : 'scale-0 opacity-0'}`}></div>
+        </div>
+
+        {/* =========================================================================
+           KONTEN HALAMAN (Diberi padding atas pt-28 agar tidak tertutup header)
+           ========================================================================= */}
+        <main className="relative z-10 pt-28 flex-grow">
           {children}
         </main>
 
         {/* =========================================================================
-           FOOTER (Golden Ratio & Clean)
+           FOOTER
            ========================================================================= */}
         <footer className="relative z-10 border-t border-white/5 bg-[#060D1F]/50 backdrop-blur-sm mt-32 py-12 px-6 text-center text-sm text-slate-500 font-light selection:bg-cyan-500">
           <div className="max-w-7xl mx-auto flex flex-col items-center gap-4">
             <p>© 2026 Muhammad Rafli Ramadhan. All Rights Reserved.</p>
-            <div className="flex gap-6 items-center uppercase tracking-widest text-xs font-bold text-cyan-500/80">
+            <div className="flex gap-4 sm:gap-6 items-center uppercase tracking-widest text-[10px] sm:text-xs font-bold text-cyan-500/80">
               <span>Graphic Designer</span>
               <div className="w-1 h-1 bg-slate-700 rounded-full"></div>
               <span>AquaNime Founder</span>
