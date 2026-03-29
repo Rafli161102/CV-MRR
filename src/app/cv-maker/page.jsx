@@ -193,7 +193,7 @@ export default function CVMaker() {
                   <input type="text" value={exp.company} onChange={(e) => handleArrayChange(setExperiences, experiences, index, 'company', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:outline-none mb-1" placeholder={t.placeholders.expComp} />
                   <input type="text" value={exp.role} onChange={(e) => handleArrayChange(setExperiences, experiences, index, 'role', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:outline-none mb-1" placeholder={t.placeholders.expRole} />
                   <input type="text" value={exp.period} onChange={(e) => handleArrayChange(setExperiences, experiences, index, 'period', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:outline-none mb-1" placeholder={t.placeholders.expDate} />
-                  <textarea value={exp.description} onChange={(e) => handleArrayChange(setExperiences, experiences, index, 'description', e.target.value)} rows="2" className="w-full mt-1 bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:outline-none" placeholder="- Tulis tanggung jawab utama..."></textarea>
+                  <textarea value={exp.description} onChange={(e) => handleArrayChange(setExperiences, experiences, index, 'description', e.target.value)} rows="3" className="w-full mt-1 bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:outline-none" placeholder="- Tulis tanggung jawab utama..."></textarea>
                 </div>
               ))}
             </div>
@@ -211,7 +211,7 @@ export default function CVMaker() {
                   <input type="text" value={edu.major} onChange={(e) => handleArrayChange(setEducations, educations, index, 'major', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:outline-none mb-1" placeholder={t.placeholders.eduMaj} />
                   <div className="grid grid-cols-2 gap-2 mt-1">
                     <input type="text" value={edu.period} onChange={(e) => handleArrayChange(setEducations, educations, index, 'period', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:outline-none" placeholder={t.placeholders.eduDate} />
-                    <input type="text" value={edu.gpa} onChange={(e) => handleArrayChange(setEducations, educations, index, 'gpa', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:outline-none" placeholder="Info Lain / IPK" />
+                    <input type="text" value={edu.gpa} onChange={(e) => handleArrayChange(setEducations, educations, index, 'gpa', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:outline-none" placeholder="GPA / IPK" />
                   </div>
                 </div>
               ))}
@@ -230,7 +230,7 @@ export default function CVMaker() {
                     <input type="text" value={proj.name} onChange={(e) => handleArrayChange(setProjects, projects, index, 'name', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:outline-none" placeholder={t.placeholders.projName} />
                     <input type="text" value={proj.period} onChange={(e) => handleArrayChange(setProjects, projects, index, 'period', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:outline-none" placeholder={t.placeholders.projDate} />
                   </div>
-                  <textarea value={proj.description} onChange={(e) => handleArrayChange(setProjects, projects, index, 'description', e.target.value)} rows="2" className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:outline-none mt-1" placeholder="- Deskripsi proyek..."></textarea>
+                  <textarea value={proj.description} onChange={(e) => handleArrayChange(setProjects, projects, index, 'description', e.target.value)} rows="3" className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:outline-none mt-1" placeholder="- Deskripsi proyek..."></textarea>
                 </div>
               ))}
             </div>
@@ -263,21 +263,24 @@ export default function CVMaker() {
           <div className="w-full xl:w-7/12 bg-[#0A1329]/50 p-4 sm:p-6 rounded-[2rem] overflow-x-auto [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-thumb]:bg-cyan-600 [&::-webkit-scrollbar-thumb]:rounded-full">
             <div className="w-fit mx-auto">
               
-              <div id="cv-preview" className={`w-[21cm] min-w-[21cm] min-h-[29.7cm] bg-white text-black py-12 px-12 sm:px-14 shadow-2xl shrink-0 border border-gray-200 
+              <div id="cv-preview" className={`w-[21cm] min-w-[21cm] min-h-[29.7cm] bg-white text-black py-10 px-12 sm:px-14 shadow-2xl shrink-0 border border-gray-200 
                 ${template === 'normal' ? 'font-[Arial,Helvetica,sans-serif]' : template === 'harvard' || template === 'japanese' ? 'font-serif' : 'font-sans'}`}>
                 
                 {/* --------------------------------------------------------- */}
                 {/* 1. HEADER RENDERER */}
                 {/* --------------------------------------------------------- */}
                 
-                {/* TEMA 1: NORMAL (Standar ATS / Sesuai PDF) */}
+                {/* TEMA 1: NORMAL (Standar ATS / Sesuai PDF Huda) */}
+                {/* BUG FIX: Memisahkan blok Contact (Centered) dan blok Summary (Justified full width) */}
                 {template === 'normal' && (
-                  <div className="text-center pb-2">
-                    <h1 className="text-[22pt] font-bold mb-1 tracking-wide uppercase leading-none">{basics.name || "NAMA LENGKAP"}</h1>
-                    
-                    <p className="text-[10pt] text-black mb-3 flex flex-wrap justify-center gap-x-1.5 mt-2">
-                      {[basics.location, basics.phone, basics.email, basics.linkedin].filter(Boolean).join(' | ')}
-                    </p>
+                  <div className="pb-2">
+                    <div className="text-center mb-3 mt-2">
+                      <h1 className="text-[22pt] font-bold mb-1 tracking-wide uppercase leading-none">{basics.name || "NAMA LENGKAP"}</h1>
+                      
+                      <p className="text-[10pt] text-black flex flex-wrap justify-center gap-x-1.5 mt-2">
+                        {[basics.location, basics.phone, basics.email, basics.linkedin].filter(Boolean).join(' | ')}
+                      </p>
+                    </div>
                     
                     {basics.summary && <p className="text-[10.5pt] leading-relaxed text-justify text-black mb-4">{basics.summary}</p>}
                   </div>
@@ -334,12 +337,26 @@ export default function CVMaker() {
                 )}
 
                 {/* --------------------------------------------------------- */}
-                {/* 2. SECTION RENDERER BERDASARKAN TEMA */}
+                {/* 2. MESIN PARSER BULLET POINT (BARU) */}
                 {/* --------------------------------------------------------- */}
-                
+                {/* Fungsi ini mengubah tanda strip "-" dari form menjadi bullet bulat "•" dengan indentasi rapi */}
                 {(() => {
+                  const formatDescription = (text, normalTemplate) => {
+                    if (!text) return null;
+                    return text.split('\n').map((line, i) => {
+                      const isBullet = line.trim().startsWith('-');
+                      return (
+                        <div key={i} className={`flex ${isBullet ? 'mt-1' : ''}`}>
+                          {isBullet && <span className="mr-2 font-bold">•</span>}
+                          <span className={`${isBullet ? 'flex-1' : ''} ${normalTemplate ? 'text-[10.5pt]' : 'text-[13px]'} leading-relaxed text-black text-justify`}>
+                            {isBullet ? line.replace(/^-/, '').trim() : line}
+                          </span>
+                        </div>
+                      );
+                    });
+                  };
+
                   const SectionTitle = ({ title }) => {
-                    // Normal style persis seperti PDF Huda (garis bawah solid)
                     if (template === 'normal') return <h2 className="text-[11pt] font-bold uppercase border-b-[1.5px] border-black mb-2.5 pb-0.5 text-black tracking-wide mt-4">{title}</h2>;
                     if (template === 'executive') return <h2 className="text-[12px] font-bold uppercase border-b border-gray-300 mb-2 pb-1 text-gray-900 tracking-widest mt-3">{title}</h2>;
                     if (template === 'modern') return <h2 className="text-[15px] font-black uppercase text-gray-900 border-b-2 border-gray-800 mb-3 pb-1 mt-4">{title}</h2>;
@@ -353,12 +370,11 @@ export default function CVMaker() {
                       {educations.filter(e => e.institution.trim() !== "").map((edu, idx) => (
                         <div key={idx} className="mb-2.5 break-inside-avoid">
                           <div className="flex justify-between items-start">
-                            {/* Instansi Uppercase di mode Normal */}
                             <h3 className={`text-[10.5pt] text-black ${template === 'normal' ? 'uppercase font-bold' : 'font-bold'}`}>{edu.institution}</h3>
                             <span className="text-[10.5pt] text-black whitespace-nowrap">{edu.period}</span>
                           </div>
                           <div className="text-[10.5pt] text-black">{edu.major}</div>
-                          {edu.gpa && <div className="text-[10.5pt] text-black">{edu.gpa}</div>}
+                          {edu.gpa && <div className="text-[10.5pt] text-black">{template === 'normal' && lang === 'en' ? `Graduated with a GPA of ${edu.gpa}.` : edu.gpa}</div>}
                         </div>
                       ))}
                     </div>
@@ -386,8 +402,10 @@ export default function CVMaker() {
                             <h3 className={`text-[10.5pt] text-black ${template === 'normal' ? 'font-bold' : 'font-bold'}`}>{exp.company}</h3>
                             <span className="text-[10.5pt] text-black whitespace-nowrap">{exp.period}</span>
                           </div>
-                          <div className={`text-[10.5pt] text-black mb-1 ${template === 'normal' ? 'font-medium' : 'font-bold text-gray-800'}`}>{exp.role}</div>
-                          <div className={`text-[10.5pt] leading-relaxed text-black whitespace-pre-wrap break-words text-justify ${template === 'normal' ? 'ml-0' : 'pl-3'}`}>{exp.description}</div>
+                          <div className={`text-[10.5pt] text-black mb-1 ${template === 'normal' ? 'font-normal' : 'font-bold text-gray-800'}`}>{exp.role}</div>
+                          <div className={`${template === 'normal' ? 'ml-0' : 'pl-3'}`}>
+                             {formatDescription(exp.description, template === 'normal')}
+                          </div>
                         </div>
                       ))}
                     </div>
@@ -402,7 +420,9 @@ export default function CVMaker() {
                             <h3 className="text-[10.5pt] font-bold text-black">{proj.name}</h3>
                             <span className="text-[10.5pt] text-black whitespace-nowrap">{proj.period}</span>
                           </div>
-                          <div className="text-[10.5pt] leading-relaxed text-black whitespace-pre-wrap break-words text-justify mt-1">{proj.description}</div>
+                          <div className={`mt-1 ${template === 'normal' ? 'ml-0' : 'pl-3'}`}>
+                            {formatDescription(proj.description, template === 'normal')}
+                          </div>
                         </div>
                       ))}
                     </div>
@@ -418,20 +438,17 @@ export default function CVMaker() {
                             <span className="text-[10.5pt] text-black whitespace-nowrap">{cert.period}</span>
                           </div>
                           <div className="text-[10.5pt] text-black italic mb-1">{cert.issuer}</div>
-                          <div className="text-[10.5pt] leading-relaxed text-black whitespace-pre-wrap break-words text-justify">{cert.description}</div>
+                          <div className={`${template === 'normal' ? 'ml-0' : 'pl-3'}`}>
+                            {formatDescription(cert.description, template === 'normal')}
+                          </div>
                         </div>
                       ))}
                     </div>
                   );
 
                   // URUTAN SESUAI TEMA
-                  // NORMAL ATS (Persis PDF Huda): Edu -> Skills -> Exp -> Proj -> Certs
                   if (template === 'normal') return <>{RenderEducation()}{RenderSkills()}{RenderExperience()}{RenderProjects()}{RenderCerts()}</>;
-                  
-                  // MODERN & JAPANESE: Exp -> Edu -> Skills -> Proj -> Certs
                   if (template === 'modern' || template === 'japanese') return <>{RenderExperience()}{RenderEducation()}{RenderSkills()}{RenderProjects()}{RenderCerts()}</>;
-                  
-                  // UMUM: Edu -> Exp -> Proj -> Certs -> Skills
                   return <>{RenderEducation()}{RenderExperience()}{RenderProjects()}{RenderCerts()}{RenderSkills()}</>;
                   
                 })()}
