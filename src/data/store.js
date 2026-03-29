@@ -54,11 +54,34 @@ export const PROJECT_LIST = [
   }
 ];
 
+// ... (Bagian PROJECT_LIST biarkan saja) ...
+
 export const WORK_EXPERIENCE = [
-  // Data ini akan kita aktifkan saat mengerjakan halaman About nanti
+  {
+    year: "2023 - Sekarang",
+    role: "Founder & Creative Director",
+    company: "AquaNime Community",
+    description: "Mendirikan dan memimpin komunitas kreatif. Bertanggung jawab atas seluruh identitas visual, branding, dan strategi publikasi."
+  },
+  {
+    year: "2022 - 2023",
+    role: "Graphic Designer",
+    company: "Bstation Indonesia",
+    description: "Merancang aset visual promosi untuk media sosial dan event offline (Bstation Anime Carnival)."
+  },
+  {
+    year: "2021 - 2022",
+    role: "Freelance Designer",
+    company: "Berbagai Klien",
+    description: "Menyediakan layanan desain grafis mulai dari logo, packaging, hingga materi cetak untuk UMKM dan perusahaan seperti Pertamina."
+  }
 ];
+
+// ... (Bagian CERTIFICATES biarkan saja) ...
+
 
 export const CERTIFICATES = [
   // Data ini akan kita aktifkan saat mengerjakan halaman About nanti
 ];
+
 
