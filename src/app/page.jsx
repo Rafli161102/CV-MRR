@@ -4,30 +4,26 @@ import Link from 'next/link';
 import { PROJECT_LIST } from '../data/store';
 
 export default function Home() {
-  // Mengambil 3 karya pertama dari store.js untuk dipajang di Beranda
   const featuredProjects = PROJECT_LIST.slice(0, 3);
+  
+  // Ganti dengan nomor WhatsApp aslimu (format: 628...)
+  const whatsappNumber = "6285155020363"; 
+  const waMessage = "Halo Rafli, saya tertarik dengan portofolio desain Anda dan ingin berdiskusi lebih lanjut.";
 
   return (
     <div className="min-h-screen bg-[#060D1F] text-slate-300 font-sans selection:bg-cyan-500 selection:text-white relative overflow-hidden">
       
-      {/* =========================================================================
-         BACKGROUND CYBER SPACE FX
-         ========================================================================= */}
+      {/* BACKGROUND */}
       <div className="fixed inset-0 bg-gradient-to-br from-[#060D1F] via-[#0D1836] to-[#060D1F] pointer-events-none z-0"></div>
-      
-      {/* Orbs Sinar Cyan Melayang */}
       <div className="absolute top-[-10%] left-[-10%] w-[40rem] h-[40rem] bg-cyan-900/20 rounded-full blur-[120px] pointer-events-none z-0"></div>
       <div className="absolute bottom-[-10%] right-[-5%] w-[30rem] h-[30rem] bg-cyan-600/10 rounded-full blur-[100px] pointer-events-none z-0"></div>
 
       <div className="relative z-10 pt-32 pb-32">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           
-          {/* =========================================================================
-             HERO SECTION (SAPAAN UTAMA)
-             ========================================================================= */}
+          {/* HERO SECTION */}
           <div className="flex flex-col lg:flex-row items-center justify-between gap-16 lg:gap-8 min-h-[70vh]">
             
-            {/* Bagian Teks (Kiri) */}
             <div className="w-full lg:w-[61.8%] flex flex-col justify-center text-center lg:text-left">
               <div className="inline-block px-4 py-2 bg-[#0A1329]/80 border border-cyan-500/30 rounded-full text-cyan-400 text-xs font-bold tracking-[0.2em] uppercase mb-8 self-center lg:self-start shadow-[0_0_15px_rgba(6,182,212,0.15)]">
                 Graphic Designer & Founder
@@ -45,24 +41,39 @@ export default function Home() {
                 Halo, saya Rafli. Membantu brand dan entitas mencapai potensi maksimalnya melalui identitas visual yang presisi, estetis, dan strategis.
               </p>
               
-              <div className="flex flex-col sm:flex-row items-center gap-6 justify-center lg:justify-start">
-                <Link href="/projects" className="w-full sm:w-auto px-10 py-4 bg-cyan-600 hover:bg-cyan-500 text-white font-bold rounded-full transition-all shadow-[0_0_20px_rgba(6,182,212,0.4)] hover:shadow-[0_0_40px_rgba(6,182,212,0.6)] hover:scale-105 tracking-wide text-center">
-                  Lihat Karya Terbaik
-                </Link>
-                <Link href="/about" className="w-full sm:w-auto px-10 py-4 bg-transparent border border-white/20 hover:border-cyan-400 text-slate-300 hover:text-cyan-400 font-bold rounded-full transition-all tracking-wide text-center group">
-                  Kenali Lebih Jauh <span className="inline-block transition-transform group-hover:translate-x-2">→</span>
-                </Link>
+              {/* TOMBOL CALL TO ACTION (DIPERBARUI) */}
+              <div className="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start">
+                
+                {/* Tombol Download CV (Mengarah ke folder public) */}
+                <a 
+                  href="/CV_Muhammad_Rafli_Ramadhan.pdf" 
+                  download 
+                  className="w-full sm:w-auto px-8 py-4 bg-cyan-600 hover:bg-cyan-500 text-white font-bold rounded-full transition-all shadow-[0_0_20px_rgba(6,182,212,0.4)] hover:shadow-[0_0_40px_rgba(6,182,212,0.6)] hover:scale-105 tracking-wide text-center flex justify-center items-center gap-2"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                  Download CV
+                </a>
+
+                {/* Tombol Hubungi WhatsApp */}
+                <a 
+                  href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(waMessage)}`}
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="w-full sm:w-auto px-8 py-4 bg-[#25D366]/10 border border-[#25D366]/50 hover:bg-[#25D366] hover:text-white text-[#25D366] font-bold rounded-full transition-all tracking-wide text-center group flex justify-center items-center gap-2"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.1.824z"/></svg>
+                  Mulai Diskusi
+                </a>
+
               </div>
             </div>
 
-            {/* Bagian Visual (Kanan) - Golden Ratio Frame */}
-            <div className="w-full lg:w-[38.2%] flex justify-center lg:justify-end relative">
+            {/* Bagian Visual Frame */}
+            <div className="w-full lg:w-[38.2%] flex justify-center lg:justify-end relative mt-12 lg:mt-0">
               <div className="relative w-72 h-72 sm:w-96 sm:h-96">
-                {/* Efek Bingkai Cyber Melayang */}
                 <div className="absolute inset-0 border-2 border-cyan-500/30 rounded-full animate-[spin_10s_linear_infinite] border-dashed"></div>
                 <div className="absolute inset-4 border border-white/10 rounded-full animate-[spin_15s_linear_infinite_reverse]"></div>
                 
-                {/* Foto Profil Utama */}
                 <div className="absolute inset-8 rounded-full overflow-hidden bg-[#0A1329] border border-cyan-500/50 shadow-[0_0_50px_rgba(6,182,212,0.2)]">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img 
@@ -73,7 +84,6 @@ export default function Home() {
                   />
                 </div>
                 
-                {/* Lencana AquaNime */}
                 <div className="absolute -bottom-4 -right-4 bg-[#0A1329] p-4 rounded-2xl border border-white/10 shadow-2xl backdrop-blur-md">
                   <div className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Founder of</div>
                   <div className="text-lg font-black text-cyan-400">AquaNime.</div>
@@ -83,9 +93,7 @@ export default function Home() {
 
           </div>
 
-          {/* =========================================================================
-             SEKILAS KARYA (FEATURED PROJECTS)
-             ========================================================================= */}
+          {/* FEATURED PROJECTS */}
           <div className="mt-40 pt-20 border-t border-white/5">
             <div className="flex flex-col sm:flex-row justify-between items-end mb-16 gap-6">
               <div>
