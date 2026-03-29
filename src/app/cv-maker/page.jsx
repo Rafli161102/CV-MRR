@@ -271,16 +271,13 @@ export default function CVMaker() {
                 {/* --------------------------------------------------------- */}
                 
                 {/* TEMA 1: NORMAL (Standar ATS / Sesuai PDF Huda) */}
-                {/* BUG FIX: Memisahkan blok Contact (Centered) dan blok Summary (Justified full width) */}
                 {template === 'normal' && (
-                  <div className="pb-2">
-                    <div className="text-center mb-3 mt-2">
-                      <h1 className="text-[22pt] font-bold mb-1 tracking-wide uppercase leading-none">{basics.name || "NAMA LENGKAP"}</h1>
-                      
-                      <p className="text-[10pt] text-black flex flex-wrap justify-center gap-x-1.5 mt-2">
-                        {[basics.location, basics.phone, basics.email, basics.linkedin].filter(Boolean).join(' | ')}
-                      </p>
-                    </div>
+                  <div className="pb-2 text-left">
+                    <h1 className="text-[22pt] font-bold mb-1 tracking-wide uppercase leading-none">{basics.name || "NAMA LENGKAP"}</h1>
+                    
+                    <p className="text-[10pt] text-black flex flex-wrap gap-x-1.5 mt-2 mb-3">
+                      {[basics.location, basics.phone, basics.email, basics.linkedin].filter(Boolean).join(' | ')}
+                    </p>
                     
                     {basics.summary && <p className="text-[10.5pt] leading-relaxed text-justify text-black mb-4">{basics.summary}</p>}
                   </div>
@@ -370,6 +367,7 @@ export default function CVMaker() {
                       {educations.filter(e => e.institution.trim() !== "").map((edu, idx) => (
                         <div key={idx} className="mb-2.5 break-inside-avoid">
                           <div className="flex justify-between items-start">
+                            {/* Instansi Uppercase di mode Normal */}
                             <h3 className={`text-[10.5pt] text-black ${template === 'normal' ? 'uppercase font-bold' : 'font-bold'}`}>{edu.institution}</h3>
                             <span className="text-[10.5pt] text-black whitespace-nowrap">{edu.period}</span>
                           </div>
@@ -384,7 +382,7 @@ export default function CVMaker() {
                     <div className="mb-3 break-inside-avoid">
                       <SectionTitle title={t.skills} />
                       {template === 'normal' ? (
-                        <ul className="list-disc list-inside text-[10.5pt] text-black grid grid-cols-2 sm:grid-cols-3 gap-x-2 mt-1">
+                        <ul className="list-disc list-inside text-[10.5pt] text-black grid grid-cols-1 sm:grid-cols-2 gap-x-2 mt-1">
                           {basics.skills.split(',').map((skill, i) => <li key={i}>{skill.trim()}</li>)}
                         </ul>
                       ) : (
