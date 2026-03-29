@@ -2,69 +2,84 @@
 
 import { useState } from 'react';
 
+// =========================================================================
+// KOMPONEN IKON SVG (BEBAS EMOJI & PROFESIONAL)
+// =========================================================================
+const SparklesIcon = ({ className = "w-4 h-4" }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className}>
+    <path fillRule="evenodd" d="M9 4.5a.75.75 0 01.721.544l.813 2.846a3.75 3.75 0 002.576 2.576l2.846.813a.75.75 0 010 1.442l-2.846.813a3.75 3.75 0 00-2.576 2.576l-.813 2.846a.75.75 0 01-1.442 0l-.813-2.846a3.75 3.75 0 00-2.576-2.576l-2.846-.813a.75.75 0 010-1.442l2.846-.813A3.75 3.75 0 007.466 7.89l.813-2.846A.75.75 0 019 4.5zM18 1.5a.75.75 0 01.728.568l.258 1.036c.236.94.97 1.674 1.91 1.91l1.036.258a.75.75 0 010 1.456l-1.036.258c-.94.236-1.674.97-1.91 1.91l-.258 1.036a.75.75 0 01-1.456 0l-.258-1.036a2.625 2.625 0 00-1.91-1.91l-1.036-.258a.75.75 0 010-1.456l1.036-.258a2.625 2.625 0 001.91-1.91l.258-1.036A.75.75 0 0118 1.5zM16.5 15a.75.75 0 01.712.513l.394 1.183c.15.447.5.799.948.948l1.183.395a.75.75 0 010 1.422l-1.183.395c-.447.15-.799.5-.948.948l-.395 1.183a.75.75 0 01-1.422 0l-.395-1.183a1.5 1.5 0 00-.948-.948l-1.183-.395a.75.75 0 010-1.422l1.183-.395c.447-.15.799-.5.948-.948l.395-1.183A.75.75 0 0116.5 15z" clipRule="evenodd" />
+  </svg>
+);
+
+const InfoIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+  </svg>
+);
+
+const AlertIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 text-red-400 shrink-0 mt-0.5">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+  </svg>
+);
+
+const ShieldIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+  </svg>
+);
+
+const PrintIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M6.72 13.829c-.24.03-.48.062-.724.092m6.524-4.31a1.125 1.125 0 11-2.25 0 1.125 1.125 0 012.25 0zm-1.895-3.32a.5.5 0 00-.5.5v2.25c0 .276.224.5.5.5h2.25a.5.5 0 00.5-.5v-2.25a.5.5 0 00-.5-.5h-2.25zM12 21.75c3.55 0 6.544-2.185 7.91-5.326m-15.82 0A8.966 8.966 0 0112 2.25a8.964 8.964 0 017.91 5.326m-15.82 0a8.964 8.964 0 00-7.91 5.326M12 21.75a8.965 8.965 0 007.91-5.326m0 0H21m-9 0v-4.5" />
+  </svg>
+);
+
+
 export default function CVMaker() {
   const [template, setTemplate] = useState('normal'); 
   const [lang, setLang] = useState('id'); 
   const [isTranslating, setIsTranslating] = useState(false);
 
-  // KAMUS BAHASA & PLACEHOLDER JELAS
+  // KAMUS BAHASA & PLACEHOLDER
   const t = {
     id: {
       personal: "Informasi Dasar", exp: "PENGALAMAN KERJA", edu: "PENDIDIKAN", proj: "PROYEK", cert: "SERTIFIKASI", summary: "PROFIL SINGKAT", skills: "KEAHLIAN DAN KOMPETENSI",
       add: "+ Tambah", del: "Hapus", print: "Cetak / Simpan PDF",
       placeholders: { 
-        name: "Nama Lengkap (Contoh: Budi Santoso)", 
-        role: "Posisi Dilamar (Opsional, Cth: UI/UX Designer)", 
-        loc: "Kota, Provinsi (Contoh: Jakarta, Indonesia)", 
-        phone: "Nomor Telepon (Contoh: 08123456789)",
-        email: "Alamat Email (Contoh: budi@email.com)",
-        linkedin: "URL Portofolio / LinkedIn (Opsional)",
+        name: "Nama Lengkap", role: "Posisi Dilamar (Opsional)", loc: "Kota, Provinsi", phone: "Nomor Telepon", email: "Alamat Email", linkedin: "URL Portofolio / LinkedIn (Opsional)",
         summary: "Tuliskan ringkasan profil Anda secara singkat dan profesional. Contoh: Lulusan Desain Grafis dengan pengalaman 3 tahun dalam merancang identitas visual...", 
         skills: "Keahlian 1, Keahlian 2, Keahlian 3 (Pisahkan dengan koma)", 
-        expRole: "Nama Jabatan (Contoh: Graphic Designer)", 
-        expComp: "Nama Perusahaan (Contoh: PT Kreatif Maju)", 
-        expDate: "Bulan Tahun - Bulan Tahun (Cth: Jan 2021 - Des 2023)", 
-        eduInst: "Nama Kampus / Sekolah (Cth: Universitas Indonesia)", 
-        eduMaj: "Jurusan / Gelar (Cth: S1 Desain Komunikasi Visual)", 
-        eduDate: "Bulan Tahun Lulus (Cth: Agustus 2020)",
-        projName: "Nama Proyek (Contoh: Rebranding Logo Perusahaan)", 
-        projDate: "Bulan Tahun (Contoh: Maret 2023)",
-        certName: "Nama Sertifikasi (Contoh: Google UX Design)",
-        certDate: "Bulan Tahun (Contoh: Juli 2023)"
+        expRole: "Nama Jabatan (Contoh: Graphic Designer)", expComp: "Nama Perusahaan (Contoh: PT Kreatif Maju)", expDate: "Bulan Tahun - Bulan Tahun", 
+        eduInst: "Nama Kampus / Sekolah", eduMaj: "Jurusan / Gelar", eduDate: "Bulan Tahun Lulus",
+        projName: "Nama Proyek", projDate: "Bulan Tahun", certName: "Nama Sertifikasi", certDate: "Bulan Tahun"
       }
     },
     en: {
       personal: "Basic Information", exp: "EXPERIENCE", edu: "EDUCATION", proj: "PROJECTS", cert: "CERTIFICATION", summary: "PROFESSIONAL SUMMARY", skills: "SKILL AND COMPETENCIES",
       add: "+ Add New", del: "Remove", print: "Print / Save as PDF",
       placeholders: { 
-        name: "Full Name (e.g. John Doe)", 
-        role: "Targeted Role (Optional, e.g. UI/UX Designer)", 
-        loc: "City, Country (e.g. Jakarta, Indonesia)", 
-        phone: "Phone Number",
-        email: "Email Address",
-        linkedin: "LinkedIn / Portfolio URL (Optional)",
-        summary: "Write your professional summary here. Example: A highly motivated Graphic Designer with 3 years of experience in visual identity...", 
-        skills: "Core Skills (e.g. HTML, CSS, Figma - separated by comma)", 
-        expRole: "Job Title (e.g. Graphic Designer)", 
-        expComp: "Company Name (e.g. Creative Corp)", 
-        expDate: "Month Year - Month Year (e.g. Jan 2021 - Dec 2023)", 
-        eduInst: "University / School Name", 
-        eduMaj: "Major / Degree (e.g. Bachelor of Arts)", 
-        eduDate: "Graduation Date (e.g. August 2020)",
-        projName: "Project Name (e.g. Corporate Rebranding)", 
-        projDate: "Month Year (e.g. March 2023)",
-        certName: "Certification Name (e.g. Google UX Design)",
-        certDate: "Month Year (e.g. July 2023)"
+        name: "Full Name", role: "Targeted Role (Optional)", loc: "City, Country", phone: "Phone Number", email: "Email Address", linkedin: "LinkedIn / Portfolio URL (Optional)",
+        summary: "Write your professional summary here...", skills: "Core Skills (e.g. HTML, CSS, Figma - separated by comma)", 
+        expRole: "Job Title", expComp: "Company Name", expDate: "Month Year - Month Year", 
+        eduInst: "University / School Name", eduMaj: "Major / Degree", eduDate: "Graduation Date",
+        projName: "Project Name", projDate: "Month Year", certName: "Certification Name", certDate: "Month Year"
       }
     },
     jp: {
       personal: "基本情報", exp: "職務経歴", edu: "学歴", proj: "プロジェクト", cert: "資格・免許", summary: "自己PR / 職務要約", skills: "スキル・知識",
       add: "+ 追加", del: "削除", print: "PDFとして保存",
-      placeholders: { name: "氏名", role: "希望職種", loc: "住所", phone: "電話番号", email: "メールアドレス", linkedin: "リンク", summary: "自己PRを入力してください...", skills: "スキル (HTML, CSS...)", expRole: "役職", expComp: "会社名", expDate: "年月 - 年月", eduInst: "学校名", eduMaj: "学部・学科", eduDate: "卒業年月", projName: "プロジェクト名", projDate: "年月", certName: "資格名", certDate: "取得年月" }
+      placeholders: { 
+        name: "氏名", role: "希望職種", loc: "住所", phone: "電話番号", email: "メールアドレス", linkedin: "リンク", 
+        summary: "自己PRを入力してください...", skills: "スキル (HTML, CSS...)", 
+        expRole: "役職", expComp: "会社名", expDate: "入社年 - 退社年", 
+        eduInst: "学校名", eduMaj: "学部・学科", eduDate: "卒業年月", 
+        projName: "プロジェクト名", projDate: "年月", certName: "資格名", certDate: "取得年月" 
+      }
     }
   }[lang];
 
-  // STATE FORMULIR KOSONG
+  // STATE FORMULIR UTAMA
   const [basics, setBasics] = useState({ 
     name: "", furigana: "", role: "", location: "", phone: "", email: "", linkedin: "", summary: "", skills: "",
     birthdate: "", age: "", gender: "男", nationality: "", visa: "" 
@@ -94,7 +109,6 @@ export default function CVMaker() {
         const data = await res.json();
         return data[0].map(item => item[0]).join(''); 
       } catch (err) {
-        console.error("Translate error:", err);
         return text;
       }
     };
@@ -141,31 +155,6 @@ export default function CVMaker() {
 
   const isJapanese = template === 'jp-umum' || template === 'jp-asing';
 
-  // KOMPONEN IKON SVG MINIMALIS
-  const MagicIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 text-cyan-400">
-      <path fillRule="evenodd" d="M9 4.5a.75.75 0 01.721.544l.813 2.846a3.75 3.75 0 002.576 2.576l2.846.813a.75.75 0 010 1.442l-2.846.813a3.75 3.75 0 00-2.576 2.576l-.813 2.846a.75.75 0 01-1.442 0l-.813-2.846a3.75 3.75 0 00-2.576-2.576l-2.846-.813a.75.75 0 010-1.442l2.846-.813A3.75 3.75 0 007.466 7.89l.813-2.846A.75.75 0 019 4.5zM18 1.5a.75.75 0 01.728.568l.258 1.036c.236.94.97 1.674 1.91 1.91l1.036.258a.75.75 0 010 1.456l-1.036.258c-.94.236-1.674.97-1.91 1.91l-.258 1.036a.75.75 0 01-1.456 0l-.258-1.036a2.625 2.625 0 00-1.91-1.91l-1.036-.258a.75.75 0 010-1.456l1.036-.258a2.625 2.625 0 001.91-1.91l.258-1.036A.75.75 0 0118 1.5zM16.5 15a.75.75 0 01.712.513l.394 1.183c.15.447.5.799.948.948l1.183.395a.75.75 0 010 1.422l-1.183.395c-.447.15-.799.5-.948.948l-.395 1.183a.75.75 0 01-1.422 0l-.395-1.183a1.5 1.5 0 00-.948-.948l-1.183-.395a.75.75 0 010-1.422l1.183-.395c.447-.15.799-.5.948-.948l.395-1.183A.75.75 0 0116.5 15z" clipRule="evenodd" />
-    </svg>
-  );
-
-  const InfoIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
-    </svg>
-  );
-
-  const PrintIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M6.72 13.829c-.24.03-.48.062-.724.092m6.524-4.31a1.125 1.125 0 11-2.25 0 1.125 1.125 0 012.25 0zm-1.895-3.32a.5.5 0 00-.5.5v2.25c0 .276.224.5.5.5h2.25a.5.5 0 00.5-.5v-2.25a.5.5 0 00-.5-.5h-2.25zM12 21.75c3.55 0 6.544-2.185 7.91-5.326m-15.82 0A8.966 8.966 0 0112 2.25a8.964 8.964 0 017.91 5.326m-15.82 0a8.964 8.964 0 00-7.91 5.326M12 21.75a8.965 8.965 0 007.91-5.326m0 0H21m-9 0v-4.5" />
-    </svg>
-  );
-
-  const LockIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 text-emerald-400">
-      <path fillRule="evenodd" d="M12 1.5a5.25 5.25 0 00-5.25 5.25v3a3 3 0 00-3 3v6.75a3 3 0 003 3h10.5a3 3 0 003-3v-6.75a3 3 0 00-3-3v-3c0-2.9-2.35-5.25-5.25-5.25zm3.75 8.25v-3a3.75 3.75 0 10-7.5 0v3h7.5z" clipRule="evenodd" />
-    </svg>
-  );
-
   return (
     <div className="min-h-screen pt-28 pb-20 px-4 md:px-8 bg-[#060D1F] relative z-10 selection:bg-cyan-500 selection:text-white font-sans">
       
@@ -181,53 +170,91 @@ export default function CVMaker() {
       `}} />
 
       <div className="max-w-[1400px] mx-auto">
-        <div className="text-center mb-8 no-print">
-          <h1 className="text-4xl font-black text-white mb-2">ATS <span className="text-cyan-500">CV Maker</span></h1>
+        
+        {/* ========================================================= */}
+        {/* SECTION PENDAHULUAN (HERO & STORY)                        */}
+        {/* ========================================================= */}
+        <div className="text-center mb-12 no-print animate-fade-in-up">
+          {/* Lencana Privasi */}
+          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-bold tracking-wide mb-5 shadow-[0_0_15px_rgba(16,185,129,0.1)]">
+            <ShieldIcon />
+            100% Aman. Kami tidak menyimpan atau merekam data Anda.
+          </div>
+          
+          <h1 className="text-4xl sm:text-5xl font-black text-white mb-4 tracking-tight">ATS <span className="text-cyan-500">CV Maker</span></h1>
+          
+          <p className="text-slate-400 max-w-2xl mx-auto leading-relaxed text-sm sm:text-base">
+            Sistem ini dibangun untuk membantu siapa saja yang kesulitan mengatur <i>margin</i> dan format CV agar lolos seleksi mesin HRD (ATS). Pilih template, isi data Anda, dan alat ini akan menyusunnya secara presisi. <span className="text-cyan-400 font-medium">Sepenuhnya gratis dan langsung cetak.</span>
+          </p>
         </div>
 
         <div className="flex flex-col xl:flex-row gap-8 items-start">
           
-          {/* KOLOM KIRI: FORMULIR ISIAN */}
+          {/* ========================================================= */}
+          {/* KOLOM KIRI: FORMULIR ISIAN                                  */}
+          {/* ========================================================= */}
           <div className="w-full xl:w-5/12 bg-[#0A1329] border border-white/10 p-6 rounded-[2rem] no-print xl:sticky xl:top-32 h-fit max-h-none xl:max-h-[80vh] overflow-visible xl:overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-cyan-600 [&::-webkit-scrollbar-thumb]:rounded-full">
             
-            {/* ======================================================= */}
-            {/* PANEL PANDUAN & PRIVASI (BARU & ELEGAN)                 */}
-            {/* ======================================================= */}
-            <div className="mb-6 rounded-xl border border-cyan-500/20 bg-gradient-to-br from-cyan-900/10 to-[#0A1329] shadow-inner overflow-hidden relative">
+            {/* ------------------------------------------------------- */}
+            {/* PANEL PANDUAN CETAK & TUTORIAL                          */}
+            {/* ------------------------------------------------------- */}
+            <div className="mb-6 p-5 rounded-xl border border-cyan-500/20 bg-gradient-to-br from-cyan-900/10 to-[#0A1329] shadow-inner relative overflow-hidden group">
               <div className="absolute top-0 left-0 w-1 h-full bg-cyan-500"></div>
               
-              <div className="p-5 border-b border-white/5">
-                <div className="flex items-start gap-3">
-                  <InfoIcon />
-                  <div>
-                    <h3 className="text-cyan-400 font-bold text-sm mb-1">Panduan Cetak PDF Bebas Terpotong</h3>
-                    <p className="text-slate-400 text-xs leading-relaxed mb-3">
-                      Aplikasi ini dirancang untuk menciptakan CV berstandar mesin seleksi HRD (ATS) secara gratis. Ikuti langkah berikut agar hasilnya sempurna:
-                    </p>
-                    <ul className="space-y-2 ml-4 text-[11px] text-slate-300 list-decimal list-outside">
-                      <li>Isi formulir menggunakan <b>Bahasa Indonesia</b> terlebih dahulu untuk memudahkan Anda.</li>
-                      <li>Gunakan tombol <b>Magic Translate</b> di bawah untuk menerjemahkan ke Bahasa Inggris.</li>
-                      <li className="text-cyan-300 font-medium">SANGAT PENTING: Saat menekan tombol Cetak/PDF, pastikan pengaturan <span className="underline">Margin (Batas Tepi) diset ke "Tidak Ada" atau "None"</span>. Jarak tepi yang benar sudah tertanam otomatis di dalam sistem.</li>
-                    </ul>
-                  </div>
+              <div className="flex items-start gap-3 mb-3">
+                <InfoIcon />
+                <div>
+                  <h3 className="text-cyan-400 font-bold text-sm mb-1">Panduan Cetak PDF Bebas Terpotong</h3>
+                  <p className="text-slate-400 text-xs leading-relaxed">
+                    Ikuti 3 langkah mudah berikut agar hasil CV Anda sempurna:
+                  </p>
                 </div>
               </div>
-
-              {/* Deklarasi Privasi */}
-              <div className="px-5 py-3 bg-[#060D1F]/50 flex items-center gap-2">
-                <LockIcon />
-                <p className="text-[10px] text-emerald-400/80 font-medium tracking-wide">
-                  Privasi Aman: Kami tidak merekam, menyimpan, atau melacak data pribadi Anda.
-                </p>
-              </div>
+              
+              <ul className="space-y-2.5 ml-8 text-[11px] text-slate-300 list-decimal list-outside">
+                <li>Isi formulir menggunakan <b>Bahasa Indonesia</b> terlebih dahulu untuk memudahkan Anda.</li>
+                <li>Gunakan panel <span className="text-cyan-400 font-bold flex inline-flex items-center gap-1 mx-1"><SparklesIcon className="w-3 h-3"/> Magic Translate</span> di bawah untuk menerjemahkan ke Bahasa Inggris/Jepang secara otomatis.</li>
+                <li className="bg-cyan-900/30 p-2 rounded border border-cyan-500/30 font-medium leading-relaxed">
+                  <span className="text-cyan-300 font-bold uppercase tracking-wider">Sangat Penting:</span> Saat menekan tombol Cetak PDF, pastikan opsi <b>Ukuran Kertas adalah "A4"</b> dan <b>Margin (Batas Tepi) diset ke "Tidak Ada" (None)</b>. Jarak tepi yang standar sudah kami tanamkan ke dalam kertas.
+                </li>
+              </ul>
             </div>
 
-            {/* PANEL KONTROL (TEMA & TRANSLATE) */}
+            {/* ------------------------------------------------------- */}
+            {/* PANEL PANDUAN KHUSUS JEPANG (Muncul jika Template JP)   */}
+            {/* ------------------------------------------------------- */}
+            {isJapanese && (
+              <div className="mb-6 p-5 rounded-xl border border-red-500/20 bg-gradient-to-br from-red-900/10 to-[#0A1329] shadow-inner relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-1 h-full bg-red-500"></div>
+                <div className="flex items-start gap-3 mb-3">
+                  <AlertIcon />
+                  <div>
+                    <h3 className="text-red-400 font-bold text-sm mb-1">Standar CV Jepang (JIS 履歴書)</h3>
+                    <p className="text-slate-400 text-xs leading-relaxed">Format tabel ini sangat kaku dan diatur secara nasional di Jepang. Perhatikan aturan berikut:</p>
+                  </div>
+                </div>
+                <ul className="space-y-2 ml-8 text-[11px] text-slate-300 list-disc list-outside">
+                  <li><b>Furigana:</b> Wajib isi huruf Katakana untuk cara baca nama Anda.</li>
+                  <li><b>Tahun Masehi:</b> Cukup ketik angka tahun (Cth: 2023). Jangan ketik bulan.</li>
+                  <li><b>Pas Foto:</b> Kertas ini sengaja menyediakan kolom kosong di kanan atas untuk Anda menempelkan foto fisik 3x4 (berjas rapi).</li>
+                  {template === 'jp-asing' && (
+                    <>
+                      <li className="text-red-300 font-medium"><b>Aturan Pekerja Asing/Magang:</b> Kolom "Kewarganegaraan" dan "Status Visa" wajib diisi dengan jujur.</li>
+                      <li className="text-red-300 font-medium"><b>Sertifikasi:</b> Taruh level JLPT / JFT Basic Anda di baris paling pertama pada kolom sertifikasi.</li>
+                    </>
+                  )}
+                </ul>
+              </div>
+            )}
+
+            {/* ------------------------------------------------------- */}
+            {/* PANEL KONTROL (TEMA & TRANSLATE)                        */}
+            {/* ------------------------------------------------------- */}
             <div className="mb-6 p-5 bg-[#060D1F] border border-cyan-500/30 rounded-xl shadow-md">
               <div className="flex justify-between items-center mb-4 border-b border-white/10 pb-3">
-                <div className="flex items-center gap-1.5">
-                  <MagicIcon />
-                  <h2 className="text-xs font-bold text-cyan-400 uppercase tracking-wider">Magic Translate</h2>
+                <div className="flex items-center gap-1.5 text-cyan-400">
+                  <SparklesIcon />
+                  <h2 className="text-xs font-bold uppercase tracking-wider">Magic Translate</h2>
                 </div>
                 <div className="flex bg-[#0A1329] rounded border border-white/10 overflow-hidden shadow-inner">
                   <button onClick={() => handleMagicTranslate('id')} disabled={isTranslating} className={`px-4 py-1.5 text-xs font-bold transition-colors ${lang === 'id' ? 'bg-cyan-600 text-white' : 'text-slate-500 hover:bg-white/5 hover:text-white'}`}>ID</button>
@@ -256,34 +283,12 @@ export default function CVMaker() {
               </div>
             )}
 
-            {/* PANDUAN PINTAR KHUSUS JEPANG */}
-            {isJapanese && (
-              <div className="mb-6 p-4 rounded-xl border border-red-500/20 bg-gradient-to-br from-red-900/10 to-[#0A1329] shadow-inner relative overflow-hidden">
-                <div className="absolute top-0 left-0 w-1 h-full bg-red-500"></div>
-                <h3 className="text-red-400 font-bold text-sm mb-2 flex items-center gap-2">
-                  <InfoIcon />
-                  Aturan Baku CV Jepang (JIS)
-                </h3>
-                <ul className="list-disc list-inside text-[11px] text-red-200/80 space-y-1.5 ml-1">
-                  <li><b>Furigana:</b> Wajib diisi (huruf Katakana cara baca nama Anda).</li>
-                  <li><b>Tahun:</b> Gunakan angka (Cth: 2023). Sistem otomatis memasukkannya ke kolom yang benar.</li>
-                  {template === 'jp-asing' && (
-                    <>
-                      <li className="text-red-300 font-medium"><b>Pekerja Asing:</b> Isi Kewarganegaraan dan Status Visa Anda.</li>
-                      <li className="text-red-300 font-medium"><b>Sertifikasi:</b> Taruh level JLPT / JFT Anda di kolom pertama form.</li>
-                    </>
-                  )}
-                </ul>
-              </div>
-            )}
-
             {/* FORM: DATA PRIBADI */}
             <div className="mb-6">
               <h2 className="text-lg font-bold text-cyan-400 mb-3 border-b border-white/10 pb-1">{t.personal}</h2>
               <div className="space-y-2">
                 <input type="text" name="name" value={basics.name} onChange={handleBasicsChange} className="w-full bg-[#060D1F] border border-white/5 p-2.5 rounded text-white text-sm focus:border-cyan-500 focus:outline-none transition-colors" placeholder={t.placeholders.name} />
                 
-                {/* Input Khusus Jepang */}
                 {isJapanese && (
                   <div className="flex gap-2">
                     <input type="text" name="furigana" value={basics.furigana} onChange={handleBasicsChange} className="w-1/2 bg-[#060D1F] border border-white/5 p-2.5 rounded text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder="ふりがな (Furigana Nama)" />
@@ -327,7 +332,7 @@ export default function CVMaker() {
                   <input type="text" value={exp.company} onChange={(e) => handleArrayChange(setExperiences, experiences, index, 'company', e.target.value)} className="w-11/12 bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:border-cyan-500 focus:outline-none mb-2" placeholder={t.placeholders.expComp} />
                   <input type="text" value={exp.role} onChange={(e) => handleArrayChange(setExperiences, experiences, index, 'role', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:border-cyan-500 focus:outline-none mb-2" placeholder={t.placeholders.expRole} />
                   <input type="text" value={exp.period} onChange={(e) => handleArrayChange(setExperiences, experiences, index, 'period', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:border-cyan-500 focus:outline-none mb-2" placeholder={t.placeholders.expDate} />
-                  {!isJapanese && <textarea value={exp.description} onChange={(e) => handleArrayChange(setExperiences, experiences, index, 'description', e.target.value)} rows="3" className="w-full mt-2 bg-transparent border border-white/5 rounded p-2 text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder="- Tulis deskripsi (Gunakan strip untuk membuat peluru / bullet point)..."></textarea>}
+                  {!isJapanese && <textarea value={exp.description} onChange={(e) => handleArrayChange(setExperiences, experiences, index, 'description', e.target.value)} rows="3" className="w-full mt-2 bg-transparent border border-white/5 rounded p-2 text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder="- Tulis deskripsi (Gunakan strip untuk membuat bullet point)..."></textarea>}
                 </div>
               ))}
             </div>
@@ -379,7 +384,7 @@ export default function CVMaker() {
                 <div key={cert.id} className="bg-[#060D1F] p-4 rounded-xl mb-3 relative border border-white/5 hover:border-white/10 transition-colors">
                   <button onClick={() => removeField(setCerts, certs, index)} className="absolute top-3 right-3 text-red-400 hover:text-red-300 text-[10px] font-bold px-2 py-1 bg-red-400/10 rounded">{t.del}</button>
                   <div className="grid grid-cols-2 gap-3 mb-2 pr-12">
-                    <input type="text" value={cert.name} onChange={(e) => handleArrayChange(setCerts, certs, index, 'name', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder={template === 'jp-asing' ? "JLPT N3 / JFT Basic" : t.placeholders.certName} />
+                    <input type="text" value={cert.name} onChange={(e) => handleArrayChange(setCerts, certs, index, 'name', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder={t.placeholders.certName} />
                     <input type="text" value={cert.period} onChange={(e) => handleArrayChange(setCerts, certs, index, 'period', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder={t.placeholders.certDate} />
                   </div>
                   <input type="text" value={cert.issuer} onChange={(e) => handleArrayChange(setCerts, certs, index, 'issuer', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:border-cyan-500 focus:outline-none mb-2" placeholder="Penerbit (Cth: Google, Dicoding)" />
@@ -524,22 +529,20 @@ export default function CVMaker() {
                   /* 2. JIKA TEMPLATE UMUM (NORMAL, MODERN, DLL)               */
                   /* --------------------------------------------------------- */
                   <>
-                    {/* TEMA 1: NORMAL (Professional) - 100% Persis PDF (Rata Kiri, Non-Center) */}
+                    {/* TEMA 1: NORMAL (Standar ATS Huda Clone) */}
                     {template === 'normal' && (
                       <div className="pb-2 text-left">
-                        {/* Judul Capitalize Standard */}
                         <h1 className="text-[20pt] font-bold mb-1 tracking-tight capitalize leading-none text-black">{basics.name || t.placeholders.name.split(' (')[0]}</h1>
                         
                         <p className="text-[10.5pt] text-black flex flex-wrap gap-x-1.5 mt-1.5 mb-3">
                           {[basics.location, basics.phone, basics.email, basics.linkedin].filter(Boolean).join(' | ')}
                         </p>
                         
-                        {/* Summary rata kiri-kanan persis PDF */}
                         {basics.summary && <div className="text-[10.5pt] leading-[1.6] text-justify text-black mb-4 break-words">{basics.summary}</div>}
                       </div>
                     )}
 
-                    {/* TEMA 2: MODERN PRO - Tanpa Icon, Rata Kiri Bersih */}
+                    {/* TEMA 2: MODERN PRO */}
                     {template === 'modern' && (
                       <div className="border-b-[3px] border-gray-900 pb-4 mb-4 text-left">
                         <h1 className="text-3xl font-black text-gray-900 mb-1 uppercase tracking-tight">{basics.name || "YOUR NAME"}</h1>
