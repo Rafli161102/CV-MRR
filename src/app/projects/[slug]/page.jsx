@@ -168,7 +168,7 @@ export default function ProjectDetail() {
         <div className="mt-32 sm:mt-48 py-20 px-8 rounded-[3rem] bg-gradient-to-b from-[#0A1329] to-transparent border-t border-white/5 text-center reveal stagger-5">
           <div className="max-w-2xl mx-auto">
             <h4 className="text-3xl sm:text-4xl font-black text-white mb-6 tracking-tighter">
-              Let's Build Your <div className="min-h-screen pt-28 pb-24 relative w-full overflow-x-hidden bg-[#030712] selection:bg-cyan-500/30">Identity</span>.
+              Let's Build Your <span className="text-cyan-400">Identity</span>.
             </h4>
             <p className="text-base sm:text-lg text-slate-400 mb-12 font-medium leading-relaxed">
               Saya siap membantu Anda mentransformasikan ide bisnis menjadi sebuah identitas merek yang memiliki nilai jual tinggi dan strategi visual yang solid.
