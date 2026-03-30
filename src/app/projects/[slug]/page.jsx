@@ -1,81 +1,180 @@
 "use client";
 
-// PERBAIKAN: Jalur foldernya sudah dibenarkan menjadi 3 tingkat (../../../)
-import { PROJECT_LIST } from '../../../data/store';
+import { useParams } from 'next/navigation';
 import Link from 'next/link';
+import { PROJECT_LIST } from '../../../data/store';
+import { notFound } from 'next/navigation';
 
-export default function ProjectDetail({ params }) {
-  const project = PROJECT_LIST.find((p) => p.id === params.slug);
+// =========================================================================
+// IKON SVG PROFESIONAL UNTUK METADATA PROYEK
+// =========================================================================
+const ArrowLeftIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4 group-hover:-translate-x-1 transition-transform">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+  </svg>
+);
 
+const ClientIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 text-cyan-400">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008z" />
+  </svg>
+);
+
+const RoleIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 text-cyan-400">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.827M15.75 12.75l-2.456-2.456M7.102 18.324a3.75 3.75 0 01-5.304 0 3.75 3.75 0 010-5.304l6.187-6.187a3.75 3.75 0 015.304 0l2.455 2.456" />
+  </svg>
+);
+
+const DateIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 text-cyan-400">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+  </svg>
+);
+
+export default function ProjectDetail() {
+  const params = useParams();
+  const slug = params?.slug;
+
+  // Mencari data proyek berdasarkan URL (slug)
+  const project = PROJECT_LIST.find((p) => p.id === slug);
+
+  // Jika proyek tidak ditemukan, tampilkan error bawaan
   if (!project) {
-    return (
-      <div className="min-h-screen bg-[#060D1F] flex flex-col items-center justify-center text-center px-6">
-        <h1 className="text-6xl font-black text-white mb-4">404</h1>
-        <p className="text-xl text-slate-400 mb-8">Karya tidak ditemukan atau belum diunggah.</p>
-        <Link href="/projects" className="bg-cyan-600 hover:bg-cyan-500 text-white px-8 py-3 rounded-full font-bold transition-all shadow-[0_0_20px_rgba(6,182,212,0.4)]">
-          Kembali ke Galeri
-        </Link>
-      </div>
-    );
+    return notFound();
   }
 
-  const projectImages = project.images ? project.images : [project.image];
-
   return (
-    <div className="min-h-screen bg-[#060D1F] text-slate-300 font-sans selection:bg-cyan-500 selection:text-white pt-32 pb-48 relative">
+    <div className="min-h-screen pt-32 pb-24 relative w-full overflow-x-hidden bg-[#030712]">
       
-      <div className="fixed inset-0 bg-gradient-to-br from-[#060D1F] via-[#0D1836] to-[#060D1F] pointer-events-none z-0"></div>
+      {/* Background Decor (Glow Konsisten dengan Global) */}
+      <div className="fixed top-0 right-0 w-[80vw] h-[80vw] max-w-[600px] max-h-[600px] bg-cyan-900/20 rounded-full blur-[120px] pointer-events-none -z-10 translate-x-1/3 -translate-y-1/3"></div>
+      <div className="fixed bottom-0 left-0 w-[80vw] h-[80vw] max-w-[600px] max-h-[600px] bg-indigo-900/20 rounded-full blur-[120px] pointer-events-none -z-10 -translate-x-1/3 translate-y-1/3"></div>
 
-      <div className="max-w-5xl mx-auto px-6 lg:px-12 relative z-10">
+      <div className="max-w-[1200px] mx-auto px-5 sm:px-8 lg:px-12 relative z-10 w-full">
         
-        <Link href="/projects" className="inline-flex items-center gap-3 text-cyan-500 hover:text-cyan-300 font-bold tracking-widest uppercase text-xs mb-16 transition-all group">
-          <span className="w-8 h-8 rounded-full bg-cyan-500/10 flex items-center justify-center border border-cyan-500/30 group-hover:bg-cyan-500 group-hover:text-white transition-all">
-            ←
-          </span>
-          Kembali ke Galeri
-        </Link>
+        {/* ========================================================= */}
+        {/* TOMBOL KEMBALI (Pill Shaped Minimalist)                   */}
+        {/* ========================================================= */}
+        <div className="mb-12 reveal stagger-1">
+          <Link 
+            href="/projects" 
+            className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-[#0A1329] border border-white/10 text-xs sm:text-sm font-bold text-slate-300 hover:text-cyan-400 hover:border-cyan-500/30 hover:bg-[#0A1329]/80 shadow-lg hover:shadow-[0_0_15px_rgba(6,182,212,0.2)] transition-all duration-300 group"
+          >
+            <ArrowLeftIcon />
+            Kembali ke Galeri
+          </Link>
+        </div>
 
-        <div className="mb-20">
-          <div className="text-sm font-bold tracking-[0.3em] text-cyan-400 uppercase mb-6 drop-shadow-md">
-            {project.category}
-          </div>
-          <h1 className="text-5xl sm:text-7xl font-black tracking-tight text-white mb-8 leading-[1.1] drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]">
-            {project.title}
-          </h1>
+        {/* ========================================================= */}
+        {/* HEADER SECTION (GOLDEN RATIO 61.8 : 38.2)                 */}
+        {/* ========================================================= */}
+        <div className="flex flex-col lg:flex-row gap-12 lg:gap-16 items-start">
           
-          <div className="flex flex-col md:flex-row md:items-start justify-between gap-10 md:gap-20 pt-10 border-t border-white/10">
-            <div className="md:w-[61.8%]">
-              <h3 className="text-lg font-bold text-white mb-4">Latar Belakang / Deskripsi</h3>
-              <p className="text-slate-400 text-lg leading-relaxed font-light">
+          {/* KIRI: 61.8% (Judul Raksasa & Deskripsi) */}
+          <div className="w-full lg:w-[61.8%] reveal stagger-2">
+            
+            {/* Badge Kategori */}
+            <div className="inline-flex items-center gap-2 text-[9px] sm:text-[10px] font-bold tracking-[0.2em] text-cyan-400 uppercase mb-6 sm:mb-8 bg-cyan-950/40 border border-cyan-500/20 px-4 py-2 rounded-full shadow-md">
+              <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shrink-0"></span>
+              {project.category}
+            </div>
+            
+            {/* Judul Proyek */}
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-white tracking-tighter mb-8 leading-[1.1]">
+              {project.title}
+            </h1>
+            
+            {/* Teks Deskripsi (Narasi Case Study) */}
+            <div className="prose prose-invert max-w-none">
+              <h3 className="text-xl font-bold text-white mb-4 border-b border-white/10 pb-4 inline-block">Latar Belakang / Deskripsi</h3>
+              <p className="text-slate-400 text-base md:text-lg leading-relaxed">
                 {project.description}
               </p>
             </div>
-            <div className="md:w-[38.2%] bg-[#0A1329]/80 backdrop-blur-sm p-8 rounded-[2rem] border border-white/5 shadow-xl">
-              <h3 className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-2">Klien / Perusahaan</h3>
-              <p className="text-xl font-bold text-cyan-400">{project.company}</p>
+          </div>
+
+          {/* KANAN: 38.2% (Kartu Metadata Glassmorphism) */}
+          <div className="w-full lg:w-[38.2%] reveal stagger-3 mt-4 lg:mt-0">
+            <div className="bg-gradient-to-br from-[#0A1329] to-[#030712] border border-white/10 rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden group">
+              
+              {/* Efek Cahaya Sudut */}
+              <div className="absolute -top-12 -right-12 w-40 h-40 bg-cyan-500/10 rounded-full blur-[40px] group-hover:bg-cyan-500/20 transition-all duration-700"></div>
+              
+              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-6 border-b border-white/5 pb-4">
+                Informasi Proyek
+              </h4>
+
+              <div className="space-y-6">
+                
+                {/* Item Klien */}
+                <div className="flex items-start gap-4">
+                  <div className="p-2.5 bg-cyan-500/10 rounded-xl border border-cyan-500/20 shrink-0">
+                    <ClientIcon />
+                  </div>
+                  <div>
+                    <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold mb-1">Klien</p>
+                    <p className="text-sm font-semibold text-white">{project.client || "Proyek Internal / Personal"}</p>
+                  </div>
+                </div>
+
+                {/* Item Peran (Role) - Default jika tidak ada di store.js */}
+                <div className="flex items-start gap-4">
+                  <div className="p-2.5 bg-cyan-500/10 rounded-xl border border-cyan-500/20 shrink-0">
+                    <RoleIcon />
+                  </div>
+                  <div>
+                    <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold mb-1">Peran / Role</p>
+                    <p className="text-sm font-semibold text-white">{project.role || "Lead Visual Designer"}</p>
+                  </div>
+                </div>
+
+                {/* Item Tahun - Default jika tidak ada di store.js */}
+                <div className="flex items-start gap-4">
+                  <div className="p-2.5 bg-cyan-500/10 rounded-xl border border-cyan-500/20 shrink-0">
+                    <DateIcon />
+                  </div>
+                  <div>
+                    <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold mb-1">Tahun Eksekusi</p>
+                    <p className="text-sm font-semibold text-white">{project.year || "2023 - 2024"}</p>
+                  </div>
+                </div>
+
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="flex flex-col gap-12 sm:gap-16 lg:gap-20">
-          {projectImages.map((imgUrl, index) => (
-            <div key={index} className="w-full bg-[#0A1329] rounded-[2rem] sm:rounded-[3rem] overflow-hidden border border-white/5 shadow-[0_0_40px_rgba(0,0,0,0.5)]">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img 
-                src={imgUrl} 
-                alt={`${project.title} - Preview ${index + 1}`} 
-                className="w-full h-auto object-cover"
-                onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200&auto=format&fit=crop'; }}
-              />
-            </div>
-          ))}
+        {/* ========================================================= */}
+        {/* CINEMATIC IMAGE DISPLAY                                     */}
+        {/* ========================================================= */}
+        <div className="mt-20 reveal stagger-4">
+          <div className="w-full rounded-3xl sm:rounded-[2.5rem] overflow-hidden border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.4)] bg-[#050A14] group">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img 
+              src={project.image} 
+              alt={`${project.title} Preview`}
+              className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-[2s] ease-out"
+              onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200&auto=format&fit=crop'; }}
+            />
+          </div>
         </div>
 
-        <div className="mt-32 pt-16 border-t border-white/10 flex flex-col items-center text-center">
-          <h3 className="text-2xl font-bold text-white mb-6">Tertarik dengan visual seperti ini?</h3>
-          <Link href="/about" className="bg-cyan-600 hover:bg-cyan-500 text-white px-10 py-4 rounded-full font-bold tracking-wide transition-all shadow-[0_0_25px_rgba(6,182,212,0.4)] hover:shadow-[0_0_40px_rgba(6,182,212,0.6)] hover:scale-105">
-            Lihat Profil Lengkap Saya
-          </Link>
+        {/* ========================================================= */}
+        {/* NEXT CALL TO ACTION (Navigasi Bawah)                      */}
+        {/* ========================================================= */}
+        <div className="mt-24 pt-12 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-6 reveal stagger-5">
+          <p className="text-sm text-slate-400 font-medium text-center sm:text-left">
+            Tertarik membuat desain identitas seperti ini?
+          </p>
+          <a 
+            href={`https://wa.me/6285155020363?text=${encodeURIComponent(`Halo Rafli, saya tertarik untuk berdiskusi mengenai pembuatan desain ${project.category} seperti proyek ${project.title}.`)}`}
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="px-6 py-3 rounded-full bg-white text-[#030712] font-bold text-sm hover:bg-cyan-400 hover:shadow-[0_0_20px_rgba(34,211,238,0.4)] transition-all duration-300 w-full sm:w-auto text-center"
+          >
+            Diskusikan Proyek Anda
+          </a>
         </div>
 
       </div>
