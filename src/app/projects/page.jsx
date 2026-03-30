@@ -22,10 +22,10 @@ const SparklesIcon = () => (
 export default function ProjectsPage() {
   const [activeCategory, setActiveCategory] = useState('All');
 
-  // Mengekstrak kategori unik dari PROJECT_LIST secara dinamis
+  // Mengambil kategori unik
   const categories = ['All', ...new Set(PROJECT_LIST.map(project => project.category))];
 
-  // Memfilter proyek berdasarkan tombol kategori yang diklik
+  // Filter data berdasarkan kategori
   const filteredProjects = activeCategory === 'All' 
     ? PROJECT_LIST 
     : PROJECT_LIST.filter(project => project.category === activeCategory);
@@ -33,20 +33,17 @@ export default function ProjectsPage() {
   return (
     <div className="min-h-screen pt-32 pb-24 px-6 md:px-12 relative overflow-hidden">
       
-      {/* ========================================================= */}
-      {/* BACKGROUND DEKORATIF (Menyamakan dengan Global)           */}
-      {/* ========================================================= */}
+      {/* Background Decor */}
       <div className="fixed top-0 right-[-10%] w-[60vw] h-[60vw] bg-cyan-950/20 rounded-full blur-[140px] pointer-events-none -z-10"></div>
       <div className="fixed bottom-0 left-[-10%] w-[50vw] h-[50vw] bg-indigo-950/20 rounded-full blur-[140px] pointer-events-none -z-10"></div>
 
       <div className="max-w-[1400px] mx-auto relative z-10">
         
         {/* ========================================================= */}
-        {/* HEADER SECTION (GOLDEN RATIO: 61.8% & 38.2%)              */}
+        {/* HEADER SECTION (GOLDEN RATIO 61.8 : 38.2)                 */}
         {/* ========================================================= */}
         <div className="flex flex-col lg:flex-row gap-12 lg:gap-16 mb-20 items-start">
           
-          {/* KIRI: 61.8% (Judul & Narasi Utama) */}
           <div className="w-full lg:w-[61.8%] reveal stagger-1">
             <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-[10px] font-bold tracking-widest uppercase mb-6">
               <span className="w-2 h-2 rounded-full bg-cyan-500 animate-pulse"></span>
@@ -61,7 +58,6 @@ export default function ProjectsPage() {
             </p>
           </div>
 
-          {/* KANAN: 38.2% (Kartu Statistik Glassmorphism) */}
           <div className="w-full lg:w-[38.2%] reveal stagger-2 mt-4 lg:mt-0">
             <div className="bg-gradient-to-br from-[#0A1329] to-[#030712] border border-white/10 rounded-[2rem] p-8 shadow-2xl relative overflow-hidden group">
               <div className="absolute -top-10 -right-10 w-40 h-40 bg-cyan-500/10 rounded-full blur-[40px] group-hover:bg-cyan-500/20 transition-all duration-700"></div>
@@ -87,22 +83,37 @@ export default function ProjectsPage() {
         </div>
 
         {/* ========================================================= */}
-        {/* FILTER KATEGORI (RESPONSIF)                               */}
+        {/* FILTER KATEGORI (MODERN SWIPEABLE MENU UNTUK MOBILE)      */}
         {/* ========================================================= */}
-        <div className="reveal stagger-3 mb-12 flex flex-wrap items-center gap-3">
-          {categories.map((category) => (
-            <button
-              key={category}
-              onClick={() => setActiveCategory(category)}
-              className={`px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold tracking-wide transition-all duration-300 ${
-                activeCategory === category
-                  ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/50 shadow-[0_0_15px_rgba(6,182,212,0.2)]'
-                  : 'bg-white/5 text-slate-400 border border-white/5 hover:bg-white/10 hover:text-white'
-              }`}
-            >
-              {category}
-            </button>
-          ))}
+        <div className="relative mb-12 reveal stagger-3">
+          
+          {/* Fading Edge di Mobile: Indikator visual bahwa bisa di-swipe ke kanan */}
+          <div className="absolute top-0 right-0 bottom-0 w-16 bg-gradient-to-l from-[#030712] to-transparent z-10 md:hidden pointer-events-none"></div>
+
+          {/* Container Scrollable (Tanpa Scrollbar terlihat) */}
+          <div className="flex overflow-x-auto gap-3 sm:gap-4 pb-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+            {categories.map((category) => (
+              <button
+                key={category}
+                onClick={() => setActiveCategory(category)}
+                className={`relative shrink-0 px-6 py-3 rounded-full text-xs sm:text-sm font-bold tracking-wide transition-all duration-300 overflow-hidden group ${
+                  activeCategory === category
+                    ? 'text-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.15)]'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                {/* Background State */}
+                {activeCategory === category ? (
+                  <span className="absolute inset-0 bg-cyan-500/10 border border-cyan-500/50 rounded-full"></span>
+                ) : (
+                  <span className="absolute inset-0 bg-white/5 border border-white/5 rounded-full group-hover:bg-white/10 transition-colors"></span>
+                )}
+                
+                {/* Teks */}
+                <span className="relative z-10 whitespace-nowrap">{category}</span>
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* ========================================================= */}
@@ -110,7 +121,6 @@ export default function ProjectsPage() {
         {/* ========================================================= */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
           {filteredProjects.map((project, index) => {
-            // Memberikan efek delay berurutan berdasarkan index (maksimal sampai stagger-7)
             const staggerDelay = index < 5 ? `stagger-${index + 4}` : 'stagger-7';
             
             return (
@@ -119,7 +129,6 @@ export default function ProjectsPage() {
                 key={project.id} 
                 className={`reveal ${staggerDelay} group relative rounded-[2rem] overflow-hidden bg-[#0A1329] border border-white/5 hover:border-cyan-500/40 transition-all duration-500 shadow-lg hover:shadow-[0_20px_50px_rgba(6,182,212,0.15)] flex flex-col h-full`}
               >
-                {/* Pembungkus Gambar dengan Aspect Ratio Konsisten */}
                 <div className="relative w-full aspect-[4/3] overflow-hidden bg-[#050A14]">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img 
@@ -128,11 +137,9 @@ export default function ProjectsPage() {
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[1.5s] ease-out opacity-80 group-hover:opacity-100"
                     onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop'; }} 
                   />
-                  {/* Overlay Gradasi Tipis agar gambar menyatu dengan card */}
                   <div className="absolute inset-0 bg-gradient-to-t from-[#0A1329] via-transparent to-transparent opacity-90"></div>
                 </div>
                 
-                {/* Informasi Kartu (Teks) */}
                 <div className="p-6 sm:p-8 flex flex-col flex-grow relative z-10 -mt-8">
                   <div className="inline-flex items-center gap-2 text-[9px] font-bold tracking-[0.2em] text-cyan-400 uppercase mb-3 bg-[#0A1329] border border-cyan-500/20 px-3 py-1.5 rounded-full w-fit shadow-md">
                     <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shrink-0"></span>
@@ -158,7 +165,6 @@ export default function ProjectsPage() {
           })}
         </div>
 
-        {/* Pesan Kosong jika kategori tidak ditemukan (Opsional) */}
         {filteredProjects.length === 0 && (
           <div className="text-center py-20 reveal stagger-4">
             <p className="text-slate-500 text-lg">Belum ada karya di kategori ini.</p>
