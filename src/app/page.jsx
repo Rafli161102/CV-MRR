@@ -1,147 +1,177 @@
 "use client";
 
 import Link from 'next/link';
-import { PROJECT_LIST } from '../data/store';
+import { PROJECT_LIST } from '../data/store'; // Pastikan path ini benar sesuai foldermu
 
 export default function Home() {
-  // Mengambil 3 karya pertama dari store.js untuk dipajang di Beranda
+  // Mengambil 3 karya pertama dari store.js
   const featuredProjects = PROJECT_LIST.slice(0, 3);
   
-  // Ganti dengan nomor WhatsApp aslimu (format: 628...)
+  // Kontak
   const whatsappNumber = "6285155020363"; 
   const waMessage = "Halo Rafli, saya tertarik dengan portofolio desain Anda dan ingin berdiskusi lebih lanjut.";
 
   return (
-    <div className="min-h-screen bg-[#060D1F] text-slate-300 font-sans selection:bg-cyan-500 selection:text-white relative overflow-hidden">
+    <div className="min-h-screen bg-[#030712] text-slate-300 font-sans selection:bg-cyan-500 selection:text-white relative overflow-hidden">
       
-      {/* BACKGROUND */}
-      <div className="fixed inset-0 bg-gradient-to-br from-[#060D1F] via-[#0D1836] to-[#060D1F] pointer-events-none z-0"></div>
-      <div className="absolute top-[-10%] left-[-10%] w-[40rem] h-[40rem] bg-cyan-900/20 rounded-full blur-[120px] pointer-events-none z-0"></div>
-      <div className="absolute bottom-[-10%] right-[-5%] w-[30rem] h-[30rem] bg-cyan-600/10 rounded-full blur-[100px] pointer-events-none z-0"></div>
+      {/* ========================================================= */}
+      {/* BACKGROUND (GRID PATTERN & GLOW) - UI/UX TREND 2025         */}
+      {/* ========================================================= */}
+      <div className="fixed inset-0 pointer-events-none z-0">
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:24px_24px]"></div>
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[60rem] h-[40rem] bg-cyan-900/20 blur-[120px] rounded-full"></div>
+        <div className="absolute bottom-0 right-0 w-[40rem] h-[30rem] bg-blue-900/10 blur-[100px] rounded-full"></div>
+      </div>
 
-      <div className="relative z-10 pt-32 pb-32">
+      <div className="relative z-10 pt-32 pb-24">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           
-          {/* HERO SECTION */}
-          <div className="flex flex-col lg:flex-row items-center justify-between gap-16 lg:gap-8 min-h-[70vh]">
+          {/* ========================================================= */}
+          {/* 1. HERO SECTION (EDITORIAL STYLE)                         */}
+          {/* ========================================================= */}
+          <div className="flex flex-col items-center text-center mb-24 animate-fade-in-up">
             
-            <div className="w-full lg:w-[61.8%] flex flex-col justify-center text-center lg:text-left">
-              <div className="inline-block px-4 py-2 bg-[#0A1329]/80 border border-cyan-500/30 rounded-full text-cyan-400 text-xs font-bold tracking-[0.2em] uppercase mb-8 self-center lg:self-start shadow-[0_0_15px_rgba(6,182,212,0.15)]">
-                Graphic Designer & Founder
-              </div>
-              
-              <h1 className="text-5xl sm:text-7xl lg:text-[5rem] font-black tracking-tighter text-white mb-8 leading-[1.1] drop-shadow-2xl">
-                Menciptakan <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-600">
-                  Visual Epik
-                </span> <br />
-                Yang Beresonansi.
-              </h1>
-              
-              <p className="text-lg sm:text-xl text-slate-400 font-light leading-relaxed mb-12 max-w-2xl mx-auto lg:mx-0">
-                Halo, saya Rafli. Membantu brand dan entitas mencapai potensi maksimalnya melalui identitas visual yang presisi, estetis, dan strategis.
-              </p>
-              
-              {/* TOMBOL CALL TO ACTION */}
-              <div className="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start">
-                
-                {/* Tombol Lihat & Download CV (Mengarah ke CV Auto-Generate) */}
-                <Link 
-                  href="/cv-print" 
-                  className="w-full sm:w-auto px-8 py-4 bg-cyan-600 hover:bg-cyan-500 text-white font-bold rounded-full transition-all shadow-[0_0_20px_rgba(6,182,212,0.4)] hover:shadow-[0_0_40px_rgba(6,182,212,0.6)] hover:scale-105 tracking-wide text-center flex justify-center items-center gap-2"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
-                  Lihat & Download CV
-                </Link>
-
-                {/* Tombol Hubungi WhatsApp */}
-                <a 
-                  href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(waMessage)}`}
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="w-full sm:w-auto px-8 py-4 bg-[#25D366]/10 border border-[#25D366]/50 hover:bg-[#25D366] hover:text-white text-[#25D366] font-bold rounded-full transition-all tracking-wide text-center group flex justify-center items-center gap-2"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.1.824z"/></svg>
-                  Mulai Diskusi
-                </a>
-
-              </div>
-
-              {/* ======================================================== */}
-              {/* PORTAL KE CV MAKER PUBLIK (BARU)                           */}
-              {/* ======================================================== */}
-              <div className="mt-8 text-center lg:text-left">
-                <p className="text-sm text-slate-500 font-medium">
-                  Terpesona dengan CV ATS saya?{' '}
-                  <Link href="/cv-maker" className="text-cyan-400 hover:text-cyan-300 transition-colors inline-flex items-center gap-1 group">
-                    <span className="underline underline-offset-4 decoration-cyan-500/30 group-hover:decoration-cyan-400">Buat CV-mu sendiri secara gratis</span>
-                    <span className="group-hover:translate-x-1 transition-transform duration-300">→</span>
-                  </Link>
-                </p>
-              </div>
-
+            {/* Status Badge */}
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-md mb-8 hover:bg-white/10 transition-colors cursor-default">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+              </span>
+              <span className="text-xs font-medium text-slate-300 tracking-wide uppercase">Available for Work & Collaboration</span>
             </div>
 
-            {/* Bagian Visual Frame */}
-            <div className="w-full lg:w-[38.2%] flex justify-center lg:justify-end relative mt-12 lg:mt-0">
-              <div className="relative w-72 h-72 sm:w-96 sm:h-96">
-                <div className="absolute inset-0 border-2 border-cyan-500/30 rounded-full animate-[spin_10s_linear_infinite] border-dashed"></div>
-                <div className="absolute inset-4 border border-white/10 rounded-full animate-[spin_15s_linear_infinite_reverse]"></div>
-                
-                <div className="absolute inset-8 rounded-full overflow-hidden bg-[#0A1329] border border-cyan-500/50 shadow-[0_0_50px_rgba(6,182,212,0.2)]">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img 
-                    src="/profile.jpg" 
-                    alt="M. Rafli Ramadhan" 
-                    className="w-full h-full object-cover object-center grayscale hover:grayscale-0 transition-all duration-700"
-                    onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop'; }}
-                  />
-                </div>
-                
-                <div className="absolute -bottom-4 -right-4 bg-[#0A1329] p-4 rounded-2xl border border-white/10 shadow-2xl backdrop-blur-md">
-                  <div className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Founder of</div>
-                  <div className="text-lg font-black text-cyan-400">AquaNime.</div>
-                </div>
-              </div>
-            </div>
+            {/* Giant Typography */}
+            <h1 className="text-5xl sm:text-7xl lg:text-[6rem] font-black tracking-tighter text-white mb-6 leading-[1.05] drop-shadow-2xl">
+              Merancang <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500">Identitas,</span> <br className="hidden sm:block" />
+              Membangun <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-500 to-pink-500">Bercerita.</span>
+            </h1>
 
+            <p className="text-lg sm:text-xl text-slate-400 font-light leading-relaxed max-w-3xl mx-auto mb-10">
+              Halo, saya <b className="text-white font-bold">Muhammad Rafli Ramadhan</b>. Seorang Desainer Grafis & UI/UX Enthusiast yang mengubah ide kompleks menjadi karya visual yang estetis, strategis, dan berdampak.
+            </p>
+
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto">
+              <a 
+                href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(waMessage)}`}
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="w-full sm:w-auto px-8 py-4 bg-white text-black hover:bg-slate-200 font-bold rounded-full transition-all hover:scale-105 tracking-wide text-center flex justify-center items-center gap-2 shadow-[0_0_20px_rgba(255,255,255,0.2)]"
+              >
+                Mulai Diskusi Proyek
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4"><path fillRule="evenodd" d="M8.25 3.75H19.5a.75.75 0 01.75.75v11.25a.75.75 0 01-1.5 0V6.31L5.03 20.03a.75.75 0 01-1.06-1.06L17.69 5.25H8.25a.75.75 0 010-1.5z" clipRule="evenodd" /></svg>
+              </a>
+              <Link 
+                href="/projects" 
+                className="w-full sm:w-auto px-8 py-4 bg-white/5 border border-white/10 hover:bg-white/10 text-white font-medium rounded-full transition-all tracking-wide text-center flex justify-center items-center gap-2"
+              >
+                Lihat Portofolio
+              </Link>
+            </div>
           </div>
 
-          {/* FEATURED PROJECTS */}
-          <div className="mt-40 pt-20 border-t border-white/5">
-            <div className="flex flex-col sm:flex-row justify-between items-end mb-16 gap-6">
-              <div>
-                <h2 className="text-4xl sm:text-5xl font-black text-white mb-4">Mahakarya <span className="text-cyan-500">Terpilih</span></h2>
-                <p className="text-slate-400 text-lg">Sekilas cuplikan dari portofolio terbaru saya.</p>
+          {/* ========================================================= */}
+          {/* 2. BENTO GRID SECTION (TREN UI/UX MODERN)                 */}
+          {/* ========================================================= */}
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 mb-32">
+            
+            {/* Bento 1: Profil & Intro (Besar) */}
+            <div className="md:col-span-2 lg:col-span-2 bg-gradient-to-br from-white/5 to-transparent border border-white/10 rounded-[2rem] p-8 flex flex-col justify-between relative overflow-hidden group hover:border-cyan-500/30 transition-all">
+              <div className="absolute top-0 right-0 p-8 opacity-20 group-hover:opacity-40 transition-opacity">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1} stroke="currentColor" className="w-24 h-24 text-cyan-400"><path strokeLinecap="round" strokeLinejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.876-5.814a1.151 1.151 0 00-1.597-1.597L14.146 6.32a15.996 15.996 0 00-4.649 4.763m3.42 3.42a6.776 6.776 0 00-3.42-3.42" /></svg>
               </div>
-              <Link href="/projects" className="text-cyan-400 hover:text-cyan-300 font-bold tracking-widest uppercase text-sm group flex items-center gap-2 transition-all">
-                Lihat Semua <span className="group-hover:translate-x-2 transition-transform">→</span>
+              <div>
+                <div className="w-14 h-14 bg-cyan-500/20 rounded-2xl flex items-center justify-center mb-6 border border-cyan-500/30">
+                  <span className="text-2xl">🎨</span>
+                </div>
+                <h3 className="text-2xl font-bold text-white mb-2">Desain Grafis & Branding</h3>
+                <p className="text-slate-400 text-sm leading-relaxed max-w-sm">Menciptakan logo, kemasan, dan materi pemasaran yang tidak hanya indah dipandang, tapi juga memiliki strategi komunikasi yang kuat.</p>
+              </div>
+              <Link href="/about" className="inline-flex items-center gap-2 text-cyan-400 font-bold text-sm mt-8 group-hover:gap-3 transition-all">
+                Lebih Lanjut Tentang Saya <span className="text-lg">→</span>
               </Link>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
-              {featuredProjects.map((project) => (
-                <Link href={`/projects/${project.id}`} key={project.id} className="group flex flex-col h-full bg-[#0A1329]/80 backdrop-blur-sm p-6 rounded-[2.5rem] border border-white/5 hover:border-cyan-500/40 hover:bg-[#0D1836] hover:shadow-[0_0_40px_rgba(6,182,212,0.15)] transition-all duration-500">
-                  <div className="relative aspect-[1.618/1] rounded-[1.5rem] overflow-hidden bg-[#060D1F] mb-6 border border-white/5">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img 
-                      src={project.image} 
-                      alt={project.title} 
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 opacity-80 group-hover:opacity-100"
-                      onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop'; }} 
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#060D1F] to-transparent opacity-0 group-hover:opacity-80 transition-opacity duration-500"></div>
-                  </div>
-                  <div className="px-2 pb-2">
-                    <div className="text-[10px] font-bold tracking-[0.2em] text-cyan-400 uppercase mb-3">
-                      {project.category}
+            {/* Bento 2: Photography (Medium) */}
+            <Link href="/photography" className="md:col-span-1 lg:col-span-1 bg-[#0A1329] border border-white/10 rounded-[2rem] p-6 flex flex-col justify-between group hover:bg-[#0D1836] hover:border-purple-500/50 transition-all relative overflow-hidden">
+              <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1516802273409-68526ee1bdd6?q=80&w=600&auto=format&fit=crop')] bg-cover bg-center opacity-10 group-hover:opacity-30 transition-opacity duration-700"></div>
+              <div className="relative z-10">
+                <h3 className="text-xl font-bold text-white mb-1">Fotografi</h3>
+                <p className="text-slate-400 text-xs">Jurnal Visual Pribadi.</p>
+              </div>
+              <div className="relative z-10 mt-12 flex justify-between items-end">
+                <span className="px-3 py-1 bg-white/10 rounded-full text-[10px] font-bold text-white backdrop-blur-md">@img_ischeznut.jpg</span>
+                <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center border border-white/10 group-hover:bg-purple-500 group-hover:border-purple-400 transition-colors">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 text-white"><path fillRule="evenodd" d="M8.25 3.75H19.5a.75.75 0 01.75.75v11.25a.75.75 0 01-1.5 0V6.31L5.03 20.03a.75.75 0 01-1.06-1.06L17.69 5.25H8.25a.75.75 0 010-1.5z" clipRule="evenodd" /></svg>
+                </div>
+              </div>
+            </Link>
+
+            {/* Bento 3: CV Maker (Medium Highlight) */}
+            <Link href="/cv-maker" className="md:col-span-3 lg:col-span-1 bg-gradient-to-b from-cyan-600 to-blue-800 rounded-[2rem] p-6 flex flex-col justify-between group hover:shadow-[0_0_30px_rgba(6,182,212,0.4)] hover:-translate-y-1 transition-all">
+              <div>
+                <div className="px-3 py-1 bg-white/20 rounded-full text-[10px] font-bold text-white backdrop-blur-md inline-block mb-4 uppercase tracking-widest">Free Tool</div>
+                <h3 className="text-2xl font-black text-white mb-2 leading-tight">ATS CV<br/>Maker.</h3>
+                <p className="text-cyan-100 text-xs leading-relaxed">Aplikasi cerdas untuk membuat CV berstandar mesin HRD (ATS) secara gratis, lengkap dengan fitur auto-translate.</p>
+              </div>
+              <div className="mt-8 text-white font-bold text-sm flex items-center gap-2 group-hover:gap-3 transition-all">
+                Coba Sekarang <span>→</span>
+              </div>
+            </Link>
+
+          </div>
+
+          {/* ========================================================= */}
+          {/* 3. SELECTED WORKS (PROJECTS GRID)                         */}
+          {/* ========================================================= */}
+          <div className="pt-10 border-t border-white/5">
+            <div className="flex flex-col sm:flex-row justify-between items-end mb-12 gap-6">
+              <div>
+                <h2 className="text-3xl sm:text-4xl font-black text-white mb-2">Selected <span className="text-cyan-500">Works</span></h2>
+                <p className="text-slate-400 text-sm">Beberapa karya pilihan dari portofolio saya.</p>
+              </div>
+              <Link href="/projects" className="px-6 py-2 rounded-full border border-white/10 text-white hover:bg-white hover:text-black font-bold text-xs uppercase tracking-widest transition-all">
+                Lihat Semua Karya
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+              {featuredProjects.map((project) => {
+                // Menghindari error jika properti image tidak ada di store.js
+                const imgSrc = project.image || (project.images && project.images[0]) || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop';
+
+                return (
+                  <Link href={`/projects/${project.id}`} key={project.id} className="group block">
+                    {/* Image Container with Inner Shadow */}
+                    <div className="relative aspect-[4/3] rounded-3xl overflow-hidden bg-[#0A1329] mb-5 border border-white/5 shadow-lg group-hover:border-cyan-500/30 transition-colors">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img 
+                        src={imgSrc} 
+                        alt={project.title} 
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                        onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop'; }} 
+                      />
+                      {/* Overlay Soft Gradient */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                      
+                      {/* Floating View Button */}
+                      <div className="absolute bottom-4 right-4 w-10 h-10 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center border border-white/20 opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500 text-white">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4"><path fillRule="evenodd" d="M8.25 3.75H19.5a.75.75 0 01.75.75v11.25a.75.75 0 01-1.5 0V6.31L5.03 20.03a.75.75 0 01-1.06-1.06L17.69 5.25H8.25a.75.75 0 010-1.5z" clipRule="evenodd" /></svg>
+                      </div>
                     </div>
-                    <h3 className="text-xl font-bold text-white group-hover:text-cyan-300 transition-colors">
-                      {project.title}
-                    </h3>
-                  </div>
-                </Link>
-              ))}
+                    
+                    {/* Text Details */}
+                    <div className="px-2">
+                      <div className="text-[10px] font-bold tracking-[0.2em] text-cyan-400 uppercase mb-2">
+                        {project.category}
+                      </div>
+                      <h3 className="text-xl font-bold text-white group-hover:text-cyan-300 transition-colors">
+                        {project.title}
+                      </h3>
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
           </div>
 
