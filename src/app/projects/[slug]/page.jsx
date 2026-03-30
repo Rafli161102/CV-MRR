@@ -9,7 +9,7 @@ import { notFound } from 'next/navigation';
 // IKON SVG PROFESIONAL UNTUK METADATA PROYEK
 // =========================================================================
 const ArrowLeftIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4 group-hover:-translate-x-1 transition-transform">
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4 group-hover:-translate-x-1 transition-transform shrink-0">
     <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
   </svg>
 );
@@ -36,30 +36,32 @@ export default function ProjectDetail() {
   const params = useParams();
   const slug = params?.slug;
 
-  // Mencari data proyek berdasarkan URL (slug)
   const project = PROJECT_LIST.find((p) => p.id === slug);
 
-  // Jika proyek tidak ditemukan, tampilkan error bawaan
   if (!project) {
     return notFound();
   }
 
+  // Trik Cerdas: Jika project.images ada dan tidak kosong, gunakan itu. Jika tidak, jadikan array dengan 1 gambar.
+  const imagesToShow = project.images && project.images.length > 0 ? project.images : [project.image];
+
   return (
-    <div className="min-h-screen pt-32 pb-24 relative w-full overflow-x-hidden bg-[#030712]">
+    // FIX OVERFLOW: Mengamankan agar layar tidak melar ke samping
+    <div className="min-h-screen pt-28 pb-24 relative w-full overflow-x-hidden bg-[#030712]">
       
-      {/* Background Decor (Glow Konsisten dengan Global) */}
-      <div className="fixed top-0 right-0 w-[80vw] h-[80vw] max-w-[600px] max-h-[600px] bg-cyan-900/20 rounded-full blur-[120px] pointer-events-none -z-10 translate-x-1/3 -translate-y-1/3"></div>
-      <div className="fixed bottom-0 left-0 w-[80vw] h-[80vw] max-w-[600px] max-h-[600px] bg-indigo-900/20 rounded-full blur-[120px] pointer-events-none -z-10 -translate-x-1/3 translate-y-1/3"></div>
+      {/* Background Decor (Glow Konsisten) */}
+      <div className="fixed top-0 right-0 w-[80vw] h-[80vw] max-w-[600px] max-h-[600px] bg-cyan-900/15 rounded-full blur-[120px] pointer-events-none -z-10 translate-x-1/3 -translate-y-1/3"></div>
+      <div className="fixed bottom-0 left-0 w-[80vw] h-[80vw] max-w-[600px] max-h-[600px] bg-indigo-900/15 rounded-full blur-[120px] pointer-events-none -z-10 -translate-x-1/3 translate-y-1/3"></div>
 
       <div className="max-w-[1200px] mx-auto px-5 sm:px-8 lg:px-12 relative z-10 w-full">
         
         {/* ========================================================= */}
         {/* TOMBOL KEMBALI (Pill Shaped Minimalist)                   */}
         {/* ========================================================= */}
-        <div className="mb-12 reveal stagger-1">
+        <div className="mb-10 sm:mb-12 reveal stagger-1">
           <Link 
             href="/projects" 
-            className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-[#0A1329] border border-white/10 text-xs sm:text-sm font-bold text-slate-300 hover:text-cyan-400 hover:border-cyan-500/30 hover:bg-[#0A1329]/80 shadow-lg hover:shadow-[0_0_15px_rgba(6,182,212,0.2)] transition-all duration-300 group"
+            className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-[#0A1329] border border-white/10 text-[11px] sm:text-xs font-bold tracking-widest uppercase text-slate-400 hover:text-cyan-400 hover:border-cyan-500/30 hover:bg-[#0A1329]/80 shadow-lg hover:shadow-[0_0_15px_rgba(6,182,212,0.2)] transition-all duration-300 group w-fit"
           >
             <ArrowLeftIcon />
             Kembali ke Galeri
@@ -69,26 +71,28 @@ export default function ProjectDetail() {
         {/* ========================================================= */}
         {/* HEADER SECTION (GOLDEN RATIO 61.8 : 38.2)                 */}
         {/* ========================================================= */}
-        <div className="flex flex-col lg:flex-row gap-12 lg:gap-16 items-start">
+        <div className="flex flex-col lg:flex-row gap-10 lg:gap-16 items-start">
           
-          {/* KIRI: 61.8% (Judul Raksasa & Deskripsi) */}
+          {/* KIRI: 61.8% (Judul Tipografi Dinamis & Deskripsi) */}
           <div className="w-full lg:w-[61.8%] reveal stagger-2">
             
             {/* Badge Kategori */}
-            <div className="inline-flex items-center gap-2 text-[9px] sm:text-[10px] font-bold tracking-[0.2em] text-cyan-400 uppercase mb-6 sm:mb-8 bg-cyan-950/40 border border-cyan-500/20 px-4 py-2 rounded-full shadow-md">
+            <div className="inline-flex items-center gap-2 text-[9px] sm:text-[10px] font-bold tracking-[0.2em] text-cyan-400 uppercase mb-4 sm:mb-6 bg-cyan-950/40 border border-cyan-500/20 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full shadow-md">
               <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shrink-0"></span>
               {project.category}
             </div>
             
-            {/* Judul Proyek */}
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-white tracking-tighter mb-8 leading-[1.1]">
+            {/* FONT DINAMIS: Lebih kecil di HP agar tidak terlalu memakan ruang, namun membesar otomatis di PC */}
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[4rem] font-black text-white tracking-tighter mb-6 sm:mb-8 leading-[1.1] sm:leading-tight">
               {project.title}
             </h1>
             
-            {/* Teks Deskripsi (Narasi Case Study) */}
-            <div className="prose prose-invert max-w-none">
-              <h3 className="text-xl font-bold text-white mb-4 border-b border-white/10 pb-4 inline-block">Latar Belakang / Deskripsi</h3>
-              <p className="text-slate-400 text-base md:text-lg leading-relaxed">
+            {/* Latar Belakang Proyek */}
+            <div>
+              <h3 className="text-sm sm:text-base font-bold text-slate-300 uppercase tracking-widest mb-4 border-b border-white/10 pb-3 inline-block">
+                Latar Belakang / Deskripsi
+              </h3>
+              <p className="text-sm sm:text-base text-slate-400 leading-relaxed sm:leading-loose">
                 {project.description}
               </p>
             </div>
@@ -96,47 +100,53 @@ export default function ProjectDetail() {
 
           {/* KANAN: 38.2% (Kartu Metadata Glassmorphism) */}
           <div className="w-full lg:w-[38.2%] reveal stagger-3 mt-4 lg:mt-0">
-            <div className="bg-gradient-to-br from-[#0A1329] to-[#030712] border border-white/10 rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden group">
+            <div className="bg-[#0A1329]/80 backdrop-blur-xl border border-white/10 rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden group">
               
-              {/* Efek Cahaya Sudut */}
+              {/* Efek Cahaya Halus */}
               <div className="absolute -top-12 -right-12 w-40 h-40 bg-cyan-500/10 rounded-full blur-[40px] group-hover:bg-cyan-500/20 transition-all duration-700"></div>
               
-              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-6 border-b border-white/5 pb-4">
+              <h4 className="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-[0.2em] mb-6 border-b border-white/5 pb-4">
                 Informasi Proyek
               </h4>
 
-              <div className="space-y-6">
+              <div className="space-y-5 sm:space-y-6">
                 
-                {/* Item Klien */}
+                {/* Klien */}
                 <div className="flex items-start gap-4">
-                  <div className="p-2.5 bg-cyan-500/10 rounded-xl border border-cyan-500/20 shrink-0">
+                  <div className="p-2 sm:p-2.5 bg-cyan-500/10 rounded-xl border border-cyan-500/20 shrink-0">
                     <ClientIcon />
                   </div>
                   <div>
-                    <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold mb-1">Klien</p>
-                    <p className="text-sm font-semibold text-white">{project.client || "Proyek Internal / Personal"}</p>
+                    <p className="text-[9px] sm:text-[10px] text-slate-500 uppercase tracking-widest font-bold mb-1">Klien</p>
+                    <p className="text-xs sm:text-sm font-bold text-white leading-tight">
+                      {project.company || "Proyek Personal"}
+                    </p>
                   </div>
                 </div>
 
-                {/* Item Peran (Role) - Default jika tidak ada di store.js */}
+                {/* Peran */}
                 <div className="flex items-start gap-4">
-                  <div className="p-2.5 bg-cyan-500/10 rounded-xl border border-cyan-500/20 shrink-0">
+                  <div className="p-2 sm:p-2.5 bg-cyan-500/10 rounded-xl border border-cyan-500/20 shrink-0">
                     <RoleIcon />
                   </div>
                   <div>
-                    <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold mb-1">Peran / Role</p>
-                    <p className="text-sm font-semibold text-white">{project.role || "Lead Visual Designer"}</p>
+                    <p className="text-[9px] sm:text-[10px] text-slate-500 uppercase tracking-widest font-bold mb-1">Peran / Role</p>
+                    <p className="text-xs sm:text-sm font-bold text-white leading-tight">
+                      {project.role || "Lead Visual Designer"}
+                    </p>
                   </div>
                 </div>
 
-                {/* Item Tahun - Default jika tidak ada di store.js */}
+                {/* Tahun Eksekusi */}
                 <div className="flex items-start gap-4">
-                  <div className="p-2.5 bg-cyan-500/10 rounded-xl border border-cyan-500/20 shrink-0">
+                  <div className="p-2 sm:p-2.5 bg-cyan-500/10 rounded-xl border border-cyan-500/20 shrink-0">
                     <DateIcon />
                   </div>
                   <div>
-                    <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold mb-1">Tahun Eksekusi</p>
-                    <p className="text-sm font-semibold text-white">{project.year || "2023 - 2024"}</p>
+                    <p className="text-[9px] sm:text-[10px] text-slate-500 uppercase tracking-widest font-bold mb-1">Tahun Eksekusi</p>
+                    <p className="text-xs sm:text-sm font-bold text-white leading-tight">
+                      {project.year || "2023 - 2024"}
+                    </p>
                   </div>
                 </div>
 
@@ -146,32 +156,45 @@ export default function ProjectDetail() {
         </div>
 
         {/* ========================================================= */}
-        {/* CINEMATIC IMAGE DISPLAY                                     */}
+        {/* CINEMATIC MULTIPLE IMAGE DISPLAY (OTOMATIS LOOPING)         */}
         {/* ========================================================= */}
-        <div className="mt-20 reveal stagger-4">
-          <div className="w-full rounded-3xl sm:rounded-[2.5rem] overflow-hidden border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.4)] bg-[#050A14] group">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img 
-              src={project.image} 
-              alt={`${project.title} Preview`}
-              className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-[2s] ease-out"
-              onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200&auto=format&fit=crop'; }}
-            />
-          </div>
+        <div className="mt-16 sm:mt-24 flex flex-col gap-8 sm:gap-12">
+          {imagesToShow.map((imgUrl, index) => {
+            // Efek animasi berurutan untuk setiap gambar yang diload
+            const staggerDelay = index < 5 ? `stagger-${index + 3}` : 'stagger-7';
+
+            return (
+              <div 
+                key={index}
+                className={`reveal ${staggerDelay} w-full rounded-2xl sm:rounded-[2.5rem] overflow-hidden border border-white/5 shadow-2xl bg-[#050A14] group`}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img 
+                  src={imgUrl} 
+                  alt={`${project.title} - Preview ${index + 1}`}
+                  className="w-full h-auto object-cover group-hover:scale-[1.02] transition-transform duration-1000 ease-out"
+                  onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200&auto=format&fit=crop'; }}
+                />
+              </div>
+            );
+          })}
         </div>
 
         {/* ========================================================= */}
         {/* NEXT CALL TO ACTION (Navigasi Bawah)                      */}
         {/* ========================================================= */}
-        <div className="mt-24 pt-12 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-6 reveal stagger-5">
-          <p className="text-sm text-slate-400 font-medium text-center sm:text-left">
-            Tertarik membuat desain identitas seperti ini?
-          </p>
+        <div className="mt-20 sm:mt-32 pt-10 sm:pt-12 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-6 reveal stagger-5">
+          <div className="text-center sm:text-left">
+            <h4 className="text-white font-bold text-lg mb-2">Tertarik dengan hasil desain ini?</h4>
+            <p className="text-xs sm:text-sm text-slate-400 font-medium">
+              Mari diskusikan visi proyek kreatif Anda selanjutnya bersama saya.
+            </p>
+          </div>
           <a 
             href={`https://wa.me/6285155020363?text=${encodeURIComponent(`Halo Rafli, saya tertarik untuk berdiskusi mengenai pembuatan desain ${project.category} seperti proyek ${project.title}.`)}`}
             target="_blank" 
             rel="noopener noreferrer"
-            className="px-6 py-3 rounded-full bg-white text-[#030712] font-bold text-sm hover:bg-cyan-400 hover:shadow-[0_0_20px_rgba(34,211,238,0.4)] transition-all duration-300 w-full sm:w-auto text-center"
+            className="px-6 py-3.5 sm:px-8 sm:py-4 rounded-full bg-cyan-500 text-[#030712] font-bold text-xs sm:text-sm hover:bg-cyan-400 hover:shadow-[0_0_25px_rgba(6,182,212,0.4)] transition-all duration-300 w-full sm:w-auto text-center whitespace-nowrap"
           >
             Diskusikan Proyek Anda
           </a>
