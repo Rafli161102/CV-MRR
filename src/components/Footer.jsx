@@ -3,7 +3,7 @@
 import Link from 'next/link';
 
 // =========================================================================
-// IKON SVG KUSTOM, UNIK, & RESMI (Didesain Khusus tanpa Ikon Bawaan)
+// IKON SVG KUSTOM, UNIK, & RESMI
 // =========================================================================
 const DiamondSparkleIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 shrink-0 text-cyan-400 group-hover:animate-pulse">
@@ -29,106 +29,128 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-[#030712] border-t border-white/5 pt-16 pb-8 relative z-20 overflow-hidden">
+    <footer className="bg-[#030712] relative z-20 overflow-hidden">
       
-      {/* Background Glow Halus */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[40rem] h-[20rem] bg-cyan-900/10 rounded-full blur-[120px] pointer-events-none"></div>
+      {/* Garis batas transparan dengan efek cahaya di tengah */}
+      <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent"></div>
 
-      <div className="max-w-[1400px] mx-auto px-6 lg:px-12 relative z-10">
+      {/* Background Glow Halus */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[50vw] h-[30vw] bg-cyan-900/10 rounded-full blur-[120px] pointer-events-none"></div>
+
+      <div className="max-w-[1400px] mx-auto px-6 lg:px-12 pt-20 pb-8 relative z-10">
         
         {/* ========================================================= */}
-        {/* BANNER DUKUNGAN / APRESIASI KARYA (GLASSMORPHISM)         */}
+        {/* BANNER APRESIASI (GOLDEN RATIO LAYOUT)                      */}
         {/* ========================================================= */}
-        <div className="mb-20 p-6 sm:p-8 lg:p-10 rounded-3xl bg-gradient-to-r from-[#0A1329] to-[#050A14] border border-cyan-500/20 shadow-[0_0_40px_rgba(6,182,212,0.05)] flex flex-col md:flex-row items-center justify-between gap-8 group">
-          <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-5">
-            <div className="p-4 bg-cyan-950/50 rounded-2xl border border-cyan-500/30 shrink-0 shadow-[0_0_20px_rgba(6,182,212,0.15)] group-hover:scale-110 transition-transform duration-500">
+        <div className="mb-24 p-8 lg:p-12 rounded-[2.5rem] bg-gradient-to-r from-[#0A1329] to-[#050A14] border border-white/5 shadow-[0_0_50px_rgba(6,182,212,0.03)] hover:border-cyan-500/30 transition-colors duration-500 flex flex-col lg:flex-row items-center justify-between gap-10 group relative overflow-hidden">
+          
+          {/* Efek kilauan halus di dalam banner */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/10 rounded-full blur-[80px] -z-10 group-hover:bg-cyan-500/20 transition-all duration-700"></div>
+
+          {/* KIRI: 61.8% (Teks & Ikon) */}
+          <div className="w-full lg:w-[61.8%] flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-6 z-10">
+            <div className="p-4 bg-[#030712] rounded-2xl border border-white/5 shrink-0 shadow-inner group-hover:scale-110 group-hover:border-cyan-500/30 transition-all duration-500">
               <DiamondSparkleIcon />
             </div>
             <div>
-              <h3 className="text-xl sm:text-2xl font-black text-white mb-2 tracking-tight">Dukung Perjalanan Kreatif Ini</h3>
+              <h3 className="text-2xl sm:text-3xl font-black text-white mb-3 tracking-tight">Dukung Perjalanan Kreatif Ini</h3>
               <p className="text-slate-400 text-sm sm:text-base max-w-xl leading-relaxed">
                 Jika alat ATS CV gratis atau desain saya telah membantu Anda, pertimbangkan untuk memberikan sedikit apresiasi. Setiap dukungan sangat berarti untuk server dan komunitas AquaNime.
               </p>
             </div>
           </div>
           
-          {/* Ganti Href dengan link Trakteer / Saweria / KaryaKarsa milikmu */}
-          <a 
-            href="https://saweria.co/mrr" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="w-full md:w-auto whitespace-nowrap px-8 py-4 bg-white/5 hover:bg-cyan-600 border border-white/10 hover:border-cyan-400 text-white font-bold rounded-xl transition-all shadow-lg hover:shadow-[0_0_30px_rgba(6,182,212,0.4)] flex items-center justify-center gap-3 hover:-translate-y-1"
-          >
-            Beri Apresiasi
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-            </svg>
-          </a>
+          {/* KANAN: 38.2% (Tombol Aksi) */}
+          <div className="w-full lg:w-[38.2%] flex justify-center lg:justify-end z-10">
+            {/* Ganti Href dengan link Trakteer / Saweria / KaryaKarsa milikmu */}
+            <a 
+              href="https://saweria.co/mrr" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="w-full sm:w-auto whitespace-nowrap px-8 py-4 bg-white/5 hover:bg-cyan-600 border border-white/10 hover:border-cyan-400 text-white font-bold rounded-xl transition-all shadow-lg hover:shadow-[0_0_30px_rgba(6,182,212,0.4)] flex items-center justify-center gap-3 hover:-translate-y-1"
+            >
+              Beri Apresiasi
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+              </svg>
+            </a>
+          </div>
+
         </div>
 
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+        {/* ========================================================= */}
+        {/* LINK FOOTER UTAMA (GOLDEN RATIO: 61.8% & 38.2%)           */}
+        {/* ========================================================= */}
+        <div className="flex flex-col lg:flex-row gap-16 lg:gap-0 mb-20">
           
-          {/* Brand Info */}
-          <div className="lg:col-span-2">
-            <Link href="/" className="inline-block mb-5">
-              <span className="text-3xl font-extrabold tracking-tighter text-white">
-                MRR<span className="text-cyan-500">.</span>
+          {/* KIRI: 61.8% (Brand Info & Misi) */}
+          <div className="w-full lg:w-[61.8%] pr-0 lg:pr-20">
+            <Link href="/" className="inline-block mb-6 group">
+              <span className="text-4xl font-black tracking-tighter text-white">
+                MRR<span className="text-cyan-500 group-hover:text-white transition-colors">.</span>
               </span>
             </Link>
-            <p className="text-slate-400 text-sm leading-relaxed max-w-sm">
-              Menerjemahkan imajinasi menjadi realitas visual. Fokus pada pembuatan identitas merek yang presisi, estetis, dan strategis.
+            <p className="text-slate-400 text-sm md:text-base leading-relaxed max-w-md">
+              Menerjemahkan imajinasi menjadi realitas visual. Fokus pada pembuatan identitas merek yang presisi, estetis, dan strategis melalui desain grafis dan teknologi web.
             </p>
           </div>
 
-          {/* Quick Links */}
-          <div>
-            <h4 className="text-white font-bold tracking-widest uppercase text-xs mb-6 flex items-center gap-2">
-              <span className="w-1.5 h-1.5 bg-cyan-500 rounded-full"></span> Navigasi
-            </h4>
-            <ul className="space-y-3 text-sm text-slate-400">
-              <li><Link href="/projects" className="hover:text-cyan-400 hover:translate-x-1 inline-block transition-transform">Portofolio</Link></li>
-              <li><Link href="/photography" className="hover:text-cyan-400 hover:translate-x-1 inline-block transition-transform">Galeri Fotografi</Link></li>
-              <li><Link href="/about" className="hover:text-cyan-400 hover:translate-x-1 inline-block transition-transform">Tentang Saya</Link></li>
-              <li><Link href="/cv-maker" className="hover:text-cyan-400 hover:translate-x-1 inline-block transition-transform">ATS CV Tools</Link></li>
-            </ul>
-          </div>
+          {/* KANAN: 38.2% (Menu Navigasi & Kontak) */}
+          <div className="w-full lg:w-[38.2%] grid grid-cols-2 gap-8 sm:gap-12">
+            
+            {/* Kolom Navigasi */}
+            <div>
+              <h4 className="text-white font-bold tracking-widest uppercase text-[10px] md:text-xs mb-6 flex items-center gap-2 opacity-80">
+                <span className="w-1.5 h-1.5 bg-cyan-500 rounded-full"></span> Navigasi
+              </h4>
+              <ul className="space-y-4 text-sm text-slate-400 font-medium">
+                <li><Link href="/projects" className="hover:text-cyan-400 hover:translate-x-1 inline-block transition-transform">Portofolio</Link></li>
+                <li><Link href="/photography" className="hover:text-cyan-400 hover:translate-x-1 inline-block transition-transform">Fotografi</Link></li>
+                <li><Link href="/about" className="hover:text-cyan-400 hover:translate-x-1 inline-block transition-transform">Tentang Saya</Link></li>
+                <li><Link href="/toolkit" className="hover:text-cyan-400 hover:translate-x-1 inline-block transition-transform text-cyan-400/80">Toolkit Ekosistem</Link></li>
+              </ul>
+            </div>
 
-          {/* Contact Info (Di sinilah email barumu bersinar!) */}
-          <div>
-            <h4 className="text-white font-bold tracking-widest uppercase text-xs mb-6 flex items-center gap-2">
-              <span className="w-1.5 h-1.5 bg-cyan-500 rounded-full"></span> Hubungi Saya
-            </h4>
-            <ul className="space-y-4 text-sm text-slate-400">
-              <li>
-                <a href="mailto:hello@mrr.my.id" className="flex items-center gap-3 hover:text-cyan-400 transition-colors group">
-                  <span className="p-2.5 rounded-full bg-white/5 border border-white/5 group-hover:bg-cyan-500/20 group-hover:border-cyan-500/30 transition-all">
-                    <MailIcon />
-                  </span>
-                  hello@mrr.my.id
-                </a>
-              </li>
-              <li>
-                <a href="https://wa.me/6285155020363" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 hover:text-cyan-400 transition-colors group">
-                  <span className="p-2.5 rounded-full bg-white/5 border border-white/5 group-hover:bg-cyan-500/20 group-hover:border-cyan-500/30 transition-all">
-                    <WhatsAppSmallIcon />
-                  </span>
-                  +62 851-5502-0363
-                </a>
-              </li>
-            </ul>
+            {/* Kolom Kontak */}
+            <div>
+              <h4 className="text-white font-bold tracking-widest uppercase text-[10px] md:text-xs mb-6 flex items-center gap-2 opacity-80">
+                <span className="w-1.5 h-1.5 bg-cyan-500 rounded-full"></span> Kontak
+              </h4>
+              <ul className="space-y-5 text-sm text-slate-400 font-medium">
+                <li>
+                  <a href="mailto:hello@mrr.my.id" className="flex items-center gap-3 hover:text-cyan-400 transition-colors group">
+                    <span className="p-2 rounded-full bg-white/5 border border-white/5 group-hover:bg-cyan-500/20 group-hover:border-cyan-500/30 transition-all">
+                      <MailIcon />
+                    </span>
+                    hello@mrr.my.id
+                  </a>
+                </li>
+                <li>
+                  <a href="https://wa.me/6285155020363" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 hover:text-cyan-400 transition-colors group">
+                    <span className="p-2 rounded-full bg-white/5 border border-white/5 group-hover:bg-cyan-500/20 group-hover:border-cyan-500/30 transition-all">
+                      <WhatsAppSmallIcon />
+                    </span>
+                    WhatsApp
+                  </a>
+                </li>
+              </ul>
+            </div>
+
           </div>
 
         </div>
 
-        {/* Copyright & Socials */}
-        <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-6 text-xs text-slate-500">
+        {/* ========================================================= */}
+        {/* COPYRIGHT & SOCIAL MEDIA                                  */}
+        {/* ========================================================= */}
+        <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-6 text-xs text-slate-500 font-medium">
           <p>© {currentYear} Muhammad Rafli Ramadhan. All rights reserved.</p>
-          <div className="flex gap-6">
-            <a href="https://instagram.com/img_ischeznut.jpg" target="_blank" rel="noopener noreferrer" className="hover:text-cyan-400 uppercase tracking-widest font-semibold transition-colors">Instagram</a>
-            <a href="https://www.linkedin.com/in/muhammad-rafli-ramadhan" target="_blank" rel="noopener noreferrer" className="hover:text-cyan-400 uppercase tracking-widest font-semibold transition-colors">LinkedIn</a>
+          <div className="flex gap-8">
+            <a href="https://instagram.com/img_ischeznut.jpg" target="_blank" rel="noopener noreferrer" className="hover:text-cyan-400 uppercase tracking-widest transition-colors">Instagram</a>
+            <a href="https://www.linkedin.com/in/muhammad-rafli-ramadhan" target="_blank" rel="noopener noreferrer" className="hover:text-cyan-400 uppercase tracking-widest transition-colors">LinkedIn</a>
           </div>
         </div>
+
       </div>
     </footer>
   );
