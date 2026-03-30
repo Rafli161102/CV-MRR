@@ -1,119 +1,171 @@
 "use client";
 
-import { useState } from 'react'
-import { PROJECT_LIST } from '../../data/store'
-import Link from 'next/link'
+import { useState } from 'react';
+import Link from 'next/link';
+import { PROJECT_LIST } from '../../data/store';
 
-export default function Projects() {
-  // Ambil daftar kategori unik
-  const availableCategories = [
-    "All", 
-    ...new Set(PROJECT_LIST.map(project => project.category))
-  ];
+// =========================================================================
+// IKON SVG PROFESIONAL
+// =========================================================================
+const FolderIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-cyan-400">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z" />
+  </svg>
+);
 
-  const [activeCategory, setActiveCategory] = useState("All");
+const SparklesIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 text-cyan-400">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09l2.846.813-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
+  </svg>
+);
 
-  const filteredProjects = activeCategory === "All" 
+export default function ProjectsPage() {
+  const [activeCategory, setActiveCategory] = useState('All');
+
+  // Mengekstrak kategori unik dari PROJECT_LIST secara dinamis
+  const categories = ['All', ...new Set(PROJECT_LIST.map(project => project.category))];
+
+  // Memfilter proyek berdasarkan tombol kategori yang diklik
+  const filteredProjects = activeCategory === 'All' 
     ? PROJECT_LIST 
     : PROJECT_LIST.filter(project => project.category === activeCategory);
 
   return (
-    <div className="min-h-screen pt-32 pb-48 relative">
-      <div className="max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
+    <div className="min-h-screen pt-32 pb-24 px-6 md:px-12 relative overflow-hidden">
+      
+      {/* ========================================================= */}
+      {/* BACKGROUND DEKORATIF (Menyamakan dengan Global)           */}
+      {/* ========================================================= */}
+      <div className="fixed top-0 right-[-10%] w-[60vw] h-[60vw] bg-cyan-950/20 rounded-full blur-[140px] pointer-events-none -z-10"></div>
+      <div className="fixed bottom-0 left-[-10%] w-[50vw] h-[50vw] bg-indigo-950/20 rounded-full blur-[140px] pointer-events-none -z-10"></div>
+
+      <div className="max-w-[1400px] mx-auto relative z-10">
         
-        {/* =========================================================================
-           HEADER GALERI
-           ========================================================================= */}
-        <div className="mb-10 md:mb-16 max-w-3xl">
-          <h1 className="text-5xl sm:text-7xl font-black tracking-tight text-white mb-6 drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]">
-            Galeri <span className="text-cyan-500">Portofolio</span>
-          </h1>
-          <p className="text-xl sm:text-2xl text-slate-400 font-light leading-relaxed">
-            Kumpulan mahakarya desain terbaik saya. Jelajahi karya visual berdasarkan kategori spesifik.
-          </p>
+        {/* ========================================================= */}
+        {/* HEADER SECTION (GOLDEN RATIO: 61.8% & 38.2%)              */}
+        {/* ========================================================= */}
+        <div className="flex flex-col lg:flex-row gap-12 lg:gap-16 mb-20 items-start">
+          
+          {/* KIRI: 61.8% (Judul & Narasi Utama) */}
+          <div className="w-full lg:w-[61.8%] reveal stagger-1">
+            <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-[10px] font-bold tracking-widest uppercase mb-6">
+              <span className="w-2 h-2 rounded-full bg-cyan-500 animate-pulse"></span>
+              Galeri Mahakarya
+            </div>
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-white tracking-tighter mb-6 leading-[1.1]">
+              Eksplorasi <br/> 
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500">Visual & Identitas.</span>
+            </h1>
+            <p className="text-slate-400 text-lg md:text-xl leading-relaxed max-w-2xl font-medium">
+              Kumpulan arsip proyek desain komersial dan komunitas. Setiap karya dirancang dengan pendekatan strategis untuk memecahkan masalah komunikasi visual.
+            </p>
+          </div>
+
+          {/* KANAN: 38.2% (Kartu Statistik Glassmorphism) */}
+          <div className="w-full lg:w-[38.2%] reveal stagger-2 mt-4 lg:mt-0">
+            <div className="bg-gradient-to-br from-[#0A1329] to-[#030712] border border-white/10 rounded-[2rem] p-8 shadow-2xl relative overflow-hidden group">
+              <div className="absolute -top-10 -right-10 w-40 h-40 bg-cyan-500/10 rounded-full blur-[40px] group-hover:bg-cyan-500/20 transition-all duration-700"></div>
+              
+              <div className="flex items-center gap-5 mb-6">
+                <div className="p-4 bg-cyan-500/10 rounded-2xl border border-cyan-500/20 shadow-lg shadow-cyan-500/5">
+                  <FolderIcon />
+                </div>
+                <div>
+                  <h3 className="text-white font-black text-3xl">{PROJECT_LIST.length}</h3>
+                  <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">Total Arsip Proyek</p>
+                </div>
+              </div>
+
+              <div className="pt-5 border-t border-white/5 flex items-start gap-3">
+                <div className="mt-0.5"><SparklesIcon /></div>
+                <p className="text-sm text-slate-400 leading-relaxed italic">
+                  "Desain yang baik tidak hanya terlihat indah, tetapi harus mampu berbicara dan menyelesaikan masalah."
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* =========================================================================
-           KATEGORI FILTER (BEHANCE STYLE - HORIZONTAL SWIPE)
-           ========================================================================= */}
-        {/* Trik -mx-6 agar scroll bisa tembus ke ujung layar HP */}
-        <div className="-mx-6 px-6 lg:mx-0 lg:px-0 mb-12 md:mb-20">
-          <div className="flex flex-nowrap gap-3 md:gap-4 overflow-x-auto snap-x pb-4 items-center [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-            <span className="text-xs font-bold tracking-widest text-slate-500 uppercase pr-2 hidden md:block shrink-0">Filter:</span>
-            
-            {availableCategories.map((category, index) => (
-              <button
-                key={index}
-                onClick={() => setActiveCategory(category)}
-                className={`snap-start shrink-0 px-6 py-2.5 rounded-full text-sm font-bold tracking-wide transition-all duration-300 border ${
-                  activeCategory === category
-                    ? 'bg-cyan-600 text-white border-cyan-500 shadow-[0_0_15px_rgba(6,182,212,0.4)]'
-                    : 'bg-[#0A1329]/80 backdrop-blur-sm text-slate-400 border-white/5 hover:bg-[#0D1836] hover:text-white'
-                }`}
-              >
-                {category}
-                {activeCategory === category && (
-                  <span className="ml-2 text-xs opacity-80 font-medium">({
-                    category === "All" ? PROJECT_LIST.length : PROJECT_LIST.filter(p => p.category === category).length
-                  })</span>
-                )}
-              </button>
-            ))}
-          </div>
+        {/* ========================================================= */}
+        {/* FILTER KATEGORI (RESPONSIF)                               */}
+        {/* ========================================================= */}
+        <div className="reveal stagger-3 mb-12 flex flex-wrap items-center gap-3">
+          {categories.map((category) => (
+            <button
+              key={category}
+              onClick={() => setActiveCategory(category)}
+              className={`px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold tracking-wide transition-all duration-300 ${
+                activeCategory === category
+                  ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/50 shadow-[0_0_15px_rgba(6,182,212,0.2)]'
+                  : 'bg-white/5 text-slate-400 border border-white/5 hover:bg-white/10 hover:text-white'
+              }`}
+            >
+              {category}
+            </button>
+          ))}
         </div>
-        
-        {/* =========================================================================
-           GRID PORTOFOLIO
-           ========================================================================= */}
-        {filteredProjects.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 md:gap-14 transition-all duration-500 ease-in-out">
-            {filteredProjects.map((project) => (
-              <Link href={`/projects/${project.id}`} key={project.id} className="transform transition-all duration-500 scale-100 opacity-100">
-                <div className="group flex flex-col h-full bg-[#0A1329]/80 backdrop-blur-sm p-6 sm:p-7 rounded-[3rem] border border-white/5 hover:border-cyan-500/40 hover:bg-[#0D1836] hover:shadow-[0_0_50px_rgba(6,182,212,0.2)] transition-all duration-500 cursor-pointer overflow-hidden relative">
-                  
-                  <div className="relative aspect-[1.618/1] rounded-[2.2rem] overflow-hidden bg-[#060D1F] mb-8 border border-white/5 shadow-inner">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img 
-                      src={project.image} 
-                      alt={project.title} 
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 ease-out opacity-80 group-hover:opacity-100"
-                      onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop'; }} 
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#060D1F] to-transparent opacity-0 group-hover:opacity-80 transition-opacity duration-500"></div>
-                    <div className="absolute bottom-8 left-1/2 -translate-x-1/2 translate-y-12 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-500 px-7 py-3.5 bg-cyan-500 text-white font-bold rounded-full text-sm tracking-widest uppercase shadow-[0_0_25px_rgba(6,182,212,0.7)] whitespace-nowrap z-10">
-                      Buka Studi Kasus
-                    </div>
+
+        {/* ========================================================= */}
+        {/* GRID PORTOFOLIO (ANIMASI MUNCUL BERURUTAN)                */}
+        {/* ========================================================= */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+          {filteredProjects.map((project, index) => {
+            // Memberikan efek delay berurutan berdasarkan index (maksimal sampai stagger-7)
+            const staggerDelay = index < 5 ? `stagger-${index + 4}` : 'stagger-7';
+            
+            return (
+              <Link 
+                href={`/projects/${project.id}`} 
+                key={project.id} 
+                className={`reveal ${staggerDelay} group relative rounded-[2rem] overflow-hidden bg-[#0A1329] border border-white/5 hover:border-cyan-500/40 transition-all duration-500 shadow-lg hover:shadow-[0_20px_50px_rgba(6,182,212,0.15)] flex flex-col h-full`}
+              >
+                {/* Pembungkus Gambar dengan Aspect Ratio Konsisten */}
+                <div className="relative w-full aspect-[4/3] overflow-hidden bg-[#050A14]">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img 
+                    src={project.image} 
+                    alt={project.title} 
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[1.5s] ease-out opacity-80 group-hover:opacity-100"
+                    onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop'; }} 
+                  />
+                  {/* Overlay Gradasi Tipis agar gambar menyatu dengan card */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0A1329] via-transparent to-transparent opacity-90"></div>
+                </div>
+                
+                {/* Informasi Kartu (Teks) */}
+                <div className="p-6 sm:p-8 flex flex-col flex-grow relative z-10 -mt-8">
+                  <div className="inline-flex items-center gap-2 text-[9px] font-bold tracking-[0.2em] text-cyan-400 uppercase mb-3 bg-[#0A1329] border border-cyan-500/20 px-3 py-1.5 rounded-full w-fit shadow-md">
+                    <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shrink-0"></span>
+                    {project.category}
                   </div>
                   
-                  <div className="px-1 flex flex-col flex-grow relative z-10">
-                    <div className="text-xs font-bold tracking-[0.25em] text-cyan-400 uppercase mb-4 opacity-80 group-hover:opacity-100 transition-opacity">
-                      {project.category}
-                    </div>
-                    <h3 className="text-2xl sm:text-3xl font-bold text-white mb-2 leading-tight group-hover:text-cyan-300 transition-colors duration-300">
-                      {project.title}
-                    </h3>
-                    <p className="text-sm font-medium text-cyan-500/70 mb-6 tracking-wide uppercase">
-                      Klien: {project.company}
-                    </p>
-                    <p className="text-slate-400 text-base leading-relaxed font-light mt-auto line-clamp-3 opacity-90 group-hover:opacity-100 transition-opacity">
-                      {project.description}
-                    </p>
-                  </div>
+                  <h3 className="text-xl sm:text-2xl font-bold text-white group-hover:text-cyan-300 transition-colors tracking-tight mb-2 leading-snug">
+                    {project.title}
+                  </h3>
                   
-                  <div className="absolute -top-10 -right-10 w-24 h-24 bg-cyan-500 blur-[60px] opacity-0 group-hover:opacity-20 transition-opacity duration-500"></div>
+                  {project.client && (
+                    <p className="text-[10px] sm:text-xs text-slate-500 font-bold uppercase tracking-widest mb-4">
+                      Klien: {project.client}
+                    </p>
+                  )}
+                  
+                  <p className="text-sm text-slate-400 leading-relaxed line-clamp-2 mt-auto">
+                    {project.description}
+                  </p>
                 </div>
               </Link>
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-24 bg-[#0A1329] rounded-[3rem] border border-slate-800 selection:bg-cyan-500">
-            <div className="text-6xl mb-6">🔍</div>
-            <h3 className="text-2xl font-bold text-white mb-2">Belum ada karya.</h3>
-            <p className="text-slate-500">Kategori <span className="text-cyan-400 font-medium">{activeCategory}</span> belum memiliki project yang di-upload.</p>
+            );
+          })}
+        </div>
+
+        {/* Pesan Kosong jika kategori tidak ditemukan (Opsional) */}
+        {filteredProjects.length === 0 && (
+          <div className="text-center py-20 reveal stagger-4">
+            <p className="text-slate-500 text-lg">Belum ada karya di kategori ini.</p>
           </div>
         )}
 
       </div>
     </div>
-  )
+  );
 }
