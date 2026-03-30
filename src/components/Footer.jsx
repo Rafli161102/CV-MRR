@@ -25,6 +25,12 @@ const WhatsAppSmallIcon = () => (
   </svg>
 );
 
+const BoltIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-3 h-3 text-cyan-400">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+  </svg>
+);
+
 export default function Footer() {
   const currentYear = new Date().getFullYear();
 
@@ -41,26 +47,28 @@ export default function Footer() {
         {/* ========================================================= */}
         <div className="mb-24 p-8 sm:p-10 lg:p-12 rounded-[2rem] bg-gradient-to-br from-[#0A1329]/80 via-[#060D1F] to-[#030712] backdrop-blur-xl border border-cyan-500/20 shadow-[0_20px_50px_rgba(0,0,0,0.5)] hover:border-cyan-500/40 hover:shadow-[0_20px_60px_rgba(6,182,212,0.1)] transition-all duration-700 flex flex-col lg:flex-row items-center justify-between gap-10 lg:gap-0 group relative overflow-hidden">
           
-          {/* Efek kilauan halus di dalam banner */}
           <div className="absolute top-0 right-0 w-72 h-72 bg-cyan-500/10 rounded-full blur-[90px] -z-10 group-hover:bg-cyan-500/20 transition-all duration-700"></div>
 
-          {/* KIRI: 61.8% (Teks & Ikon) */}
+          {/* KIRI: 61.8% */}
           <div className="w-full lg:w-[61.8%] flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-6 z-10 lg:pr-10">
             <div className="p-4 bg-cyan-950/40 rounded-2xl border border-cyan-500/30 shrink-0 shadow-[0_0_20px_rgba(6,182,212,0.15)] group-hover:bg-cyan-900/50 transition-all duration-500 flex items-center justify-center">
               <DiamondSparkleIcon />
             </div>
             <div>
               <h3 className="text-2xl sm:text-3xl font-black text-white mb-3 tracking-tight">Dukung Perjalanan Kreatif Ini</h3>
-              {/* COPYWRITING DIPERBARUI SESUAI DISKUSI TOOLKIT */}
               <p className="text-slate-400 text-sm sm:text-base max-w-xl leading-relaxed">
-                Jika <span className="text-cyan-400 font-semibold">Ekosistem Toolkit Gratis</span> atau hasil karya desain saya telah memberikan nilai tambah untuk Anda, pertimbangkan untuk memberikan apresiasi. Dukungan Anda adalah bahan bakar utama untuk pemeliharaan server dan komunitas AquaNime.
+                Jika {' '}
+                {/* TEKS DENGAN EFEK GLOW & GRADIENT */}
+                <span className="font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400 drop-shadow-[0_0_8px_rgba(6,182,212,0.6)]">
+                  Ekosistem Toolkit Gratis
+                </span>
+                {' '} atau hasil karya desain saya telah memberikan nilai tambah untuk Anda, pertimbangkan untuk memberikan apresiasi. Dukungan Anda adalah bahan bakar utama untuk pemeliharaan server dan komunitas AquaNime.
               </p>
             </div>
           </div>
           
-          {/* KANAN: 38.2% (Tombol Aksi) */}
+          {/* KANAN: 38.2% */}
           <div className="w-full lg:w-[38.2%] flex justify-center lg:justify-end z-10">
-            {/* Ganti Href dengan link Trakteer / Saweria / KaryaKarsa milikmu */}
             <a 
               href="https://saweria.co/mrr" 
               target="_blank" 
@@ -77,11 +85,10 @@ export default function Footer() {
         </div>
 
         {/* ========================================================= */}
-        {/* LINK FOOTER UTAMA (GOLDEN RATIO: 61.8% & 38.2%)           */}
+        {/* LINK FOOTER UTAMA                                         */}
         {/* ========================================================= */}
         <div className="flex flex-col lg:flex-row gap-16 lg:gap-0 mb-20 relative z-10">
           
-          {/* KIRI: 61.8% (Brand Info & Misi) */}
           <div className="w-full lg:w-[61.8%] pr-0 lg:pr-20">
             <Link href="/" className="inline-block mb-6 group">
               <span className="text-4xl font-black tracking-tighter text-white">
@@ -93,7 +100,6 @@ export default function Footer() {
             </p>
           </div>
 
-          {/* KANAN: 38.2% (Menu Navigasi & Kontak) */}
           <div className="w-full lg:w-[38.2%] grid grid-cols-2 gap-8 sm:gap-12">
             
             {/* Kolom Navigasi */}
@@ -105,7 +111,20 @@ export default function Footer() {
                 <li><Link href="/projects" className="hover:text-cyan-400 hover:translate-x-1 inline-block transition-transform">Portofolio</Link></li>
                 <li><Link href="/photography" className="hover:text-cyan-400 hover:translate-x-1 inline-block transition-transform">Fotografi</Link></li>
                 <li><Link href="/about" className="hover:text-cyan-400 hover:translate-x-1 inline-block transition-transform">Tentang Saya</Link></li>
-                <li><Link href="/toolkit" className="hover:text-cyan-400 hover:translate-x-1 inline-block transition-transform text-cyan-400">Toolkit Ekosistem</Link></li>
+                
+                {/* LINK TOOLKIT DENGAN ANIMASI PING & GLOW */}
+                <li className="pt-1">
+                  <Link href="/toolkit" className="group flex items-center gap-2 w-fit">
+                    <div className="relative flex items-center justify-center w-5 h-5 rounded-full bg-cyan-500/20 border border-cyan-500/50 overflow-hidden shrink-0">
+                      <div className="absolute inset-0 bg-cyan-400/30 animate-ping"></div>
+                      <BoltIcon />
+                    </div>
+                    <span className="font-bold text-cyan-400 drop-shadow-[0_0_8px_rgba(6,182,212,0.4)] group-hover:text-cyan-300 group-hover:translate-x-1 transition-all">
+                      Toolkit Ekosistem
+                    </span>
+                  </Link>
+                </li>
+
               </ul>
             </div>
 
