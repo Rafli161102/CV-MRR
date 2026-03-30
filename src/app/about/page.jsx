@@ -4,7 +4,7 @@ import { WORK_EXPERIENCE, EDUCATION } from '../../data/store';
 import Link from 'next/link';
 
 // =========================================================================
-// IKON SVG PROFESIONAL (Konsisten dengan Ekosistem)
+// IKON SVG PROFESIONAL 
 // =========================================================================
 const PaintBrushIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 text-cyan-400">
@@ -26,53 +26,48 @@ const AcademicIcon = () => (
 
 export default function About() {
   return (
-    // FIX OVERFLOW ABSOLUTE: w-full & overflow-x-hidden mengamankan layar dari bocor ke samping
+    // FIX OVERFLOW ABSOLUTE: Menjaga layar HP dari melar
     <div className="min-h-screen pt-28 sm:pt-36 pb-24 relative w-full overflow-x-hidden bg-[#030712]">
       
-      {/* ========================================================= */}
-      {/* BACKGROUND DECOR (Cahaya Cyan/Indigo Khas Halaman Beranda)*/}
-      {/* ========================================================= */}
+      {/* BACKGROUND DECOR KONSISTEN DENGAN BERANDA */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        <div className="absolute top-[5%] left-[-10%] w-[300px] sm:w-[500px] lg:w-[700px] h-[300px] sm:h-[500px] lg:h-[700px] bg-cyan-600/10 rounded-full blur-[100px] lg:blur-[120px]"></div>
+        <div className="absolute top-[5%] left-[-10%] w-[300px] sm:w-[500px] lg:w-[600px] h-[300px] sm:h-[500px] lg:h-[600px] bg-cyan-600/10 rounded-full blur-[100px] lg:blur-[120px]"></div>
         <div className="absolute bottom-[10%] right-[-10%] w-[300px] sm:w-[500px] lg:w-[600px] h-[300px] sm:h-[500px] lg:h-[600px] bg-indigo-600/10 rounded-full blur-[100px] lg:blur-[140px]"></div>
       </div>
 
       <div className="max-w-[1400px] mx-auto px-5 sm:px-8 lg:px-12 relative z-10 w-full">
         
         {/* ========================================================= */}
-        {/* BAGIAN 1: PROFIL & KEAHLIAN (GOLDEN RATIO 61.8 : 38.2)    */}
+        {/* HEADER & PROFIL (GOLDEN RATIO)                            */}
         {/* ========================================================= */}
         <div className="flex flex-col lg:flex-row gap-12 lg:gap-16 mb-24 lg:mb-32 items-start">
           
-          {/* KIRI (61.8%): Header & Narasi Profil (Gaya Editorial Bebas) */}
           <div className="w-full lg:w-[61.8%] reveal stagger-1">
             
-            {/* Lencana Identik dengan Beranda */}
             <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[9px] sm:text-[10px] font-bold tracking-widest uppercase mb-6 sm:mb-8">
               <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-              Profil Eksekutif
+              Graphic Design & Community Development
             </div>
             
-            {/* TEMA FONT 100% SELARAS BERANDA */}
+            {/* TEMA FONT 100% SAMA DENGAN BERANDA */}
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-[4.5rem] font-black tracking-tighter text-white mb-8 sm:mb-10 leading-[1.1] drop-shadow-lg">
-              Tentang <br className="hidden sm:block lg:hidden" />
-              <span className="text-transparent bg-clip-text bg-gradient-to-br from-cyan-300 via-blue-500 to-indigo-600">Saya.</span>
+              Di Balik <br className="hidden sm:block lg:hidden" />
+              <span className="text-transparent bg-clip-text bg-gradient-to-br from-cyan-300 via-blue-500 to-indigo-600">Layar Kreatif.</span>
             </h1>
             
             <div className="space-y-6 text-sm sm:text-base lg:text-lg text-slate-400 font-medium leading-relaxed sm:leading-loose max-w-2xl">
               <p>
-                Halo! Saya <span className="text-white font-bold">M. Rafli Ramadhan</span>, seorang desainer grafis profesional yang memiliki passion mendalam dalam menerjemahkan imajinasi menjadi realitas visual. Saya sangat menguasai ekosistem industri seperti <strong className="text-cyan-400">Adobe Creative Suite</strong> (Photoshop, Illustrator, InDesign) dan mampu mengoperasikan kamera DSLR dengan presisi.
+                Halo! Saya <span className="text-white font-bold">M. Rafli Ramadhan</span>, seorang desainer grafis profesional yang memiliki passion mendalam dalam menerjemahkan imajinasi menjadi realitas visual. Saya sangat menguasai ekosistem industri seperti <strong className="text-cyan-400">Adobe Creative Suite</strong> (Photoshop, Illustrator, InDesign) dan operasional fotografi DSLR.
               </p>
               <p>
-                Pengalaman saya membentang luas dalam ranah desain cetak (printing) maupun digital; mulai dari perancangan identitas logo, materi pemasaran B2B korporat, hingga tata kelola kendali mutu produksi cetak (Quality Control).
+                Pengalaman saya membentang luas dalam ranah desain cetak maupun digital; mulai dari perancangan identitas merek, materi pemasaran B2B korporat, hingga tata kelola kendali mutu produksi cetak (Quality Control) agar hasil akhir sesuai standar.
               </p>
               <p>
-                Selain eksekusi teknis, peran saya sebagai pendiri komunitas <strong className="text-cyan-400">AquaNime</strong> telah secara alami menajamkan kemampuan komunikasi kepemimpinan, negosiasi klien, serta manajemen proyek skala visual saya.
+                Selain eksekusi teknis, peran saya sebagai pendiri komunitas <strong className="text-cyan-400">AquaNime</strong> telah secara alami menajamkan kemampuan kepemimpinan, negosiasi klien, serta manajemen proyek visual skala besar.
               </p>
             </div>
           </div>
 
-          {/* KANAN (38.2%): Widget Senjata & Keahlian (Glassmorphism) */}
           <div className="w-full lg:w-[38.2%] flex flex-col gap-6 sm:gap-8 reveal stagger-2 mt-4 lg:mt-0">
             
             <div className="flex items-center gap-3 px-2 mb-2">
@@ -80,7 +75,7 @@ export default function About() {
               <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight">Arsenal Keahlian</h2>
             </div>
             
-            {/* Widget 1: Creative Tools */}
+            {/* Creative Tools */}
             <div className="bg-[#0A1329]/80 backdrop-blur-xl p-6 sm:p-8 rounded-[2rem] border border-white/5 shadow-2xl hover:border-cyan-500/30 transition-all duration-500 group">
               <div className="flex items-center gap-3 mb-6">
                 <div className="p-2.5 bg-cyan-500/10 rounded-xl border border-cyan-500/20 group-hover:bg-cyan-500/20 transition-colors">
@@ -88,7 +83,6 @@ export default function About() {
                 </div>
                 <h3 className="text-[10px] sm:text-xs font-bold tracking-[0.2em] text-cyan-400 uppercase">Creative Tools</h3>
               </div>
-              
               <div className="flex flex-wrap gap-2.5">
                 {['Adobe Illustrator', 'Adobe Photoshop', 'Adobe InDesign', 'Canva', 'Photography'].map((tool) => (
                   <span key={tool} className="px-4 py-2 bg-[#030712] border border-white/5 text-slate-300 rounded-full text-[10px] sm:text-[11px] font-bold tracking-wide hover:border-cyan-500/40 hover:text-white transition-colors cursor-default">
@@ -98,7 +92,7 @@ export default function About() {
               </div>
             </div>
 
-            {/* Widget 2: Productivity & Biz */}
+            {/* Productivity & Biz */}
             <div className="bg-[#0A1329]/80 backdrop-blur-xl p-6 sm:p-8 rounded-[2rem] border border-white/5 shadow-2xl hover:border-cyan-500/30 transition-all duration-500 group">
               <div className="flex items-center gap-3 mb-6">
                 <div className="p-2.5 bg-cyan-500/10 rounded-xl border border-cyan-500/20 group-hover:bg-cyan-500/20 transition-colors">
@@ -106,7 +100,6 @@ export default function About() {
                 </div>
                 <h3 className="text-[10px] sm:text-xs font-bold tracking-[0.2em] text-cyan-400 uppercase">Productivity & Biz</h3>
               </div>
-              
               <div className="flex flex-wrap gap-2.5">
                 {['Ms. Word', 'Ms. Excel', 'Business Dev.', 'Quality Control', 'B2B Pitching'].map((tool) => (
                   <span key={tool} className="px-4 py-2 bg-[#030712] border border-white/5 text-slate-300 rounded-full text-[10px] sm:text-[11px] font-bold tracking-wide hover:border-cyan-500/40 hover:text-white transition-colors cursor-default">
@@ -120,7 +113,7 @@ export default function About() {
         </div>
 
         {/* ========================================================= */}
-        {/* BAGIAN 2: REKAM JEJAK & PENGALAMAN (TIMELINE GOLDEN RATIO)*/}
+        {/* TIMELINE REKAM JEJAK (RESPONSIF & MOBILE-SMART)           */}
         {/* ========================================================= */}
         <div className="mb-32 reveal stagger-3">
           
@@ -128,36 +121,45 @@ export default function About() {
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight mb-4">
               Rekam Jejak <br className="sm:hidden" /> & <span className="text-cyan-500">Pengalaman</span>
             </h2>
-            <p className="text-slate-400 text-sm sm:text-base font-medium">Evolusi karir dan kontribusi saya di industri kreatif.</p>
+            <p className="text-slate-400 text-sm sm:text-base font-medium">Evolusi karir dan jejak kontribusi saya di industri kreatif.</p>
           </div>
           
           <div className="relative w-full mx-auto">
             
-            {/* GARIS TIMELINE: 
-                - Di HP: Mepet ke kiri (left-[16px])
-                - Di Desktop: Berada di titik potong Golden Ratio (left-[38.2%]) 
-            */}
-            <div className="absolute left-[18px] lg:left-[38.2%] top-2 bottom-0 w-[2px] bg-gradient-to-b from-cyan-500/80 via-indigo-500/30 to-transparent lg:-translate-x-1/2 rounded-full"></div>
+            {/* GARIS TIMELINE: Cerdas menyesuaikan posisi! 
+                Di HP -> Mepet Kiri (left-[20px])
+                Di Desktop -> Membelah layar dengan proporsi Golden Ratio (left-[38.2%]) */}
+            <div className="absolute left-[20px] lg:left-[38.2%] top-2 bottom-0 w-[2px] bg-gradient-to-b from-cyan-500/80 via-indigo-500/30 to-transparent lg:-translate-x-1/2 rounded-full z-0"></div>
             
-            <div className="flex flex-col gap-10 sm:gap-14">
+            <div className="flex flex-col gap-10 sm:gap-14 relative z-10">
               {WORK_EXPERIENCE.map((exp, index) => (
                 <div key={index} className="relative flex flex-col lg:flex-row items-start w-full group">
                   
-                  {/* TITIK NEON (Node): Selaras dengan posisi garis */}
-                  <div className="absolute left-[18px] lg:left-[38.2%] -translate-x-1/2 mt-1 sm:mt-1.5 w-4 h-4 rounded-full bg-[#030712] border-[3px] border-cyan-400 group-hover:bg-cyan-400 group-hover:shadow-[0_0_20px_rgba(34,211,238,0.8)] transition-all duration-300 z-10"></div>
+                  {/* TITIK NEON (Node) */}
+                  <div className="absolute left-[20px] lg:left-[38.2%] -translate-x-1/2 mt-7 lg:mt-1.5 w-4 h-4 rounded-full bg-[#030712] border-[3px] border-cyan-400 group-hover:bg-cyan-400 group-hover:shadow-[0_0_20px_rgba(34,211,238,0.8)] transition-all duration-300 z-20"></div>
                   
-                  {/* KIRI (38.2%): Tahun & Nama Perusahaan */}
-                  <div className="w-full lg:w-[38.2%] pl-12 lg:pl-0 lg:pr-12 lg:text-right pt-0 mb-3 lg:mb-0">
-                     <span className="inline-flex items-center px-3 sm:px-4 py-1.5 bg-cyan-950/40 text-cyan-400 border border-cyan-500/20 rounded-full text-[9px] sm:text-[10px] font-bold tracking-widest mb-2 sm:mb-3 shadow-md">
+                  {/* SISI KIRI (Desktop): Tahun & Perusahaan. Di HP disembunyikan karena dipindah ke dalam kotak */}
+                  <div className="hidden lg:block w-[38.2%] pr-12 text-right pt-0">
+                     <span className="inline-flex items-center px-4 py-1.5 bg-cyan-950/40 text-cyan-400 border border-cyan-500/20 rounded-full text-[10px] font-bold tracking-widest mb-3 shadow-md">
                        {exp.year}
                      </span>
-                     <h4 className="text-xs sm:text-sm font-bold text-white uppercase tracking-widest">{exp.company}</h4>
+                     <h4 className="text-sm font-bold text-white uppercase tracking-widest">{exp.company}</h4>
                   </div>
 
-                  {/* KANAN (61.8%): Kartu Jabatan & Deskripsi Pekerjaan */}
-                  <div className="w-full lg:w-[61.8%] pl-12 lg:pl-14">
-                     <div className="bg-gradient-to-br from-[#0A1329]/90 to-[#050A14]/90 backdrop-blur-xl p-6 sm:p-8 rounded-3xl border border-white/5 hover:border-cyan-500/40 shadow-xl group-hover:shadow-[0_15px_40px_rgba(6,182,212,0.1)] group-hover:-translate-y-1 transition-all duration-500">
-                       <h3 className="text-xl sm:text-2xl font-black text-white mb-4 tracking-tight group-hover:text-cyan-300 transition-colors">{exp.role}</h3>
+                  {/* SISI KANAN / KARTU KONTEN */}
+                  {/* Di HP: pl-14 memberikan ruang agar garis dan titik neon tidak tertutup */}
+                  <div className="w-full lg:w-[61.8%] pl-14 lg:pl-12">
+                     <div className="bg-gradient-to-br from-[#0A1329]/90 to-[#050A14]/90 backdrop-blur-xl p-6 sm:p-8 rounded-[1.5rem] sm:rounded-3xl border border-white/5 hover:border-cyan-500/40 shadow-xl group-hover:shadow-[0_15px_40px_rgba(6,182,212,0.1)] group-hover:-translate-y-1 transition-all duration-500">
+                       
+                       {/* Khusus Mobile: Tampilkan Tahun dan Perusahaan di DALAM kotak */}
+                       <div className="lg:hidden mb-4 border-b border-white/5 pb-4">
+                         <span className="inline-flex items-center px-3 py-1 bg-cyan-950/40 text-cyan-400 border border-cyan-500/20 rounded-full text-[9px] sm:text-[10px] font-bold tracking-widest mb-2">
+                           {exp.year}
+                         </span>
+                         <h4 className="text-xs sm:text-sm font-bold text-cyan-300 uppercase tracking-widest">{exp.company}</h4>
+                       </div>
+
+                       <h3 className="text-xl sm:text-2xl font-black text-white mb-3 sm:mb-4 tracking-tight group-hover:text-cyan-300 transition-colors leading-snug">{exp.role}</h3>
                        <p className="text-slate-400 text-xs sm:text-sm leading-relaxed font-medium">
                          {exp.description}
                        </p>
@@ -171,11 +173,11 @@ export default function About() {
         </div>
 
         {/* ========================================================= */}
-        {/* BAGIAN 3: PENDIDIKAN FORMAL (Bento Grid Style)            */}
+        {/* BAGIAN 3: PENDIDIKAN FORMAL (Bento Grid)                  */}
         {/* ========================================================= */}
-        <div className="mb-20 reveal stagger-4 border-t border-white/5 pt-20">
+        <div className="mb-20 reveal stagger-4 border-t border-white/5 pt-16 sm:pt-20">
           
-          <div className="flex items-center gap-4 mb-12 sm:mb-16">
+          <div className="flex items-center gap-4 mb-10 sm:mb-16">
             <div className="p-3 bg-cyan-500/10 border border-cyan-500/30 rounded-xl shrink-0"><AcademicIcon /></div>
             <div>
               <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">Latar <span className="text-cyan-500">Pendidikan</span></h2>
@@ -185,7 +187,7 @@ export default function About() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
             {EDUCATION.map((edu, index) => (
                <div key={index} className="bg-[#0A1329] p-6 sm:p-8 rounded-[2rem] border border-white/5 hover:border-cyan-500/30 transition-all duration-300 group shadow-lg hover:shadow-cyan-500/5">
-                  <span className="inline-flex items-center gap-2 px-3 py-1.5 bg-[#030712] border border-white/10 text-slate-300 rounded-full text-[9px] sm:text-[10px] font-bold tracking-widest mb-5">
+                  <span className="inline-flex items-center gap-2 px-3 py-1.5 bg-[#030712] border border-white/10 text-slate-300 rounded-full text-[9px] sm:text-[10px] font-bold tracking-widest mb-4 sm:mb-5">
                     <span className="w-1.5 h-1.5 bg-slate-500 group-hover:bg-cyan-400 rounded-full transition-colors"></span>
                     {edu.year}
                   </span>
