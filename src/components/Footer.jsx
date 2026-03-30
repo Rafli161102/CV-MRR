@@ -6,9 +6,9 @@ import Link from 'next/link';
 // IKON SVG KUSTOM, UNIK, & RESMI
 // =========================================================================
 const DiamondSparkleIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 shrink-0 text-cyan-400 group-hover:animate-pulse">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 shrink-0 text-cyan-400 group-hover:scale-110 transition-transform duration-500">
     <path d="M11.644 1.59a.75.75 0 01.712 0l9.75 5.25c.343.186.343.682 0 .868l-9.75 5.25a.75.75 0 01-.712 0l-9.75-5.25a.75.75 0 010-.868l9.75-5.25z" />
-    <path d="M3.265 10.602l7.668 4.129a2.25 2.25 0 002.134 0l7.668-4.129-8.425 4.536a.75.75 0 01-.712 0l-8.425-4.536zM3.265 13.602l7.668 4.129a2.25 2.25 0 002.134 0l7.668-4.129-8.425 4.536a.75.75 0 01-.712 0l-8.425-4.536z" opacity="0.5" />
+    <path d="M3.265 10.602l7.668 4.129a2.25 2.25 0 002.134 0l7.668-4.129-8.425 4.536a.75.75 0 01-.712 0l-8.425-4.536zM3.265 13.602l7.668 4.129a2.25 2.25 0 002.134 0l7.668-4.129-8.425 4.536a.75.75 0 01-.712 0l-8.425-4.536z" opacity="0.4" />
     <path d="M12 21.75a.75.75 0 01-.75-.75v-1.5a.75.75 0 011.5 0v1.5a.75.75 0 01-.75.75zM18.75 12a.75.75 0 01-.75-.75v-1.5a.75.75 0 011.5 0v1.5a.75.75 0 01-.75.75zM5.25 12a.75.75 0 01-.75-.75v-1.5a.75.75 0 011.5 0v1.5a.75.75 0 01-.75.75z" />
   </svg>
 );
@@ -29,33 +29,31 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-[#030712] relative z-20 overflow-hidden">
+    <footer className="bg-[#030712] relative z-20 overflow-hidden mt-12 border-t border-white/5">
       
-      {/* Garis batas transparan dengan efek cahaya di tengah */}
-      <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent"></div>
-
       {/* Background Glow Halus */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[50vw] h-[30vw] bg-cyan-900/10 rounded-full blur-[120px] pointer-events-none"></div>
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[60vw] h-[40vw] bg-cyan-900/10 rounded-full blur-[130px] pointer-events-none"></div>
 
       <div className="max-w-[1400px] mx-auto px-6 lg:px-12 pt-20 pb-8 relative z-10">
         
         {/* ========================================================= */}
         {/* BANNER APRESIASI (GOLDEN RATIO LAYOUT)                      */}
         {/* ========================================================= */}
-        <div className="mb-24 p-8 lg:p-12 rounded-[2.5rem] bg-gradient-to-r from-[#0A1329] to-[#050A14] border border-white/5 shadow-[0_0_50px_rgba(6,182,212,0.03)] hover:border-cyan-500/30 transition-colors duration-500 flex flex-col lg:flex-row items-center justify-between gap-10 group relative overflow-hidden">
+        <div className="mb-24 p-8 sm:p-10 lg:p-12 rounded-[2rem] bg-gradient-to-br from-[#0A1329]/80 via-[#060D1F] to-[#030712] backdrop-blur-xl border border-cyan-500/20 shadow-[0_20px_50px_rgba(0,0,0,0.5)] hover:border-cyan-500/40 hover:shadow-[0_20px_60px_rgba(6,182,212,0.1)] transition-all duration-700 flex flex-col lg:flex-row items-center justify-between gap-10 lg:gap-0 group relative overflow-hidden">
           
           {/* Efek kilauan halus di dalam banner */}
-          <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/10 rounded-full blur-[80px] -z-10 group-hover:bg-cyan-500/20 transition-all duration-700"></div>
+          <div className="absolute top-0 right-0 w-72 h-72 bg-cyan-500/10 rounded-full blur-[90px] -z-10 group-hover:bg-cyan-500/20 transition-all duration-700"></div>
 
           {/* KIRI: 61.8% (Teks & Ikon) */}
-          <div className="w-full lg:w-[61.8%] flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-6 z-10">
-            <div className="p-4 bg-[#030712] rounded-2xl border border-white/5 shrink-0 shadow-inner group-hover:scale-110 group-hover:border-cyan-500/30 transition-all duration-500">
+          <div className="w-full lg:w-[61.8%] flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-6 z-10 lg:pr-10">
+            <div className="p-4 bg-cyan-950/40 rounded-2xl border border-cyan-500/30 shrink-0 shadow-[0_0_20px_rgba(6,182,212,0.15)] group-hover:bg-cyan-900/50 transition-all duration-500 flex items-center justify-center">
               <DiamondSparkleIcon />
             </div>
             <div>
               <h3 className="text-2xl sm:text-3xl font-black text-white mb-3 tracking-tight">Dukung Perjalanan Kreatif Ini</h3>
+              {/* COPYWRITING DIPERBARUI SESUAI DISKUSI TOOLKIT */}
               <p className="text-slate-400 text-sm sm:text-base max-w-xl leading-relaxed">
-                Jika alat ATS CV gratis atau desain saya telah membantu Anda, pertimbangkan untuk memberikan sedikit apresiasi. Setiap dukungan sangat berarti untuk server dan komunitas AquaNime.
+                Jika <span className="text-cyan-400 font-semibold">Ekosistem Toolkit Gratis</span> atau hasil karya desain saya telah memberikan nilai tambah untuk Anda, pertimbangkan untuk memberikan apresiasi. Dukungan Anda adalah bahan bakar utama untuk pemeliharaan server dan komunitas AquaNime.
               </p>
             </div>
           </div>
@@ -67,10 +65,10 @@ export default function Footer() {
               href="https://saweria.co/mrr" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="w-full sm:w-auto whitespace-nowrap px-8 py-4 bg-white/5 hover:bg-cyan-600 border border-white/10 hover:border-cyan-400 text-white font-bold rounded-xl transition-all shadow-lg hover:shadow-[0_0_30px_rgba(6,182,212,0.4)] flex items-center justify-center gap-3 hover:-translate-y-1"
+              className="w-full sm:w-auto px-8 py-4 bg-cyan-600 hover:bg-cyan-500 text-white font-bold rounded-xl transition-all shadow-[0_0_20px_rgba(6,182,212,0.3)] hover:shadow-[0_0_40px_rgba(6,182,212,0.5)] hover:-translate-y-1 flex items-center justify-center gap-3 tracking-wide"
             >
               Beri Apresiasi
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5 group-hover:translate-x-1 transition-transform">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
               </svg>
             </a>
@@ -81,7 +79,7 @@ export default function Footer() {
         {/* ========================================================= */}
         {/* LINK FOOTER UTAMA (GOLDEN RATIO: 61.8% & 38.2%)           */}
         {/* ========================================================= */}
-        <div className="flex flex-col lg:flex-row gap-16 lg:gap-0 mb-20">
+        <div className="flex flex-col lg:flex-row gap-16 lg:gap-0 mb-20 relative z-10">
           
           {/* KIRI: 61.8% (Brand Info & Misi) */}
           <div className="w-full lg:w-[61.8%] pr-0 lg:pr-20">
@@ -107,7 +105,7 @@ export default function Footer() {
                 <li><Link href="/projects" className="hover:text-cyan-400 hover:translate-x-1 inline-block transition-transform">Portofolio</Link></li>
                 <li><Link href="/photography" className="hover:text-cyan-400 hover:translate-x-1 inline-block transition-transform">Fotografi</Link></li>
                 <li><Link href="/about" className="hover:text-cyan-400 hover:translate-x-1 inline-block transition-transform">Tentang Saya</Link></li>
-                <li><Link href="/toolkit" className="hover:text-cyan-400 hover:translate-x-1 inline-block transition-transform text-cyan-400/80">Toolkit Ekosistem</Link></li>
+                <li><Link href="/toolkit" className="hover:text-cyan-400 hover:translate-x-1 inline-block transition-transform text-cyan-400">Toolkit Ekosistem</Link></li>
               </ul>
             </div>
 
@@ -119,7 +117,7 @@ export default function Footer() {
               <ul className="space-y-5 text-sm text-slate-400 font-medium">
                 <li>
                   <a href="mailto:hello@mrr.my.id" className="flex items-center gap-3 hover:text-cyan-400 transition-colors group">
-                    <span className="p-2 rounded-full bg-white/5 border border-white/5 group-hover:bg-cyan-500/20 group-hover:border-cyan-500/30 transition-all">
+                    <span className="p-2 rounded-full bg-[#0A1329] border border-white/5 group-hover:bg-cyan-500/20 group-hover:border-cyan-500/30 transition-all shadow-inner">
                       <MailIcon />
                     </span>
                     hello@mrr.my.id
@@ -127,7 +125,7 @@ export default function Footer() {
                 </li>
                 <li>
                   <a href="https://wa.me/6285155020363" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 hover:text-cyan-400 transition-colors group">
-                    <span className="p-2 rounded-full bg-white/5 border border-white/5 group-hover:bg-cyan-500/20 group-hover:border-cyan-500/30 transition-all">
+                    <span className="p-2 rounded-full bg-[#0A1329] border border-white/5 group-hover:bg-cyan-500/20 group-hover:border-cyan-500/30 transition-all shadow-inner">
                       <WhatsAppSmallIcon />
                     </span>
                     WhatsApp
@@ -143,9 +141,9 @@ export default function Footer() {
         {/* ========================================================= */}
         {/* COPYRIGHT & SOCIAL MEDIA                                  */}
         {/* ========================================================= */}
-        <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-6 text-xs text-slate-500 font-medium">
+        <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-6 text-[11px] sm:text-xs text-slate-500 font-medium relative z-10">
           <p>© {currentYear} Muhammad Rafli Ramadhan. All rights reserved.</p>
-          <div className="flex gap-8">
+          <div className="flex gap-6 sm:gap-8">
             <a href="https://instagram.com/img_ischeznut.jpg" target="_blank" rel="noopener noreferrer" className="hover:text-cyan-400 uppercase tracking-widest transition-colors">Instagram</a>
             <a href="https://www.linkedin.com/in/muhammad-rafli-ramadhan" target="_blank" rel="noopener noreferrer" className="hover:text-cyan-400 uppercase tracking-widest transition-colors">LinkedIn</a>
           </div>
