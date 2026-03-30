@@ -19,6 +19,12 @@ const SparklesIcon = () => (
   </svg>
 );
 
+const FilterIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 text-cyan-400">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75" />
+  </svg>
+);
+
 export default function ProjectsPage() {
   const [activeCategory, setActiveCategory] = useState('All');
 
@@ -29,20 +35,19 @@ export default function ProjectsPage() {
     : PROJECT_LIST.filter(project => project.category === activeCategory);
 
   return (
-    // FIX UTAMA: overflow-hidden di root div untuk membunuh semua potensi layar melar di HP
+    // Membunuh potensi horizontal scrolling di Body, tapi mengizinkannya di Menu Kategori
     <div className="min-h-screen pt-32 pb-24 relative overflow-hidden bg-[#030712]">
       
-      {/* Background Decor (Posisi aman di dalam pembungkus overflow-hidden) */}
+      {/* Background Decor */}
       <div className="absolute top-0 right-0 w-[80vw] h-[80vw] max-w-[600px] max-h-[600px] bg-cyan-900/20 rounded-full blur-[120px] pointer-events-none -z-10 translate-x-1/3 -translate-y-1/3"></div>
       <div className="absolute bottom-0 left-0 w-[80vw] h-[80vw] max-w-[600px] max-h-[600px] bg-indigo-900/20 rounded-full blur-[120px] pointer-events-none -z-10 -translate-x-1/3 translate-y-1/3"></div>
 
       <div className="max-w-[1400px] mx-auto px-6 lg:px-12 relative z-10 w-full">
         
         {/* ========================================================= */}
-        {/* HEADER SECTION (GOLDEN RATIO 61.8 : 38.2)                 */}
+        {/* HEADER SECTION                                            */}
         {/* ========================================================= */}
         <div className="flex flex-col lg:flex-row gap-10 lg:gap-16 mb-20 items-start">
-          
           <div className="w-full lg:w-[61.8%] reveal stagger-1">
             <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-[10px] font-bold tracking-widest uppercase mb-6">
               <span className="w-2 h-2 rounded-full bg-cyan-500 animate-pulse"></span>
@@ -82,37 +87,32 @@ export default function ProjectsPage() {
         </div>
 
         {/* ========================================================= */}
-        {/* FILTER KATEGORI (DESAIN CHIP/PILL PROFESIONAL)            */}
+        {/* FILTER KATEGORI (MODERN MINIMALIST & SWIPEABLE)           */}
         {/* ========================================================= */}
-        <div className="mb-12 reveal stagger-3">
+        <div className="relative mb-12 reveal stagger-3">
           
-          <div className="flex items-center gap-4 mb-6">
+          <div className="flex items-center gap-3 mb-6">
+            <FilterIcon />
             <h3 className="text-[10px] font-bold text-white uppercase tracking-[0.2em]">Filter Kategori</h3>
             <div className="h-[1px] flex-grow bg-gradient-to-r from-white/10 to-transparent"></div>
           </div>
 
-          <div className="flex flex-wrap gap-3">
+          {/* Fading Edge (Gradasi gelap di kanan khusus HP sebagai petunjuk bisa digeser) */}
+          <div className="absolute right-0 top-10 bottom-0 w-16 bg-gradient-to-l from-[#030712] to-transparent z-20 md:hidden pointer-events-none"></div>
+
+          {/* Container Geser (Scrollable tanpa Scrollbar) */}
+          <div className="flex overflow-x-auto gap-3 sm:gap-4 pb-2 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             {categories.map((category) => (
               <button
                 key={category}
                 onClick={() => setActiveCategory(category)}
-                className={`group relative px-5 py-2.5 sm:px-6 sm:py-3 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wider transition-all duration-300 ${
+                className={`relative shrink-0 snap-center px-6 py-2.5 rounded-full text-[11px] sm:text-xs font-semibold tracking-wider transition-all duration-300 border ${
                   activeCategory === category
-                    ? 'text-[#030712] shadow-[0_0_20px_rgba(6,182,212,0.3)] scale-105'
-                    : 'text-slate-400 hover:text-white hover:scale-105'
+                    ? 'bg-cyan-500/10 border-cyan-500/50 text-cyan-300 shadow-[0_0_20px_rgba(6,182,212,0.15)]' // Ghost Button (Minimalis menyala)
+                    : 'bg-transparent border-white/10 text-slate-400 hover:bg-white/5 hover:border-white/20 hover:text-white' // Inactive
                 }`}
               >
-                {/* Latar Belakang Tombol yang Lebih Mewah */}
-                {activeCategory === category ? (
-                  <span className="absolute inset-0 bg-cyan-400 rounded-full"></span>
-                ) : (
-                  <span className="absolute inset-0 bg-[#0A1329] border border-white/10 rounded-full group-hover:border-cyan-500/50 transition-colors"></span>
-                )}
-                
-                {/* Ubah kata 'All' agar panjang karakternya imbang dengan kategori lain */}
-                <span className="relative z-10">
-                  {category === 'All' ? 'Semua Karya' : category}
-                </span>
+                {category === 'All' ? 'Semua Karya' : category}
               </button>
             ))}
           </div>
