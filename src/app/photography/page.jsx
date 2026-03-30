@@ -1,14 +1,14 @@
 "use client";
 
 import Link from 'next/link';
-import Script from 'next/script';
+import Script from 'next/script'; // 👈 Menggunakan Script khusus Next.js
 
 export default function Photography() {
   return (
     <div className="min-h-screen pt-28 pb-20 bg-[#060D1F] text-slate-300 font-sans selection:bg-cyan-500 selection:text-white relative overflow-hidden">
       
-      {/* MENGGUNAKAN NEXT.JS SCRIPT AGAR WIDGET STABIL DI SPA (Single Page Application) */}
-      <Script src="https://static.elfsight.com/platform/platform.js" data-use-service-core defer strategy="lazyOnload" />
+      {/* SCRIPT ELFSIGHT ASLI (Berjalan di latar belakang) */}
+      <Script src="https://elfsightcdn.com/platform.js" strategy="lazyOnload" />
 
       {/* BACKGROUND EFFECTS */}
       <div className="fixed inset-0 bg-gradient-to-br from-[#060D1F] via-[#0D1836] to-[#060D1F] pointer-events-none z-0"></div>
@@ -52,19 +52,16 @@ export default function Photography() {
         <div className="bg-[#0A1329]/80 border border-white/10 rounded-[2rem] p-4 sm:p-8 min-h-[60vh] flex flex-col items-center justify-center relative shadow-2xl backdrop-blur-sm overflow-hidden">
           
           {/* ========================================================================= */}
-          {/* GANTI KODE "eb3eb186-b2d9-4b67-9c98-c88b725227d8" DI BAWAH DENGAN ID MILIKMU */}
+          {/* WIDGET ELFSIGHT ASLI MILIK RAFLI                                          */}
           {/* ========================================================================= */}
-          <div className="elfsight-app-eb3eb186-b2d9-4b67-9c98-c88b725227d8 w-full z-20"></div>
+          <div className="elfsight-app-ef53f00e-0624-4984-b241-142529624016 w-full z-20" data-elfsight-app-lazy></div>
           
-          {/* Pesan Peringatan jika ID belum diganti (Spinner & Teks) */}
-          <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none text-center px-4 z-10">
-            <svg className="w-12 h-12 text-cyan-500 mb-4 animate-spin-slow opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+          {/* Efek Loading yang berada di belakang (Akan tertutup otomatis saat gambar IG muncul) */}
+          <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none text-center px-4 z-10 opacity-60">
+            <svg className="w-10 h-10 text-cyan-500 mb-3 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
             </svg>
-            <p className="text-sm text-cyan-400 font-bold mb-2">Menyinkronkan Feed Instagram...</p>
-            <div className="bg-red-900/40 border border-red-500/50 p-3 rounded-lg max-w-sm">
-              <p className="text-[11px] text-red-200"><b>Peringatan:</b> Jika loading ini tidak kunjung selesai, artinya Anda belum mengganti <b>Widget ID</b> di kodingan dengan ID Anda sendiri.</p>
-            </div>
+            <p className="text-sm text-cyan-400 font-bold tracking-widest uppercase">Memuat Galeri...</p>
           </div>
 
         </div>
