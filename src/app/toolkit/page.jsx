@@ -33,19 +33,6 @@ export default function ToolkitPage() {
   return (
     <div className="min-h-screen pt-32 pb-24 px-6 md:px-12 relative overflow-hidden">
       
-      {/* ANIMASI KEYFRAMES */}
-      <style dangerouslySetInnerHTML={{__html: `
-        @keyframes fadeInUp {
-          0% { opacity: 0; transform: translateY(20px); }
-          100% { opacity: 1; transform: translateY(0); }
-        }
-        .reveal { animation: fadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; opacity: 0; }
-        .stagger-1 { animation-delay: 0.1s; }
-        .stagger-2 { animation-delay: 0.2s; }
-        .stagger-3 { animation-delay: 0.3s; }
-        .stagger-4 { animation-delay: 0.4s; }
-      `}} />
-
       {/* Decorative Background */}
       <div className="fixed top-0 right-0 w-[60vw] h-[60vw] bg-cyan-950/20 rounded-full blur-[140px] pointer-events-none -z-10"></div>
       <div className="fixed bottom-0 left-0 w-[50vw] h-[50vw] bg-indigo-950/20 rounded-full blur-[140px] pointer-events-none -z-10"></div>
@@ -91,7 +78,7 @@ export default function ToolkitPage() {
                 <div className="flex gap-4">
                   <div className="shrink-0 mt-1"><EyeSlashIcon /></div>
                   <p className="text-sm text-slate-400 leading-relaxed">
-                    <strong className="text-slate-200">Zero Data Storage:</strong> Kami tidak menyediakan database. Seluruh informasi yang Anda input tetap berada di memori browser Anda.
+                    <strong className="text-slate-200">Zero Data Storage:</strong> Kami tidak menyediakan database. Seluruh informasi yang Anda input tetap berada di memori lokal browser Anda.
                   </p>
                 </div>
                 <div className="flex gap-4">
@@ -104,7 +91,7 @@ export default function ToolkitPage() {
 
               <div className="mt-8 pt-6 border-t border-white/5">
                 <p className="text-[11px] text-slate-500 italic leading-relaxed">
-                  *Gunakan browser Chrome, Safari, atau Edge versi terbaru untuk performa rendering PDF dan visual yang optimal.
+                  *Gunakan browser Chrome, Safari, atau Edge versi terbaru untuk performa PDF dan visual yang optimal.
                 </p>
               </div>
             </div>
@@ -147,14 +134,14 @@ export default function ToolkitPage() {
         </div>
 
         {/* ========================================================= */}
-        {/* FOOTER RECOMMENDATIONS / UPCOMING TOOLS                   */}
+        {/* REKOMENDASI & PANDUAN BAWAH                               */}
         {/* ========================================================= */}
-        <div className="mt-40 pt-20 border-t border-white/5 reveal stagger-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center bg-[#050B18] rounded-[3rem] p-10 border border-white/5">
+        <div className="mt-40 pt-20 border-t border-white/5 reveal stagger-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center bg-[#050B18] rounded-[3rem] p-8 md:p-10 border border-white/5 shadow-2xl">
             <div>
               <h3 className="text-2xl font-black text-white mb-4">Punya Ide Toolkit Baru?</h3>
               <p className="text-slate-400 text-sm leading-relaxed mb-6">
-                Ekosistem ini terus tumbuh berdasarkan kebutuhan komunitas. Jika Anda memiliki saran utilitas yang dapat mempermudah pekerjaan kreatif, mari diskusikan melalui WhatsApp.
+                Ekosistem ini terus tumbuh berdasarkan kebutuhan komunitas. Jika Anda memiliki saran aplikasi atau utilitas desain yang dapat mempermudah pekerjaan Anda, mari diskusikan melalui WhatsApp.
               </p>
               <a href="https://wa.me/6285155020363" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-cyan-400 font-bold hover:text-cyan-300 transition-colors group">
                 Ajukan Ide Toolkit
@@ -163,13 +150,14 @@ export default function ToolkitPage() {
                 </svg>
               </a>
             </div>
+            
             <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
               <h4 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Pro Tips & Guide</h4>
               <ul className="space-y-3 text-xs text-slate-400 list-disc pl-4">
                 <li>Klik tombol <span className="text-cyan-500 font-bold">Akses Gratis</span> untuk membuka tools secara instan.</li>
-                <li>Gunakan mode Desktop pada browser HP jika tampilan editor terasa terlalu sempit.</li>
-                <li>Bookmark halaman ini (`mrr.my.id/toolkit`) untuk akses cepat toolkit harian Anda.</li>
-                <li>Ikuti Instagram <span className="text-white">@img_ischeznut.jpg</span> untuk info update toolkit terbaru.</li>
+                <li>Gunakan mode Desktop pada browser HP Anda jika tampilan form dirasa terlalu sempit.</li>
+                <li>Bookmark (Simpan) halaman ini agar bisa diakses cepat setiap hari.</li>
+                <li>Ikuti Instagram <span className="text-white">@img_ischeznut.jpg</span> untuk bocoran rilis tools berikutnya.</li>
               </ul>
             </div>
           </div>
