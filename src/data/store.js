@@ -115,3 +115,28 @@ export const EDUCATION = [
 ];
 
 export const CERTIFICATES = [];
+
+// =========================================================================
+// 📷 DATA FOTOGRAFI & INSTAGRAM
+// =========================================================================
+
+export const INSTAGRAM_STATS = {
+  posts: "73",
+  followers: "588",
+  following: "681",
+  username: "@img_ischeznut.jpg",
+  link: "https://instagram.com/img_ischeznut.jpg"
+};
+
+// CARA UPLOAD: Taruh foto di dalam folder "public/fotografi/" (misal: public/fotografi/foto1.jpg)
+// Lalu panggil di bawah ini dengan url: "/fotografi/foto1.jpg"
+export const PHOTO_GALLERY = [
+  { id: 1, url: "https://images.unsplash.com/photo-1542038784456-1ea8e935640e?q=80&w=800&auto=format&fit=crop", title: "Urban Exploration" },
+  { id: 2, url: "https://images.unsplash.com/photo-1493246507139-91e8fad9978e?q=80&w=800&auto=format&fit=crop", title: "Nature's Whisper" },
+  { id: 3, url: "https://images.unsplash.com/photo-1511895426328-dc8714191300?q=80&w=800&auto=format&fit=crop", title: "Night Lights" },
+  { id: 4, url: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?q=80&w=800&auto=format&fit=crop", title: "Mountain Peak" },
+  { id: 5, url: "https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?q=80&w=800&auto=format&fit=crop", title: "Forest Path" },
+  { id: 6, url: "https://images.unsplash.com/photo-1516802273409-68526ee1bdd6?q=80&w=800&auto=format&fit=crop", title: "Cityscapes" },
+  { id: 7, url: "https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=800&auto=format&fit=crop", title: "Starry Night" }, // Foto ke-7 (akan disembunyikan awalnya)
+  { id: 8, url: "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?q=80&w=800&auto=format&fit=crop", title: "Morning Mist" },  // Foto ke-8
+];
