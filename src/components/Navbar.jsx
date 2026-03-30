@@ -10,8 +10,9 @@ export default function Navbar() {
   const navLinks = [
     { name: 'Home', href: '/', isExternal: false },
     { name: 'Projects', href: '/projects', isExternal: false },
+    { name: 'Photography', href: '/photography', isExternal: false }, // 📸 Link ke Galeri IG
     { name: 'About', href: '/about', isExternal: false },
-    { name: 'CV Maker', href: '/cv-maker', isExternal: false }, // 👈 INI TAMBAHANNYA
+    { name: 'CV Tools', href: '/cv-maker', isExternal: false }, // 💼 Nama baru yang lebih profesional
     { name: 'AquaNime', href: 'https://aqua-nime.vercel.app/', isExternal: true },
   ];
 
