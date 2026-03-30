@@ -1,3 +1,52 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ==========================================================================
+   1. CUSTOM UTILITIES (Kelas Animasi agar bisa dipanggil di semua halaman)
+   ========================================================================== */
+@layer utilities {
+  /* Animasi Muncul dari Bawah (Fade In Up) */
+  .anim-fade-in-up, .reveal {
+    animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0;
+  }
+
+  /* Efek Mengambang (Floating) untuk gambar/kartu hero */
+  .anim-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  /* Jeda Waktu Animasi (Delay / Staggering) untuk elemen yang berurutan */
+  .anim-delay-100, .stagger-1 { animation-delay: 100ms; }
+  .anim-delay-200, .stagger-2 { animation-delay: 200ms; }
+  .anim-delay-300, .stagger-3 { animation-delay: 300ms; }
+  .anim-delay-400, .stagger-4 { animation-delay: 400ms; }
+  .anim-delay-500, .stagger-5 { animation-delay: 500ms; }
+  .stagger-6 { animation-delay: 600ms; }
+  .stagger-7 { animation-delay: 700ms; }
+}
+
+/* ==========================================================================
+   2. KEYFRAMES (Rumus Pergerakan Matematika Animasi)
+   ========================================================================== */
+@keyframes fadeInUp {
+  0% { 
+    opacity: 0; 
+    transform: translateY(30px); 
+  }
+  100% { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-15px); }
+}
+
+/* Animasi kilauan cahaya putih menyapu (Shimmer) untuk tombol premium */
+@keyframes shimmer {
+  100% { left: 100%; }
+}
