@@ -60,7 +60,7 @@ export default function Footer() {
           </div>
           
           <div className="w-full md:w-auto flex justify-center lg:w-[38.2%] lg:justify-end">
-            <a href="https://saweria.co/mrr" target="_blank" rel="noopener noreferrer" 
+            <a href="https://saweria.co/mrr0" target="_blank" rel="noopener noreferrer" 
                className="w-full sm:w-auto px-8 py-4 bg-cyan-600 hover:bg-cyan-500 text-white font-bold rounded-xl transition-all shadow-lg hover:shadow-[0_0_30px_rgba(6,182,212,0.4)] flex items-center justify-center gap-3">
               Beri Apresiasi
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4 group-hover:translate-x-1 transition-transform">
