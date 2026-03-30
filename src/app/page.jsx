@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { PROJECT_LIST } from '../data/store';
 
 // =========================================================================
-// KOMPONEN IKON SVG MINIMALIS & PROFESIONAL (Tanpa Emoji HP)
+// KOMPONEN IKON SVG MINIMALIS & PROFESIONAL
 // =========================================================================
 const DocumentIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 shrink-0">
@@ -38,50 +38,26 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-[#030712] text-slate-300 font-sans selection:bg-cyan-500 selection:text-white relative w-full overflow-x-hidden">
       
-      {/* SUNTIKAN CSS ANIMASI KHUSUS */}
-      <style dangerouslySetInnerHTML={{__html: `
-        @keyframes fadeInUp {
-          0% { opacity: 0; transform: translateY(30px); }
-          100% { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes float {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-15px); }
-        }
-        .anim-fade-in-up { animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
-        .anim-delay-100 { animation-delay: 100ms; }
-        .anim-delay-200 { animation-delay: 200ms; }
-        .anim-delay-300 { animation-delay: 300ms; }
-        .anim-float { animation: float 6s ease-in-out infinite; }
-      `}} />
-
-      {/* ========================================================= */}
-      {/* BACKGROUND EFFECTS (Aman dari Overflow)                   */}
-      {/* ========================================================= */}
+      {/* BACKGROUND EFFECTS */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
         <div className="absolute top-[-10%] left-[-10%] w-[120vw] md:w-[50rem] h-[120vw] md:h-[50rem] bg-cyan-600/10 rounded-full blur-[100px] md:blur-[120px]"></div>
         <div className="absolute bottom-[-20%] right-[-10%] w-[100vw] md:w-[40rem] h-[100vw] md:h-[40rem] bg-indigo-600/10 rounded-full blur-[100px] md:blur-[150px]"></div>
         
-        {/* Garis Vertikal Halus (Menciptakan kesan Grid System) */}
+        {/* Garis Vertikal Halus */}
         <div className="hidden md:block absolute left-[10%] top-0 bottom-0 w-[1px] bg-white/[0.02]"></div>
         <div className="hidden md:block absolute left-[50%] top-0 bottom-0 w-[1px] bg-white/[0.02]"></div>
         <div className="hidden md:block absolute right-[10%] top-0 bottom-0 w-[1px] bg-white/[0.02]"></div>
       </div>
 
-      {/* ========================================================= */}
-      {/* KONTEN UTAMA                                              */}
-      {/* ========================================================= */}
+      {/* KONTEN UTAMA */}
       <div className="relative z-10 pt-28 md:pt-36 pb-24 w-full">
         <div className="max-w-[1400px] mx-auto px-5 sm:px-8 lg:px-12 w-full">
           
-          {/* ========================================================= */}
-          {/* HERO SECTION (GOLDEN RATIO: 61.8% & 38.2%)                */}
-          {/* ========================================================= */}
+          {/* HERO SECTION */}
           <div className="flex flex-col lg:flex-row items-center justify-between gap-16 lg:gap-0 min-h-[75vh] w-full">
             
-            {/* KIRI: 61.8% (Tipografi & Informasi) */}
+            {/* KIRI */}
             <div className="w-full lg:w-[61.8%] flex flex-col justify-center text-center lg:text-left pr-0 lg:pr-12 z-20">
-              
               <div className="anim-fade-in-up inline-flex items-center justify-center lg:justify-start gap-3 mb-6">
                 <div className="flex items-center justify-center w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-emerald-500/20 border border-emerald-500/50 shrink-0">
                   <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
@@ -101,40 +77,26 @@ export default function Home() {
               </p>
               
               <div className="anim-fade-in-up anim-delay-300 flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start w-full sm:w-auto">
-                <Link 
-                  href="/cv-print" 
-                  className="w-full sm:w-auto px-8 py-4 bg-white text-[#030712] hover:bg-cyan-50 font-black rounded-xl transition-all shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:shadow-[0_0_30px_rgba(6,182,212,0.4)] hover:-translate-y-1 tracking-wide flex justify-center items-center gap-2 group"
-                >
+                <Link href="/cv-print" className="w-full sm:w-auto px-8 py-4 bg-white text-[#030712] hover:bg-cyan-50 font-black rounded-xl transition-all shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:shadow-[0_0_30px_rgba(6,182,212,0.4)] hover:-translate-y-1 tracking-wide flex justify-center items-center gap-2 group">
                   <span className="group-hover:-translate-y-1 transition-transform duration-300"><DocumentIcon /></span>
                   Lihat CV Saya
                 </Link>
 
-                <a 
-                  href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(waMessage)}`}
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="w-full sm:w-auto px-8 py-4 bg-transparent border border-white/20 hover:border-[#25D366] hover:bg-[#25D366]/10 text-white font-bold rounded-xl transition-all tracking-wide flex justify-center items-center gap-2 group hover:-translate-y-1"
-                >
+                <a href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(waMessage)}`} target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto px-8 py-4 bg-transparent border border-white/20 hover:border-[#25D366] hover:bg-[#25D366]/10 text-white font-bold rounded-xl transition-all tracking-wide flex justify-center items-center gap-2 group hover:-translate-y-1">
                   <span className="text-[#25D366] group-hover:scale-110 transition-transform"><WhatsAppIcon /></span>
                   Mulai Diskusi
                 </a>
               </div>
             </div>
 
-            {/* KANAN: 38.2% (Visual Abstrak / Portret) */}
+            {/* KANAN */}
             <div className="w-full lg:w-[38.2%] flex justify-center lg:justify-end relative mt-6 lg:mt-0 z-10">
               <div className="relative w-full max-w-[260px] sm:max-w-[320px] lg:max-w-[360px] aspect-[4/5] group anim-float mx-auto lg:mx-0">
-                
                 <div className="absolute inset-0 bg-gradient-to-tr from-cyan-500 to-indigo-500 rounded-[2rem] rotate-6 group-hover:rotate-12 transition-all duration-700 opacity-30 blur-xl"></div>
                 <div className="absolute inset-0 border border-cyan-500/50 rounded-[2rem] -rotate-3 group-hover:-rotate-6 transition-all duration-700 z-0"></div>
                 
                 <div className="absolute inset-0 rounded-[2rem] overflow-hidden bg-[#0A1329] shadow-2xl z-10 border border-white/10">
-                  <img 
-                    src="/profile.jpg" 
-                    alt="Muhammad Rafli Ramadhan" 
-                    className="w-full h-full object-cover object-center grayscale hover:grayscale-0 transition-all duration-700 scale-105 group-hover:scale-100"
-                    onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop'; }}
-                  />
+                  <img src="/profile.jpg" alt="Muhammad Rafli Ramadhan" className="w-full h-full object-cover object-center grayscale hover:grayscale-0 transition-all duration-700 scale-105 group-hover:scale-100" onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop'; }} />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#030712] via-transparent to-transparent opacity-90"></div>
                 </div>
                 
@@ -149,14 +111,11 @@ export default function Home() {
                   <div className="text-xl sm:text-3xl font-black text-white">3+</div>
                   <div className="text-[8px] sm:text-[10px] font-bold text-cyan-100 uppercase tracking-wider leading-tight">Years<br/>Experience</div>
                 </div>
-
               </div>
             </div>
           </div>
 
-          {/* ========================================================= */}
-          {/* PROMO TOOLKIT ECOSYSTEM (Banner Eksekutif Glassmorphism)  */}
-          {/* ========================================================= */}
+          {/* PROMO TOOLKIT ECOSYSTEM */}
           <div className="mt-32 w-full anim-fade-in-up anim-delay-300">
             <div className="relative rounded-3xl overflow-hidden border border-white/10 bg-gradient-to-r from-[#0a152e] to-[#050b1a] p-6 sm:p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-8 shadow-2xl group">
               <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/10 rounded-full blur-[80px] -z-10 group-hover:bg-cyan-500/20 transition-all duration-700"></div>
@@ -168,7 +127,6 @@ export default function Home() {
                 </div>
                 <div className="w-full">
                   <div className="text-cyan-400 text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.2em] mb-2">Micro-SaaS Buatan Saya</div>
-                  {/* PENGGANTIAN TEXT DARI ATS KE TOOLKIT */}
                   <h3 className="text-xl sm:text-2xl md:text-3xl font-black text-white mb-3 tracking-tight">MRR Toolkit Ecosystem</h3>
                   <p className="text-slate-400 text-xs sm:text-sm md:text-base max-w-2xl leading-relaxed mx-auto md:mx-0">
                     Kumpulan aplikasi web dan utilitas desain gratis. Mulai dari ATS CV Maker, generator tautan WhatsApp premium, hingga ekstraktor palet warna untuk mempercepat alur kerja kreatif Anda.
@@ -176,7 +134,6 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* PENGGANTIAN LINK DARI /cv-maker KE /toolkit */}
               <Link href="/toolkit" className="w-full md:w-auto z-10 whitespace-nowrap px-6 sm:px-8 py-3.5 sm:py-4 bg-cyan-600 hover:bg-cyan-500 text-white font-bold rounded-xl transition-all shadow-[0_0_20px_rgba(6,182,212,0.3)] hover:shadow-[0_0_30px_rgba(6,182,212,0.5)] flex items-center justify-center gap-3 hover:-translate-x-1">
                 Eksplorasi Toolkit
                 <ArrowRightIcon />
@@ -184,9 +141,7 @@ export default function Home() {
             </div>
           </div>
 
-          {/* ========================================================= */}
-          {/* BENTO GRID: KARYA TERPILIH                                */}
-          {/* ========================================================= */}
+          {/* BENTO GRID */}
           <div className="mt-32 pt-16 border-t border-white/5">
             <div className="flex flex-col sm:flex-row justify-between items-end mb-12 gap-6 w-full">
               <div className="w-full sm:w-auto">
@@ -206,24 +161,13 @@ export default function Home() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 auto-rows-[300px] sm:auto-rows-[350px] lg:auto-rows-[450px]">
               {featuredProjects.map((project, index) => (
-                <Link 
-                  href={`/projects/${project.id}`} 
-                  key={project.id} 
-                  className={`group relative rounded-3xl sm:rounded-[2rem] overflow-hidden bg-[#0A1329] border border-white/5 hover:border-cyan-500/40 transition-all duration-500 shadow-lg hover:shadow-[0_20px_50px_rgba(6,182,212,0.15)] 
-                  ${index === 0 ? 'md:col-span-2 lg:col-span-2' : 'col-span-1'}`}
-                >
-                  <img 
-                    src={project.image} 
-                    alt={project.title} 
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[1.5s] ease-out opacity-60 group-hover:opacity-100"
-                    onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop'; }} 
-                  />
+                <Link key={project.id} href={`/projects/${project.id}`} className={`group relative rounded-3xl sm:rounded-[2rem] overflow-hidden bg-[#0A1329] border border-white/5 hover:border-cyan-500/40 transition-all duration-500 shadow-lg hover:shadow-[0_20px_50px_rgba(6,182,212,0.15)] ${index === 0 ? 'md:col-span-2 lg:col-span-2' : 'col-span-1'}`}>
+                  <img src={project.image} alt={project.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[1.5s] ease-out opacity-60 group-hover:opacity-100" onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop'; }} />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#030712] via-[#030712]/60 to-transparent opacity-90 group-hover:opacity-100 transition-opacity duration-500"></div>
                   
                   <div className="absolute bottom-0 left-0 w-full p-6 sm:p-8 lg:p-10 flex flex-col justify-end transform translate-y-2 sm:translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
                     <div className="inline-flex items-center gap-2 text-[9px] sm:text-[10px] font-bold tracking-[0.2em] text-cyan-400 uppercase mb-2 sm:mb-3 bg-cyan-900/40 backdrop-blur-md border border-cyan-500/30 px-3 py-1.5 rounded-full w-fit">
-                      <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shrink-0"></span>
-                      {project.category}
+                      <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shrink-0"></span> {project.category}
                     </div>
                     <h3 className={`font-bold text-white group-hover:text-cyan-300 transition-colors tracking-tight line-clamp-2 ${index === 0 ? 'text-2xl sm:text-3xl md:text-4xl lg:text-5xl' : 'text-xl sm:text-2xl lg:text-3xl'}`}>
                       {project.title}
