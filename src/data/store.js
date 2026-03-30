@@ -1,7 +1,6 @@
 // =========================================================================
 // 🗄️ PUSAT DATA WEBSITE MRR (DRAG & PLAY)
 // =========================================================================
-// Aturan: Hanya ubah teks di dalam tanda kutip ("..."). Jangan hapus tanda koma (,).
 
 export const PROJECT_LIST = [
   {
@@ -10,92 +9,93 @@ export const PROJECT_LIST = [
     company: "PT Bumi Eka Sukses Tridaya",
     category: "Brand Identity",
     description: "Proyek corporate branding menyeluruh untuk Bumi Eka Sukses Tridaya (BEST). Desain identitas visual ini dirancang untuk memancarkan kesan profesional, stabil, dan inovatif. Logo menggabungkan inisial B, E, S, T dengan bentuk globe (oval) yang melambangkan visi perusahaan sebagai mitra usaha berskala nasional dan internasional. Proyek ini juga mencakup perancangan Brand Guidelines lengkap, mulai dari filosofi warna, penggunaan tipografi Montserrat yang modern, hingga aturan ruang kosong (clear space) dan grid konstruksi logo.",
-
     image: "/projects/logo-best/1.jpg", 
-
     images: [
-    "/projects/logo-best/1.jpg", 
-    "/projects/logo-best/2.jpg", 
-    "/projects/logo-best/3.jpg",
-    "/projects/logo-best/4.jpg",
-    "/projects/logo-best/5.jpg",
-    "/projects/logo-best/6.jpg", 
-  ]
-}, 
+      "/projects/logo-best/1.jpg", 
+      "/projects/logo-best/2.jpg", 
+      "/projects/logo-best/3.jpg",
+      "/projects/logo-best/4.jpg",
+      "/projects/logo-best/5.jpg",
+      "/projects/logo-best/6.jpg", 
+    ]
+  }, 
   {
     id: "packing-box",
     title: "Packing Box",
     company: "Pertamina One Solution",
     category: "Packaging Design",
-    description: "Desain kotak souvenir untuk Pertamina One Solution.",
-    image: "/projects/box-pertamina/1.jpg"
+    description: "Desain kotak souvenir eksklusif untuk Pertamina One Solution yang merepresentasikan citra premium perusahaan.",
+    image: "/projects/box-pertamina/1.jpg",
+    images: ["/projects/box-pertamina/1.jpg"] 
   },
   {
     id: "bunker-buku",
     title: "Cover Book Subsidi",
     company: "Pertamina Patra Niaga",
     category: "Print Design",
-    description: "Desain cover buku Langganan Bunker BBM Subsidi.",
-    image: "/projects/buku-bunker/1.jpg"
+    description: "Perancangan desain sampul buku pedoman Langganan Bunker BBM Subsidi untuk PT Pertamina Patra Niaga.",
+    image: "/projects/buku-bunker/1.jpg",
+    images: ["/projects/buku-bunker/1.jpg"]
   },
   {
     id: "kumpul-wibu",
     title: "Pamflet Event Kumpul Wibu",
     company: "Bella Terra Lifestyle Center",
     category: "Social Media Design",
-    description: "Desain pamflet promosi untuk event Kumpul Wibu.",
-    image: "/projects/kumpul-wibu.jpg"
+    description: "Desain pamflet promosi digital yang atraktif untuk event komunitas Kumpul Wibu di Bella Terra Lifestyle Center.",
+    image: "/projects/kumpul-wibu.jpg",
+    images: ["/projects/kumpul-wibu.jpg"]
   },
   {
     id: "anime-carnival",
     title: "Bstation Anime Carnival 2023",
     company: "Bstation Indonesia",
     category: "Social Media Design",
-    description: "Visual promosi media sosial untuk publikasi acara di Bstation.",
-    image: "/projects/anime-carnival.jpg"
+    description: "Eksekusi visual promosi media sosial untuk publikasi acara berskala besar Bstation di Mall Artha Gading.",
+    image: "/projects/anime-carnival.jpg",
+    images: ["/projects/anime-carnival.jpg"]
   },
   {
     id: "aquanime",
     title: "AquaNime Community",
     company: "Community Founder",
     category: "Community Design",
-    description: "Desain identitas visual, maskot, dan layout media sosial.",
-    image: "/projects/aquanime.jpg"
+    description: "Pengembangan identitas visual menyeluruh, perancangan maskot, dan tata letak media sosial untuk komunitas AquaNime.",
+    image: "/projects/aquanime.jpg",
+    images: ["/projects/aquanime.jpg"]
   }
 ];
 
-// ... (Bagian PROJECT_LIST biarkan saja) ...
-
 export const WORK_EXPERIENCE = [
   {
-    year: "Sep 2024 - Sep 2025", // Asumsi ini adalah target atau kontrak saat ini
+    year: "Sep 2024 - Sep 2025",
     role: "Design Graphic Printing",
     company: "PT Wellen Brother",
-    description: "Merancang banner, brosur, pamflet, kartu nama, stiker, poster, dan merchandise berdasarkan brief klien dan identitas merek. Menyiapkan file siap cetak (CMYK, bleed, crop marks, 300 DPI) dan melakukan kontrol kualitas (proofing). Berkoordinasi dengan tim produksi, memilih material yang tepat, serta memastikan akurasi warna dan konsistensi cetak."
+    description: "Merancang materi pemasaran visual komprehensif (banner, brosur, pamflet, merchandise) yang selaras dengan identitas merek klien. Bertanggung jawab atas optimasi file siap cetak (CMYK, bleed, 300 DPI) dan tata kelola Quality Control (QC) untuk memastikan akurasi warna dan standar produksi tertinggi."
   },
   {
     year: "Feb 2024 - Agt 2024",
     role: "Bussiness Development Officer",
     company: "PT Megatama Jaya Makmur",
-    description: "Mengidentifikasi peluang B2B dengan klien korporat. Menganalisis kebutuhan klien dan menerjemahkannya menjadi solusi bisnis dan kreatif. Menyusun proposal bisnis, materi presentasi, dan mockup visual. Berkoordinasi dengan tim desain dan produksi, serta melakukan analisis efisiensi biaya."
+    description: "Menganalisis kebutuhan klien korporat (B2B) dan menerjemahkannya menjadi solusi kreatif terukur. Berperan dalam penyusunan proposal bisnis, presentasi komersial, dan perancangan mockup visual. Mengelola koordinasi lintas divisi antara tim desain dan produksi serta mengeksekusi analisis efisiensi biaya."
   },
   {
     year: "Des 2023 - Jan 2024",
     role: "Freelance Designer & Head of Equipment",
     company: "Bstation Indonesia",
-    description: "Sebagai desainer grafis yang merancang pamflet promosi acara di media sosial Bstation untuk event Anime Carnival 2023 di Mall Artha Gading. Sekaligus bertindak sebagai kepala tim koordinasi perlengkapan."
+    description: "Merancang aset visual dan pamflet promosi digital untuk publikasi event berskala nasional 'Anime Carnival 2023' di Mall Artha Gading. Dipercaya memimpin tim koordinasi perlengkapan teknis selama jalannya acara."
   },
   {
     year: "Mar 2023 - Des 2023",
     role: "Customer Service Associate",
     company: "Mineski Infinity Sunter",
-    description: "Melayani transaksi top up member card, pembelian makanan dan minuman, serta bertanggung jawab atas kebersihan area pada shift malam."
+    description: "Mengelola interaksi pelanggan langsung (B2C), menangani transaksi sistem member, dan memastikan standar operasional kebersihan serta kenyamanan area pelayanan."
   },
   {
     year: "Jan 2022 - Des 2022",
     role: "Counter Retail",
     company: "PT Berlian Busana Cemerlang",
-    description: "Melayani transaksi pelanggan, melakukan pengecekan pakaian, dan mengelola rak penyortiran."
+    description: "Mengelola alur masuk-keluar barang, menangani transaksi pelanggan, dan mengeksekusi sistem penyortiran inventaris dengan tingkat akurasi tinggi."
   }
 ];
 
@@ -103,17 +103,15 @@ export const EDUCATION = [
   {
     year: "Sep 2022 - Jan 2024",
     degree: "Desain Komunikasi Visual (Tidak Selesai)",
-    institution: "Universitas Indraprasta PGRI"
+    institution: "Universitas Indraprasta PGRI",
+    description: "Mempelajari dasar-dasar nirmana, tipografi, dan komunikasi visual."
   },
   {
     year: "Jun 2018 - Jul 2021",
     degree: "Teknik Komputer dan Jaringan",
     institution: "SMK Hang Tuah 2 Jakarta",
-    description: "Wakil Ketua OSIS (2020-2021) | Lulusan Terbaik (2021)"
+    description: "Lulusan Terbaik (2021) | Wakil Ketua OSIS (2020-2021)"
   }
 ];
 
-export const CERTIFICATES = [
-  // ... (Kosongkan dulu atau isi jika ada)
-];
-
+export const CERTIFICATES = [];
