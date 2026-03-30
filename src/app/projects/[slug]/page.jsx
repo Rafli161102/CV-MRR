@@ -6,7 +6,7 @@ import { PROJECT_LIST } from '../../../data/store';
 import { notFound } from 'next/navigation';
 
 // =========================================================================
-// IKON SVG PROFESIONAL RAMPING
+// IKON SVG PROFESIONAL 
 // =========================================================================
 const ArrowLeftIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4 group-hover:-translate-x-1 transition-transform shrink-0">
@@ -44,104 +44,132 @@ export default function ProjectDetail() {
 
   const imagesToShow = project.images && project.images.length > 0 ? project.images : [project.image];
 
+  // TRIK UI KELAS DUNIA: Memecah judul agar kata terakhir mendapat warna gradient otomatis
+  const titleWords = project.title.split(' ');
+  const highlightWord = titleWords.pop();
+  const normalWords = titleWords.join(' ');
+
   return (
-    // FIX OVERFLOW ABSOLUTE: w-full dan overflow-x-hidden pada level root
-    <div className="min-h-screen pt-28 pb-24 relative w-full overflow-x-hidden bg-[#030712]">
+    // FIX OVERFLOW ABSOLUTE: w-full & overflow-x-hidden mengamankan layar HP dari melar
+    <div className="min-h-screen pt-28 sm:pt-36 pb-24 relative w-full overflow-x-hidden bg-[#030712]">
       
-      {/* Background Decor - Dikunci agar tidak bocor ke luar viewport */}
+      {/* ========================================================= */}
+      {/* BACKGROUND DECOR 100% SINKRON DENGAN BERANDA              */}
+      {/* ========================================================= */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        <div className="absolute top-0 right-0 w-[70vw] h-[70vw] max-w-[500px] bg-cyan-900/10 rounded-full blur-[100px] translate-x-1/4 -translate-y-1/4"></div>
-        <div className="absolute bottom-0 left-0 w-[70vw] h-[70vw] max-w-[500px] bg-indigo-900/10 rounded-full blur-[100px] -translate-x-1/4 translate-y-1/4"></div>
+        <div className="absolute top-[-10%] left-[-10%] w-[120vw] md:w-[50rem] h-[120vw] md:h-[50rem] bg-cyan-600/10 rounded-full blur-[100px] md:blur-[120px]"></div>
+        <div className="absolute bottom-[-20%] right-[-10%] w-[100vw] md:w-[40rem] h-[100vw] md:h-[40rem] bg-indigo-600/10 rounded-full blur-[100px] md:blur-[150px]"></div>
+        
+        {/* Garis Vertikal Halus (Hiasan Desktop) */}
+        <div className="hidden md:block absolute left-[10%] top-0 bottom-0 w-[1px] bg-white/[0.02]"></div>
+        <div className="hidden md:block absolute left-[50%] top-0 bottom-0 w-[1px] bg-white/[0.02]"></div>
+        <div className="hidden md:block absolute right-[10%] top-0 bottom-0 w-[1px] bg-white/[0.02]"></div>
       </div>
 
-      <div className="max-w-[1200px] mx-auto px-6 sm:px-8 lg:px-12 relative z-10 w-full">
+      <div className="max-w-[1400px] mx-auto px-5 sm:px-8 lg:px-12 relative z-10 w-full">
         
-        {/* Navigasi Kembali */}
-        <div className="mb-10 reveal stagger-1">
+        {/* ========================================================= */}
+        {/* TOMBOL KEMBALI                                            */}
+        {/* ========================================================= */}
+        <div className="mb-10 sm:mb-12 reveal stagger-1">
           <Link 
             href="/projects" 
-            className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-[#0A1329]/50 backdrop-blur-sm border border-white/5 text-[10px] sm:text-xs font-bold tracking-widest uppercase text-slate-400 hover:text-cyan-400 hover:border-cyan-500/30 hover:bg-[#0A1329] shadow-lg transition-all duration-300 group"
+            className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-[#0A1329]/80 backdrop-blur-md border border-white/5 text-[10px] sm:text-xs font-bold tracking-widest uppercase text-slate-400 hover:text-cyan-400 hover:border-cyan-500/30 hover:bg-[#0A1329] shadow-lg transition-all duration-300 group w-fit"
           >
             <ArrowLeftIcon />
-            Kembali
+            Kembali ke Galeri
           </Link>
         </div>
 
-        {/* HEADER: GOLDEN RATIO 61.8 : 38.2 */}
+        {/* ========================================================= */}
+        {/* HEADER SECTION (GOLDEN RATIO 61.8 : 38.2)                 */}
+        {/* ========================================================= */}
         <div className="flex flex-col lg:flex-row gap-12 lg:gap-16 items-start mb-16 sm:mb-24">
           
           {/* KIRI (61.8%): Konten Narasi */}
-          <div className="w-full lg:w-[61.8%] reveal stagger-2">
-            <div className="inline-flex items-center gap-2 text-[8px] sm:text-[9px] font-black tracking-[0.3em] text-cyan-400 uppercase mb-4 sm:mb-6 bg-cyan-950/30 border border-cyan-500/20 px-3 py-1.5 rounded-lg shadow-[0_0_15px_rgba(6,182,212,0.1)]">
-              <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shrink-0"></span>
+          <div className="w-full lg:w-[61.8%] reveal stagger-2 pr-0 lg:pr-8">
+            
+            {/* Badge Identik dengan Beranda */}
+            <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-[9px] sm:text-[10px] font-bold tracking-widest uppercase mb-6 sm:mb-8 shadow-md">
+              <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-cyan-500 animate-pulse shrink-0"></span>
               {project.category}
             </div>
             
-            {/* TEMA FONT: Menyesuaikan halaman utama (Gradient Text yang Mewah) */}
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[4rem] font-black tracking-tighter mb-8 sm:mb-10 leading-[1.05] text-transparent bg-clip-text bg-gradient-to-br from-white via-slate-200 to-slate-500 drop-shadow-lg">
-              {project.title}
+            {/* TEMA FONT: Text Raksasa dengan Gradient Otomatis pada Kata Terakhir */}
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-[4.5rem] font-black tracking-tighter mb-8 sm:mb-10 leading-[1.1] drop-shadow-lg text-white">
+              {normalWords}{' '}
+              <span className="text-transparent bg-clip-text bg-gradient-to-br from-cyan-300 via-blue-500 to-indigo-600">
+                {highlightWord}
+              </span>
             </h1>
             
             <div className="space-y-4 sm:space-y-6">
-              <h3 className="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-[0.2em] border-b border-white/10 pb-3">
-                Latar Belakang Proyek
-              </h3>
-              <p className="text-sm sm:text-base md:text-lg text-slate-300 leading-relaxed sm:leading-loose font-medium">
+              <div className="flex items-center gap-4 mb-4">
+                <div className="h-[1px] w-8 sm:w-12 bg-cyan-500 rounded-full"></div>
+                <h3 className="text-xs sm:text-sm font-bold text-white uppercase tracking-widest">
+                  Latar Belakang Proyek
+                </h3>
+              </div>
+              <p className="text-sm sm:text-base md:text-lg text-slate-400 leading-relaxed sm:leading-loose font-medium max-w-2xl">
                 {project.description}
               </p>
             </div>
           </div>
 
-          {/* KANAN (38.2%): Metadata Ringkas */}
-          <div className="w-full lg:w-[38.2%] reveal stagger-3">
-            <div className="bg-gradient-to-br from-[#0A1329] to-[#030712] border border-cyan-500/10 rounded-[2rem] p-6 sm:p-8 shadow-2xl relative overflow-hidden group hover:border-cyan-500/30 transition-colors duration-500">
-              <div className="absolute -top-10 -right-10 w-32 h-32 bg-cyan-500/10 rounded-full blur-[40px] group-hover:bg-cyan-500/20 transition-all duration-700"></div>
+          {/* KANAN (38.2%): Metadata Glassmorphism */}
+          <div className="w-full lg:w-[38.2%] reveal stagger-3 mt-4 lg:mt-0">
+            <div className="bg-[#0A1329]/80 backdrop-blur-xl border border-white/5 rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-8 md:p-10 shadow-2xl relative overflow-hidden group hover:border-cyan-500/30 transition-all duration-500">
+              
+              {/* Efek Cahaya Dalam */}
+              <div className="absolute -top-10 -right-10 w-40 h-40 bg-cyan-500/10 rounded-full blur-[40px] group-hover:bg-cyan-500/20 transition-all duration-700"></div>
+              <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-indigo-500/10 rounded-full blur-[40px] group-hover:bg-indigo-500/20 transition-all duration-700"></div>
               
               <div className="space-y-8 relative z-10">
                 {/* Klien */}
-                <div className="flex items-center gap-5">
+                <div className="flex items-center gap-4 sm:gap-5">
                   <div className="p-3 bg-cyan-950/40 rounded-2xl border border-cyan-500/20 shrink-0 shadow-inner group-hover:bg-cyan-900/50 transition-colors">
                     <ClientIcon />
                   </div>
                   <div>
-                    <p className="text-[9px] text-cyan-400/70 uppercase tracking-widest font-bold mb-1">Client / Company</p>
-                    <p className="text-xs sm:text-sm font-bold text-white">{project.company || "Personal Project"}</p>
+                    <p className="text-[9px] sm:text-[10px] text-cyan-400/80 uppercase tracking-widest font-bold mb-1">Client / Company</p>
+                    <p className="text-xs sm:text-sm font-bold text-white tracking-wide">{project.company || "Personal Project"}</p>
                   </div>
                 </div>
 
                 {/* Role */}
-                <div className="flex items-center gap-5">
+                <div className="flex items-center gap-4 sm:gap-5">
                   <div className="p-3 bg-cyan-950/40 rounded-2xl border border-cyan-500/20 shrink-0 shadow-inner group-hover:bg-cyan-900/50 transition-colors">
                     <RoleIcon />
                   </div>
                   <div>
-                    <p className="text-[9px] text-cyan-400/70 uppercase tracking-widest font-bold mb-1">My Role</p>
-                    <p className="text-xs sm:text-sm font-bold text-white">{project.role || "Lead Visual Designer"}</p>
+                    <p className="text-[9px] sm:text-[10px] text-cyan-400/80 uppercase tracking-widest font-bold mb-1">My Role</p>
+                    <p className="text-xs sm:text-sm font-bold text-white tracking-wide">{project.role || "Lead Visual Designer"}</p>
                   </div>
                 </div>
               </div>
 
-              <div className="mt-8 pt-6 border-t border-white/5">
-                <p className="text-[10px] text-slate-500 italic leading-relaxed">
-                  Proyek ini dikembangkan dengan pendekatan <span className="text-slate-400 font-semibold">User-Centered Design</span> untuk hasil visual maksimal.
+              <div className="mt-8 pt-6 border-t border-white/5 relative z-10">
+                <p className="text-[10px] sm:text-[11px] text-slate-500 italic leading-relaxed">
+                  Proyek ini dikembangkan dengan pendekatan <strong className="text-slate-400 font-semibold">User-Centered Design</strong> untuk memastikan solusi visual tepat sasaran.
                 </p>
               </div>
             </div>
           </div>
         </div>
 
-        {/* GALLERY AREA: Cinematic & Staggered dengan Efek 3D Hover */}
-        <div className="flex flex-col gap-8 sm:gap-12 lg:gap-16">
+        {/* ========================================================= */}
+        {/* GALLERY AREA: Cinematic & Staggered Hover 3D              */}
+        {/* ========================================================= */}
+        <div className="flex flex-col gap-8 sm:gap-12 lg:gap-16 max-w-5xl mx-auto">
           {imagesToShow.map((imgUrl, index) => (
             <div 
               key={index}
-              className={`reveal stagger-4 w-full rounded-[1.5rem] sm:rounded-[2.5rem] overflow-hidden border border-white/5 bg-[#050A14] shadow-[0_20px_50px_rgba(0,0,0,0.5)] transition-all duration-700 hover:shadow-[0_30px_60px_rgba(6,182,212,0.15)] group`}
+              className={`reveal stagger-4 w-full rounded-2xl sm:rounded-[2.5rem] overflow-hidden border border-white/5 bg-[#050A14] shadow-[0_20px_50px_rgba(0,0,0,0.5)] transition-all duration-700 hover:shadow-[0_30px_60px_rgba(6,182,212,0.15)] group`}
             >
               <img 
                 src={imgUrl} 
                 alt={`${project.title} View ${index + 1}`}
-                // Menambahkan sedikit rotasi saat di-hover untuk kesan dinamis
-                className="w-full h-auto object-cover transition-transform duration-[1.5s] ease-out group-hover:scale-105 group-hover:rotate-1 origin-center"
+                className="w-full h-auto object-cover transition-transform duration-[1.5s] ease-out group-hover:scale-[1.03] group-hover:rotate-1 origin-center"
                 onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200&auto=format&fit=crop'; }}
               />
             </div>
@@ -149,32 +177,31 @@ export default function ProjectDetail() {
         </div>
 
         {/* ========================================================= */}
-        {/* BANNER CTA MEWAH (Menggantikan CTA Lama yang Kaku)        */}
+        {/* CTA MEWAH KONSISTEN DENGAN BERANDA                        */}
         {/* ========================================================= */}
         <div className="mt-24 sm:mt-32 reveal stagger-5">
-          <div className="relative rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden bg-gradient-to-br from-[#0A1329] to-[#030712] border border-cyan-500/20 p-8 sm:p-12 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-8 group hover:border-cyan-500/40 transition-colors duration-500">
+          <div className="relative rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden bg-gradient-to-r from-[#0a152e] to-[#050b1a] border border-white/10 p-8 sm:p-12 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-8 group hover:border-cyan-500/30 transition-colors duration-500">
             
-            {/* Glow Latar CTA */}
+            {/* Glow Latar CTA Sama Persis Seperti Beranda */}
             <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/10 rounded-full blur-[80px] -z-10 group-hover:bg-cyan-500/20 transition-all duration-700"></div>
             <div className="absolute bottom-0 left-0 w-40 h-40 bg-blue-500/10 rounded-full blur-[60px] -z-10"></div>
 
-            <div className="text-center md:text-left z-10 w-full md:w-[61.8%]">
+            <div className="text-center md:text-left z-10 w-full md:w-auto">
               <h4 className="text-2xl sm:text-3xl font-black text-white mb-3 tracking-tight">Punya Visi Serupa?</h4>
-              <p className="text-sm sm:text-base text-slate-400 max-w-md leading-relaxed mx-auto md:mx-0">
-                Mari wujudkan identitas visual yang <span className="text-cyan-400 font-semibold drop-shadow-md">strategis dan berdampak nyata</span> untuk entitas bisnis Anda bersama saya.
+              <p className="text-sm sm:text-base text-slate-400 max-w-xl leading-relaxed mx-auto md:mx-0">
+                Mari diskusikan dan wujudkan identitas visual yang <span className="text-cyan-400 font-semibold drop-shadow-md">strategis dan berdampak nyata</span> untuk entitas bisnis Anda bersama saya.
               </p>
             </div>
 
-            <div className="z-10 w-full md:w-auto flex justify-center md:justify-end shrink-0">
+            <div className="z-10 w-full md:w-auto flex justify-center shrink-0 mt-4 md:mt-0">
               <a 
                 href={`https://wa.me/6285155020363?text=${encodeURIComponent(`Halo Rafli, saya tertarik berdiskusi mengenai proyek ${project.title}.`)}`}
                 target="_blank" 
                 rel="noopener noreferrer"
-                // Desain Tombol Action Premium
-                className="w-full sm:w-auto px-8 py-4 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-[#030712] font-black text-sm sm:text-base transition-all shadow-[0_0_20px_rgba(6,182,212,0.4)] hover:shadow-[0_0_40px_rgba(6,182,212,0.6)] flex items-center justify-center gap-3 hover:-translate-y-1 whitespace-nowrap"
+                className="w-full sm:w-auto px-8 py-4 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-black text-sm sm:text-base transition-all shadow-[0_0_20px_rgba(6,182,212,0.3)] hover:shadow-[0_0_40px_rgba(6,182,212,0.5)] flex items-center justify-center gap-3 hover:-translate-y-1 whitespace-nowrap"
               >
-                <WhatsAppIcon />
                 Mulai Diskusi
+                <WhatsAppIcon />
               </a>
             </div>
 
