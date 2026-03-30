@@ -1,6 +1,9 @@
 "use client";
 
+import { useState } from 'react';
 import Link from 'next/link';
+// IMPORT DATA DARI STORE
+import { PHOTO_GALLERY, INSTAGRAM_STATS } from '../../data/store';
 
 // =========================================================================
 // IKON SVG PROFESIONAL
@@ -24,24 +27,26 @@ const ExternalLinkIcon = () => (
   </svg>
 );
 
-// Data Foto Placeholder (Silakan ganti URL-nya dengan link foto karya aslimu)
-const PHOTO_GALLERY = [
-  { id: 1, url: "https://images.unsplash.com/photo-1542038784456-1ea8e935640e?q=80&w=800&auto=format&fit=crop", title: "Urban Exploration" },
-  { id: 2, url: "https://images.unsplash.com/photo-1493246507139-91e8fad9978e?q=80&w=800&auto=format&fit=crop", title: "Nature's Whisper" },
-  { id: 3, url: "https://images.unsplash.com/photo-1511895426328-dc8714191300?q=80&w=800&auto=format&fit=crop", title: "Night Lights" },
-  { id: 4, url: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?q=80&w=800&auto=format&fit=crop", title: "Mountain Peak" },
-  { id: 5, url: "https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?q=80&w=800&auto=format&fit=crop", title: "Forest Path" },
-  { id: 6, url: "https://images.unsplash.com/photo-1516802273409-68526ee1bdd6?q=80&w=800&auto=format&fit=crop", title: "Cityscapes" },
-];
+const ArrowDownIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 animate-bounce">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+  </svg>
+);
 
 export default function PhotographyPage() {
+  // STATE: Berapa banyak gambar yang mau ditampilkan di awal? (Default: 6)
+  const [visibleCount, setVisibleCount] = useState(6);
+
+  // FUNGSI: Tambah 6 gambar lagi saat tombol "Load More" diklik
+  const handleLoadMore = () => {
+    setVisibleCount((prevCount) => prevCount + 6);
+  };
+
   return (
     // FIX OVERFLOW ABSOLUTE: Layar HP aman dari kebocoran
     <div className="min-h-screen pt-28 sm:pt-36 pb-24 relative w-full overflow-x-hidden bg-[#030712]">
       
-      {/* ========================================================= */}
-      {/* BACKGROUND DECOR 100% SINKRON DENGAN BERANDA              */}
-      {/* ========================================================= */}
+      {/* BACKGROUND DECOR KONSISTEN */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
         <div className="absolute top-[5%] left-[-10%] w-[300px] sm:w-[500px] lg:w-[600px] h-[300px] sm:h-[500px] lg:h-[600px] bg-cyan-600/10 rounded-full blur-[100px] lg:blur-[120px]"></div>
         <div className="absolute bottom-[10%] right-[-10%] w-[300px] sm:w-[500px] lg:w-[600px] h-[300px] sm:h-[500px] lg:h-[600px] bg-indigo-600/10 rounded-full blur-[100px] lg:blur-[140px]"></div>
@@ -54,15 +59,12 @@ export default function PhotographyPage() {
         {/* ========================================================= */}
         <div className="flex flex-col lg:flex-row gap-12 lg:gap-16 mb-20 lg:mb-28 items-start">
           
-          {/* KIRI (61.8%): Konten Narasi */}
           <div className="w-full lg:w-[61.8%] reveal stagger-1 pr-0 lg:pr-8 text-center lg:text-left">
-            
             <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-[9px] sm:text-[10px] font-bold tracking-widest uppercase mb-6 sm:mb-8 shadow-md">
               <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-cyan-500 animate-pulse shrink-0"></span>
               Hobi & Eksplorasi Visual
             </div>
             
-            {/* TEMA FONT: Gradient Hit menyamakan halaman depan */}
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-[4.5rem] font-black tracking-tighter mb-6 sm:mb-8 leading-[1.1] drop-shadow-lg text-white">
               Bercerita Melalui <br className="hidden sm:block lg:hidden" />
               <span className="text-transparent bg-clip-text bg-gradient-to-br from-cyan-300 via-blue-500 to-indigo-600">
@@ -75,15 +77,13 @@ export default function PhotographyPage() {
             </p>
           </div>
 
-          {/* KANAN (38.2%): Kartu Profil Instagram Eksklusif */}
+          {/* Kartu Profil Instagram Dinamis (Ambil data dari store.js) */}
           <div className="w-full lg:w-[38.2%] reveal stagger-2 mt-4 lg:mt-0">
             <div className="bg-gradient-to-br from-[#0A1329]/90 to-[#050A14]/90 backdrop-blur-xl border border-white/5 rounded-[2rem] sm:rounded-[2.5rem] p-8 sm:p-10 shadow-2xl relative overflow-hidden group hover:border-cyan-500/30 transition-all duration-500">
               
-              {/* Efek Cahaya Dalam */}
               <div className="absolute -top-10 -right-10 w-40 h-40 bg-cyan-500/10 rounded-full blur-[40px] group-hover:bg-cyan-500/20 transition-all duration-700"></div>
               
               <div className="flex flex-col items-center text-center relative z-10">
-                {/* Foto Profil IG */}
                 <div className="w-24 h-24 rounded-full p-1 bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-500 mb-4 shadow-[0_0_20px_rgba(236,72,153,0.3)] group-hover:scale-105 transition-transform duration-300">
                   <div className="w-full h-full rounded-full border-[3px] border-[#0A1329] overflow-hidden bg-[#030712]">
                     <img 
@@ -96,29 +96,27 @@ export default function PhotographyPage() {
                 </div>
 
                 <h3 className="text-xl font-bold text-white mb-1 tracking-tight">Rafli Ramadhan</h3>
-                <p className="text-sm font-medium text-slate-400 mb-6">@img_ischeznut.jpg</p>
+                <p className="text-sm font-medium text-slate-400 mb-6">{INSTAGRAM_STATS.username}</p>
 
-                {/* Statistik IG */}
                 <div className="flex items-center justify-center gap-6 sm:gap-8 w-full border-t border-b border-white/5 py-5 mb-8">
                   <div>
-                    <p className="text-lg sm:text-xl font-black text-white">73</p>
+                    <p className="text-lg sm:text-xl font-black text-white">{INSTAGRAM_STATS.posts}</p>
                     <p className="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-widest">Posts</p>
                   </div>
                   <div className="w-px h-8 bg-white/10"></div>
                   <div>
-                    <p className="text-lg sm:text-xl font-black text-white">588</p>
+                    <p className="text-lg sm:text-xl font-black text-white">{INSTAGRAM_STATS.followers}</p>
                     <p className="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-widest">Followers</p>
                   </div>
                   <div className="w-px h-8 bg-white/10"></div>
                   <div>
-                    <p className="text-lg sm:text-xl font-black text-white">681</p>
+                    <p className="text-lg sm:text-xl font-black text-white">{INSTAGRAM_STATS.following}</p>
                     <p className="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-widest">Following</p>
                   </div>
                 </div>
 
-                {/* Tombol Follow/Visit */}
                 <a 
-                  href="https://instagram.com/img_ischeznut.jpg" 
+                  href={INSTAGRAM_STATS.link}
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="w-full px-6 py-4 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold text-sm transition-all shadow-[0_0_20px_rgba(236,72,153,0.3)] hover:shadow-[0_0_30px_rgba(236,72,153,0.5)] flex items-center justify-center gap-2 group/btn hover:-translate-y-1"
@@ -145,16 +143,15 @@ export default function PhotographyPage() {
             </div>
           </div>
 
-          {/* Masonry Layout Menggunakan CSS Columns */}
           <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 sm:gap-8 space-y-6 sm:space-y-8">
-            {PHOTO_GALLERY.map((photo, index) => {
-              // Menambahkan efek tinggi gambar yang bervariasi (mensimulasikan masonry asli)
+            {/* Slice: Hanya render gambar dari indeks 0 hingga batas visibleCount */}
+            {PHOTO_GALLERY.slice(0, visibleCount).map((photo, index) => {
               const isTall = index % 2 === 0;
               
               return (
                 <div 
                   key={photo.id} 
-                  className="relative group rounded-3xl overflow-hidden bg-[#050A14] border border-white/5 shadow-xl hover:shadow-[0_20px_50px_rgba(6,182,212,0.15)] break-inside-avoid transition-all duration-500"
+                  className="relative group rounded-3xl overflow-hidden bg-[#050A14] border border-white/5 shadow-xl hover:shadow-[0_20px_50px_rgba(6,182,212,0.15)] break-inside-avoid transition-all duration-500 reveal anim-fade-in-up"
                 >
                   <div className={`relative w-full ${isTall ? 'aspect-[3/4]' : 'aspect-square'} overflow-hidden`}>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -163,13 +160,11 @@ export default function PhotographyPage() {
                       alt={photo.title}
                       className="w-full h-full object-cover transition-transform duration-[2s] ease-out group-hover:scale-110 grayscale hover:grayscale-0"
                     />
-                    {/* Overlay Hitam Halus Saat Di-Hover */}
                     <div className="absolute inset-0 bg-gradient-to-t from-[#030712] via-transparent to-transparent opacity-0 group-hover:opacity-90 transition-opacity duration-500"></div>
                     
-                    {/* Teks Muncul Saat Hover */}
                     <div className="absolute bottom-0 left-0 w-full p-6 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 flex items-center justify-between">
                       <p className="text-white font-bold tracking-wide">{photo.title}</p>
-                      <a href="https://instagram.com/img_ischeznut.jpg" target="_blank" rel="noopener noreferrer" className="p-2 bg-white/10 backdrop-blur-md rounded-full text-white hover:bg-cyan-500 transition-colors">
+                      <a href={INSTAGRAM_STATS.link} target="_blank" rel="noopener noreferrer" className="p-2 bg-white/10 backdrop-blur-md rounded-full text-white hover:bg-cyan-500 transition-colors">
                         <ExternalLinkIcon />
                       </a>
                     </div>
@@ -179,17 +174,35 @@ export default function PhotographyPage() {
             })}
           </div>
 
-          <div className="mt-16 text-center">
-            <a 
-              href="https://instagram.com/img_ischeznut.jpg" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-[#0A1329] border border-white/10 text-sm font-bold text-slate-300 hover:text-white hover:border-cyan-500/30 shadow-lg transition-all duration-300 group"
-            >
-              <InstagramIcon />
-              Lihat Lebih Banyak di Instagram
-            </a>
-          </div>
+          {/* TOMBOL "LOAD MORE" / MUAT LEBIH BANYAK */}
+          {/* Tombol ini HANYA MUNCUL jika masih ada sisa foto di database yang belum ditampilkan */}
+          {visibleCount < PHOTO_GALLERY.length && (
+            <div className="mt-16 flex justify-center reveal stagger-4">
+              <button 
+                onClick={handleLoadMore}
+                className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-[#0A1329] border border-white/10 text-sm font-bold text-cyan-400 hover:text-white hover:border-cyan-500/50 hover:bg-[#0d1a38] shadow-[0_0_20px_rgba(6,182,212,0.1)] transition-all duration-300 group"
+              >
+                Muat Lebih Banyak
+                <ArrowDownIcon />
+              </button>
+            </div>
+          )}
+
+          {/* Tombol Lihat Instagram (Muncul jika semua foto sudah dimuat) */}
+          {visibleCount >= PHOTO_GALLERY.length && (
+            <div className="mt-16 text-center reveal stagger-4">
+              <p className="text-slate-500 text-sm mb-6">Anda telah melihat semua koleksi di website ini.</p>
+              <a 
+                href={INSTAGRAM_STATS.link} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-[#0A1329] border border-white/10 text-sm font-bold text-slate-300 hover:text-white hover:border-cyan-500/30 shadow-lg transition-all duration-300 group"
+              >
+                <InstagramIcon />
+                Lihat Karya Lainnya di Instagram
+              </a>
+            </div>
+          )}
         </div>
 
       </div>
