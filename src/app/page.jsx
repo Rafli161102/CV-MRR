@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { PROJECT_LIST } from '../data/store';
 
 // =========================================================================
-// KOMPONEN IKON SVG MINIMALIS & PROFESIONAL
+// KOMPONEN IKON SVG MINIMALIS & PROFESIONAL (Tanpa Emoji HP)
 // =========================================================================
 const DocumentIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 shrink-0">
@@ -36,7 +36,6 @@ export default function Home() {
   const waMessage = "Halo Rafli, saya telah melihat portofolio Anda dan tertarik untuk berdiskusi mengenai proyek desain.";
 
   return (
-    // KUNCI BUG FIX: w-full dan overflow-x-hidden sangat wajib agar layar tidak melar di HP
     <div className="min-h-screen bg-[#030712] text-slate-300 font-sans selection:bg-cyan-500 selection:text-white relative w-full overflow-x-hidden">
       
       {/* SUNTIKAN CSS ANIMASI KHUSUS */}
@@ -60,12 +59,8 @@ export default function Home() {
       {/* BACKGROUND EFFECTS (Aman dari Overflow)                   */}
       {/* ========================================================= */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        {/* Menggunakan persentase viewport (vw) agar dinamis mengecil di HP */}
         <div className="absolute top-[-10%] left-[-10%] w-[120vw] md:w-[50rem] h-[120vw] md:h-[50rem] bg-cyan-600/10 rounded-full blur-[100px] md:blur-[120px]"></div>
         <div className="absolute bottom-[-20%] right-[-10%] w-[100vw] md:w-[40rem] h-[100vw] md:h-[40rem] bg-indigo-600/10 rounded-full blur-[100px] md:blur-[150px]"></div>
-        
-        {/* Grid pattern overlay untuk kesan technical/design */}
-        <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.02] mix-blend-overlay"></div>
         
         {/* Garis Vertikal Halus (Menciptakan kesan Grid System) */}
         <div className="hidden md:block absolute left-[10%] top-0 bottom-0 w-[1px] bg-white/[0.02]"></div>
@@ -87,7 +82,6 @@ export default function Home() {
             {/* KIRI: 61.8% (Tipografi & Informasi) */}
             <div className="w-full lg:w-[61.8%] flex flex-col justify-center text-center lg:text-left pr-0 lg:pr-12 z-20">
               
-              {/* Indikator "Tersedia untuk proyek" */}
               <div className="anim-fade-in-up inline-flex items-center justify-center lg:justify-start gap-3 mb-6">
                 <div className="flex items-center justify-center w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-emerald-500/20 border border-emerald-500/50 shrink-0">
                   <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
@@ -97,7 +91,6 @@ export default function Home() {
                 </span>
               </div>
               
-              {/* Headline dengan font dinamis (Aman di HP kecil) */}
               <h1 className="anim-fade-in-up anim-delay-100 text-4xl sm:text-5xl md:text-6xl lg:text-[5rem] font-black tracking-tighter text-white mb-6 leading-[1.1] drop-shadow-lg break-words">
                 Menerjemahkan <span className="text-transparent bg-clip-text bg-gradient-to-br from-cyan-300 via-blue-500 to-indigo-600">Imajinasi</span> <br className="hidden lg:block" />
                 Menjadi Realitas Visual.
@@ -107,10 +100,7 @@ export default function Home() {
                 Halo, saya Rafli. Membantu brand dan entitas mencapai potensi maksimalnya melalui desain identitas yang presisi, estetis, dan strategis.
               </p>
               
-              {/* TOMBOL CALL TO ACTION (Desain Mewah & Interaktif) */}
               <div className="anim-fade-in-up anim-delay-300 flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start w-full sm:w-auto">
-                
-                {/* Tombol Lihat & Download CV (Auto-Generate Page) */}
                 <Link 
                   href="/cv-print" 
                   className="w-full sm:w-auto px-8 py-4 bg-white text-[#030712] hover:bg-cyan-50 font-black rounded-xl transition-all shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:shadow-[0_0_30px_rgba(6,182,212,0.4)] hover:-translate-y-1 tracking-wide flex justify-center items-center gap-2 group"
@@ -119,7 +109,6 @@ export default function Home() {
                   Lihat CV Saya
                 </Link>
 
-                {/* Tombol Diskusi WhatsApp */}
                 <a 
                   href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(waMessage)}`}
                   target="_blank" 
@@ -129,34 +118,26 @@ export default function Home() {
                   <span className="text-[#25D366] group-hover:scale-110 transition-transform"><WhatsAppIcon /></span>
                   Mulai Diskusi
                 </a>
-
               </div>
             </div>
 
             {/* KANAN: 38.2% (Visual Abstrak / Portret) */}
             <div className="w-full lg:w-[38.2%] flex justify-center lg:justify-end relative mt-6 lg:mt-0 z-10">
-              
-              {/* Desain bingkai Squircle, ukurannya dibatasi agar tidak bocor di layar HP kecil */}
               <div className="relative w-full max-w-[260px] sm:max-w-[320px] lg:max-w-[360px] aspect-[4/5] group anim-float mx-auto lg:mx-0">
                 
-                {/* Efek layer belakang yang offset */}
                 <div className="absolute inset-0 bg-gradient-to-tr from-cyan-500 to-indigo-500 rounded-[2rem] rotate-6 group-hover:rotate-12 transition-all duration-700 opacity-30 blur-xl"></div>
                 <div className="absolute inset-0 border border-cyan-500/50 rounded-[2rem] -rotate-3 group-hover:-rotate-6 transition-all duration-700 z-0"></div>
                 
-                {/* Main Image Container */}
                 <div className="absolute inset-0 rounded-[2rem] overflow-hidden bg-[#0A1329] shadow-2xl z-10 border border-white/10">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img 
                     src="/profile.jpg" 
                     alt="Muhammad Rafli Ramadhan" 
                     className="w-full h-full object-cover object-center grayscale hover:grayscale-0 transition-all duration-700 scale-105 group-hover:scale-100"
                     onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop'; }}
                   />
-                  {/* Gradien gelap di bawah foto */}
                   <div className="absolute inset-0 bg-gradient-to-t from-[#030712] via-transparent to-transparent opacity-90"></div>
                 </div>
                 
-                {/* Floating Badge Kiri (Komunitas) - Disetel agar tidak mepet batas kiri HP */}
                 <div className="absolute -bottom-5 left-[-10px] lg:-left-10 z-20 bg-[#0A1329]/90 backdrop-blur-xl p-3 sm:p-5 rounded-2xl border border-white/10 shadow-[0_20px_40px_rgba(0,0,0,0.6)] hover:-translate-y-2 transition-transform duration-300">
                   <div className="text-[8px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-1">Founder of</div>
                   <div className="text-base sm:text-xl font-black text-white flex items-center gap-2">
@@ -164,7 +145,6 @@ export default function Home() {
                   </div>
                 </div>
 
-                {/* Floating Badge Kanan Atas (Experience) */}
                 <div className="absolute -top-5 right-[-10px] lg:-right-8 z-20 bg-gradient-to-br from-cyan-600 to-blue-700 p-3 sm:p-4 rounded-2xl shadow-[0_10px_30px_rgba(6,182,212,0.4)] hover:scale-105 transition-transform duration-300 flex items-center gap-2 sm:gap-3">
                   <div className="text-xl sm:text-3xl font-black text-white">3+</div>
                   <div className="text-[8px] sm:text-[10px] font-bold text-cyan-100 uppercase tracking-wider leading-tight">Years<br/>Experience</div>
@@ -172,11 +152,10 @@ export default function Home() {
 
               </div>
             </div>
-
           </div>
 
           {/* ========================================================= */}
-          {/* PROMO CV TOOLS (Banner Eksekutif Glassmorphism)           */}
+          {/* PROMO TOOLKIT ECOSYSTEM (Banner Eksekutif Glassmorphism)  */}
           {/* ========================================================= */}
           <div className="mt-32 w-full anim-fade-in-up anim-delay-300">
             <div className="relative rounded-3xl overflow-hidden border border-white/10 bg-gradient-to-r from-[#0a152e] to-[#050b1a] p-6 sm:p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-8 shadow-2xl group">
@@ -189,15 +168,17 @@ export default function Home() {
                 </div>
                 <div className="w-full">
                   <div className="text-cyan-400 text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.2em] mb-2">Micro-SaaS Buatan Saya</div>
-                  <h3 className="text-xl sm:text-2xl md:text-3xl font-black text-white mb-3 tracking-tight">HRD-Ready ATS CV Maker</h3>
+                  {/* PENGGANTIAN TEXT DARI ATS KE TOOLKIT */}
+                  <h3 className="text-xl sm:text-2xl md:text-3xl font-black text-white mb-3 tracking-tight">MRR Toolkit Ecosystem</h3>
                   <p className="text-slate-400 text-xs sm:text-sm md:text-base max-w-2xl leading-relaxed mx-auto md:mx-0">
-                    Aplikasi web gratis untuk merancang CV berstandar mesin seleksi (ATS) dengan <i>margin</i> presisi. Dilengkapi fitur AI Auto-Translate ke Bahasa Inggris dan format CV standar Jepang (JIS).
+                    Kumpulan aplikasi web dan utilitas desain gratis. Mulai dari ATS CV Maker, generator tautan WhatsApp premium, hingga ekstraktor palet warna untuk mempercepat alur kerja kreatif Anda.
                   </p>
                 </div>
               </div>
 
-              <Link href="/cv-maker" className="w-full md:w-auto z-10 whitespace-nowrap px-6 sm:px-8 py-3.5 sm:py-4 bg-cyan-600 hover:bg-cyan-500 text-white font-bold rounded-xl transition-all shadow-[0_0_20px_rgba(6,182,212,0.3)] hover:shadow-[0_0_30px_rgba(6,182,212,0.5)] flex items-center justify-center gap-3 hover:-translate-x-1">
-                Coba Tools Gratis
+              {/* PENGGANTIAN LINK DARI /cv-maker KE /toolkit */}
+              <Link href="/toolkit" className="w-full md:w-auto z-10 whitespace-nowrap px-6 sm:px-8 py-3.5 sm:py-4 bg-cyan-600 hover:bg-cyan-500 text-white font-bold rounded-xl transition-all shadow-[0_0_20px_rgba(6,182,212,0.3)] hover:shadow-[0_0_30px_rgba(6,182,212,0.5)] flex items-center justify-center gap-3 hover:-translate-x-1">
+                Eksplorasi Toolkit
                 <ArrowRightIcon />
               </Link>
             </div>
@@ -207,7 +188,6 @@ export default function Home() {
           {/* BENTO GRID: KARYA TERPILIH                                */}
           {/* ========================================================= */}
           <div className="mt-32 pt-16 border-t border-white/5">
-            
             <div className="flex flex-col sm:flex-row justify-between items-end mb-12 gap-6 w-full">
               <div className="w-full sm:w-auto">
                 <div className="flex items-center gap-2 mb-3">
@@ -224,25 +204,20 @@ export default function Home() {
               </Link>
             </div>
 
-            {/* Layout Bento Grid (Aman di Mobile) */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 auto-rows-[300px] sm:auto-rows-[350px] lg:auto-rows-[450px]">
               {featuredProjects.map((project, index) => (
                 <Link 
                   href={`/projects/${project.id}`} 
                   key={project.id} 
-                  // Logika Bento: Item index 0 memakan 2 kolom di tablet/desktop
                   className={`group relative rounded-3xl sm:rounded-[2rem] overflow-hidden bg-[#0A1329] border border-white/5 hover:border-cyan-500/40 transition-all duration-500 shadow-lg hover:shadow-[0_20px_50px_rgba(6,182,212,0.15)] 
                   ${index === 0 ? 'md:col-span-2 lg:col-span-2' : 'col-span-1'}`}
                 >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img 
                     src={project.image} 
                     alt={project.title} 
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[1.5s] ease-out opacity-60 group-hover:opacity-100"
                     onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop'; }} 
                   />
-                  
-                  {/* Gradient Overlay Mewah dari bawah ke atas */}
                   <div className="absolute inset-0 bg-gradient-to-t from-[#030712] via-[#030712]/60 to-transparent opacity-90 group-hover:opacity-100 transition-opacity duration-500"></div>
                   
                   <div className="absolute bottom-0 left-0 w-full p-6 sm:p-8 lg:p-10 flex flex-col justify-end transform translate-y-2 sm:translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
@@ -257,9 +232,7 @@ export default function Home() {
                 </Link>
               ))}
             </div>
-
           </div>
-
         </div>
       </div>
     </div>
