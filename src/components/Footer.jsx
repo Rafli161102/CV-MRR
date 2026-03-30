@@ -35,12 +35,14 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-[#030712] relative z-20 overflow-hidden mt-20 border-t border-white/5">
+    // PERBAIKAN BUG: mt-20 dihapus, diganti pt-16 agar nempel sempurna dengan halaman di atasnya
+    <footer className="bg-[#030712] relative z-20 overflow-hidden pt-16 border-t border-white/5">
+      
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[80vw] h-[40vw] bg-cyan-900/10 rounded-full blur-[120px] pointer-events-none"></div>
 
-      <div className="max-w-[1400px] mx-auto px-6 lg:px-12 pt-20 pb-8 relative z-10">
+      <div className="max-w-[1400px] mx-auto px-6 lg:px-12 pb-8 relative z-10">
         
-        {/* BANNER APRESIASI - PERBAIKAN SPACING MOBILE */}
+        {/* BANNER APRESIASI */}
         <div className="mb-24 p-8 md:p-12 rounded-[2.5rem] bg-gradient-to-br from-[#0A1329] to-[#030712] border border-cyan-500/20 shadow-2xl flex flex-col lg:flex-row items-center justify-between gap-8 group overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/10 rounded-full blur-[80px] -z-10 group-hover:bg-cyan-500/20 transition-all"></div>
 
