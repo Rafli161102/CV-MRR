@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { PROJECT_LIST } from '../../data/store';
 
 // =========================================================================
-// IKON SVG PROFESIONAL (Untuk Header)
+// IKON SVG PROFESIONAL (Kategori & UI Utama)
 // =========================================================================
 const FolderIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-cyan-400">
@@ -19,12 +19,9 @@ const SparklesIcon = () => (
   </svg>
 );
 
-// =========================================================================
-// FUNGSI PEMETAAN IKON KATEGORI DINAMIS (Desain Presisi)
-// =========================================================================
+// Fungsi Pemetaan Ikon Kategori Dinamis
 const getCategoryIcon = (categoryName) => {
-  // Ukuran ikon disesuaikan agar pas dengan tinggi teks
-  const baseClass = "w-4 h-4 shrink-0"; 
+  const baseClass = "w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0"; 
   switch (categoryName) {
     case 'All':
       return <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className={baseClass}><path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" /></svg>;
@@ -46,63 +43,59 @@ const getCategoryIcon = (categoryName) => {
 export default function ProjectsPage() {
   const [activeCategory, setActiveCategory] = useState('All');
 
-  // Mengambil kategori unik
   const categories = ['All', ...new Set(PROJECT_LIST.map(project => project.category))];
 
-  // Filter data
   const filteredProjects = activeCategory === 'All' 
     ? PROJECT_LIST 
     : PROJECT_LIST.filter(project => project.category === activeCategory);
 
   return (
-    // FIX UTAMA: w-full dipadukan untuk memastikan layar tidak melar
-    <div className="min-h-screen pt-32 pb-24 relative w-full bg-[#030712]">
+    <div className="min-h-screen pt-32 pb-24 relative w-full overflow-x-hidden bg-[#030712]">
       
-      {/* KOTAK KACA ANTI-BOCOR (Mengunci efek blur agar tidak bikin layar melar) */}
+      {/* Background Decor */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
         <div className="absolute top-[-10%] right-[-10%] w-[300px] sm:w-[500px] lg:w-[600px] h-[300px] sm:h-[500px] lg:h-[600px] bg-cyan-900/20 rounded-full blur-[100px] lg:blur-[140px]"></div>
         <div className="absolute bottom-[-10%] left-[-10%] w-[300px] sm:w-[500px] lg:w-[600px] h-[300px] sm:h-[500px] lg:h-[600px] bg-indigo-900/20 rounded-full blur-[100px] lg:blur-[140px]"></div>
       </div>
 
-      {/* Konten Utama */}
       <div className="max-w-[1400px] mx-auto px-5 sm:px-8 lg:px-12 relative z-10 w-full">
         
         {/* ========================================================= */}
         {/* HEADER SECTION (GOLDEN RATIO 61.8 : 38.2)                 */}
         {/* ========================================================= */}
-        <div className="flex flex-col lg:flex-row gap-10 lg:gap-16 mb-20 items-start">
+        <div className="flex flex-col lg:flex-row gap-10 lg:gap-16 mb-16 sm:mb-20 items-start">
           
           <div className="w-full lg:w-[61.8%] reveal stagger-1">
-            <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-[10px] font-bold tracking-widest uppercase mb-6">
-              <span className="w-2 h-2 rounded-full bg-cyan-500 animate-pulse"></span>
+            <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-[9px] sm:text-[10px] font-bold tracking-widest uppercase mb-5 sm:mb-6">
+              <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-cyan-500 animate-pulse"></span>
               Galeri Mahakarya
             </div>
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-white tracking-tighter mb-6 leading-[1.1]">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-white tracking-tighter mb-4 sm:mb-6 leading-[1.1]">
               Eksplorasi <br/> 
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500">Visual & Identitas.</span>
             </h1>
-            <p className="text-slate-400 text-base md:text-lg leading-relaxed max-w-xl font-medium">
+            <p className="text-slate-400 text-sm sm:text-base md:text-lg leading-relaxed max-w-xl font-medium">
               Kumpulan arsip proyek desain komersial dan komunitas. Setiap karya dirancang dengan pendekatan strategis untuk memecahkan masalah komunikasi visual.
             </p>
           </div>
 
-          <div className="w-full lg:w-[38.2%] reveal stagger-2 mt-2 lg:mt-0">
-            <div className="bg-gradient-to-br from-[#0A1329] to-[#030712] border border-white/10 rounded-[2rem] p-6 md:p-8 shadow-2xl relative overflow-hidden group">
-              <div className="absolute -top-10 -right-10 w-40 h-40 bg-cyan-500/10 rounded-full blur-[40px] group-hover:bg-cyan-500/20 transition-all duration-700"></div>
+          <div className="w-full lg:w-[38.2%] reveal stagger-2 mt-4 lg:mt-0">
+            <div className="bg-gradient-to-br from-[#0A1329] to-[#030712] border border-white/10 rounded-3xl sm:rounded-[2rem] p-6 sm:p-8 shadow-2xl relative overflow-hidden group">
+              <div className="absolute -top-10 -right-10 w-32 h-32 sm:w-40 sm:h-40 bg-cyan-500/10 rounded-full blur-[40px] group-hover:bg-cyan-500/20 transition-all duration-700"></div>
               
               <div className="flex items-center gap-4 mb-5">
-                <div className="p-3 sm:p-4 bg-cyan-500/10 rounded-2xl border border-cyan-500/20 shadow-lg shadow-cyan-500/5 shrink-0">
+                <div className="p-3 sm:p-4 bg-cyan-500/10 rounded-xl sm:rounded-2xl border border-cyan-500/20 shadow-lg shadow-cyan-500/5 shrink-0">
                   <FolderIcon />
                 </div>
                 <div>
-                  <h3 className="text-white font-black text-3xl sm:text-4xl">{PROJECT_LIST.length}</h3>
-                  <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">Total Arsip</p>
+                  <h3 className="text-white font-black text-2xl sm:text-3xl lg:text-4xl">{PROJECT_LIST.length}</h3>
+                  <p className="text-slate-400 text-[9px] sm:text-[10px] font-bold uppercase tracking-widest">Total Arsip</p>
                 </div>
               </div>
 
-              <div className="pt-5 border-t border-white/5 flex items-start gap-3">
+              <div className="pt-4 sm:pt-5 border-t border-white/5 flex items-start gap-3">
                 <div className="mt-0.5"><SparklesIcon /></div>
-                <p className="text-xs sm:text-sm text-slate-400 leading-relaxed italic">
+                <p className="text-[11px] sm:text-xs md:text-sm text-slate-400 leading-relaxed italic">
                   "Desain yang baik tidak hanya terlihat indah, tetapi harus mampu berbicara dan menyelesaikan masalah."
                 </p>
               </div>
@@ -111,55 +104,43 @@ export default function ProjectsPage() {
         </div>
 
         {/* ========================================================= */}
-        {/* FILTER KATEGORI (MODERN MINIMALIST SWIPE MENU)            */}
+        {/* FILTER KATEGORI SWIPEABLE                                 */}
         {/* ========================================================= */}
-        <div className="mb-12 reveal stagger-3 relative z-10 w-full">
-          
-          <div className="flex items-center gap-4 mb-6">
-            <h3 className="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-[0.2em]">Filter Kategori</h3>
+        <div className="mb-10 sm:mb-12 reveal stagger-3 relative z-10 w-full">
+          <div className="flex items-center gap-4 mb-4 sm:mb-6 hidden sm:flex">
+            <h3 className="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-[0.2em]">Filter Kategori</h3>
             <div className="h-[1px] flex-grow bg-gradient-to-r from-white/10 to-transparent"></div>
           </div>
 
-          {/* Wrapper Scroll (Menggunakan negative margin di HP agar bisa digeser mentok ke ujung layar) */}
           <div className="relative -mx-5 px-5 sm:mx-0 sm:px-0">
-            
-            {/* Fading Edge di Kanan (Petunjuk Visual untuk Swipe) */}
-            <div className="absolute top-0 right-0 bottom-0 w-12 bg-gradient-to-l from-[#030712] to-transparent pointer-events-none z-10 sm:hidden"></div>
+            <div className="absolute top-0 right-0 bottom-0 w-8 sm:w-12 bg-gradient-to-l from-[#030712] to-transparent pointer-events-none z-10 sm:hidden"></div>
 
             <div className="flex overflow-x-auto gap-2.5 sm:gap-3 pb-4 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
               {categories.map((category) => (
                 <button
                   key={category}
                   onClick={() => setActiveCategory(category)}
-                  // DESAIN KAPSUL SOLID: Padding diseimbangkan (px-5 py-2.5) agar rapi
-                  className={`group flex items-center justify-center gap-2 shrink-0 px-5 py-2.5 sm:px-6 sm:py-3 rounded-full text-[11px] sm:text-xs font-bold tracking-wide uppercase transition-all duration-300 snap-center border ${
+                  className={`group flex items-center justify-center gap-2 shrink-0 px-4 py-2.5 sm:px-6 sm:py-3 rounded-full text-[10px] sm:text-[11px] md:text-xs font-bold tracking-wide uppercase transition-all duration-300 snap-center border ${
                     activeCategory === category
-                      // Warna Aktif: Background Cyan Terang, Teks Gelap
-                      ? 'bg-cyan-500 text-[#030712] border-cyan-500 shadow-[0_0_20px_rgba(6,182,212,0.4)]'
-                      // Warna Tidak Aktif: Background Transparan Gelap, Teks Slate
+                      ? 'bg-cyan-500 text-[#030712] border-cyan-500 shadow-[0_0_15px_rgba(6,182,212,0.4)] scale-105'
                       : 'bg-[#0A1329]/50 text-slate-400 border-white/5 hover:border-cyan-500/30 hover:bg-[#0A1329]'
                   }`}
                 >
-                  {/* Ikon Kategori Dinamis */}
                   <span className={`${activeCategory === category ? 'text-[#030712]' : 'text-cyan-500 group-hover:text-cyan-400'} transition-colors`}>
                     {getCategoryIcon(category)}
                   </span>
-
-                  {/* Teks Kategori */}
-                  <span className="whitespace-nowrap mt-0.5">
+                  <span className="whitespace-nowrap mt-[1px]">
                     {category === 'All' ? 'Semua Karya' : category}
                   </span>
                 </button>
               ))}
-              
-              {/* Spasi ekstra di ujung kanan layar HP agar item terakhir tidak mepet */}
               <div className="w-4 shrink-0 sm:hidden"></div>
             </div>
           </div>
         </div>
 
         {/* ========================================================= */}
-        {/* GRID PORTOFOLIO                                           */}
+        {/* GRID PORTOFOLIO (GOLDEN RATIO ASPECT)                     */}
         {/* ========================================================= */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
           {filteredProjects.map((project, index) => {
@@ -169,9 +150,11 @@ export default function ProjectsPage() {
               <Link 
                 href={`/projects/${project.id}`} 
                 key={project.id} 
-                className={`reveal ${staggerDelay} group relative rounded-[2rem] overflow-hidden bg-[#0A1329] border border-white/5 hover:border-cyan-500/40 transition-all duration-500 shadow-lg hover:shadow-[0_20px_50px_rgba(6,182,212,0.15)] flex flex-col h-full`}
+                // Border radius dikecilkan khusus untuk HP agar tidak terlihat terlalu bulat raksasa
+                className={`reveal ${staggerDelay} group relative rounded-3xl sm:rounded-[2rem] overflow-hidden bg-[#0A1329] border border-white/5 hover:border-cyan-500/40 transition-all duration-500 shadow-lg hover:shadow-[0_20px_50px_rgba(6,182,212,0.15)] flex flex-col h-full`}
               >
-                <div className="relative w-full aspect-[4/3] overflow-hidden bg-[#050A14]">
+                {/* PENERAPAN GOLDEN RATIO: aspect-[1.618/1] membuat gambar lebih sinematik dan tidak terlalu tinggi di HP */}
+                <div className="relative w-full aspect-[1.618/1] overflow-hidden bg-[#050A14]">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img 
                     src={project.image} 
@@ -182,23 +165,26 @@ export default function ProjectsPage() {
                   <div className="absolute inset-0 bg-gradient-to-t from-[#0A1329] via-transparent to-transparent opacity-90"></div>
                 </div>
                 
-                <div className="p-6 sm:p-8 flex flex-col flex-grow relative z-10 -mt-8">
-                  <div className="inline-flex items-center gap-2 text-[9px] font-bold tracking-[0.2em] text-cyan-400 uppercase mb-3 bg-[#0A1329] border border-cyan-500/20 px-3 py-1.5 rounded-full w-fit shadow-md">
-                    <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shrink-0"></span>
+                {/* PADDING DINAMIS: p-5 di HP, p-7 di Tablet/Desktop */}
+                <div className="p-5 sm:p-7 flex flex-col flex-grow relative z-10 -mt-6 sm:-mt-8">
+                  <div className="inline-flex items-center gap-1.5 sm:gap-2 text-[8px] sm:text-[9px] font-bold tracking-[0.2em] text-cyan-400 uppercase mb-2.5 sm:mb-3 bg-[#0A1329] border border-cyan-500/20 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full w-fit shadow-md">
+                    <span className="w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-cyan-400 shrink-0"></span>
                     {project.category}
                   </div>
                   
-                  <h3 className="text-xl sm:text-2xl font-bold text-white group-hover:text-cyan-300 transition-colors tracking-tight mb-2 leading-snug">
+                  {/* FONT DINAMIS: text-lg di HP agar tidak terlalu raksasa */}
+                  <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-white group-hover:text-cyan-300 transition-colors tracking-tight mb-1.5 sm:mb-2 leading-snug">
                     {project.title}
                   </h3>
                   
                   {project.client && (
-                    <p className="text-[10px] sm:text-xs text-slate-500 font-bold uppercase tracking-widest mb-4">
+                    <p className="text-[9px] sm:text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-3 sm:mb-4">
                       Klien: {project.client}
                     </p>
                   )}
                   
-                  <p className="text-sm text-slate-400 leading-relaxed line-clamp-2 mt-auto">
+                  {/* FONT DINAMIS: text-xs di HP */}
+                  <p className="text-xs sm:text-sm text-slate-400 leading-relaxed line-clamp-2 mt-auto">
                     {project.description}
                   </p>
                 </div>
@@ -209,7 +195,7 @@ export default function ProjectsPage() {
 
         {filteredProjects.length === 0 && (
           <div className="text-center py-20 reveal stagger-4">
-            <p className="text-slate-500 text-lg">Belum ada karya di kategori ini.</p>
+            <p className="text-slate-500 text-sm sm:text-base">Belum ada karya di kategori ini.</p>
           </div>
         )}
 
