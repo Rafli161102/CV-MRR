@@ -12,7 +12,7 @@ const SparklesIcon = ({ className = "w-4 h-4" }) => (
 );
 
 const InfoIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 text-cyan-400 shrink-0 mt-1">
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5">
     <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
   </svg>
 );
@@ -77,7 +77,7 @@ export default function CVMaker() {
         expRole: "Nama Jabatan", expComp: "Nama Perusahaan", expDate: "Bulan Tahun - Bulan Tahun", 
         eduInst: "Nama Kampus / Sekolah", eduMaj: "Jurusan / Gelar", eduDate: "Bulan Tahun Lulus",
         projName: "Nama Proyek", projDate: "Bulan Tahun", certName: "Nama Sertifikasi", certDate: "Bulan Tahun",
-        clHr: "Bapak/Ibu HRD", clTarget: "PT Nama Perusahaan", clSenderLoc: "Kota / Alamat Singkat", clSenderPhone: "0812-xxxx-xxxx", clSenderEmail: "email@anda.com", clTargetRole: "Contoh: Graphic Designer", clRelevantSkills: "Contoh: Adobe Illustrator, Photoshop"
+        clHr: "Bapak/Ibu HRD", clTarget: "PT Nama Perusahaan", clSenderLoc: "Kota, Provinsi", clSenderPhone: "0812-xxxx-xxxx", clSenderEmail: "email@anda.com", clTargetRole: "Contoh: Graphic Designer", clRelevantSkills: "Contoh: Adobe Illustrator, Photoshop"
       }
     },
     en: {
@@ -90,7 +90,7 @@ export default function CVMaker() {
         expRole: "Job Title", expComp: "Company Name", expDate: "Month Year - Month Year", 
         eduInst: "University Name", eduMaj: "Major / Degree", eduDate: "Graduation Date",
         projName: "Project Name", projDate: "Month Year", certName: "Certification Name", certDate: "Month Year",
-        clHr: "Hiring Manager", clTarget: "Target Company Inc.", clSenderLoc: "City / Short Address", clSenderPhone: "+1 234 567 890", clSenderEmail: "your@email.com", clTargetRole: "e.g. Graphic Designer", clRelevantSkills: "e.g. Adobe Creative Suite, Design"
+        clHr: "Hiring Manager", clTarget: "Target Company Inc.", clSenderLoc: "City, Province", clSenderPhone: "+1 234 567 890", clSenderEmail: "your@email.com", clTargetRole: "e.g. Graphic Designer", clRelevantSkills: "e.g. Adobe Creative Suite, Design"
       }
     },
     jp: {
@@ -280,61 +280,65 @@ export default function CVMaker() {
               </button>
             </div>
 
-            {/* PANDUAN DINAMIS & SANGAT DETAIL SESUAI REQUEST */}
+            {/* PANDUAN DINAMIS & SANGAT DETAIL */}
             <div className="mb-6 p-5 rounded-xl border border-cyan-500/20 bg-gradient-to-br from-cyan-900/10 to-[#0A1329] shadow-inner relative overflow-hidden group">
               <div className="absolute top-0 left-0 w-1 h-full bg-cyan-500"></div>
               <div className="flex items-start gap-3 mb-3">
                 <InfoIcon />
                 <div>
                   <h3 className="text-cyan-400 font-bold text-[13px] mb-1 tracking-wide">
-                    {docMode === 'cv' ? 'Panduan Super Mudah Mengisi CV ATS' : 'Panduan Membuat Cover Letter Sakti'}
+                    {docMode === 'cv' ? 'Panduan Super Mudah Mengisi CV' : 'Panduan Membuat Surat Lamaran Sakti'}
                   </h3>
                   <p className="text-slate-400 text-[11px] leading-relaxed">
                     {docMode === 'cv' 
-                      ? 'CV ATS (Applicant Tracking System) adalah format CV bebas desain grafis berlebihan agar mudah dibaca oleh sistem robot HRD.'
-                      : 'Cover Letter (Surat Lamaran) adalah dokumen pengantar yang dikirim bersamaan dengan CV Anda. Fitur ini bersifat independen.'}
+                      ? 'CV ATS (Applicant Tracking System) adalah format CV yang dirancang khusus agar data Anda mudah dibaca oleh sistem robot (scanner) HRD perusahaan.'
+                      : 'Cover Letter (Surat Lamaran) adalah dokumen pengantar mandiri. Anda tidak perlu repot mengisi tab CV untuk bisa membuat surat lamaran di sini.'}
                   </p>
                 </div>
               </div>
               
-              <ul className="space-y-3 ml-2 text-[11px] text-slate-300">
+              <ul className="space-y-3 text-[11px] text-slate-300 ml-1">
                 {docMode === 'cv' ? (
                   <>
-                    <li className="flex items-start gap-2">
+                    <li className="flex gap-2">
                       <span className="text-cyan-400 font-bold">1.</span>
-                      <span>Isi data diri Anda di formulir bawah menggunakan <b>Bahasa Indonesia</b> terlebih dahulu agar lebih mudah.</span>
+                      <span><b>Mulai dari Bahasa Indonesia:</b> Isi seluruh kotak form di bawah ini dengan bahasa ibu agar Anda lebih mudah menyusun kalimatnya.</span>
                     </li>
-                    <li className="flex items-start gap-2">
+                    <li className="flex gap-2">
                       <span className="text-cyan-400 font-bold">2.</span>
-                      <span>Untuk menerjemahkan CV ke Bahasa Inggris (EN) atau Jepang (JP), cukup tekan tombol <b className="text-cyan-400">Magic Translate</b>. AI akan mengubah seluruh teks secara otomatis.</span>
+                      <span><b>Fitur Bullet Point:</b> Saat mengisi kotak "Deskripsi" pekerjaan/proyek, gunakan tanda strip (-) di awal kalimat untuk membuat poin otomatis di kertas.</span>
                     </li>
-                    <li className="flex items-start gap-2">
+                    <li className="flex gap-2">
                       <span className="text-cyan-400 font-bold">3.</span>
-                      <span>Kertas di sebelah kanan layar (atau di bawah jika di HP) akan otomatis memperbarui tampilan saat Anda mengetik. Teks abu-abu hanyalah contoh (*placeholder*).</span>
+                      <span><b>Sistem Translate Instan:</b> Tekan tombol kotak <b>EN</b> atau <b>JP</b> di panel "Magic Translate" bawah. AI akan otomatis menerjemahkan seluruh CV Anda tanpa merusak tata letak.</span>
+                    </li>
+                    <li className="flex gap-2">
+                      <span className="text-cyan-400 font-bold">4.</span>
+                      <span><b>Placeholder Cerdas:</b> Teks abu-abu di kertas hanyalah <i>contoh</i> visual. Teks abu-abu itu akan otomatis terganti menjadi hitam rapi ketika Anda mengetik di form.</span>
                     </li>
                   </>
                 ) : (
                   <>
-                    <li className="flex items-start gap-2">
+                    <li className="flex gap-2">
                       <span className="text-cyan-400 font-bold">1.</span>
-                      <span><b>Langkah 1:</b> Isi "Data Anda (Pengirim)", ini akan memunculkan nama Anda yang besar sebagai kop surat (Header).</span>
+                      <span><b>Langkah Pertama:</b> Isi kotak Data Pengirim (nama & kontak Anda). Kertas di sebelah kanan akan otomatis menyusunnya rata kiri layaknya surat resmi internasional.</span>
                     </li>
-                    <li className="flex items-start gap-2">
+                    <li className="flex gap-2">
                       <span className="text-cyan-400 font-bold">2.</span>
-                      <span><b>Langkah 2:</b> Tulis posisi yang dilamar dan keahlian Anda secara singkat. Ini adalah kunci agar AI bisa merangkai kalimat.</span>
+                      <span><b>Tentukan Tanggal:</b> Klik <i>Ikon Kalender</i>. Sistem akan otomatis memformat penulisan tanggal sesuai bahasa yang dipilih (misal: 30 Maret 2026 atau 2026年3月30日).</span>
                     </li>
-                    <li className="flex items-start gap-2">
+                    <li className="flex gap-2">
                       <span className="text-cyan-400 font-bold">3.</span>
-                      <span><b>Langkah 3:</b> Klik tombol <b className="text-blue-400">Auto-Generate</b>. AI akan langsung menuliskan paragraf pembuka, isi, dan penutup layaknya surat profesional.</span>
+                      <span><b>Senjata AI Auto-Generate:</b> Ketik spesifik posisi incaran dan keahlian andalan Anda. Lalu klik tombol biru <b>"Auto-Generate"</b>. AI akan merangkai paragraf pembuka, isi, dan penutup super profesional secara instan!</span>
                     </li>
                   </>
                 )}
               </ul>
               
               <div className="mt-4 bg-cyan-900/30 p-2.5 rounded border border-cyan-500/30 flex gap-2">
-                <AlertIcon />
+                <div className="text-cyan-400 mt-0.5"><SparklesIcon className="w-4 h-4"/></div>
                 <div className="text-[11px] text-cyan-50 leading-relaxed font-medium">
-                  <span className="text-cyan-300 font-bold uppercase">Aturan Cetak Wajib:</span> Saat tombol <b>Cetak PDF</b> ditekan, pastikan pengaturan ukuran kertas pada browser Anda adalah <b>A4</b>, dan yang terpenting set Margin (Batas Tepi) ke pilihan <b>"None" (Tidak Ada)</b>.
+                  <span className="text-cyan-300 font-bold uppercase">Aturan Cetak Wajib:</span> Saat Anda menekan tombol cetak, selalu pastikan pengaturan Ukuran Kertas di browser diset ke <b>"A4"</b>, dan Margin (Batas Tepi) diset ke <b>"None" (Tidak Ada)</b> agar tidak terpotong.
                 </div>
               </div>
             </div>
@@ -350,7 +354,7 @@ export default function CVMaker() {
                   <button onClick={() => { handleMagicTranslate('jp'); setTemplate('jp-umum'); }} disabled={isTranslating} className={`px-4 py-1.5 text-xs font-bold transition-colors ${lang === 'jp' ? 'bg-cyan-600 text-white' : 'text-slate-500 hover:bg-white/5 hover:text-white'}`}>JP</button>
                 </div>
               </div>
-              <h2 className="text-xs font-bold text-cyan-400 uppercase tracking-wider mb-3">Pilih Template {docMode === 'cv' ? 'Kertas CV' : 'Desain Header Surat'}</h2>
+              <h2 className="text-xs font-bold text-cyan-400 uppercase tracking-wider mb-3">Pilih Template {docMode === 'cv' ? 'Kertas CV' : 'Font Surat'}</h2>
               <div className="grid grid-cols-2 gap-2">
                 <button onClick={() => {setTemplate('normal'); if(lang==='jp') setLang('id');}} className={`py-2 px-2 text-[11px] font-bold rounded border transition-all ${template === 'normal' ? 'bg-cyan-600 border-cyan-400 text-white shadow-lg' : 'border-white/10 text-slate-400 hover:bg-white/5 hover:border-cyan-500/30'}`}>1. Normal (Standar ATS)</button>
                 <button onClick={() => {setTemplate('modern'); if(lang==='jp') setLang('id');}} className={`py-2 px-2 text-[11px] font-bold rounded border transition-all ${template === 'modern' ? 'bg-cyan-600 border-cyan-400 text-white shadow-lg' : 'border-white/10 text-slate-400 hover:bg-white/5 hover:border-cyan-500/30'}`}>2. Modern Pro</button>
@@ -596,7 +600,7 @@ export default function CVMaker() {
                 ${template === 'normal' ? 'font-[Arial,Helvetica,sans-serif]' : template === 'harvard' || isJapanese ? 'font-serif' : 'font-sans'}`}>
                 
                 {/* ========================================================= */}
-                {/* RENDER MODE: COVER LETTER (DIKEMBALIKAN KE HEADER BESAR)  */}
+                {/* RENDER MODE: COVER LETTER                                 */}
                 {/* ========================================================= */}
                 {docMode === 'cl' ? (
                   <div className="w-full text-black flex flex-col min-h-[25cm]">
@@ -623,40 +627,48 @@ export default function CVMaker() {
                       </div>
                     ) : (
 
-                      /* ========================================================= */
-                      /* DIKEMBALIKAN KE HEADER BESAR SESUAI TEMA CV (REVERTED)    */
-                      /* Namun tetap memanggil data independen dari form clData    */
-                      /* ========================================================= */
+                      /* ====================================================================== */
+                      /* FORMAT COVER LETTER STANDAR INTERNASIONAL (DIKEMBALIKAN BLOCK RATA KIRI) */
+                      /* TIDAK ADA LAGI HEADER RAKSASA, TIDAK ADA GARIS BAWAH                   */
+                      /* ====================================================================== */
                       <div className="flex-1 text-[11pt] font-sans leading-relaxed text-black">
                         
-                        <div className={`mb-10 ${template==='executive' || template==='harvard' ? 'text-center' : template==='modern' ? 'text-left border-b-[3px] border-gray-900 pb-4' : 'pb-2 text-left'}`}>
-                          <h1 className={`${template==='harvard' ? 'text-[24pt] font-serif font-normal' : template==='executive' ? 'text-3xl font-black tracking-tight' : template==='modern' ? 'text-3xl font-black text-gray-900 uppercase tracking-tight' : 'text-[20pt] font-bold tracking-tight capitalize'} leading-none mb-1 text-black`}>
-                            {clData.senderName || <span className="text-gray-400">{dBasics.name}</span>}
-                          </h1>
-                          <p className={`text-[10pt] text-gray-800 flex flex-wrap gap-x-1.5 font-medium mt-1.5 ${template==='executive' || template==='harvard' ? 'justify-center' : ''}`}>
-                            {[
-                              clData.senderLocation || <span key="l" className="text-gray-400">{dBasics.location}</span>,
-                              clData.senderPhone || <span key="p" className="text-gray-400">{dBasics.phone}</span>,
-                              clData.senderEmail || <span key="e" className="text-gray-400">{dBasics.email}</span>
-                            ].reduce((prev, curr) => [prev, <span key={Math.random()} className="mx-1 text-black font-bold">|</span>, curr])}
-                          </p>
+                        {/* 1. Blok Pengirim (Rata Kiri Murni) */}
+                        <div className="mb-8 leading-snug">
+                          <div className="font-bold text-[12pt]">
+                            {clData.senderName || <span className="text-gray-400 font-normal">{lang === 'en' ? '[Your Full Name]' : '[Nama Lengkap Anda]'}</span>}
+                          </div>
+                          <div>
+                            {clData.senderLocation || <span className="text-gray-400">{lang === 'en' ? '[City, Province]' : '[Kota, Provinsi]'}</span>}
+                          </div>
+                          <div>
+                            {clData.senderPhone || <span className="text-gray-400">{lang === 'en' ? '[Phone Number]' : '[Nomor Telepon]'}</span>}
+                          </div>
+                          <div>
+                            {clData.senderEmail || <span className="text-gray-400">{lang === 'en' ? '[Email Address]' : '[Alamat Email]'}</span>}
+                          </div>
                         </div>
 
+                        {/* 2. Tanggal Surat */}
                         <div className="mb-8">{formatVisualDate(clData.date, lang)}</div>
                         
+                        {/* 3. Blok Penerima (Tujuan Surat) */}
                         <div className="mb-8 leading-snug">
                           <div>{lang === 'id' ? 'Kepada Yth.' : 'To:'}</div>
                           <div className="font-bold">{clData.hr || <span className="text-gray-400 font-normal">{lang === 'en' ? '[Hiring Manager]' : '[Bapak/Ibu HRD]'}</span>}</div>
                           <div className="font-bold">{clData.company || <span className="text-gray-400 font-normal">{lang === 'en' ? '[Target Company]' : '[Nama Perusahaan]'}</span>}</div>
                         </div>
                         
+                        {/* 4. Salam Pembuka */}
                         <div className="mb-4">{lang === 'id' ? 'Dengan hormat,' : `Dear ${clData.hr || 'Hiring Manager'},`}</div>
                         
+                        {/* 5. Isi Surat Lamaran */}
                         <div className="whitespace-pre-wrap text-justify break-words min-h-[150px]">
                           {clData.body || <span className="text-gray-400 italic">{lang === 'id' ? '(Isi surat masih kosong. Silakan ketik di formulir, atau klik tombol "Auto-Generate" untuk merangkai surat otomatis berdasarkan posisi dan keahlian Anda.)' : '(Body is empty. Please type in the form, or click the "Auto-Generate" button on the left)'}</span>}
                         </div>
                         
-                        <div className="mt-12">{lang === 'id' ? 'Hormat saya,' : 'Sincerely,'}<br/><br/><br/><br/><span className="font-bold">{clData.senderName || <span className="text-gray-400 font-normal">{dBasics.name}</span>}</span></div>
+                        {/* 6. Salam Penutup */}
+                        <div className="mt-12">{lang === 'id' ? 'Hormat saya,' : 'Sincerely,'}<br/><br/><br/><br/><span className="font-bold">{clData.senderName || <span className="text-gray-400 font-normal">{lang === 'en' ? '[Your Name]' : '[Nama Anda]'}</span>}</span></div>
                       </div>
                     )}
                   </div>
