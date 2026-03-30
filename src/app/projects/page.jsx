@@ -29,19 +29,19 @@ export default function ProjectsPage() {
     : PROJECT_LIST.filter(project => project.category === activeCategory);
 
   return (
-    // FIX OVERFLOW: w-full overflow-x-hidden ditambahkan secara eksplisit
-    <div className="min-h-screen pt-32 pb-24 px-5 sm:px-8 lg:px-12 relative w-full overflow-x-hidden">
+    // FIX UTAMA: overflow-hidden di root div untuk membunuh semua potensi layar melar di HP
+    <div className="min-h-screen pt-32 pb-24 relative overflow-hidden bg-[#030712]">
       
-      {/* Background Decor (Fixed Width mencegah melar) */}
-      <div className="fixed top-0 right-[-10%] w-[600px] max-w-full h-[600px] bg-cyan-950/20 rounded-full blur-[140px] pointer-events-none -z-10"></div>
-      <div className="fixed bottom-0 left-[-10%] w-[500px] max-w-full h-[500px] bg-indigo-950/20 rounded-full blur-[140px] pointer-events-none -z-10"></div>
+      {/* Background Decor (Posisi aman di dalam pembungkus overflow-hidden) */}
+      <div className="absolute top-0 right-0 w-[80vw] h-[80vw] max-w-[600px] max-h-[600px] bg-cyan-900/20 rounded-full blur-[120px] pointer-events-none -z-10 translate-x-1/3 -translate-y-1/3"></div>
+      <div className="absolute bottom-0 left-0 w-[80vw] h-[80vw] max-w-[600px] max-h-[600px] bg-indigo-900/20 rounded-full blur-[120px] pointer-events-none -z-10 -translate-x-1/3 translate-y-1/3"></div>
 
-      <div className="max-w-[1400px] mx-auto relative z-10 w-full">
+      <div className="max-w-[1400px] mx-auto px-6 lg:px-12 relative z-10 w-full">
         
         {/* ========================================================= */}
         {/* HEADER SECTION (GOLDEN RATIO 61.8 : 38.2)                 */}
         {/* ========================================================= */}
-        <div className="flex flex-col lg:flex-row gap-12 lg:gap-16 mb-20 items-start">
+        <div className="flex flex-col lg:flex-row gap-10 lg:gap-16 mb-20 items-start">
           
           <div className="w-full lg:w-[61.8%] reveal stagger-1">
             <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-[10px] font-bold tracking-widest uppercase mb-6">
@@ -52,22 +52,22 @@ export default function ProjectsPage() {
               Eksplorasi <br/> 
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500">Visual & Identitas.</span>
             </h1>
-            <p className="text-slate-400 text-base md:text-lg leading-relaxed max-w-2xl font-medium">
+            <p className="text-slate-400 text-base md:text-lg leading-relaxed max-w-xl font-medium">
               Kumpulan arsip proyek desain komersial dan komunitas. Setiap karya dirancang dengan pendekatan strategis untuk memecahkan masalah komunikasi visual.
             </p>
           </div>
 
-          <div className="w-full lg:w-[38.2%] reveal stagger-2 mt-4 lg:mt-0">
-            <div className="bg-gradient-to-br from-[#0A1329] to-[#030712] border border-white/10 rounded-[2rem] p-6 sm:p-8 shadow-2xl relative overflow-hidden group">
+          <div className="w-full lg:w-[38.2%] reveal stagger-2 mt-2 lg:mt-0">
+            <div className="bg-gradient-to-br from-[#0A1329] to-[#030712] border border-white/10 rounded-[2rem] p-6 md:p-8 shadow-2xl relative overflow-hidden group">
               <div className="absolute -top-10 -right-10 w-40 h-40 bg-cyan-500/10 rounded-full blur-[40px] group-hover:bg-cyan-500/20 transition-all duration-700"></div>
               
-              <div className="flex items-center gap-5 mb-6">
-                <div className="p-4 bg-cyan-500/10 rounded-2xl border border-cyan-500/20 shadow-lg shadow-cyan-500/5 shrink-0">
+              <div className="flex items-center gap-4 mb-5">
+                <div className="p-3 sm:p-4 bg-cyan-500/10 rounded-2xl border border-cyan-500/20 shadow-lg shadow-cyan-500/5 shrink-0">
                   <FolderIcon />
                 </div>
                 <div>
-                  <h3 className="text-white font-black text-3xl">{PROJECT_LIST.length}</h3>
-                  <p className="text-slate-400 text-[10px] sm:text-xs font-bold uppercase tracking-widest">Total Arsip</p>
+                  <h3 className="text-white font-black text-3xl sm:text-4xl">{PROJECT_LIST.length}</h3>
+                  <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">Total Arsip</p>
                 </div>
               </div>
 
@@ -82,27 +82,40 @@ export default function ProjectsPage() {
         </div>
 
         {/* ========================================================= */}
-        {/* FILTER KATEGORI (FLEX WRAP UX FRIENDLY)                   */}
+        {/* FILTER KATEGORI (DESAIN CHIP/PILL PROFESIONAL)            */}
         {/* ========================================================= */}
-        <div className="mb-12 reveal stagger-3 flex flex-wrap items-center gap-2 sm:gap-3">
-          {categories.map((category) => (
-            <button
-              key={category}
-              onClick={() => setActiveCategory(category)}
-              className={`relative px-4 py-2 sm:px-6 sm:py-2.5 rounded-full text-[11px] sm:text-xs md:text-sm font-bold tracking-wide transition-all duration-300 group overflow-hidden ${
-                activeCategory === category
-                  ? 'text-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.15)]'
-                  : 'text-slate-400 hover:text-white'
-              }`}
-            >
-              {activeCategory === category ? (
-                <span className="absolute inset-0 bg-cyan-500/10 border border-cyan-500/50 rounded-full"></span>
-              ) : (
-                <span className="absolute inset-0 bg-white/5 border border-white/5 rounded-full group-hover:bg-white/10 transition-colors"></span>
-              )}
-              <span className="relative z-10 whitespace-nowrap">{category}</span>
-            </button>
-          ))}
+        <div className="mb-12 reveal stagger-3">
+          
+          <div className="flex items-center gap-4 mb-6">
+            <h3 className="text-[10px] font-bold text-white uppercase tracking-[0.2em]">Filter Kategori</h3>
+            <div className="h-[1px] flex-grow bg-gradient-to-r from-white/10 to-transparent"></div>
+          </div>
+
+          <div className="flex flex-wrap gap-3">
+            {categories.map((category) => (
+              <button
+                key={category}
+                onClick={() => setActiveCategory(category)}
+                className={`group relative px-5 py-2.5 sm:px-6 sm:py-3 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wider transition-all duration-300 ${
+                  activeCategory === category
+                    ? 'text-[#030712] shadow-[0_0_20px_rgba(6,182,212,0.3)] scale-105'
+                    : 'text-slate-400 hover:text-white hover:scale-105'
+                }`}
+              >
+                {/* Latar Belakang Tombol yang Lebih Mewah */}
+                {activeCategory === category ? (
+                  <span className="absolute inset-0 bg-cyan-400 rounded-full"></span>
+                ) : (
+                  <span className="absolute inset-0 bg-[#0A1329] border border-white/10 rounded-full group-hover:border-cyan-500/50 transition-colors"></span>
+                )}
+                
+                {/* Ubah kata 'All' agar panjang karakternya imbang dengan kategori lain */}
+                <span className="relative z-10">
+                  {category === 'All' ? 'Semua Karya' : category}
+                </span>
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* ========================================================= */}
