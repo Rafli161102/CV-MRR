@@ -93,7 +93,7 @@ export default function Home() {
                   <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
                 </div>
                 <span className="text-slate-300 text-[11px] sm:text-xs md:text-sm font-semibold tracking-wide border border-white/10 px-4 py-1.5 rounded-full bg-white/5 backdrop-blur-sm">
-                  Design Graphic & Community Development
+                  Graphic Design & Community Development
                 </span>
               </div>
               
