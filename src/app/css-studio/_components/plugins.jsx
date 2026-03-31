@@ -291,7 +291,7 @@ export const WorkspaceLayout = ({ name, controls, preview, cssOutput, bgType = '
 };
 
 // =========================================================================
-// 5. THE PLUGINS (V16 ULTIMATE - FIGMA LEVEL)
+// 5. THE PLUGINS (V17 ULTIMATE)
 // =========================================================================
 
 export const PluginBackgroundGradient = () => {
