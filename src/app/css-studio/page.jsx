@@ -29,6 +29,13 @@ const Icons = {
 // =========================================================================
 // COLOR ENGINE 2.0 (Custom HSL to HEX - Menolak Popup Native!)
 // =========================================================================
+
+// ✅ FIX VERCEL ERROR: Menambahkan kembali helper hexToRgb
+const hexToRgb = (hex) => {
+  let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : '255, 255, 255';
+};
+
 const hexToHsl = (hex) => {
   let r = 0, g = 0, b = 0;
   if (hex.length === 7) { r = parseInt(hex.slice(1, 3), 16) / 255; g = parseInt(hex.slice(3, 5), 16) / 255; b = parseInt(hex.slice(5, 7), 16) / 255; }
@@ -60,19 +67,18 @@ const hslToHex = (h, s, l) => {
 };
 
 const hexToRgba = (hex, alpha) => {
-  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-  return result ? `rgba(${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}, ${alpha})` : `rgba(255,255,255,${alpha})`;
+  return `rgba(${hexToRgb(hex)}, ${alpha})`;
 };
 
 const COLOR_PRESETS = ['#ffffff', '#030712', '#06b6d4', '#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981'];
 
 export default function CssStudioPage() {
-  const [activeTab, setActiveTab] = useState('glass');
+  const [activeTab, setActiveTab] = useState('text-gradient');
   const [copied, setCopied] = useState(false);
 
-  // --- STAGE ELEMENT CONTROLLER (User bisa ganti Teks & Bentuk) ---
+  // --- STAGE ELEMENT CONTROLLER ---
   const [previewText, setPreviewText] = useState('CSS Studio.');
-  const [previewShape, setPreviewShape] = useState('box'); // box, circle, pill, text
+  const [previewShape, setPreviewShape] = useState('box');
 
   // --- STATE: GLASSMORPHISM ---
   const [glassBlur, setGlassBlur] = useState(12);
@@ -263,15 +269,15 @@ transition: transform 0.3s ease;`;
 
   const cssOutput = generateCSS();
 
+  // =========================================================================
+  // KOMPONEN UI UX MICRO-INTERACTIONS
+  // =========================================================================
+
   const handleCopy = () => {
     navigator.clipboard.writeText(cssOutput);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
-
-  // =========================================================================
-  // KOMPONEN UI UX MICRO-INTERACTIONS
-  // =========================================================================
 
   const ToolButton = ({ id, title, icon }) => (
     <button onClick={() => setActiveTab(id)} className={`flex flex-col items-center justify-center gap-1.5 p-2 sm:p-3 rounded-xl transition-all duration-200 border ${activeTab === id ? 'bg-[#0f0f11] border-cyan-500/50 text-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.1)] scale-[1.02] z-10' : 'bg-[#18181b] border-transparent text-slate-400 hover:bg-[#27272a] hover:text-slate-200'}`}>
@@ -280,7 +286,6 @@ transition: transform 0.3s ease;`;
     </button>
   );
 
-  // 🔥 CUSTOM COLOR ENGINE (Menghapus total input type="color" bawaan HP)
   const FigmaCustomColorPicker = ({ label, hexValue, onChange }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [hsl, setHsl] = useState(hexToHsl(hexValue));
