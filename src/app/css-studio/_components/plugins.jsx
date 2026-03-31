@@ -117,29 +117,34 @@ export const PluginTypography = () => {
 };
 
 // =========================================================================
-// 4. TEXT GRADIENT PLUGIN (FIX BUG WARNA NATIVE)
+// 4. TEXT GRADIENT PLUGIN (BUG FIX KETIBAN KOTAK)
 // =========================================================================
 export const PluginTextGradient = () => {
   const [text, setText] = useState('Gradient.');
-  const [size, setSize] = useState(64);
+  const [size, setSize] = useState(80);
   const [weight, setWeight] = useState(900);
   const [angle, setAngle] = useState(135);
   const [color1, setColor1] = useState('#0ea5e9');
   const [color2, setColor2] = useState('#8b5cf6');
 
-  const css = `.gradient-text {\n  font-size: ${size}px;\n  font-weight: ${weight};\n  background: linear-gradient(${angle}deg, ${color1}, ${color2});\n  -webkit-background-clip: text;\n  -webkit-text-fill-color: transparent;\n  background-clip: text;\n  color: transparent;\n}`;
+  const css = `.gradient-text {\n  font-size: ${size}px;\n  font-weight: ${weight};\n  background: linear-gradient(${angle}deg, ${color1}, ${color2});\n  -webkit-background-clip: text;\n  -webkit-text-fill-color: transparent;\n  background-clip: text;\n  color: transparent;\n  display: inline-block;\n}`;
   
-  // FIX BUG 1: Menggunakan bg-clip-text dari tailwind dan properti inline block untuk text
+  // FIX CRITICAL: Menambahkan display: inline-block dan Webkit styling khusus agar background text tidak nabrak menjadi kotak solid.
   const preview = (
-     <div className="w-full text-center px-4 overflow-hidden flex items-center justify-center">
-       <h2 className="tracking-tighter transition-all duration-300 bg-clip-text text-transparent inline-block" 
+     <div className="w-full flex items-center justify-center p-4 overflow-hidden">
+       <h2 className="font-black tracking-tighter text-center transition-all duration-300" 
            style={{ 
-              fontSize: `${size}px`, 
-              fontWeight: weight, 
-              backgroundImage: `linear-gradient(${angle}deg, ${color1}, ${color2})`, 
-              lineHeight: 1.2 
+             fontSize: `${size}px`, 
+             fontWeight: weight, 
+             background: `linear-gradient(${angle}deg, ${color1}, ${color2})`, 
+             WebkitBackgroundClip: 'text', 
+             WebkitTextFillColor: 'transparent', 
+             backgroundClip: 'text', 
+             color: 'transparent',
+             display: 'inline-block', // MENCEGAH BUG KOTAK SOLID DI HP
+             lineHeight: 1.1
            }}>
-           {text}
+         {text}
        </h2>
      </div>
   );
@@ -147,7 +152,7 @@ export const PluginTextGradient = () => {
   const controls = (
      <>
        <FigmaTextInput label="Text Input" value={text} onChange={setText} />
-       <FigmaSlider label="Font Size" min={24} max={120} value={size} onChange={setSize} unit="px" />
+       <FigmaSlider label="Font Size" min={24} max={150} value={size} onChange={setSize} unit="px" />
        <FigmaSlider label="Font Weight" min={100} max={900} step={100} value={weight} onChange={setWeight} />
        <div className="my-4 border-t border-[#333] pt-4"></div>
        <FigmaSlider label="Angle" min={0} max={360} value={angle} onChange={setAngle} unit="°" />
@@ -334,13 +339,13 @@ export const PluginFilters = () => {
    
    const preview = (
      <div className="w-[90%] max-w-[400px] aspect-video rounded-2xl overflow-hidden shadow-2xl relative">
-       <img src="https://images.unsplash.com/photo-1493246507139-91e8fad9978e?q=80&w=800&auto=format&fit=crop" alt="Filter preview" className="w-full h-full object-cover transition-all duration-300" style={{ filter: `blur(${blur}px) brightness(${brightness}%) contrast(${contrast}%) grayscale(${grayscale}%) sepia(${sepia}%)` }} />
+       <img src="https://images.unsplash.com/photo-1493246507139-91e8fad9978e?q=80&w=800" alt="Filter preview" className="w-full h-full object-cover transition-all duration-300" style={{ filter: `blur(${blur}px) brightness(${brightness}%) contrast(${contrast}%) grayscale(${grayscale}%) sepia(${sepia}%)` }} />
        <div className="absolute bottom-3 right-3 bg-black/50 backdrop-blur-md px-2 py-1 rounded text-[8px] text-white font-mono uppercase">Image Element</div>
      </div>
    );
    const controls = (
      <>
-       <div className="p-2 mb-4 bg-cyan-900/20 border border-cyan-500/20 rounded text-[9px] text-cyan-300">Filter diterapkan ke elemen gambar utuh.</div>
+       <div className="p-2 mb-4 bg-[#3f3f46] border border-[#555] rounded text-[9px] text-slate-300 font-medium">Filter diterapkan ke elemen gambar utuh.</div>
        <FigmaSlider label="Blur" min={0} max={20} step={0.5} value={blur} onChange={setBlur} unit="px" />
        <FigmaSlider label="Brightness" min={0} max={200} value={brightness} onChange={setBrightness} unit="%" />
        <FigmaSlider label="Contrast" min={0} max={200} value={contrast} onChange={setContrast} unit="%" />
@@ -363,12 +368,7 @@ export const PluginTransform = () => {
    const css = `.transform-3d {\n  transform: perspective(${persp}px) rotateX(${rotX}deg) rotateY(${rotY}deg) scale(${scale});\n  background: linear-gradient(135deg, #0ea5e9, #3b82f6);\n  border-radius: 24px;\n  box-shadow: 0 30px 60px rgba(0,0,0,0.4);\n  transition: transform 0.3s ease;\n}`;
    
    const preview = (
-     <div style={{
-       width: '200px', height: '200px', borderRadius: '24px',
-       background: 'linear-gradient(135deg, #0ea5e9, #3b82f6)',
-       boxShadow: '0 30px 60px rgba(0,0,0,0.4)',
-       transform: `perspective(${persp}px) rotateX(${rotX}deg) rotateY(${rotY}deg) scale(${scale})`
-     }} className="flex items-center justify-center transition-all duration-300">
+     <div style={{ width: '180px', height: '180px', borderRadius: '24px', background: 'linear-gradient(135deg, #0ea5e9, #3b82f6)', boxShadow: '0 30px 60px rgba(0,0,0,0.4)', transform: `perspective(${persp}px) rotateX(${rotX}deg) rotateY(${rotY}deg) scale(${scale})` }} className="flex items-center justify-center transition-all duration-300">
        <span className="text-white font-bold tracking-widest uppercase text-xs">3D Shape</span>
      </div>
    );
@@ -392,18 +392,10 @@ export const PluginAnimation = () => {
    const [shape, setShape] = useState('box');
 
    const css = `.animated-box {\n  animation: ${type} ${duration}s infinite ${type === 'spin' ? 'linear' : 'ease-in-out'};\n}\n\n/* Include Keyframes below */\n@keyframes float {\n  0%, 100% { transform: translateY(0); }\n  50% { transform: translateY(-20px); }\n}\n@keyframes pulse-glow {\n  0%, 100% { box-shadow: 0 0 0 0 rgba(14, 165, 233, 0.4); }\n  50% { box-shadow: 0 0 40px 20px rgba(14, 165, 233, 0); }\n}\n@keyframes spin-rotate {\n  from { transform: rotate(0deg); }\n  to { transform: rotate(360deg); }\n}`;
-   
    const preview = (
      <>
        <style dangerouslySetInnerHTML={{__html: `@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } } @keyframes pulse-glow { 0%, 100% { box-shadow: 0 0 0 0 rgba(14, 165, 233, 0.5); } 50% { box-shadow: 0 0 40px 20px rgba(14, 165, 233, 0); } } @keyframes spin-rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}} />
-       <div style={{
-         width: shape === 'circle' ? '180px' : shape === 'pill' ? '280px' : '180px',
-         height: shape === 'circle' ? '180px' : shape === 'pill' ? '90px' : '180px',
-         borderRadius: shape === 'circle' ? '50%' : shape === 'pill' ? '50px' : '24px',
-         background: 'linear-gradient(135deg, #18181b, #252526)',
-         border: '1px solid rgba(14, 165, 233, 0.3)',
-         animation: `${type === 'spin' ? 'spin-rotate' : type === 'pulse' ? 'pulse-glow' : 'float'} ${duration}s infinite ${type === 'spin' ? 'linear' : 'ease-in-out'}`
-       }} className="flex items-center justify-center">
+       <div style={{ width: shape === 'circle' ? '160px' : shape === 'pill' ? '260px' : '160px', height: shape === 'circle' ? '160px' : shape === 'pill' ? '80px' : '160px', borderRadius: shape === 'circle' ? '50%' : shape === 'pill' ? '50px' : '24px', background: 'linear-gradient(135deg, #18181b, #252526)', border: '1px solid rgba(14, 165, 233, 0.3)', animation: `${type === 'spin' ? 'spin-rotate' : type === 'pulse' ? 'pulse-glow' : 'float'} ${duration}s infinite ${type === 'spin' ? 'linear' : 'ease-in-out'}` }} className="flex items-center justify-center">
           <span className="text-cyan-400 font-bold tracking-widest uppercase text-[10px]">Animate</span>
        </div>
      </>
@@ -411,12 +403,12 @@ export const PluginAnimation = () => {
    const controls = (
      <>
        <FigmaSelect label="Target Shape" options={['box', 'circle', 'pill']} value={shape} onChange={setShape} />
-       <div className="my-4 border-t border-[#333] pt-4"></div>
+       <div className="my-3 border-t border-[#333] pt-3"></div>
        <div className="mb-4">
          <label className="text-[10px] font-medium text-slate-400 block mb-2">Animation Keyframes</label>
          <div className="flex flex-col gap-1.5">
            {[{ id: 'float', name: 'Floating' }, { id: 'pulse', name: 'Pulse Glow' }, { id: 'spin', name: 'Spin Rotate' }].map(anim => (
-             <button key={anim.id} onClick={() => setType(anim.id)} className={`px-3 py-2 rounded text-[10px] font-bold text-left transition-all ${type === anim.id ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/50' : 'bg-[#111111] text-slate-400 border border-[#333] hover:bg-[#2c2c2e]'}`}>
+             <button key={anim.id} onClick={() => setType(anim.id)} className={`px-3 py-2 rounded text-[10px] font-bold text-left transition-all ${type === anim.id ? 'bg-[#333333] text-white shadow-sm' : 'bg-[#111111] text-slate-500 border border-[#252526] hover:bg-[#1e1e1e]'}`}>
                {anim.name}
              </button>
            ))}
