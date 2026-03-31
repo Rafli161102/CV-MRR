@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 
 // Import Komponen dari folder _components
 import { Icons } from './_components/shared';
-import { PluginLayout, PluginBorder, PluginTypography, PluginTextGradient, PluginGlassmorphism, PluginNeumorphism, PluginShadow, PluginGlow, PluginFilters, PluginTransform, PluginAnimation } from './_components/plugins';
+// FIX: PluginTransform dan PluginAnimation dihapus dari import agar tidak error di Vercel
+import { PluginLayout, PluginBorder, PluginTypography, PluginTextGradient, PluginGlassmorphism, PluginNeumorphism, PluginShadow, PluginGlow, PluginFilters } from './_components/plugins';
 
 // =========================================================================
 // THE MASTER REGISTRY (Sistem Plugin Pusat)
@@ -19,23 +20,18 @@ const PLUGINS = [
   { id: 'neumorphism', title: 'Neumorph', icon: <Icons.Neumorphism />, component: PluginNeumorphism, cat: 'Effects' },
   { id: 'shadow', title: 'Shadow', icon: <Icons.Shadow />, component: PluginShadow, cat: 'Effects' },
   { id: 'glow', title: 'Neon Glow', icon: <Icons.Glow />, component: PluginGlow, cat: 'Effects' },
-  { id: 'filters', title: 'Image Filters', icon: <Icons.Filters />, component: PluginFilters, cat: 'Advanced' },
-  { id: 'transform', title: '3D Move', icon: <Icons.Cube3D />, component: PluginTransform, cat: 'Advanced' },
-  { id: 'animation', title: 'Animate', icon: <Icons.Animation />, component: PluginAnimation, cat: 'Advanced' }
+  { id: 'filters', title: 'Image Filters', icon: <Icons.Filters />, component: PluginFilters, cat: 'Advanced' }
+  // FIX: PluginTransform dan PluginAnimation dihapus dari sini
 ];
 
 export default function CssStudioPage() {
   const [activeId, setActiveId] = useState('text-gradient');
 
-  // FIX BUG SCROLL MACET: Memastikan aplikasi tidak bisa digulir keluar dari container utamanya.
-  useEffect(() => {
-    document.body.style.overflow = 'hidden';
-    return () => { document.body.style.overflow = 'auto'; };
-  }, []);
-
   return (
-    // FIX BUG NAV: Menambah padding-top (pt-20 / pt-24) menyesuaikan Navbar Global kamu, dan membatasi h-[100dvh]
-    <div className="h-[100dvh] w-full flex flex-col font-sans bg-[#111111] text-[#d4d4d4] overflow-hidden pt-[80px] sm:pt-[90px]">
+    // FIX BUG NAV & SCROLL: 
+    // - pt-[90px] didorong sangat jauh agar bebas hambatan Navbar.
+    // - overflow-y-auto memungkinkan layar HP untuk di-scroll layaknya halaman normal (mencegah kepotong).
+    <div className="h-[100dvh] w-full flex flex-col font-sans bg-[#111111] text-[#d4d4d4] overflow-hidden pt-[90px] sm:pt-[100px]">
       
       {/* HEADER NAV (Studio Header) */}
       <div className="h-14 px-4 sm:px-6 border-b border-[#333333] flex items-center justify-between bg-[#252526] z-50 shrink-0 shadow-sm relative">
@@ -43,16 +39,16 @@ export default function CssStudioPage() {
           <Link href="/toolkit" className="text-slate-400 hover:text-white transition-colors"><Icons.ArrowLeft /></Link>
           <div className="flex items-center gap-2">
             <span className="font-bold text-white tracking-tight text-sm sm:text-base">CSS Visual <span className="text-cyan-500">Studio</span></span>
-            <span className="px-1.5 py-0.5 bg-cyan-500/20 text-cyan-400 rounded text-[8px] font-bold uppercase tracking-widest hidden sm:block">V12 Enterprise Plugin Mode</span>
+            <span className="px-1.5 py-0.5 bg-cyan-500/20 text-cyan-400 rounded text-[8px] font-bold uppercase tracking-widest hidden sm:block">V11 Enterprise Plugin Mode</span>
           </div>
         </div>
       </div>
 
-      {/* MAIN WORKSPACE */}
-      <div className="flex-1 flex flex-col lg:flex-row overflow-hidden relative z-40">
+      {/* MAIN WORKSPACE - FIX BUG SCROLL (Di Mobile ini jadi Parent Scroll) */}
+      <div className="flex-1 flex flex-col lg:flex-row overflow-y-auto lg:overflow-hidden relative z-40 custom-scroll">
         
-        {/* KOLOM 1: TOOLBAR */}
-        <div className="w-full lg:w-[60px] xl:w-[220px] bg-[#18181b] border-b lg:border-b-0 lg:border-r border-[#252526] shrink-0 flex flex-row lg:flex-col lg:gap-1 overflow-x-auto lg:p-3 [&::-webkit-scrollbar]:hidden relative z-50 pointer-events-auto">
+        {/* KOLOM 1: TOOLBAR (Fixed Top di HP, Kiri di Desktop) */}
+        <div className="w-full lg:w-[60px] xl:w-[220px] bg-[#18181b] border-b lg:border-b-0 lg:border-r border-[#252526] shrink-0 flex flex-row lg:flex-col lg:gap-1 overflow-x-auto lg:overflow-y-auto p-2 lg:p-3 [&::-webkit-scrollbar]:hidden sticky top-0 lg:static z-50 shadow-md lg:shadow-none">
            {['Structure', 'Text', 'Effects', 'Advanced'].map(cat => (
               <div key={cat} className="flex flex-row lg:flex-col gap-1 shrink-0">
                  <div className="text-[8px] font-bold text-slate-500 uppercase tracking-widest mb-1 mt-3 px-2 hidden xl:block">{cat}</div>
@@ -70,8 +66,8 @@ export default function CssStudioPage() {
            ))}
         </div>
 
-        {/* KOLOM 2 & 3: PLUGIN CONTENT AREA (Menjalankan Flexible WorkspaceLayout) */}
-        <div className="flex-1 overflow-hidden bg-[#111111] lg:p-6 p-0 flex flex-col relative z-10">
+        {/* KOLOM 2 & 3: PLUGIN CONTENT AREA */}
+        <div className="flex-1 bg-[#111111] lg:p-6 p-0 flex flex-col relative z-10">
            {PLUGINS.map(p => p.id === activeId && <p.component key={p.id} />)}
         </div>
 
