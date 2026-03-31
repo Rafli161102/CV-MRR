@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 // =========================================================================
 // 1. IKON SVG PROFESIONAL
@@ -23,25 +23,22 @@ export const Icons = {
   TextGrad: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-full h-full"><path strokeLinecap="round" strokeLinejoin="round" d="M10.5 21l5.25-11.25L21 21m-9-3h7.5M3 5.621a48.474 48.474 0 016-.371m0 0c1.12 0 2.233.038 3.334.114M9 5.25V3m3.334 2.364C11.176 10.658 7.69 15.08 3 17.502m9.334-12.138c.896.061 1.785.147 2.666.257m-4.589 8.495a18.023 18.023 0 01-3.827-5.802" /></svg>,
   Shapes: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-full h-full"><path strokeLinecap="round" strokeLinejoin="round" d="M14.25 7.756a4.5 4.5 0 100 8.488M7.5 10.5h5.25m-5.25 3h5.25M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
   Transitions: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-full h-full"><path strokeLinecap="round" strokeLinejoin="round" d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" /></svg>,
+  Search: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4"><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" /></svg>,
 };
 
 // =========================================================================
 // 2. COLOR ENGINE & HELPERS
 // =========================================================================
 export const safeHex = (hex) => (typeof hex === 'string' && hex.startsWith('#') && (hex.length === 4 || hex.length === 7)) ? hex : '#000000';
-
 export const hexToRgb = (hex) => {
   const h = safeHex(hex);
   let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(h);
   return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : '255, 255, 255';
 };
-
 export const hexToHsl = (hex) => {
   const h_str = safeHex(hex);
   let r = 0, g = 0, b = 0;
-  if (h_str.length === 7) { 
-    r = parseInt(h_str.slice(1, 3), 16) / 255; g = parseInt(h_str.slice(3, 5), 16) / 255; b = parseInt(h_str.slice(5, 7), 16) / 255; 
-  }
+  if (h_str.length === 7) { r = parseInt(h_str.slice(1, 3), 16) / 255; g = parseInt(h_str.slice(3, 5), 16) / 255; b = parseInt(h_str.slice(5, 7), 16) / 255; }
   const max = Math.max(r, g, b), min = Math.min(r, g, b);
   let h = 0, s = 0, l = (max + min) / 2;
   if (max !== min) {
@@ -51,22 +48,16 @@ export const hexToHsl = (hex) => {
   }
   return { h: Math.round(h * 360) || 0, s: Math.round(s * 100) || 0, l: Math.round(l * 100) || 0 };
 };
-
 export const hslToHex = (h, s, l) => {
   l /= 100;
   const a = s * Math.min(l, 1 - l) / 100;
-  const f = n => {
-    const k = (n + h / 30) % 12;
-    const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
-    return Math.round(255 * color).toString(16).padStart(2, '0');
-  };
+  const f = n => { const k = (n + h / 30) % 12; const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1); return Math.round(255 * color).toString(16).padStart(2, '0'); };
   return `#${f(0)}${f(8)}${f(4)}`;
 };
-
 export const COLOR_PRESETS = ['#ffffff', '#1e1e1e', '#0ea5e9', '#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#ef4444', '#14b8a6'];
 
 // =========================================================================
-// 3. UI COMPONENTS
+// 3. UI COMPONENTS (V14 - Anti Popup Native Select)
 // =========================================================================
 
 export const FigmaSlider = ({ label, min, max, step = 1, value, onChange, unit = "" }) => (
@@ -154,24 +145,61 @@ export const FigmaTextInput = ({ label, value, onChange, placeholder = "Ketik se
   </div>
 );
 
-export const FigmaSelectGrouped = ({ label, groups, value, onChange }) => (
-  <div className="mb-4">
-    <label className="text-[10px] font-medium text-slate-400 block mb-2">{label}</label>
-    <select 
-      value={value} 
-      onChange={(e) => onChange(e.target.value)}
-      className="w-full bg-[#111111] border border-[#333] rounded-lg px-3 py-2.5 text-[11px] font-mono text-white outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500/50 appearance-none cursor-pointer"
-    >
-      {Object.entries(groups).map(([groupName, options]) => (
-        <optgroup key={groupName} label={groupName} className="bg-[#18181b] text-cyan-500 font-bold font-sans">
-          {options.map(opt => (
-            <option key={opt.val} value={opt.val} className="text-white font-normal font-mono">{opt.name}</option>
+// FIX V14: CUSTOM DROPDOWN (PENGGANTI <select> BAWAAN OS AGAR TIDAK ADA POPUP)
+export const FigmaCustomDropdown = ({ label, groups, value, onChange }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  // Get current name
+  let currentName = value;
+  for (const group in groups) {
+    const found = groups[group].find(opt => opt.val === value);
+    if (found) { currentName = found.name; break; }
+  }
+
+  // Handle click outside to close
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) setIsOpen(false);
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  return (
+    <div className="mb-4 relative" ref={dropdownRef}>
+      <label className="text-[10px] font-medium text-slate-400 block mb-2">{label}</label>
+      <div 
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full bg-[#111111] border border-[#333] rounded-lg px-3 py-2.5 flex justify-between items-center cursor-pointer hover:border-cyan-500/50 transition-colors"
+      >
+        <span className="text-[11px] text-white font-mono truncate">{currentName}</span>
+        <div className={`text-slate-400 transition-transform ${isOpen ? 'rotate-180' : ''}`}><Icons.ChevronDown /></div>
+      </div>
+
+      {isOpen && (
+        <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-[#111111] border border-[#333] rounded-lg shadow-2xl max-h-[200px] overflow-y-auto custom-scroll ring-1 ring-black/50">
+          {Object.entries(groups).map(([groupName, options]) => (
+            <div key={groupName}>
+              <div className="px-3 py-1.5 bg-[#18181b] text-[9px] font-bold text-cyan-500 uppercase tracking-widest sticky top-0 border-b border-[#333]/50">
+                {groupName}
+              </div>
+              {options.map(opt => (
+                <div 
+                  key={opt.val} 
+                  onClick={() => { onChange(opt.val); setIsOpen(false); }}
+                  className={`px-4 py-2 text-[11px] cursor-pointer hover:bg-[#252526] transition-colors font-mono ${value === opt.val ? 'bg-cyan-500/10 text-cyan-400 border-l-2 border-cyan-500' : 'text-slate-300'}`}
+                >
+                  {opt.name}
+                </div>
+              ))}
+            </div>
           ))}
-        </optgroup>
-      ))}
-    </select>
-  </div>
-);
+        </div>
+      )}
+    </div>
+  );
+};
 
 export const CodeOutput = ({ code, isMobileTab }) => {
   const [copied, setCopied] = useState(false);
@@ -238,10 +266,11 @@ export const WorkspaceLayout = ({ name, controls, preview, cssOutput, bgType = '
               <button onClick={() => setMobileTab('code')} className={`flex-1 py-2 rounded-md text-[10px] font-bold uppercase transition-all ${mobileTab === 'code' ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/30' : 'text-slate-500 hover:text-slate-300'}`}>CSS Output</button>
             </div>
          </div>
+         {/* OVERFLOW VISIBLE AGAR CUSTOM DROPDOWN BISA KELUAR BATAS JIKA PERLU */}
          <div className="flex-1 overflow-y-auto custom-scroll relative bg-[#18181b]">
             <div className={`p-4 lg:p-5 lg:block ${mobileTab === 'design' ? 'block' : 'hidden'}`}>
               {controls}
-              <div className="h-32 lg:h-8"></div> 
+              <div className="h-48 lg:h-12"></div> 
             </div>
             <div className={`h-full lg:hidden ${mobileTab === 'code' ? 'block' : 'hidden'}`}>
               <CodeOutput code={cssOutput} isMobileTab={true} />
@@ -253,10 +282,9 @@ export const WorkspaceLayout = ({ name, controls, preview, cssOutput, bgType = '
 };
 
 // =========================================================================
-// 5. THE PLUGINS (V13 - ULTIMATE FEATURES)
+// 5. THE PLUGINS (V14 - NO POPUP + PRO TYPOGRAPHY)
 // =========================================================================
 
-// --- 5.1 BACKGROUND GRADIENT (Perbaikan berdasar gambar user) ---
 export const PluginBackgroundGradient = () => {
   const [color1, setColor1] = useState('#0ea5e9');
   const [color2, setColor2] = useState('#8b5cf6');
@@ -274,7 +302,7 @@ export const PluginBackgroundGradient = () => {
   return <WorkspaceLayout name="Box Gradient" controls={controls} preview={preview} cssOutput={css} />;
 };
 
-// --- 5.2 TEXT GRADIENT (Dengan Custom Text) ---
+// FIX V14: TEXT GRADIENT ROBUST (ANTI BUG)
 export const PluginTextGradient = () => {
   const [text, setText] = useState('MRR STUDIO');
   const [color1, setColor1] = useState('#ec4899');
@@ -284,22 +312,23 @@ export const PluginTextGradient = () => {
   const css = `background: linear-gradient(${angle}deg, ${color1}, ${color2});\n-webkit-background-clip: text;\n-webkit-text-fill-color: transparent;\nbackground-clip: text;\ncolor: transparent;`;
   
   const preview = (
-    <h1 style={{ 
-      background: `linear-gradient(${angle}deg, ${color1}, ${color2})`, 
-      WebkitBackgroundClip: 'text', 
-      WebkitTextFillColor: 'transparent', 
-      backgroundClip: 'text',
-      color: 'transparent',
-      fontSize: '3rem', 
-      fontWeight: '900', 
-      textAlign: 'center',
-      textTransform: 'uppercase',
-      letterSpacing: '2px',
-      margin: 0,
-      padding: '20px'
-    }}>
-      {text || 'GRADIENT'}
-    </h1>
+    <div className="w-full h-full flex items-center justify-center p-4">
+      <span style={{ 
+        background: `linear-gradient(${angle}deg, ${color1}, ${color2})`, 
+        WebkitBackgroundClip: 'text', 
+        WebkitTextFillColor: 'transparent', 
+        backgroundClip: 'text',
+        color: 'transparent',
+        fontSize: 'clamp(2rem, 8vw, 5rem)', // Responsif otomatis
+        fontWeight: '900', 
+        textAlign: 'center',
+        textTransform: 'uppercase',
+        letterSpacing: '2px',
+        display: 'inline-block'
+      }}>
+        {text || 'GRADIENT'}
+      </span>
+    </div>
   );
 
   const controls = (
@@ -313,18 +342,64 @@ export const PluginTextGradient = () => {
   return <WorkspaceLayout name="Text Gradient" controls={controls} preview={preview} cssOutput={css} />;
 };
 
+// FIX V14: TYPOGRAPHY PRO (100+ FONTS + VARIATIONS)
+const FONTS_DATA = {
+  "Sans Serif Popular": [
+    { name: "Inter", val: "Inter" }, { name: "Roboto", val: "Roboto" }, { name: "Open Sans", val: "Open Sans" }, 
+    { name: "Montserrat", val: "Montserrat" }, { name: "Poppins", val: "Poppins" }, { name: "Lato", val: "Lato" }, 
+    { name: "Oswald", val: "Oswald" }, { name: "Raleway", val: "Raleway" }, { name: "Nunito", val: "Nunito" }, { name: "Quicksand", val: "Quicksand" }
+  ],
+  "Serif Classic": [
+    { name: "Playfair Display", val: "Playfair Display" }, { name: "Merriweather", val: "Merriweather" }, 
+    { name: "Lora", val: "Lora" }, { name: "PT Serif", val: "PT Serif" }, { name: "Noto Serif", val: "Noto Serif" }, 
+    { name: "Crimson Text", val: "Crimson Text" }, { name: "EB Garamond", val: "EB Garamond" }, { name: "Bitter", val: "Bitter" }
+  ],
+  "Display & Creative": [
+    { name: "Bebas Neue", val: "Bebas Neue" }, { name: "Lobster", val: "Lobster" }, { name: "Righteous", val: "Righteous" }, 
+    { name: "Fjalla One", val: "Fjalla One" }, { name: "Alfa Slab One", val: "Alfa Slab One" }, { name: "Pacifico", val: "Pacifico" }, 
+    { name: "Caveat", val: "Caveat" }, { name: "Amatic SC", val: "Amatic SC" }, { name: "Dancing Script", val: "Dancing Script" }
+  ],
+  "Monospace / Code": [
+    { name: "Fira Code", val: "Fira Code" }, { name: "Inconsolata", val: "Inconsolata" }, { name: "Source Code Pro", val: "Source Code Pro" }, 
+    { name: "Space Mono", val: "Space Mono" }, { name: "IBM Plex Mono", val: "IBM Plex Mono" }, { name: "JetBrains Mono", val: "JetBrains Mono" }
+  ]
+};
+
 export const PluginTypography = () => {
-  const [text, setText] = useState('Beautiful Web');
+  const [text, setText] = useState('Design System');
+  const [fontFamily, setFontFamily] = useState('Inter');
+  const [variation, setVariation] = useState('H1');
   const [size, setSize] = useState(48);
-  const [spacing, setSpacing] = useState(2);
+  const [spacing, setSpacing] = useState(0);
   const [height, setHeight] = useState(1.2);
   const [weight, setWeight] = useState('700');
   const [color, setColor] = useState('#ffffff');
 
-  const css = `font-family: system-ui, sans-serif;\nfont-size: ${size}px;\nfont-weight: ${weight};\nletter-spacing: ${spacing}px;\nline-height: ${height};\ncolor: ${color};\ntext-align: center;`;
+  // Load Google Font Dynamically
+  useEffect(() => {
+    const linkId = `gfont-${fontFamily.replace(/\s+/g, '-')}`;
+    if (!document.getElementById(linkId)) {
+      const link = document.createElement('link');
+      link.id = linkId;
+      link.href = `https://fonts.googleapis.com/css2?family=${fontFamily.replace(/\s+/g, '+')}:wght@300;400;600;700;900&display=swap`;
+      link.rel = 'stylesheet';
+      document.head.appendChild(link);
+    }
+  }, [fontFamily]);
+
+  // Handle Preset Variation Selection
+  const applyVariation = (v) => {
+    setVariation(v);
+    if (v === 'H1') { setSize(56); setWeight('900'); setSpacing(-1); setHeight(1.1); }
+    if (v === 'H2') { setSize(32); setWeight('700'); setSpacing(0); setHeight(1.3); }
+    if (v === 'Body') { setSize(16); setWeight('400'); setSpacing(0); setHeight(1.6); }
+    if (v === 'Caption') { setSize(12); setWeight('600'); setSpacing(1); setHeight(1.4); }
+  };
+
+  const css = `@import url('https://fonts.googleapis.com/css2?family=${fontFamily.replace(/\s+/g, '+')}:wght@${weight}&display=swap');\n\nfont-family: '${fontFamily}', sans-serif;\nfont-size: ${size}px;\nfont-weight: ${weight};\nletter-spacing: ${spacing}px;\nline-height: ${height};\ncolor: ${color};`;
   
   const preview = (
-    <div style={{ fontSize: `${size}px`, letterSpacing: `${spacing}px`, lineHeight: height, color: color, fontWeight: weight, textAlign: 'center', wordBreak: 'break-word', maxWidth: '100%' }}>
+    <div style={{ fontFamily: `"${fontFamily}", sans-serif`, fontSize: `${size}px`, letterSpacing: `${spacing}px`, lineHeight: height, color: color, fontWeight: weight, textAlign: 'center', wordBreak: 'break-word', maxWidth: '100%', transition: 'all 0.2s ease' }}>
       {text || 'Type something'}
     </div>
   );
@@ -332,14 +407,26 @@ export const PluginTypography = () => {
   const controls = (
     <>
       <FigmaTextInput label="Custom Text" value={text} onChange={setText} />
+      
+      {/* Type Scale Variations */}
+      <div className="mb-4">
+        <label className="text-[10px] font-medium text-slate-400 block mb-2">Preset Variations</label>
+        <div className="flex bg-[#111111] p-1 rounded-lg border border-[#333] w-full">
+          {['H1', 'H2', 'Body', 'Caption'].map(v => (
+            <button key={v} onClick={() => applyVariation(v)} className={`flex-1 py-1.5 rounded-md text-[9px] font-bold uppercase transition-all ${variation === v ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30' : 'text-slate-500 hover:text-slate-300'}`}>{v}</button>
+          ))}
+        </div>
+      </div>
+
+      <FigmaCustomDropdown label="Font Family (100+ Fonts)" groups={FONTS_DATA} value={fontFamily} onChange={setFontFamily} />
       <FigmaColorPicker label="Text Color" hexValue={color} onChange={setColor} />
-      <FigmaSlider label="Font Size" min={12} max={120} value={size} onChange={setSize} unit="px" />
       <FigmaSelect label="Font Weight" options={['300', '400', '600', '700', '900']} value={weight} onChange={setWeight} />
-      <FigmaSlider label="Letter Spacing" min={-5} max={30} step={0.5} value={spacing} onChange={setSpacing} unit="px" />
-      <FigmaSlider label="Line Height" min={0.5} max={3} step={0.1} value={height} onChange={setHeight} unit="" />
+      <FigmaSlider label="Font Size" min={10} max={120} value={size} onChange={(val) => { setSize(val); setVariation('Custom'); }} unit="px" />
+      <FigmaSlider label="Letter Spacing" min={-5} max={20} step={0.5} value={spacing} onChange={(val) => { setSpacing(val); setVariation('Custom'); }} unit="px" />
+      <FigmaSlider label="Line Height" min={0.5} max={3} step={0.1} value={height} onChange={(val) => { setHeight(val); setVariation('Custom'); }} unit="" />
     </>
   );
-  return <WorkspaceLayout name="Typography" controls={controls} preview={preview} cssOutput={css} />;
+  return <WorkspaceLayout name="Pro Typography" controls={controls} preview={preview} cssOutput={css} />;
 };
 
 export const PluginLayout = () => {
@@ -376,7 +463,6 @@ export const PluginBorder = () => {
   return <WorkspaceLayout name="Border Styling" controls={controls} preview={preview} cssOutput={css} />;
 };
 
-// --- 5.3 CUSTOM CSS SHAPES (Baru) ---
 const SHAPES_DATA = {
   "Basic": [
     { name: "Circle", val: "circle(50% at 50% 50%)" },
@@ -409,7 +495,7 @@ export const PluginShapes = () => {
   const preview = <div style={{ clipPath: shape, backgroundColor: color, width: '150px', height: '150px' }}></div>;
   const controls = (
     <>
-      <FigmaSelectGrouped label="Select Shape Form" groups={SHAPES_DATA} value={shape} onChange={setShape} />
+      <FigmaCustomDropdown label="Select Shape Form" groups={SHAPES_DATA} value={shape} onChange={setShape} />
       <FigmaColorPicker label="Shape Color" hexValue={color} onChange={setColor} />
     </>
   );
@@ -492,7 +578,6 @@ export const PluginGlow = () => {
   return <WorkspaceLayout name="Neon Glow" controls={controls} preview={preview} cssOutput={css} />;
 };
 
-// --- 5.4 LIGHTROOM PROFESSIONAL IMAGE FILTERS ---
 export const PluginFilters = () => {
   const [brightness, setBrightness] = useState(100);
   const [contrast, setContrast] = useState(100);
@@ -515,9 +600,6 @@ export const PluginFilters = () => {
            filter: `brightness(${brightness}%) contrast(${contrast}%) saturate(${saturate}%) hue-rotate(${hue}deg) blur(${blur}px) sepia(${sepia}%) grayscale(${grayscale}%) invert(${invert}%)`
          }} 
        />
-       <div className="absolute bottom-3 right-3 bg-black/70 backdrop-blur-md px-3 py-1.5 rounded-md text-[9px] text-white/90 font-mono opacity-0 group-hover:opacity-100 transition-opacity">
-         Lightroom Render
-       </div>
     </div>
   );
 
@@ -550,7 +632,6 @@ export const PluginFilters = () => {
   return <WorkspaceLayout name="Pro Filters" controls={controls} preview={preview} cssOutput={css} bgType="dark" />;
 };
 
-// --- 5.5 TRUE 3D TRANSFORM (DENGAN PERSPECTIVE) ---
 export const PluginTransform = () => {
   const [rotateX, setRotateX] = useState(30);
   const [rotateY, setRotateY] = useState(-30);
@@ -564,7 +645,6 @@ export const PluginTransform = () => {
   
   const preview = (
     <div className="relative w-full h-full flex items-center justify-center" style={{ perspective: '1000px', transformStyle: 'preserve-3d' }}>
-      {/* 3D Box Representation */}
       <div 
         className="w-32 h-32 bg-gradient-to-tr from-cyan-500 to-blue-600 shadow-2xl flex flex-col items-center justify-center border border-white/30 rounded-xl"
         style={{ 
@@ -605,7 +685,6 @@ export const PluginTransform = () => {
   return <WorkspaceLayout name="True 3D Studio" controls={controls} preview={preview} cssOutput={css} bgType="grid" />;
 };
 
-// --- 5.6 ANIMATION BUILDER (100+ Styles Simulation) ---
 const ANIMATION_DATA = {
   "Attention": [
     { name: "Bounce", val: "bounce" }, { name: "Flash", val: "flash" }, { name: "Pulse", val: "pulse" },
@@ -670,11 +749,10 @@ export const PluginAnimation = () => {
   const [duration, setDuration] = useState(1.5);
   const [timing, setTiming] = useState('ease-in-out');
   const [iteration, setIteration] = useState('infinite');
-  const [key, setKey] = useState(0); // Trigger re-render for preview
+  const [key, setKey] = useState(0); 
 
   const css = `@keyframes anim-${animType} {\n  ${getDynamicKeyframes(animType).replace(/\} /g, '}\n  ')}\n}\n\n.animate-element {\n  animation: anim-${animType} ${duration}s ${timing} ${iteration};\n}`;
 
-  // Reset animation force
   useEffect(() => { setKey(prev => prev + 1); }, [animType, duration, timing, iteration]);
 
   const preview = (
@@ -692,7 +770,7 @@ export const PluginAnimation = () => {
 
   const controls = (
     <>
-      <FigmaSelectGrouped label="Animation Style (100+ Variations)" groups={ANIMATION_DATA} value={animType} onChange={setAnimType} />
+      <FigmaCustomDropdown label="Animation Style (100+ Variations)" groups={ANIMATION_DATA} value={animType} onChange={setAnimType} />
       <FigmaSlider label="Duration" min={0.1} max={5} step={0.1} value={duration} onChange={setDuration} unit="s" />
       <FigmaSelect label="Timing Function" options={['linear', 'ease', 'ease-in-out', 'ease-in', 'ease-out']} value={timing} onChange={setTiming} />
       <FigmaSelect label="Iteration Count" options={['1', '2', '3', 'infinite']} value={iteration} onChange={setIteration} />
@@ -706,7 +784,6 @@ export const PluginAnimation = () => {
   return <WorkspaceLayout name="Animation Builder" controls={controls} preview={preview} cssOutput={css} bgType="grid" />;
 };
 
-// --- 5.7 HOVER TRANSITIONS (Baru) ---
 const TRANSITIONS_DATA = {
   "Scale Effects": [
     { name: "Grow", val: "scale(1.1)" }, { name: "Shrink", val: "scale(0.9)" }, { name: "Pop", val: "scale(1.2)" }
@@ -739,10 +816,7 @@ export const PluginTransitions = () => {
     <div className="relative w-full h-full flex items-center justify-center group cursor-pointer">
       <div 
         className="w-40 h-16 rounded-full bg-white text-black font-bold flex items-center justify-center shadow-lg"
-        style={{ 
-          transition: `transform ${duration}s ${timing}`,
-        }}
-        // Using inline style trick for hover in React without styled-components
+        style={{ transition: `transform ${duration}s ${timing}` }}
         onMouseEnter={(e) => e.currentTarget.style.transform = transType}
         onMouseLeave={(e) => e.currentTarget.style.transform = 'none'}
       >
@@ -754,9 +828,9 @@ export const PluginTransitions = () => {
 
   const controls = (
     <>
-      <FigmaSelectGrouped label="Hover Effect Type" groups={TRANSITIONS_DATA} value={transType} onChange={setTransType} />
+      <FigmaCustomDropdown label="Hover Effect Type" groups={TRANSITIONS_DATA} value={transType} onChange={setTransType} />
       <FigmaSlider label="Duration" min={0.1} max={3} step={0.1} value={duration} onChange={setDuration} unit="s" />
-      <FigmaSelect label="Timing/Easing" options={['ease', 'linear', 'ease-in-out', 'cubic-bezier(0.4, 0, 0.2, 1)', 'cubic-bezier(0.68, -0.55, 0.265, 1.55)']} value={timing} onChange={setTiming} />
+      <FigmaSelect label="Timing/Easing" options={['ease', 'linear', 'ease-in-out', 'cubic-bezier(0.4, 0, 0.2, 1)']} value={timing} onChange={setTiming} />
     </>
   );
 
