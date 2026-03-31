@@ -4,12 +4,13 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
 // =========================================================================
-// IKON SVG PROFESIONAL (Figma-style Minimalist)
+// IKON SVG PROFESIONAL (Figma & VS Code Style)
 // =========================================================================
 const Icons = {
   ArrowLeft: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4"><path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" /></svg>,
   Copy: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4"><path strokeLinecap="round" strokeLinejoin="round" d="M15.666 3.888A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 01-.75.75H9a.75.75 0 01-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184" /></svg>,
   Check: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 text-emerald-400"><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>,
+  ChevronDown: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-3 h-3"><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>,
   
   // App Toolbar Icons
   Layout: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M9 4.5v15m6-15v15m-10.5-6h15m-15-6h15m-3-4.5H5.25C4.007 3 3 4.007 3 5.25v13.5c0 1.243 1.007 2.25 2.25 2.25h13.5c1.243 0 2.25-2.25V5.25c0-1.243-1.007-2.25-2.25-2.25z" /></svg>,
@@ -232,7 +233,7 @@ export default function CssStudioPage() {
     </button>
   );
 
-  // 🔥 CUSTOM COLOR PICKER (FLOATING POPOVER) - FIX BUG KETIBAN TEXT
+  // 🔥 CUSTOM COLOR PICKER (ACCORDION INLINE) - 100% ANTI KETIBAN TEXT!
   const FigmaColorPicker = ({ label, hexValue, onChange }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [hsl, setHsl] = useState(hexToHsl(hexValue));
@@ -246,41 +247,42 @@ export default function CssStudioPage() {
     };
 
     return (
-      <div className="relative flex items-center justify-between py-1.5 group">
-        <label className="text-[10px] font-medium text-slate-400 group-hover:text-slate-200 transition-colors">{label}</label>
-        
-        <div className="flex items-center gap-1.5 bg-[#18181b] border border-white/5 rounded pl-2 pr-1 py-1 cursor-pointer hover:border-white/20 transition-colors" onClick={() => setIsOpen(!isOpen)}>
-          <span className="text-[9px] font-mono text-slate-300 uppercase">{hexValue}</span>
-          <div className="w-3.5 h-3.5 rounded-sm shadow-inner" style={{backgroundColor: hexValue}}></div>
+      <div className="mb-4">
+        <div className="flex justify-between items-center mb-1.5">
+          <label className="text-[10px] font-medium text-slate-400">{label}</label>
         </div>
+        <div className="bg-[#1e1e1e] border border-[#333] rounded-lg overflow-hidden transition-all duration-300">
+          <div className="flex items-center justify-between p-1.5 cursor-pointer hover:bg-[#2c2c2e]/50 transition-colors" onClick={() => setIsOpen(!isOpen)}>
+            <div className="flex items-center gap-2">
+              <div className="w-5 h-5 rounded shadow-inner border border-white/10" style={{backgroundColor: hexValue}}></div>
+              <span className="text-[10px] font-mono text-slate-300 uppercase">{hexValue}</span>
+            </div>
+            <Icons.ChevronDown className={`w-4 h-4 text-slate-500 transition-transform duration-300 mr-1 ${isOpen ? 'rotate-180' : ''}`} />
+          </div>
 
-        {/* POPOVER PANEL ABSOLUTE - Tidak Merusak Layout */}
-        {isOpen && (
-          <>
-            <div className="fixed inset-0 z-[40]" onClick={() => setIsOpen(false)}></div>
-            <div className="absolute top-full right-0 mt-2 w-52 bg-[#27272a] border border-white/10 rounded-xl shadow-[0_10px_40px_rgba(0,0,0,0.5)] p-3 z-[50] animate-fade-in">
-              <div className="space-y-3">
-                <div>
-                  <div className="flex justify-between mb-1"><span className="text-[9px] text-slate-400">Hue</span></div>
-                  <input type="range" min="0" max="360" value={hsl.h} onChange={(e) => handleHslChange('h', Number(e.target.value))} className="w-full h-1.5 rounded-full appearance-none cursor-pointer custom-color-slider" style={{background: 'linear-gradient(to right, #f00 0%, #ff0 17%, #0f0 33%, #0ff 50%, #00f 67%, #f0f 83%, #f00 100%)'}} />
-                </div>
-                <div>
-                  <div className="flex justify-between mb-1"><span className="text-[9px] text-slate-400">Saturation</span></div>
-                  <input type="range" min="0" max="100" value={hsl.s} onChange={(e) => handleHslChange('s', Number(e.target.value))} className="w-full h-1.5 rounded-full appearance-none cursor-pointer custom-color-slider" style={{background: `linear-gradient(to right, #808080, ${hslToHex(hsl.h, 100, 50)})`}} />
-                </div>
-                <div>
-                  <div className="flex justify-between mb-1"><span className="text-[9px] text-slate-400">Lightness</span></div>
-                  <input type="range" min="0" max="100" value={hsl.l} onChange={(e) => handleHslChange('l', Number(e.target.value))} className="w-full h-1.5 rounded-full appearance-none cursor-pointer custom-color-slider" style={{background: `linear-gradient(to right, #000, ${hslToHex(hsl.h, hsl.s, 50)}, #fff)`}} />
-                </div>
+          {/* INLINE EXPANSION (Accordion) - Mendorong elemen bawahnya, tidak melayang */}
+          <div className={`overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? 'max-h-[200px] border-t border-[#333] p-3' : 'max-h-0'}`}>
+            <div className="space-y-3">
+              <div>
+                <div className="flex justify-between mb-1"><span className="text-[9px] text-slate-500">Hue</span></div>
+                <input type="range" min="0" max="360" value={hsl.h} onChange={(e) => handleHslChange('h', Number(e.target.value))} className="w-full h-1.5 rounded-full appearance-none cursor-pointer custom-color-slider" style={{background: 'linear-gradient(to right, #f00 0%, #ff0 17%, #0f0 33%, #0ff 50%, #00f 67%, #f0f 83%, #f00 100%)'}} />
               </div>
-              <div className="flex gap-1.5 mt-3 pt-3 border-t border-white/5">
-                {COLOR_PRESETS.map((c) => (
-                  <button key={c} onClick={() => onChange(c)} className={`w-4 h-4 rounded-full border border-white/20 transition-transform hover:scale-125`} style={{ backgroundColor: c }} />
-                ))}
+              <div>
+                <div className="flex justify-between mb-1"><span className="text-[9px] text-slate-500">Saturation</span></div>
+                <input type="range" min="0" max="100" value={hsl.s} onChange={(e) => handleHslChange('s', Number(e.target.value))} className="w-full h-1.5 rounded-full appearance-none cursor-pointer custom-color-slider" style={{background: `linear-gradient(to right, #808080, ${hslToHex(hsl.h, 100, 50)})`}} />
+              </div>
+              <div>
+                <div className="flex justify-between mb-1"><span className="text-[9px] text-slate-500">Lightness</span></div>
+                <input type="range" min="0" max="100" value={hsl.l} onChange={(e) => handleHslChange('l', Number(e.target.value))} className="w-full h-1.5 rounded-full appearance-none cursor-pointer custom-color-slider" style={{background: `linear-gradient(to right, #000, ${hslToHex(hsl.h, hsl.s, 50)}, #fff)`}} />
               </div>
             </div>
-          </>
-        )}
+            <div className="flex flex-wrap gap-1.5 mt-3 pt-3 border-t border-[#333]">
+              {COLOR_PRESETS.map((c) => (
+                <button key={c} onClick={() => onChange(c)} className={`w-4 h-4 rounded-full border border-white/20 transition-transform hover:scale-125`} style={{ backgroundColor: c }} />
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
     );
   };
@@ -289,8 +291,8 @@ export default function CssStudioPage() {
     <div className="flex items-center justify-between py-1.5 group">
       <label className="text-[10px] font-medium text-slate-400 w-1/3 group-hover:text-slate-200 transition-colors">{label}</label>
       <div className="w-2/3 flex items-center gap-2">
-        <input type="range" min={min} max={max} step={step} value={value} onChange={(e) => onChange(Number(e.target.value))} className="w-full h-[2px] bg-slate-700 rounded-lg appearance-none cursor-pointer outline-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-2.5 [&::-webkit-slider-thumb]:h-2.5 [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:rounded-full hover:[&::-webkit-slider-thumb]:scale-150 transition-all" />
-        <div className="bg-[#18181b] px-1.5 py-0.5 rounded border border-white/5 w-10 text-right shrink-0">
+        <input type="range" min={min} max={max} step={step} value={value} onChange={(e) => onChange(Number(e.target.value))} className="w-full h-[2px] bg-[#333] rounded-lg appearance-none cursor-pointer outline-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-2.5 [&::-webkit-slider-thumb]:h-2.5 [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:rounded-full hover:[&::-webkit-slider-thumb]:scale-150 transition-all" />
+        <div className="bg-[#1e1e1e] px-1.5 py-0.5 rounded border border-[#333] w-12 text-right shrink-0">
           <span className="text-[9px] font-mono text-cyan-400">{value}{unit}</span>
         </div>
       </div>
@@ -298,83 +300,42 @@ export default function CssStudioPage() {
   );
 
   return (
-    <div className="min-h-screen pt-24 sm:pt-28 pb-12 w-full bg-[#1e1e1e] text-slate-200 flex flex-col font-sans overflow-hidden h-screen">
+    <div className="min-h-screen pt-24 sm:pt-28 pb-12 w-full bg-[#111111] text-slate-200 flex flex-col font-sans overflow-hidden lg:h-screen">
       
       {/* HEADER NAV */}
-      <div className="px-6 py-3 border-b border-[#333] flex items-center justify-between bg-[#1e1e1e] z-30 shrink-0">
+      <div className="px-6 py-3 border-b border-[#252526] flex items-center justify-between bg-[#18181b] z-30 shrink-0">
         <div className="flex items-center gap-4">
           <Link href="/toolkit" className="text-slate-400 hover:text-white transition-colors"><Icons.ArrowLeft /></Link>
           <div className="flex items-center gap-2">
             <span className="font-bold text-white tracking-tight">CSS Visual <span className="text-cyan-500">Studio</span></span>
-            <span className="px-1.5 py-0.5 bg-cyan-500/20 text-cyan-400 rounded text-[8px] font-bold uppercase tracking-widest hidden sm:block">V5.0 Enterprise</span>
+            <span className="px-1.5 py-0.5 bg-cyan-500/20 text-cyan-400 rounded text-[8px] font-bold uppercase tracking-widest hidden sm:block">V7.0 Enterprise</span>
           </div>
         </div>
       </div>
 
-      {/* APP WORKSPACE (Tiruan Editor Figma) */}
-      <div className="flex-grow flex flex-col lg:flex-row overflow-hidden bg-[#111111]">
+      {/* APP WORKSPACE (Tiruan Editor Figma Sejati) */}
+      <div className="flex-grow flex flex-col lg:flex-row overflow-hidden bg-[#111111] relative">
         
-        {/* MOBILE CANVAS: Pindah ke Atas Saat di HP agar Sticky */}
-        <div className="w-full lg:hidden h-[40vh] bg-[#111111] relative border-b border-[#333] flex items-center justify-center shrink-0">
-           {/* Dot Grid Layer */}
-           <div className="absolute inset-0 opacity-[0.15] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '20px 20px'}}></div>
-           {/* Background Logic */}
-           {activeTab === 'glass' && <div className="absolute inset-0 bg-cover bg-center opacity-70" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200')" }}></div>}
-           {activeTab === 'neumorphism' && <div className="absolute inset-0 transition-colors duration-500" style={{ background: neuBg }}></div>}
-           {activeTab === 'filters' && <img src="https://images.unsplash.com/photo-1493246507139-91e8fad9978e?q=80&w=800" alt="Bg" className="absolute inset-0 w-full h-full object-cover" style={{ filter: `blur(${filterBlur}px) brightness(${filterBright}%) contrast(${filterContrast}%) grayscale(${filterGray}%)` }} />}
-           
-           {/* Element */}
-           <div 
-              className="relative z-10 flex flex-col overflow-hidden"
-              style={{
-                display: previewShape === 'text' ? 'block' : 'flex',
-                alignItems: layFlex, justifyContent: layFlex, textAlign: 'center',
-                transition: 'all 0.4s cubic-bezier(0.25, 1, 0.5, 1)', 
-                ...(previewShape === 'box' && { width: `${layWidth}px`, height: `${layHeight}px`, borderRadius: `${borRadius}px` }),
-                ...(previewShape === 'circle' && { width: '150px', height: '150px', borderRadius: '50%' }),
-                ...(previewShape === 'pill' && { width: '220px', height: '80px', borderRadius: '50px' }),
-                ...(previewShape === 'text' && { width: 'auto', height: 'auto', background: 'transparent' }),
-                
-                ...(activeTab === 'layout' && previewShape !== 'text' ? { background: layBg, padding: `${layPad}px`, border: `${borWidth}px solid ${borColor}` } : {}),
-                ...(activeTab === 'glass' && previewShape !== 'text' ? { background: `rgba(${hexToRgb(glassColor)}, ${glassOpacity})`, backdropFilter: `blur(${glassBlur}px)`, WebkitBackdropFilter: `blur(${glassBlur}px)`, border: `1px solid rgba(255, 255, 255, ${glassOutline})`, boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.2)' } : {}),
-                ...(activeTab === 'neumorphism' && previewShape !== 'text' ? { background: neuShape === 'convex' ? `linear-gradient(145deg, ${hexToRgba(neuBg, 1.1)}, ${hexToRgba(neuBg, 0.9)})` : neuShape === 'concave' ? `linear-gradient(145deg, ${hexToRgba(neuBg, 0.9)}, ${hexToRgba(neuBg, 1.1)})` : neuBg, boxShadow: `${neuShape === 'concave' ? 'inset ' : ''}${neuDistance}px ${neuDistance}px ${neuBlur}px ${hexToRgba('#000', neuIntensity + 0.3)}, ${neuShape === 'concave' ? 'inset ' : ''}-${neuDistance}px -${neuDistance}px ${neuBlur}px ${hexToRgba('#fff', neuIntensity / 2)}` } : {}),
-                ...(activeTab === 'shadow' && previewShape !== 'text' ? { background: '#ffffff', boxShadow: Array.from({length: shadowLayers}, (_, i) => `0 ${(shadowY / shadowLayers) * (i + 1)}px ${(shadowBlur / shadowLayers) * (i + 1)}px ${(shadowSpread / shadowLayers) * (i + 1)}px ${hexToRgba(shadowColor, Math.max(shadowOpacity - ((i + 1) * 0.03), 0.02))}`).join(', ') } : {}),
-                ...(activeTab === 'glow' && previewShape !== 'text' ? { background: '#0A1329', border: `1px solid ${hexToRgba(glowColor, 0.5)}`, boxShadow: `0 0 ${glowBlur}px ${glowSpread}px ${hexToRgba(glowColor, glowOpacity)}, inset 0 0 15px ${hexToRgba(glowColor, glowOpacity * 0.5)}` } : {}),
-                ...(activeTab === 'transform' && previewShape !== 'text' ? { background: 'linear-gradient(135deg, #06b6d4, #3b82f6)', boxShadow: '0 20px 40px rgba(0,0,0,0.3)', transform: `perspective(${transPersp}px) rotateX(${transRotX}deg) rotateY(${transRotY}deg) scale(${transScale})` } : {}),
-                ...(activeTab === 'animation' && previewShape !== 'text' ? { background: 'linear-gradient(135deg, #0A1329, #0d1a38)', border: '1px solid rgba(6, 182, 212, 0.3)', animation: animType === 'float' ? `float ${animDuration}s ease-in-out infinite` : animType === 'pulse' ? `pulse-glow ${animDuration}s infinite` : `spin-slow ${animDuration}s linear infinite` } : {}),
-              }}
-            >
-              {previewShape === 'text' ? (
-                <div className="w-full text-center">
-                  <h2 className="font-black tracking-tighter" style={{ fontSize: `${typoSize}px`, fontWeight: typoWeight, letterSpacing: `${typoLetter}px`, textAlign: typoAlign, ...(gradTextEnabled && activeTab === 'typography' ? { background: `linear-gradient(${gradAngle}deg, ${gradColor1}, ${gradColor2})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', color: 'transparent' } : { color: typoColor, textShadow: `${typoShadowX}px ${typoShadowY}px ${typoShadowB}px ${hexToRgba(typoShadowC, typoShadowO)}` }) }}>
-                    {previewText}
-                  </h2>
-                </div>
-              ) : (
-                <span className={`font-bold tracking-widest uppercase text-[10px] sm:text-xs ${(activeTab === 'shadow' || activeTab === 'layout') ? 'text-slate-800' : 'text-white'}`}>{previewText}</span>
-              )}
-            </div>
-        </div>
-
         {/* KOLOM 1: TOOLBAR (Kiri - Background Hitam Figma) */}
-        <div className="w-full lg:w-[60px] bg-[#252526] border-r border-[#333] shrink-0 flex flex-row lg:flex-col gap-1 overflow-x-auto p-2 [&::-webkit-scrollbar]:hidden z-20">
-          <ToolButton id="layout" title="Layout" icon={Icons.Layout} />
-          <ToolButton id="typography" title="Text" icon={Icons.Typography} />
-          <ToolButton id="glass" title="Glass" icon={Icons.Glass} />
-          <ToolButton id="neumorphism" title="Neumorph" icon={Icons.Neumorphism} />
-          <ToolButton id="shadow" title="Shadow" icon={Icons.Shadow} />
-          <ToolButton id="glow" title="Glow" icon={Icons.Glow} />
-          <ToolButton id="filters" title="Filter" icon={Icons.Filter} />
-          <ToolButton id="transform" title="3D" icon={Icons.Cube3D} />
-          <ToolButton id="animation" title="Anim" icon={Icons.Animation} />
+        <div className="w-full lg:w-[60px] xl:w-[200px] bg-[#18181b] border-r border-[#252526] shrink-0 flex flex-row lg:flex-col gap-1 overflow-x-auto p-2 lg:p-3 [&::-webkit-scrollbar]:hidden z-20">
+          <ToolButton id="layout" title="Layout" icon={<Icons.Layout />} />
+          <ToolButton id="typography" title="Typography" icon={<Icons.Typography />} />
+          <ToolButton id="glass" title="Glassmorphism" icon={<Icons.Glass />} />
+          <ToolButton id="neumorphism" title="Neumorphism" icon={<Icons.Neumorphism />} />
+          <ToolButton id="shadow" title="Shadows" icon={<Icons.Shadow />} />
+          <ToolButton id="glow" title="Neon Glow" icon={<Icons.Glow />} />
+          <ToolButton id="filters" title="Image Filters" icon={<Icons.Filters />} />
+          <ToolButton id="transform" title="3D Transform" icon={<Icons.Cube3D />} />
+          <ToolButton id="animation" title="Animations" icon={<Icons.Animation />} />
         </div>
 
-        {/* KOLOM TENGAH: CANVAS & OUTPUT CODE (Desktop) */}
-        <div className="hidden lg:flex flex-1 flex-col relative z-10 bg-[#111111]">
+        {/* KOLOM TENGAH: CANVAS & OUTPUT CODE */}
+        <div className="flex-1 flex flex-col relative z-10 bg-[#111111] h-[50vh] lg:h-auto overflow-hidden">
           
           {/* STAGE CANVAS */}
           <div className="flex-1 relative flex items-center justify-center overflow-hidden">
-            <div className="absolute inset-0 opacity-[0.15] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#ffffff 1.5px, transparent 1.5px)', backgroundSize: '24px 24px'}}></div>
+            {/* Dot Grid Layer (Mirip Figma) */}
+            <div className="absolute inset-0 opacity-[0.15] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '24px 24px'}}></div>
             
             {/* Background Panggung Eksklusif */}
             {activeTab === 'glass' && <div className="absolute inset-0 bg-cover bg-center opacity-70" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200')" }}></div>}
@@ -382,17 +343,17 @@ export default function CssStudioPage() {
             {activeTab === 'shadow' && <div className="absolute inset-0 bg-slate-200"></div>}
             {activeTab === 'filters' && <img src="https://images.unsplash.com/photo-1493246507139-91e8fad9978e?q=80&w=1200" alt="Bg" className="absolute inset-0 w-full h-full object-cover" style={{ filter: `blur(${filterBlur}px) brightness(${filterBright}%) contrast(${filterContrast}%) grayscale(${filterGray}%)` }} />}
 
-            {/* RENDER THE PREVIEW ELEMENT */}
+            {/* RENDER THE PREVIEW ELEMENT (Smooth Morphing) */}
             <div 
-              className="relative z-10 flex flex-col items-center justify-center overflow-hidden"
+              className="relative z-10 flex flex-col overflow-hidden"
               style={{
                 display: previewShape === 'text' ? 'block' : 'flex',
                 alignItems: layFlex, justifyContent: layFlex, textAlign: 'center',
-                transition: 'all 0.5s cubic-bezier(0.25, 1, 0.5, 1)', // Smooth morphing
+                transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)', 
                 
                 ...(previewShape === 'box' && { width: `${layWidth}px`, height: `${layHeight}px`, borderRadius: `${borRadius}px` }),
-                ...(previewShape === 'circle' && { width: '250px', height: '250px', borderRadius: '50%' }),
-                ...(previewShape === 'pill' && { width: '320px', height: '100px', borderRadius: '50px' }),
+                ...(previewShape === 'circle' && { width: '200px', height: '200px', borderRadius: '50%' }),
+                ...(previewShape === 'pill' && { width: '280px', height: '100px', borderRadius: '50px' }),
                 ...(previewShape === 'text' && { width: 'auto', height: 'auto', background: 'transparent' }),
                 
                 ...(activeTab === 'layout' && previewShape !== 'text' ? { background: layBg, padding: `${layPad}px`, border: `${borWidth}px solid ${borColor}` } : {}),
@@ -401,65 +362,68 @@ export default function CssStudioPage() {
                 ...(activeTab === 'shadow' && previewShape !== 'text' ? { background: '#ffffff', boxShadow: Array.from({length: shadowLayers}, (_, i) => `0 ${(shadowY / shadowLayers) * (i + 1)}px ${(shadowBlur / shadowLayers) * (i + 1)}px ${(shadowSpread / shadowLayers) * (i + 1)}px ${hexToRgba(shadowColor, Math.max(shadowOpacity - ((i + 1) * 0.03), 0.02))}`).join(', ') } : {}),
                 ...(activeTab === 'glow' && previewShape !== 'text' ? { background: '#0A1329', border: `1px solid ${hexToRgba(glowColor, 0.5)}`, boxShadow: `0 0 ${glowBlur}px ${glowSpread}px ${hexToRgba(glowColor, glowOpacity)}, inset 0 0 15px ${hexToRgba(glowColor, glowOpacity * 0.5)}` } : {}),
                 ...(activeTab === 'transform' && previewShape !== 'text' ? { background: 'linear-gradient(135deg, #06b6d4, #3b82f6)', boxShadow: '0 30px 60px rgba(0,0,0,0.4)', transform: `perspective(${transPersp}px) rotateX(${transRotX}deg) rotateY(${transRotY}deg) scale(${transScale})` } : {}),
-                ...(activeTab === 'animation' && previewShape !== 'text' ? { background: 'linear-gradient(135deg, #0A1329, #0d1a38)', border: '1px solid rgba(6, 182, 212, 0.3)', animation: animType === 'float' ? `float ${animDuration}s ease-in-out infinite` : animType === 'pulse' ? `pulse-glow ${animDuration}s infinite` : `spin-slow ${animDuration}s linear infinite` } : {}),
+                ...(activeTab === 'animation' && previewShape !== 'text' ? { background: 'linear-gradient(135deg, #0A1329, #0d1a38)', border: '1px solid rgba(6, 182, 212, 0.3)', animation: animType === 'float' ? `float ${animDuration}s ease-in-out infinite` : animType === 'pulse' ? `pulse ${animDuration}s infinite` : `spin ${animDuration}s linear infinite` } : {}),
               }}
             >
               {previewShape === 'text' ? (
                 <div className="w-full text-center">
-                  <h2 className="font-black tracking-tighter transition-all" style={{ fontSize: `${typoSize}px`, fontWeight: typoWeight, letterSpacing: `${typoLetter}px`, textAlign: typoAlign, ...(gradTextEnabled && activeTab === 'typography' ? { background: `linear-gradient(${gradAngle}deg, ${gradColor1}, ${gradColor2})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', color: 'transparent' } : { color: typoColor, textShadow: `${typoShadowX}px ${typoShadowY}px ${typoShadowB}px ${hexToRgba(typoShadowC, typoShadowO)}` }) }}>
+                  <h2 className="font-black tracking-tighter transition-all duration-300" style={{ fontSize: `${typoSize}px`, fontWeight: typoWeight, letterSpacing: `${typoLetter}px`, textAlign: typoAlign, ...(gradTextEnabled && activeTab === 'typography' ? { background: `linear-gradient(${gradAngle}deg, ${gradColor1}, ${gradColor2})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', color: 'transparent' } : { color: typoColor, textShadow: `${typoShadowX}px ${typoShadowY}px ${typoShadowB}px ${hexToRgba(typoShadowC, typoShadowO)}` }) }}>
                     {previewText}
                   </h2>
                 </div>
               ) : (
-                <span className={`font-bold tracking-widest uppercase text-xs ${(activeTab === 'shadow' || activeTab === 'layout') ? 'text-slate-800' : 'text-white'}`}>{previewText}</span>
+                <span className={`font-bold tracking-widest uppercase text-xs transition-colors duration-300 ${(activeTab === 'shadow' || activeTab === 'layout') ? 'text-slate-800' : 'text-white'}`}>{previewText}</span>
               )}
             </div>
           </div>
 
           {/* OUTPUT CSS BOTTOM PANEL */}
-          <div className="h-[220px] bg-[#1e1e1e] border-t border-[#333] relative flex flex-col shrink-0">
-            <button onClick={handleCopy} className="absolute top-4 right-6 z-10 flex items-center gap-2 px-3 py-1.5 rounded bg-[#2d2d2d] border border-white/10 text-slate-300 hover:bg-cyan-500 hover:text-[#030712] transition-all text-[10px] font-bold uppercase tracking-wider">
+          <div className="h-[150px] lg:h-[220px] bg-[#18181b] border-t border-[#252526] relative flex flex-col shrink-0">
+            <button onClick={handleCopy} className="absolute top-3 right-4 z-10 flex items-center gap-2 px-3 py-1.5 rounded bg-[#27272a] border border-white/10 text-slate-300 hover:bg-cyan-500 hover:text-[#030712] transition-all text-[10px] font-bold uppercase tracking-wider shadow-md">
               {copied ? <><Icons.Check /> Copied</> : <><Icons.Copy /> Copy CSS</>}
             </button>
-            <div className="px-6 py-2 border-b border-[#333] bg-[#252526]">
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">CSS Output</span>
+            <div className="px-5 py-2 border-b border-[#252526] bg-[#1e1e1e]">
+              <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">CSS Output</span>
             </div>
-            <div className="p-6 overflow-y-auto custom-scroll flex-grow bg-[#1e1e1e]">
-              <pre className="text-xs font-mono text-cyan-200/80 leading-relaxed">
+            <div className="p-5 overflow-y-auto custom-scroll flex-grow bg-[#111111]">
+              <pre className="text-[10px] sm:text-xs font-mono text-cyan-200/80 leading-relaxed">
                 <code>{cssOutput}</code>
               </pre>
             </div>
           </div>
         </div>
 
-        {/* KOLOM 3: PROPERTIES PANEL (Kanan - Tampilan Menu Figma) */}
-        <div className="w-full lg:w-[280px] shrink-0 bg-[#252526] border-l border-[#333] flex flex-col z-20 flex-1 lg:flex-none">
+        {/* KOLOM 3: PROPERTIES PANEL (Kanan - Tampilan Panel Properties Figma) */}
+        <div className="w-full lg:w-[280px] shrink-0 bg-[#1e1e1e] border-l border-[#252526] flex flex-col z-20 h-auto lg:h-full">
           
-          {/* Element Target Settings (Sticky) */}
-          <div className="p-4 border-b border-[#333] bg-[#252526]">
-            <h2 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Element Settings</h2>
-            <div className="flex bg-[#1e1e1e] p-1 rounded border border-[#333] mb-3">
+          {/* Element Target Settings (Sticky Top) */}
+          <div className="p-4 border-b border-[#252526] bg-[#1e1e1e] shrink-0">
+            <h2 className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-3">Element Properties</h2>
+            <div className="flex bg-[#111111] p-1 rounded border border-[#333] mb-3">
               {['box', 'circle', 'pill', 'text'].map(s => (
-                <button key={s} onClick={() => setPreviewShape(s)} className={`flex-1 py-1 rounded-sm text-[9px] font-bold uppercase transition-all ${previewShape === s ? 'bg-[#3f3f46] text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'}`}>{s}</button>
+                <button key={s} onClick={() => setPreviewShape(s)} className={`flex-1 py-1 rounded-sm text-[9px] font-bold uppercase transition-all ${previewShape === s ? 'bg-[#27272a] text-white shadow-sm' : 'text-slate-500 hover:text-slate-300'}`}>{s}</button>
               ))}
             </div>
-            <div className="flex items-center bg-[#1e1e1e] border border-[#333] rounded px-2 py-1.5">
-               <span className="text-[9px] text-slate-500 w-10">TEXT</span>
+            <div className="flex items-center bg-[#111111] border border-[#333] rounded px-2 py-1.5 hover:border-[#444] transition-colors">
+               <span className="text-[9px] font-bold text-slate-500 w-10">TEXT</span>
                <input type="text" value={previewText} onChange={(e) => setPreviewText(e.target.value)} className="w-full bg-transparent text-[10px] text-white outline-none" />
             </div>
           </div>
 
           {/* Properties Scrollable Area */}
           <div className="p-4 overflow-y-auto custom-scroll flex-grow">
-            <h2 className="text-[10px] font-bold text-cyan-400 uppercase tracking-widest mb-4 border-b border-[#333] pb-2">{activeTab.replace('-', ' ')} Properties</h2>
+            <div className="flex items-center gap-2 mb-4 border-b border-[#252526] pb-2">
+              <span className="w-1.5 h-3 bg-cyan-500 rounded-full"></span>
+              <h2 className="text-[10px] font-bold text-white uppercase tracking-widest">{activeTab.replace('-', ' ')}</h2>
+            </div>
             
             {activeTab === 'layout' && (
-              <div className="animate-fade-in">
+              <div className="animate-fade-in space-y-1">
                 <FigmaSlider label="Width" min="50" max="500" value={layWidth} onChange={setLayWidth} />
                 <FigmaSlider label="Height" min="50" max="500" value={layHeight} onChange={setLayHeight} />
                 <FigmaSlider label="Padding" min="0" max="100" value={layPad} onChange={setLayPad} />
                 <FigmaColorPicker label="Fill Color" hexValue={layBg} onChange={setLayBg} />
-                <div className="mt-4 pt-4 border-t border-[#333]">
+                <div className="mt-4 pt-4 border-t border-[#252526]">
                   <label className="text-[10px] font-medium text-slate-400 block mb-2">Border Radius</label>
                   <FigmaSlider label="Radius" min="0" max="200" value={borRadius} onChange={setBorRadius} />
                 </div>
@@ -467,15 +431,15 @@ export default function CssStudioPage() {
             )}
 
             {activeTab === 'typography' && (
-              <div className="animate-fade-in">
-                <div className="p-2 mb-3 bg-cyan-900/20 border border-cyan-500/20 rounded text-[9px] text-cyan-300">Ubah Shape ke "TEXT" di atas.</div>
+              <div className="animate-fade-in space-y-1">
+                {previewShape !== 'text' && <div className="p-2 mb-3 bg-yellow-900/20 border border-yellow-500/20 rounded text-[9px] text-yellow-400 font-medium">Ubah Shape ke "TEXT" di panel atas agar properti tipografi terlihat jelas.</div>}
                 <FigmaSlider label="Font Size" min="12" max="120" value={typoSize} onChange={setTypoSize} />
                 <FigmaSlider label="Weight" min="100" max="900" step="100" value={typoWeight} onChange={setTypoWeight} />
                 <FigmaSlider label="Spacing" min="-10" max="30" step="0.5" value={typoLetter} onChange={setTypoLetter} />
                 
-                <div className="mt-4 pt-4 border-t border-[#333]">
+                <div className="mt-4 pt-4 border-t border-[#252526]">
                   <div className="flex items-center justify-between mb-3">
-                    <label className="text-[10px] font-medium text-slate-400">Enable Gradient</label>
+                    <label className="text-[10px] font-medium text-slate-400">Gradient Text</label>
                     <input type="checkbox" checked={gradTextEnabled} onChange={(e) => setGradTextEnabled(e.target.checked)} className="accent-cyan-500 cursor-pointer" />
                   </div>
                   {gradTextEnabled ? (
@@ -489,10 +453,10 @@ export default function CssStudioPage() {
                   )}
                 </div>
 
-                <div className="mt-4 pt-4 border-t border-[#333]">
+                <div className="mt-4 pt-4 border-t border-[#252526]">
                   <label className="text-[10px] font-medium text-slate-400 block mb-3">Drop Shadow</label>
-                  <FigmaSlider label="X" min="-30" max="30" value={typoShadowX} onChange={setTypoShadowX} />
-                  <FigmaSlider label="Y" min="-30" max="30" value={typoShadowY} onChange={setTypoShadowY} />
+                  <FigmaSlider label="X Offset" min="-30" max="30" value={typoShadowX} onChange={setTypoShadowX} />
+                  <FigmaSlider label="Y Offset" min="-30" max="30" value={typoShadowY} onChange={setTypoShadowY} />
                   <FigmaSlider label="Blur" min="0" max="50" value={typoShadowB} onChange={setTypoShadowB} />
                   <FigmaSlider label="Opacity" min="0" max="1" step="0.05" value={typoShadowO} onChange={setTypoShadowO} />
                   <FigmaColorPicker label="Color" hexValue={typoShadowC} onChange={setTypoShadowC} />
@@ -501,7 +465,7 @@ export default function CssStudioPage() {
             )}
 
             {activeTab === 'glass' && (
-              <div className="animate-fade-in">
+              <div className="animate-fade-in space-y-1">
                 <FigmaColorPicker label="Fill Color" hexValue={glassColor} onChange={setGlassColor} />
                 <FigmaSlider label="Opacity" min="0" max="1" step="0.05" value={glassOpacity} onChange={setGlassOpacity} />
                 <FigmaSlider label="Blur" min="0" max="50" value={glassBlur} onChange={setGlassBlur} />
@@ -510,7 +474,7 @@ export default function CssStudioPage() {
             )}
 
             {activeTab === 'glow' && (
-              <div className="animate-fade-in">
+              <div className="animate-fade-in space-y-1">
                 <FigmaColorPicker label="Glow Color" hexValue={glowColor} onChange={setGlowColor} />
                 <FigmaSlider label="Blur" min="0" max="100" value={glowBlur} onChange={setGlowBlur} />
                 <FigmaSlider label="Spread" min="-20" max="50" value={glowSpread} onChange={setGlowSpread} />
@@ -519,16 +483,16 @@ export default function CssStudioPage() {
             )}
 
             {activeTab === 'neumorphism' && (
-              <div className="animate-fade-in">
+              <div className="animate-fade-in space-y-1">
                 <FigmaColorPicker label="Surface Color" hexValue={neuBg} onChange={setNeuBg} />
                 <FigmaSlider label="Distance" min="2" max="30" value={neuDistance} onChange={setNeoDistance} />
                 <FigmaSlider label="Blur" min="0" max="60" value={neuBlur} onChange={setNeoBlur} />
                 <FigmaSlider label="Intensity" min="0.05" max="0.5" step="0.05" value={neuIntensity} onChange={setNeoIntensity} />
-                <div className="mt-4 pt-4 border-t border-[#333]">
+                <div className="mt-4 pt-4 border-t border-[#252526]">
                   <label className="text-[10px] font-medium text-slate-400 block mb-2">Lighting Shape</label>
-                  <div className="flex bg-[#1e1e1e] p-1 rounded border border-[#333]">
+                  <div className="flex bg-[#111111] p-1 rounded border border-[#333]">
                     {['flat', 'concave', 'convex'].map(shape => (
-                      <button key={shape} onClick={() => setNeoShape(shape)} className={`flex-1 py-1 rounded-sm text-[9px] font-bold uppercase transition-all ${neuShape === shape ? 'bg-[#3f3f46] text-white' : 'text-slate-400 hover:text-slate-200'}`}>{shape}</button>
+                      <button key={shape} onClick={() => setNeoShape(shape)} className={`flex-1 py-1 rounded-sm text-[9px] font-bold uppercase transition-all ${neuShape === shape ? 'bg-[#27272a] text-white shadow-sm' : 'text-slate-500 hover:text-slate-300'}`}>{shape}</button>
                     ))}
                   </div>
                 </div>
@@ -536,17 +500,18 @@ export default function CssStudioPage() {
             )}
 
             {activeTab === 'shadow' && (
-              <div className="animate-fade-in">
+              <div className="animate-fade-in space-y-1">
                 <FigmaSlider label="Layers" min="1" max="6" value={shadowLayers} onChange={setShadowLayers} />
                 <FigmaSlider label="Y Offset" min="-50" max="50" value={shadowY} onChange={setShadowY} />
                 <FigmaSlider label="Blur" min="0" max="100" value={shadowBlur} onChange={setShadowBlur} />
                 <FigmaSlider label="Spread" min="-20" max="20" value={shadowSpread} onChange={setShadowSpread} />
+                <FigmaSlider label="Opacity" min="0.05" max="1" step="0.05" value={shadowOpacity} onChange={setShadowOpacity} />
                 <FigmaColorPicker label="Color" hexValue={shadowColor} onChange={setShadowColor} />
               </div>
             )}
 
             {activeTab === 'filters' && (
-              <div className="animate-fade-in">
+              <div className="animate-fade-in space-y-1">
                 <FigmaSlider label="Blur" min="0" max="20" step="0.5" value={filterBlur} onChange={setFilterBlur} />
                 <FigmaSlider label="Brightness" min="0" max="200" value={filterBright} onChange={setFilterBright} />
                 <FigmaSlider label="Contrast" min="0" max="200" value={filterContrast} onChange={setFilterContrast} />
@@ -555,7 +520,7 @@ export default function CssStudioPage() {
             )}
 
             {activeTab === 'transform' && (
-              <div className="animate-fade-in">
+              <div className="animate-fade-in space-y-1">
                 <FigmaSlider label="Rotate X" min="-180" max="180" value={transRotX} onChange={setTransRotX} />
                 <FigmaSlider label="Rotate Y" min="-180" max="180" value={transRotY} onChange={setTransRotY} />
                 <FigmaSlider label="Scale" min="0.5" max="1.5" step="0.05" value={transScale} onChange={setTransScale} />
@@ -564,12 +529,12 @@ export default function CssStudioPage() {
             )}
 
             {activeTab === 'animation' && (
-              <div className="animate-fade-in">
+              <div className="animate-fade-in space-y-1">
                 <div className="mb-4">
                   <label className="text-[10px] font-medium text-slate-400 block mb-2">Keyframes</label>
                   <div className="flex flex-col gap-1.5">
                     {[{ id: 'float', name: 'Floating' }, { id: 'pulse', name: 'Pulse Glow' }, { id: 'spin', name: 'Spin Rotate' }].map(anim => (
-                      <button key={anim.id} onClick={() => setAnimType(anim.id)} className={`px-3 py-2 rounded text-[10px] font-bold text-left transition-all ${animType === anim.id ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/50' : 'bg-[#1e1e1e] text-slate-400 border border-[#333] hover:bg-[#2c2c2e]'}`}>
+                      <button key={anim.id} onClick={() => setAnimType(anim.id)} className={`px-3 py-2 rounded text-[10px] font-bold text-left transition-all ${animType === anim.id ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/50' : 'bg-[#111111] text-slate-400 border border-[#333] hover:bg-[#27272a] hover:text-slate-200'}`}>
                         {anim.name}
                       </button>
                     ))}
@@ -580,22 +545,6 @@ export default function CssStudioPage() {
             )}
             
           </div>
-          
-          {/* OUTPUT CSS MOBILE: Muncul di bawah Properties saat di HP */}
-          <div className="lg:hidden h-[250px] bg-[#1e1e1e] border-t border-[#333] relative flex flex-col shrink-0 mt-4">
-            <button onClick={handleCopy} className="absolute top-4 right-4 z-10 flex items-center gap-2 px-3 py-1.5 rounded bg-[#2d2d2d] border border-white/10 text-slate-300 hover:bg-cyan-500 hover:text-[#030712] transition-all text-[10px] font-bold uppercase tracking-wider">
-              {copied ? <><Icons.Check /> Copied</> : <><Icons.Copy /> Copy CSS</>}
-            </button>
-            <div className="px-4 py-2 border-b border-[#333] bg-[#252526]">
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">CSS Output</span>
-            </div>
-            <div className="p-4 overflow-y-auto custom-scroll flex-grow bg-[#1e1e1e]">
-              <pre className="text-[10px] sm:text-xs font-mono text-cyan-200/80 leading-relaxed">
-                <code>{cssOutput}</code>
-              </pre>
-            </div>
-          </div>
-
         </div>
 
       </div>
