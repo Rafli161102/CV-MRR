@@ -2,48 +2,52 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-
-// Import Komponen dari folder _components
-import { Icons } from './_components/shared';
-import { PluginLayout, PluginBorder, PluginTypography, PluginTextGradient, PluginGlassmorphism, PluginNeumorphism, PluginShadow, PluginGlow, PluginFilters, PluginTransform, PluginAnimation } from './_components/plugins';
+import { 
+  Icons, 
+  PluginLayout, PluginBorder, PluginTypography, PluginTextGradient, 
+  PluginBackgroundGradient, PluginGlassmorphism, PluginNeumorphism, 
+  PluginShadow, PluginGlow, PluginFilters, PluginTransform, 
+  PluginAnimation, PluginShapes, PluginTransitions
+} from './_components/plugins';
 
 // =========================================================================
-// THE MASTER REGISTRY (Sistem Plugin Pusat)
+// THE MASTER REGISTRY (Sistem Plugin Pusat V13)
 // =========================================================================
 const PLUGINS = [
+  { id: 'bg-gradient', title: 'Bg Gradient', icon: <Icons.Border />, component: PluginBackgroundGradient, cat: 'Colors' },
   { id: 'text-gradient', title: 'Txt Gradient', icon: <Icons.TextGrad />, component: PluginTextGradient, cat: 'Text' },
   { id: 'typography', title: 'Typography', icon: <Icons.Typography />, component: PluginTypography, cat: 'Text' },
   { id: 'layout', title: 'Box Layout', icon: <Icons.Layout />, component: PluginLayout, cat: 'Structure' },
   { id: 'border', title: 'Border', icon: <Icons.Border />, component: PluginBorder, cat: 'Structure' },
+  { id: 'shapes', title: 'CSS Shapes', icon: <Icons.Shapes />, component: PluginShapes, cat: 'Structure' },
   { id: 'glass', title: 'Glassmorphism', icon: <Icons.Glass />, component: PluginGlassmorphism, cat: 'Effects' },
   { id: 'neumorphism', title: 'Neumorph', icon: <Icons.Neumorphism />, component: PluginNeumorphism, cat: 'Effects' },
   { id: 'shadow', title: 'Shadow', icon: <Icons.Shadow />, component: PluginShadow, cat: 'Effects' },
   { id: 'glow', title: 'Neon Glow', icon: <Icons.Glow />, component: PluginGlow, cat: 'Effects' },
-  { id: 'filters', title: 'Image Filters', icon: <Icons.Filters />, component: PluginFilters, cat: 'Advanced' },
-  { id: 'transform', title: '3D Move', icon: <Icons.Cube3D />, component: PluginTransform, cat: 'Advanced' },
-  { id: 'animation', title: 'Animate', icon: <Icons.Animation />, component: PluginAnimation, cat: 'Advanced' }
+  { id: 'filters', title: 'Image Pro', icon: <Icons.Filters />, component: PluginFilters, cat: 'Advanced' },
+  { id: 'transform', title: '3D Studio', icon: <Icons.Cube3D />, component: PluginTransform, cat: 'Advanced' },
+  { id: 'animation', title: 'Keyframes', icon: <Icons.Animation />, component: PluginAnimation, cat: 'Advanced' },
+  { id: 'transitions', title: 'Transitions', icon: <Icons.Transitions />, component: PluginTransitions, cat: 'Advanced' }
 ];
 
 export default function CssStudioPage() {
-  const [activeId, setActiveId] = useState('text-gradient');
+  const [activeId, setActiveId] = useState('bg-gradient');
 
-  // FIX BUG SCROLL MACET: Memastikan aplikasi tidak bisa digulir keluar dari container utamanya.
   useEffect(() => {
     document.body.style.overflow = 'hidden';
     return () => { document.body.style.overflow = 'auto'; };
   }, []);
 
   return (
-    // FIX BUG NAV: Menambah padding-top (pt-20 / pt-24) menyesuaikan Navbar Global kamu, dan membatasi h-[100dvh]
-    <div className="h-[100dvh] w-full flex flex-col font-sans bg-[#111111] text-[#d4d4d4] overflow-hidden pt-[80px] sm:pt-[90px]">
+    <div className="h-[100dvh] w-full flex flex-col font-sans bg-[#0a0a0b] text-[#d4d4d4] overflow-hidden pt-[80px] sm:pt-[90px]">
       
-      {/* HEADER NAV (Studio Header) */}
-      <div className="h-14 px-4 sm:px-6 border-b border-[#333333] flex items-center justify-between bg-[#252526] z-50 shrink-0 shadow-sm relative">
+      {/* HEADER NAV */}
+      <div className="h-14 px-4 sm:px-6 border-b border-[#252526] flex items-center justify-between bg-[#111111] z-50 shrink-0 shadow-sm relative">
         <div className="flex items-center gap-4">
           <Link href="/toolkit" className="text-slate-400 hover:text-white transition-colors"><Icons.ArrowLeft /></Link>
           <div className="flex items-center gap-2">
             <span className="font-bold text-white tracking-tight text-sm sm:text-base">CSS Visual <span className="text-cyan-500">Studio</span></span>
-            <span className="px-1.5 py-0.5 bg-cyan-500/20 text-cyan-400 rounded text-[8px] font-bold uppercase tracking-widest hidden sm:block">V12 Enterprise Plugin Mode</span>
+            <span className="px-1.5 py-0.5 bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 rounded text-[8px] font-bold uppercase tracking-widest hidden sm:block">V13 Pro Edit</span>
           </div>
         </div>
       </div>
@@ -51,40 +55,40 @@ export default function CssStudioPage() {
       {/* MAIN WORKSPACE */}
       <div className="flex-1 flex flex-col lg:flex-row overflow-hidden relative z-40">
         
-        {/* KOLOM 1: TOOLBAR */}
-        <div className="w-full lg:w-[60px] xl:w-[220px] bg-[#18181b] border-b lg:border-b-0 lg:border-r border-[#252526] shrink-0 flex flex-row lg:flex-col lg:gap-1 overflow-x-auto lg:p-3 [&::-webkit-scrollbar]:hidden custom-scroll z-30">
-           {['Structure', 'Text', 'Effects', 'Advanced'].map(cat => (
-              <div key={cat} className="flex flex-row lg:flex-col gap-1 shrink-0">
-                 <div className="text-[8px] font-bold text-slate-500 uppercase tracking-widest mb-1 mt-3 px-2 hidden xl:block">{cat}</div>
+        {/* KOLOM 1: TOOLBAR NAVIGASI (Fix Proporsional UI) */}
+        <div className="w-full lg:w-[100px] xl:w-[240px] bg-[#111111] border-b lg:border-b-0 lg:border-r border-[#252526] shrink-0 flex flex-row lg:flex-col overflow-x-auto lg:overflow-y-auto [&::-webkit-scrollbar]:hidden custom-scroll z-30 shadow-md">
+           {['Colors', 'Text', 'Structure', 'Effects', 'Advanced'].map(cat => (
+              <div key={cat} className="flex flex-row lg:flex-col shrink-0 lg:w-full">
+                 <div className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-2 mt-4 px-4 hidden xl:block">{cat}</div>
                  {PLUGINS.filter(p => p.cat === cat).map(p => (
                     <button 
                       key={p.id} 
                       onClick={() => setActiveId(p.id)} 
-                      className={`flex items-center gap-3 w-auto xl:w-full p-3 lg:px-3 lg:py-2.5 rounded-none lg:rounded-lg transition-all duration-200 border-b-[3px] lg:border-b-0 lg:border-l-[3px] ${activeId === p.id ? 'bg-[#232326] border-cyan-500 text-cyan-400' : 'bg-transparent border-transparent text-white/80 hover:bg-[#18181b] hover:text-cyan-400'}`}
+                      // UI BARU: Flex column untuk HP (Icon di atas, Teks di bawah), Proporsional
+                      className={`flex flex-col xl:flex-row items-center xl:justify-start justify-center gap-1.5 xl:gap-3 min-w-[76px] xl:w-full p-2.5 xl:px-4 xl:py-3 transition-all duration-200 border-b-[3px] lg:border-b-0 lg:border-l-[3px] ${activeId === p.id ? 'bg-[#18181b] border-cyan-500 text-cyan-400' : 'bg-transparent border-transparent text-slate-400 hover:bg-[#18181b] hover:text-slate-200'}`}
                     >
-                      <div className="shrink-0">{p.icon}</div>
-                      <span className="text-[10px] font-semibold tracking-wide hidden xl:block whitespace-nowrap">{p.title}</span>
+                      <div className="shrink-0 w-5 h-5 flex items-center justify-center">{p.icon}</div>
+                      <span className="text-[8px] xl:text-[11px] font-semibold tracking-wide text-center xl:text-left leading-tight">{p.title}</span>
                     </button>
                  ))}
               </div>
            ))}
         </div>
 
-        {/* KOLOM 2 & 3: PLUGIN CONTENT AREA (Menjalankan Flexible WorkspaceLayout) */}
-        <div className="flex-1 overflow-hidden bg-[#111111] lg:p-6 p-0 flex flex-col relative z-10">
+        {/* KOLOM 2 & 3: PLUGIN CONTENT AREA */}
+        <div className="flex-1 overflow-hidden bg-[#0a0a0b] flex flex-col relative z-10">
            {PLUGINS.map(p => p.id === activeId && <p.component key={p.id} />)}
         </div>
 
       </div>
 
-      {/* Global CSS */}
       <style dangerouslySetInnerHTML={{__html: `
-        .animate-fade-in { animation: fadeIn 0.2s ease-out forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-        input[type="range"].custom-color-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 14px; height: 14px; background: white; border: 2px solid #111113; border-radius: 50%; box-shadow: 0 1px 3px rgba(0,0,0,0.16); cursor: pointer; }
-        .custom-scroll::-webkit-scrollbar { width: 4px; height: 4px; }
+        .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        input[type="range"].custom-color-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 14px; height: 14px; background: white; border: 2px solid #111113; border-radius: 50%; box-shadow: 0 1px 4px rgba(0,0,0,0.3); cursor: pointer; }
+        .custom-scroll::-webkit-scrollbar { width: 5px; height: 5px; }
         .custom-scroll::-webkit-scrollbar-track { background: transparent; }
-        .custom-scroll::-webkit-scrollbar-thumb { background: #333333; border-radius: 4px; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
         .custom-scroll::-webkit-scrollbar-thumb:hover { background: #0ea5e9; }
       `}} />
     </div>
