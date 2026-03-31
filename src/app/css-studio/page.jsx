@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { 
   Icons, 
@@ -12,7 +12,7 @@ import {
 } from './_components/plugins';
 
 // =========================================================================
-// THE MASTER REGISTRY (V16.1 Professional Registry)
+// THE MASTER REGISTRY (V17 Final - Terurut Rapi)
 // =========================================================================
 const PLUGINS = [
   // 1. STRUCTURE
@@ -45,28 +45,27 @@ export default function CssStudioPage() {
   const [activeId, setActiveId] = useState('layout');
 
   return (
-    // FIX LAYOUT BLANK: Membuang 'fixed inset-0'. 
-    // Menggunakan tinggi layar penuh dikurangi ruang untuk navbar global bawaan kamu (pt-[70px] / pt-[80px])
-    <div className="w-full h-[100dvh] flex flex-col font-sans bg-[#0a0a0b] text-[#d4d4d4] overflow-hidden pt-[60px] md:pt-[80px]">
+    // FIX LAYOUT BLANK: 
+    // Menggunakan fixed positioning agar duduk tepat di bawah Navbar global (top-[76px])
+    // Ini memastikan tidak ada konflik overflow dengan body utama Next.js
+    <div className="fixed top-[76px] md:top-[88px] left-0 right-0 bottom-0 z-[90] flex flex-col font-sans bg-[#0a0a0b] text-[#d4d4d4] overflow-hidden">
       
-      {/* SUB-HEADER STUDIO (Sebagai Toolbar Tambahan di bawah Navbar Global) */}
-      <div className="h-12 px-4 border-b border-[#252526] flex items-center justify-between bg-[#111111] z-30 shrink-0">
-        <div className="flex items-center gap-3">
+      {/* HEADER STUDIO ASLI (Dikembalikan ke versi awal sesuai permintaan) */}
+      <div className="h-14 px-4 sm:px-6 border-b border-[#252526] flex items-center justify-between bg-[#111111] z-50 shrink-0 shadow-sm relative">
+        <div className="flex items-center gap-4">
+          <Link href="/toolkit" className="text-slate-400 hover:text-white transition-colors"><Icons.ArrowLeft /></Link>
           <div className="flex items-center gap-2">
-            <Icons.Brush />
-            <span className="font-bold text-white tracking-tight text-sm">MRR Studio <span className="text-slate-500 font-normal">/</span> <span className="text-cyan-500">CSS Builder</span></span>
+            <span className="font-bold text-white tracking-tight text-sm sm:text-base">CSS Visual <span className="text-cyan-500">Studio</span></span>
+            <span className="px-1.5 py-0.5 bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 rounded text-[8px] font-bold uppercase tracking-widest hidden sm:block">V17 Ultimate Edit</span>
           </div>
-        </div>
-        <div className="hidden sm:flex items-center gap-3">
-          <span className="px-2 py-0.5 bg-[#18181b] border border-[#333] text-slate-400 rounded text-[9px] font-mono tracking-widest">V16.1 PRO</span>
         </div>
       </div>
 
       {/* MAIN WORKSPACE */}
-      <div className="flex-1 flex flex-col lg:flex-row overflow-hidden relative z-20">
+      <div className="flex-1 flex flex-col lg:flex-row overflow-hidden relative z-40">
         
-        {/* KOLOM 1: TOOLBAR NAVIGASI SIDEBAR */}
-        <div className="w-full lg:w-[100px] xl:w-[220px] bg-[#111111] border-b lg:border-b-0 lg:border-r border-[#252526] shrink-0 flex flex-row lg:flex-col overflow-x-auto lg:overflow-y-auto [&::-webkit-scrollbar]:hidden custom-scroll z-20 shadow-md">
+        {/* KOLOM 1: TOOLBAR NAVIGASI */}
+        <div className="w-full lg:w-[100px] xl:w-[220px] bg-[#111111] border-b lg:border-b-0 lg:border-r border-[#252526] shrink-0 flex flex-row lg:flex-col overflow-x-auto lg:overflow-y-auto [&::-webkit-scrollbar]:hidden custom-scroll z-30 shadow-md">
            {['Structure', 'Typography', 'Colors', 'Effects', 'Advanced'].map(cat => (
               <div key={cat} className="flex flex-row lg:flex-col shrink-0 lg:w-full border-r lg:border-r-0 lg:border-b border-[#252526] lg:pb-2 lg:mb-2 last:border-0">
                  <div className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-2 mt-4 px-4 hidden xl:block">{cat}</div>
