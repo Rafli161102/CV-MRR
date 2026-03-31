@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { 
   Icons, 
@@ -12,7 +12,7 @@ import {
 } from './_components/plugins';
 
 // =========================================================================
-// THE MASTER REGISTRY (V16 Professional Registry - Diurutkan)
+// THE MASTER REGISTRY (V16.1 Professional Registry)
 // =========================================================================
 const PLUGINS = [
   // 1. STRUCTURE
@@ -44,35 +44,29 @@ const PLUGINS = [
 export default function CssStudioPage() {
   const [activeId, setActiveId] = useState('layout');
 
-  useEffect(() => {
-    // Mencegah scroll pada body luar agar aplikasi terasa seperti software native
-    document.body.style.overflow = 'hidden';
-    return () => { document.body.style.overflow = 'auto'; };
-  }, []);
-
   return (
-    // FIX LAYOUT: Menggunakan 'fixed inset-0' dan 'pt-[70px]' agar presisi menempel di layar HP, tidak nabrak
-    <div className="fixed inset-0 z-40 flex flex-col font-sans bg-[#0a0a0b] text-[#d4d4d4] pt-[60px] sm:pt-[70px]">
+    // FIX LAYOUT BLANK: Membuang 'fixed inset-0'. 
+    // Menggunakan tinggi layar penuh dikurangi ruang untuk navbar global bawaan kamu (pt-[70px] / pt-[80px])
+    <div className="w-full h-[100dvh] flex flex-col font-sans bg-[#0a0a0b] text-[#d4d4d4] overflow-hidden pt-[60px] md:pt-[80px]">
       
-      {/* APP NAVBAR (Lebih clean dan profesional) */}
-      <div className="h-12 px-4 border-b border-[#252526] flex items-center justify-between bg-[#0a0a0b]/90 backdrop-blur-md z-50 shrink-0">
+      {/* SUB-HEADER STUDIO (Sebagai Toolbar Tambahan di bawah Navbar Global) */}
+      <div className="h-12 px-4 border-b border-[#252526] flex items-center justify-between bg-[#111111] z-30 shrink-0">
         <div className="flex items-center gap-3">
-          <Link href="/toolkit" className="text-slate-400 hover:text-white p-1.5 rounded hover:bg-[#252526] transition-colors"><Icons.ArrowLeft /></Link>
-          <div className="w-[1px] h-4 bg-[#333]"></div>
           <div className="flex items-center gap-2">
+            <Icons.Brush />
             <span className="font-bold text-white tracking-tight text-sm">MRR Studio <span className="text-slate-500 font-normal">/</span> <span className="text-cyan-500">CSS Builder</span></span>
           </div>
         </div>
         <div className="hidden sm:flex items-center gap-3">
-          <span className="px-2 py-0.5 bg-[#111111] border border-[#333] text-slate-400 rounded text-[9px] font-mono tracking-widest">V16.0 PRO</span>
+          <span className="px-2 py-0.5 bg-[#18181b] border border-[#333] text-slate-400 rounded text-[9px] font-mono tracking-widest">V16.1 PRO</span>
         </div>
       </div>
 
       {/* MAIN WORKSPACE */}
-      <div className="flex-1 flex flex-col lg:flex-row overflow-hidden relative z-40">
+      <div className="flex-1 flex flex-col lg:flex-row overflow-hidden relative z-20">
         
-        {/* KOLOM 1: TOOLBAR NAVIGASI (Kategori Diurutkan) */}
-        <div className="w-full lg:w-[100px] xl:w-[220px] bg-[#111111] border-b lg:border-b-0 lg:border-r border-[#252526] shrink-0 flex flex-row lg:flex-col overflow-x-auto lg:overflow-y-auto [&::-webkit-scrollbar]:hidden custom-scroll z-30 shadow-md">
+        {/* KOLOM 1: TOOLBAR NAVIGASI SIDEBAR */}
+        <div className="w-full lg:w-[100px] xl:w-[220px] bg-[#111111] border-b lg:border-b-0 lg:border-r border-[#252526] shrink-0 flex flex-row lg:flex-col overflow-x-auto lg:overflow-y-auto [&::-webkit-scrollbar]:hidden custom-scroll z-20 shadow-md">
            {['Structure', 'Typography', 'Colors', 'Effects', 'Advanced'].map(cat => (
               <div key={cat} className="flex flex-row lg:flex-col shrink-0 lg:w-full border-r lg:border-r-0 lg:border-b border-[#252526] lg:pb-2 lg:mb-2 last:border-0">
                  <div className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-2 mt-4 px-4 hidden xl:block">{cat}</div>
