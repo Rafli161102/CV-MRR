@@ -24,7 +24,7 @@ export const Icons = {
 };
 
 // =========================================================================
-// 2. COLOR ENGINE (Mencegah Error Vercel & Mengatur HSL Konversi)
+// 2. COLOR ENGINE & HELPERS
 // =========================================================================
 export const safeHex = (hex) => (typeof hex === 'string' && hex.startsWith('#') && (hex.length === 4 || hex.length === 7)) ? hex : '#000000';
 
@@ -65,14 +65,14 @@ export const hexToRgba = (hex, alpha) => `rgba(${hexToRgb(hex)}, ${alpha})`;
 export const COLOR_PRESETS = ['#ffffff', '#1e1e1e', '#0ea5e9', '#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981'];
 
 // =========================================================================
-// 3. UI COMPONENTS (Figma Style)
+// 3. UI COMPONENTS (Figma Style Workspace)
 // =========================================================================
 
 export const FigmaSlider = ({ label, min, max, step = 1, value, onChange, unit = "" }) => (
   <div className="flex items-center justify-between py-1.5 group">
     <label className="text-[10px] font-medium text-slate-400 w-1/3 group-hover:text-slate-200 transition-colors truncate pr-2">{label}</label>
     <div className="w-2/3 flex items-center gap-2">
-      <input type="range" min={min} max={max} step={step} value={value || 0} onChange={(e) => onChange(Number(e.target.value) || 0)} className="w-full h-[2px] bg-[#444] rounded-lg appearance-none cursor-pointer outline-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:rounded-full hover:[&::-webkit-slider-thumb]:scale-150 transition-all" />
+      <input type="range" min={min} max={max} step={step} value={value || 0} onChange={(e) => onChange(Number(e.target.value) || 0)} className="w-full h-[2px] bg-[#444] rounded-lg appearance-none cursor-pointer outline-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-2.5 [&::-webkit-slider-thumb]:h-2.5 [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:rounded-full hover:[&::-webkit-slider-thumb]:scale-150 transition-all" />
       <div className="bg-[#111111] px-1.5 py-0.5 rounded border border-[#252526] w-12 text-right shrink-0">
         <span className="text-[9px] font-mono text-cyan-400">{value}{unit}</span>
       </div>
@@ -80,6 +80,7 @@ export const FigmaSlider = ({ label, min, max, step = 1, value, onChange, unit =
   </div>
 );
 
+// FIX BUG KEPOTONG: Color Picker menggunakan Accordion Inline agar layarnya tidak tertutup.
 export const FigmaColorPicker = ({ label, hexValue, onChange }) => {
   const [isOpen, setIsOpen] = useState(false);
   const safeColor = safeHex(hexValue);
@@ -163,15 +164,14 @@ export const CodeOutput = ({ code }) => {
     setTimeout(() => setCopied(false), 2000);
   };
   return (
-    <div className="w-full h-full bg-[#111111] relative flex flex-col overflow-hidden">
+    <div className="w-full h-[220px] bg-[#1e1e1e] relative flex flex-col overflow-hidden">
        <button onClick={handleCopy} className="absolute top-3 right-4 z-10 flex items-center gap-2 px-3 py-1.5 rounded bg-[#252526] border border-[#333333] text-slate-300 hover:bg-cyan-500 hover:text-[#111] transition-all text-[9px] font-bold uppercase tracking-wider shadow-md">
          {copied ? <><Icons.Check /> COPIED</> : <><Icons.Copy /> COPY CSS</>}
        </button>
-       <div className="px-4 py-2 border-b border-[#252526] bg-[#18181b] shrink-0">
-         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">CSS Output Code</span>
+       <div className="px-4 py-2.5 border-b border-[#252526] bg-[#18181b] shrink-0">
+         <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">CSS Output Code</span>
        </div>
-       {/* FIX BUG: Padding Bottom ekstra di Mobile agar CSS Code tidak tertutup layar bawah */}
-       <div className="p-4 pb-20 lg:pb-4 overflow-y-auto flex-grow bg-[#111111] custom-scroll">
+       <div className="p-4 overflow-y-auto flex-grow bg-[#111111] custom-scroll">
           <pre className="text-[11px] font-mono text-cyan-300/80 leading-relaxed whitespace-pre-wrap break-words"><code>{code}</code></pre>
        </div>
     </div>
@@ -180,12 +180,11 @@ export const CodeOutput = ({ code }) => {
 
 export const WorkspaceLayout = ({ name, controls, preview, cssOutput, bgType = 'grid', bgHex }) => {
   return (
-    <div className="flex flex-col lg:flex-row gap-4 lg:gap-6 w-full h-full animate-fade-in bg-[#0a0a0b] lg:bg-transparent">
+    <div className="flex flex-col lg:flex-row w-full h-full animate-fade-in bg-[#0a0a0b] lg:bg-transparent">
        
        {/* MIDDLE: CANVAS & CSS CODE */}
        <div className="flex-1 flex flex-col min-w-0 lg:border-r border-[#252526]">
          
-         {/* CANVAS AREA (Sticky on Mobile) */}
          <div className="h-[35vh] shrink-0 lg:h-auto lg:flex-1 relative flex items-center justify-center overflow-hidden bg-[#0a0a0b] border-b lg:border-b-0 border-[#252526] z-30 sticky top-0 lg:static transition-colors duration-500" style={{backgroundColor: bgHex || 'transparent'}}>
             {bgType === 'grid' && <div className="absolute inset-0 opacity-[0.15] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '24px 24px'}}></div>}
             {bgType === 'image' && <div className="absolute inset-0 bg-cover bg-center opacity-60" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200')" }}></div>}
@@ -194,23 +193,21 @@ export const WorkspaceLayout = ({ name, controls, preview, cssOutput, bgType = '
             <div className="relative z-10 w-full h-full flex items-center justify-center p-4 overflow-hidden">{preview}</div>
          </div>
          
-         {/* CODE OUTPUT (Desktop Only) */}
-         <div className="hidden lg:block h-[220px] border-t border-[#252526] shrink-0">
+         <div className="hidden lg:block border-t border-[#252526] shrink-0">
             <CodeOutput code={cssOutput} />
          </div>
        </div>
 
-       {/* RIGHT: PROPERTIES */}
+       {/* RIGHT: PROPERTIES PANEL */}
        <div className="w-full lg:w-[320px] bg-[#18181b] flex flex-col shrink-0 z-20">
          <div className="px-4 py-3 border-b border-[#252526] bg-[#18181b] sticky top-0 z-20 shrink-0">
             <h2 className="text-[10px] font-bold text-cyan-400 uppercase tracking-widest">{name} Properties</h2>
          </div>
-         {/* Properties Scroll - FIX BUG: Huge padding bottom so dropdowns aren't cut off */}
-         <div className="p-4 overflow-y-auto custom-scroll flex-1 h-[40vh] lg:h-auto pb-48 lg:pb-10">
+         {/* FIX BUG SCROLL: Menambahkan pb-[180px] agar menu dropdown paling bawah bisa ditarik tanpa terpotong! */}
+         <div className="p-4 pb-[180px] lg:pb-10 overflow-y-auto custom-scroll flex-1 h-[45vh] lg:h-auto">
             {controls}
          </div>
-         {/* CODE OUTPUT (Mobile Only - ditempelkan di bagian bawah) */}
-         <div className="lg:hidden h-[250px] shrink-0 border-t border-[#252526] z-50 bg-[#111111]">
+         <div className="lg:hidden border-t border-[#252526] shrink-0 w-full bg-[#111111]">
             <CodeOutput code={cssOutput} />
          </div>
        </div>
