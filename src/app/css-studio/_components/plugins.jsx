@@ -251,7 +251,7 @@ export const PluginNeumorphism = () => {
 export const PluginShadow = () => {
    const [shape, setShape] = useState('box');
    const [layers, setLayers] = useState(4);
-   const [y, setY] = useState(12);
+   const [y, setOriginY] = useState(12);
    const [blur, setBlur] = useState(24);
    const [spread, setSpread] = useState(0);
    const [opacity, setOpacity] = useState(0.25);
@@ -279,7 +279,7 @@ export const PluginShadow = () => {
        <FigmaSelect label="Shape Builder" options={['box', 'circle', 'pill']} value={shape} onChange={setShape} />
        <div className="my-4 border-t border-[#252526] pt-4"></div>
        <FigmaSlider label="Smooth Layers" min={1} max={6} value={layers} onChange={setLayers} />
-       <FigmaSlider label="Y Offset" min={-50} max={50} value={y} onChange={setY} unit="px" />
+       <FigmaSlider label="Y Offset" min={-50} max={50} value={y} onChange={setOriginY} unit="px" />
        <FigmaSlider label="Blur Radius" min={0} max={100} value={blur} onChange={setBlur} unit="px" />
        <FigmaSlider label="Spread" min={-20} max={20} value={spread} onChange={setSpread} unit="px" />
        <FigmaSlider label="Opacity" min={0.05} max={1} step={0.05} value={opacity} onChange={setOpacity} />
@@ -330,11 +330,10 @@ export const PluginGlow = () => {
 // 9. IMAGE FILTERS PLUGIN (LIGHTROOM EDITION)
 // =========================================================================
 export const PluginFilters = () => {
-   // State untuk mengatur gambar kustom dari user
-   const [imgUrl, setImgUrl] = useState('https://images.unsplash.com/photo-1493246507139-91e8fad9978e?q=80&w=800&auto=format&fit=crop');
+   // Menggunakan default pemandangan yang serupa dengan screenshot
+   const [imgUrl, setImgUrl] = useState('https://images.unsplash.com/photo-1506744626753-140733692368?q=80&w=800&auto=format&fit=crop');
    
-   // State untuk kontrol filter
-   const [blurEnabled, setBlurEnabled] = useState(false);
+   // State kontrol filter sejajar seperti Lightroom
    const [blur, setBlur] = useState(0);
    const [brightness, setBrightness] = useState(100);
    const [contrast, setContrast] = useState(100);
@@ -343,7 +342,6 @@ export const PluginFilters = () => {
 
    // Filter resetter
    const handleReset = () => {
-      setBlurEnabled(false);
       setBlur(0);
       setBrightness(100);
       setContrast(100);
@@ -351,49 +349,51 @@ export const PluginFilters = () => {
       setSepia(0);
    };
 
-   // CSS Generator
-   const css = `.filter-image {\n  filter: ${blurEnabled ? `blur(${blur}px) ` : ''}brightness(${brightness}%) contrast(${contrast}%) grayscale(${grayscale}%) sepia(${sepia}%);\n  border-radius: 16px;\n}`;
+   // CSS Generator (mengaplikasikan semua efek ke dalam 1 property filter)
+   const css = `.filter-image {\n  filter: blur(${blur}px) brightness(${brightness}%) contrast(${contrast}%) grayscale(${grayscale}%) sepia(${sepia}%);\n  border-radius: 16px;\n  width: 100%;\n  height: auto;\n}`;
    
    // Preview
    const preview = (
-     <div className="w-[90%] max-w-[500px] aspect-video rounded-2xl overflow-hidden shadow-2xl relative border border-white/10">
+     <div className="w-[90%] max-w-[500px] aspect-[16/10] rounded-2xl overflow-hidden shadow-2xl relative border border-white/5">
        <img 
-          src={imgUrl || 'https://images.unsplash.com/photo-1493246507139-91e8fad9978e?q=80&w=800&auto=format&fit=crop'} 
+          src={imgUrl || 'https://images.unsplash.com/photo-1506744626753-140733692368?q=80&w=800&auto=format&fit=crop'} 
           alt="Filter preview" 
           className="w-full h-full object-cover transition-all duration-300" 
-          style={{ filter: `${blurEnabled ? `blur(${blur}px) ` : ''}brightness(${brightness}%) contrast(${contrast}%) grayscale(${grayscale}%) sepia(${sepia}%)` }} 
-          onError={(e) => e.target.src = 'https://images.unsplash.com/photo-1493246507139-91e8fad9978e?q=80&w=800'}
+          style={{ filter: `blur(${blur}px) brightness(${brightness}%) contrast(${contrast}%) grayscale(${grayscale}%) sepia(${sepia}%)` }} 
+          onError={(e) => e.target.src = 'https://images.unsplash.com/photo-1506744626753-140733692368?q=80&w=800'}
         />
-       <div className="absolute bottom-3 right-3 bg-black/60 backdrop-blur-md px-2 py-1 rounded text-[8px] text-white font-mono uppercase">IMAGE ELEMENT</div>
+       <div className="absolute bottom-3 right-3 bg-black/50 backdrop-blur-md px-3 py-1.5 rounded text-[9px] text-white/90 font-mono uppercase tracking-widest border border-white/10">IMAGE ELEMENT</div>
      </div>
    );
 
    // Lightroom-style Controls
    const controls = (
-     <>
-       <div className="flex items-center justify-between mb-4">
-          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Image Source</label>
-          <button onClick={handleReset} className="text-[9px] text-cyan-400 hover:text-cyan-300 px-2 py-1 bg-cyan-900/30 rounded border border-cyan-800/50">Reset Filters</button>
+     <div className="space-y-4">
+       {/* Kotak Info */}
+       <div className="bg-[#29292b] border border-[#3e3e42] text-slate-300 text-[11px] p-3 rounded font-medium">
+         Filter diterapkan ke elemen gambar utuh.
        </div>
-       <FigmaTextInput label="Custom Image URL" value={imgUrl} onChange={setImgUrl} />
        
-       <div className="my-4 border-t border-[#252526] pt-4"></div>
-       <div className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-3">Color Grading</div>
-       
-       <FigmaSlider label="Brightness" min={0} max={200} value={brightness} onChange={setBrightness} unit="%" />
-       <FigmaSlider label="Contrast" min={0} max={200} value={contrast} onChange={setContrast} unit="%" />
-       <FigmaSlider label="Grayscale" min={0} max={100} value={grayscale} onChange={setGrayscale} unit="%" />
-       <FigmaSlider label="Sepia" min={0} max={100} value={sepia} onChange={setSepia} unit="%" />
-       
-       <div className="mt-4 pt-4 border-t border-[#252526]">
-          <div className="flex items-center justify-between mb-3">
-             <label className="text-[10px] font-medium text-slate-400">Enable Blur</label>
-             <input type="checkbox" checked={blurEnabled} onChange={(e) => setBlurEnabled(e.target.checked)} className="accent-cyan-500 cursor-pointer" />
+       {/* Slider Section */}
+       <div className="space-y-2">
+         <FigmaSlider label="Blur" min={0} max={20} step={0.5} value={blur} onChange={setBlur} unit="px" />
+         <FigmaSlider label="Brightness" min={0} max={200} value={brightness} onChange={setBrightness} unit="%" />
+         <FigmaSlider label="Contrast" min={0} max={200} value={contrast} onChange={setContrast} unit="%" />
+         <FigmaSlider label="Grayscale" min={0} max={100} value={grayscale} onChange={setGrayscale} unit="%" />
+         <FigmaSlider label="Sepia" min={0} max={100} value={sepia} onChange={setSepia} unit="%" />
+       </div>
+
+       {/* Opsi Tambahan (Bawah) */}
+       <div className="mt-6 pt-4 border-t border-[#252526] flex flex-col gap-3">
+          <div className="flex items-center justify-between">
+             <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Image Source</label>
+             <button onClick={handleReset} className="text-[9px] text-cyan-400 hover:text-cyan-300 px-2 py-1 bg-cyan-900/20 rounded border border-cyan-800/50 transition-colors">Reset Filters</button>
           </div>
-          {blurEnabled && <FigmaSlider label="Blur Radius" min={0} max={20} step={0.5} value={blur} onChange={setBlur} unit="px" />}
+          <FigmaTextInput label="Custom Image URL" value={imgUrl} onChange={setImgUrl} />
        </div>
-     </>
+     </div>
    );
+
    return <WorkspaceLayout name="Image Filters" controls={controls} preview={preview} cssOutput={css} bgType="grid" />;
 };
 
@@ -498,7 +498,7 @@ export const PluginAnimation = () => {
    // Hanya render keyframes yang SEDANG aktif (Mencegah ratusan baris CSS menumpuk di Output)
    const css = `.animated-element {\n  animation: ${currentAnim.id} ${duration}s infinite ${currentAnim.timing};\n}\n\n/* Keyframes Khusus ${currentAnim.name} */\n${currentAnim.keyframes}`;
    
-constnsconstt preview = (
+   const preview = (
      <>
        {/* Inject Keyframes langsung ke DOM */}
        <style dangerouslySetInnerHTML={{__html: currentAnim.keyframes}} />
