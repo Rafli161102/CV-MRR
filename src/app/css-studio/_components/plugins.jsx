@@ -12,28 +12,59 @@ export const PluginLayout = () => {
   const [bgColor, setBgColor] = useState('#0ea5e9');
   const [align, setAlign] = useState('center');
 
-  const css = `.layout-box {\n  display: flex;\n  align-items: ${align};\n  justify-content: ${align};\n  width: ${shape === 'circle' ? '200' : shape === 'pill' ? '300' : width}px;\n  height: ${shape === 'circle' ? '200' : shape === 'pill' ? '100' : height}px;\n  padding: ${padding}px;\n  border-radius: ${shape === 'circle' ? '50%' : shape === 'pill' ? '50px' : `${radius}px`};\n  background-color: ${bgColor};\n}`;
+  const css = `.box-element {\n  display: flex;\n  align-items: ${align};\n  justify-content: ${align};\n  width: ${shape === 'circle' ? '200' : shape === 'pill' ? '300' : width}px;\n  height: ${shape === 'circle' ? '200' : shape === 'pill' ? '100' : height}px;\n  padding: ${padding}px;\n  border-radius: ${shape === 'circle' ? '50%' : shape === 'pill' ? '50px' : `${radius}px`};\n  background-color: ${bgColor};\n}`;
   const preview = (
-    <div style={{ display: 'flex', alignItems: align, justifyContent: align, width: `${shape === 'circle' ? 200 : shape === 'pill' ? 300 : width}px`, height: `${shape === 'circle' ? 200 : shape === 'pill' ? 100 : height}px`, padding: `${padding}px`, borderRadius: shape === 'circle' ? '50%' : shape === 'pill' ? '50px' : `${radius}px`, backgroundColor: bgColor }} className="transition-all duration-500 cubic-bezier(0.25, 1, 0.5, 1) shadow-xl max-w-full max-h-full">
-      <div className="bg-black/20 w-full h-full border border-black/10 rounded flex items-center justify-center overflow-hidden">
-        <span className="text-white/70 text-[10px] font-bold uppercase tracking-widest text-center truncate">Layout Area</span>
+    <div style={{ display: 'flex', alignItems: align, justifyContent: align, width: `${shape === 'circle' ? 200 : shape === 'pill' ? 300 : width}px`, height: `${shape === 'circle' ? 200 : shape === 'pill' ? 100 : height}px`, padding: `${padding}px`, borderRadius: shape === 'circle' ? '50%' : shape === 'pill' ? '50px' : `${radius}px`, backgroundColor: bgColor }} className="transition-all duration-300 shadow-xl max-w-full max-h-full">
+      <div className="bg-black/20 w-full h-full border border-black/10 rounded flex items-center justify-center">
+        <span className="text-white/70 text-[10px] font-bold uppercase tracking-widest text-center">Layout Area</span>
       </div>
     </div>
   );
   const controls = (
     <>
       <FigmaSelect label="Target Shape" options={['box', 'circle', 'pill']} value={shape} onChange={setShape} />
-      <div className="my-4 border-t border-[#252526] pt-4"></div>
+      <div className="my-4 border-t border-[#333] pt-4"></div>
       <FigmaSlider label="Width" min={50} max={500} value={width} onChange={setWidth} unit="px" />
       <FigmaSlider label="Height" min={50} max={500} value={height} onChange={setHeight} unit="px" />
       <FigmaSlider label="Padding" min={0} max={100} value={padding} onChange={setPadding} unit="px" />
       {shape === 'box' && <FigmaSlider label="Border Radius" min={0} max={200} value={radius} onChange={setRadius} unit="px" />}
-      <div className="my-4 border-t border-[#252526] pt-4"></div>
+      <div className="my-4 border-t border-[#333] pt-4"></div>
       <FigmaSelect label="Flex Align" options={['flex-start', 'center', 'flex-end']} value={align} onChange={setAlign} />
       <FigmaColorPicker label="Background Color" hexValue={bgColor} onChange={setBgColor} />
     </>
   );
   return <WorkspaceLayout name="Layout & Flex" controls={controls} preview={preview} cssOutput={css} bgType="grid" />;
+};
+
+export const PluginBorder = () => {
+  const [shape, setShape] = useState('box');
+  const [width, setWidth] = useState(4);
+  const [radius, setRadius] = useState(24);
+  const [style, setStyle] = useState('solid');
+  const [color, setColor] = useState('#0ea5e9');
+
+  const css = `.border-element {\n  border: ${width}px ${style} ${color};\n  border-radius: ${shape === 'circle' ? '50%' : shape === 'pill' ? '50px' : `${radius}px`};\n  background-color: transparent;\n}`;
+  const preview = (
+    <div style={{
+      width: shape === 'circle' ? '200px' : shape === 'pill' ? '300px' : '200px',
+      height: shape === 'circle' ? '200px' : shape === 'pill' ? '100px' : '200px',
+      border: `${width}px ${style} ${color}`,
+      borderRadius: shape === 'circle' ? '50%' : shape === 'pill' ? '50px' : `${radius}px`,
+    }} className="flex items-center justify-center transition-all duration-500">
+      <span className="text-slate-500 text-[10px] font-bold uppercase tracking-widest">Border Area</span>
+    </div>
+  );
+  const controls = (
+    <>
+      <FigmaSelect label="Target Shape" options={['box', 'circle', 'pill']} value={shape} onChange={setShape} />
+      <div className="my-4 border-t border-[#333] pt-4"></div>
+      <FigmaSlider label="Border Width" min={0} max={30} value={width} onChange={setWidth} unit="px" />
+      {shape === 'box' && <FigmaSlider label="Border Radius" min={0} max={200} value={radius} onChange={setRadius} unit="px" />}
+      <FigmaSelect label="Border Style" options={['solid', 'dashed', 'dotted']} value={style} onChange={setStyle} />
+      <FigmaColorPicker label="Border Color" hexValue={color} onChange={setColor} />
+    </>
+  );
+  return <WorkspaceLayout name="Border Styling" controls={controls} preview={preview} cssOutput={css} bgType="grid" />;
 };
 
 export const PluginTypography = () => {
@@ -49,22 +80,21 @@ export const PluginTypography = () => {
   const [shadowC, setShadowC] = useState('#0ea5e9');
   const [shadowO, setShadowO] = useState(0.5);
 
-  const css = `.typography {\n  font-size: ${size}px;\n  font-weight: ${weight};\n  letter-spacing: ${letter}px;\n  text-align: ${align};\n  color: ${color};\n  text-shadow: ${shadowX}px ${shadowY}px ${shadowB}px ${hexToRgba(shadowC, shadowO)};\n}`;
+  const css = `.text-element {\n  font-size: ${size}px;\n  font-weight: ${weight};\n  letter-spacing: ${letter}px;\n  text-align: ${align};\n  color: ${color};\n  text-shadow: ${shadowX}px ${shadowY}px ${shadowB}px ${hexToRgba(shadowC, shadowO)};\n}`;
   const preview = (
-    <div className="w-full px-4 overflow-hidden" style={{ textAlign: align }}>
-       <h2 style={{ display: 'inline-block', fontSize: `${size}px`, fontWeight: weight, letterSpacing: `${letter}px`, color: color, textShadow: `${shadowX}px ${shadowY}px ${shadowB}px ${hexToRgba(shadowC, shadowO)}`, transition: 'all 0.2s ease', lineHeight: 1.2 }}>{text}</h2>
+    <div className="w-full" style={{ textAlign: align }}>
+       <h2 style={{ display: 'inline-block', fontSize: `${size}px`, fontWeight: weight, letterSpacing: `${letter}px`, color: color, textShadow: `${shadowX}px ${shadowY}px ${shadowB}px ${hexToRgba(shadowC, shadowO)}`, transition: 'all 0.3s ease' }}>{text}</h2>
     </div>
   );
   const controls = (
     <>
       <FigmaTextInput label="Text Input" value={text} onChange={setText} />
-      <div className="my-4 border-t border-[#252526] pt-4"></div>
       <FigmaSlider label="Font Size" min={12} max={120} value={size} onChange={setSize} />
       <FigmaSlider label="Font Weight" min={100} max={900} step={100} value={weight} onChange={setWeight} />
       <FigmaSlider label="Letter Spacing" min={-10} max={30} step={0.5} value={letter} onChange={setLetter} />
       <FigmaSelect label="Text Align" options={['left', 'center', 'right']} value={align} onChange={setAlign} />
       <FigmaColorPicker label="Text Color" hexValue={color} onChange={setColor} />
-      <div className="mt-4 pt-4 border-t border-[#252526]">
+      <div className="mt-4 pt-4 border-t border-[#333]">
         <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Drop Shadow</h3>
         <FigmaSlider label="X Offset" min={-30} max={30} value={shadowX} onChange={setShadowX} />
         <FigmaSlider label="Y Offset" min={-30} max={30} value={shadowY} onChange={setShadowY} />
@@ -77,70 +107,46 @@ export const PluginTypography = () => {
   return <WorkspaceLayout name="Typography" controls={controls} preview={preview} cssOutput={css} />;
 };
 
+// FIX BUG KETIBAN KOTAK: Injecting explicit webkit clip rules
 export const PluginTextGradient = () => {
-  const [text, setText] = useState('CSS Gradient.');
+  const [text, setText] = useState('Gradient.');
   const [size, setSize] = useState(64);
   const [weight, setWeight] = useState(900);
   const [angle, setAngle] = useState(135);
   const [color1, setColor1] = useState('#0ea5e9');
   const [color2, setColor2] = useState('#8b5cf6');
 
-  // CSS Output diperbarui agar menggunakan background-image agar lebih stabil.
-  const css = `.gradient-text {\n  font-size: ${size}px;\n  font-weight: ${weight};\n  background-image: linear-gradient(${angle}deg, ${color1}, ${color2});\n  -webkit-background-clip: text;\n  color: transparent;\n  display: inline-block;\n}`;
-  
-  // FIX BUG GRADIENT: Menggunakan Tailwind class "bg-clip-text text-transparent inline-block" dan "backgroundImage" untuk rendering HP.
+  const css = `.gradient-text {\n  font-size: ${size}px;\n  font-weight: ${weight};\n  background: linear-gradient(${angle}deg, ${color1}, ${color2});\n  -webkit-background-clip: text;\n  -webkit-text-fill-color: transparent;\n  background-clip: text;\n  color: transparent;\n  display: inline-block;\n}`;
   const preview = (
      <div className="w-full text-center px-4 overflow-hidden flex items-center justify-center">
-       <h2 className="tracking-tighter transition-all duration-300 bg-clip-text text-transparent inline-block" 
+       <h2 className="tracking-tighter transition-all duration-300" 
            style={{ 
               fontSize: `${size}px`, 
               fontWeight: weight, 
-              backgroundImage: `linear-gradient(${angle}deg, ${color1}, ${color2})`, 
+              background: `linear-gradient(${angle}deg, ${color1}, ${color2})`, 
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+              color: 'transparent',
+              display: 'inline-block',
               lineHeight: 1.2 
            }}>
            {text}
        </h2>
      </div>
   );
-  
   const controls = (
      <>
        <FigmaTextInput label="Text Input" value={text} onChange={setText} />
        <FigmaSlider label="Font Size" min={24} max={150} value={size} onChange={setSize} unit="px" />
        <FigmaSlider label="Font Weight" min={100} max={900} step={100} value={weight} onChange={setWeight} />
-       <div className="my-4 border-t border-[#252526] pt-4"></div>
+       <div className="my-4 border-t border-[#333] pt-4"></div>
        <FigmaSlider label="Angle" min={0} max={360} value={angle} onChange={setAngle} unit="°" />
        <FigmaColorPicker label="Start Color" hexValue={color1} onChange={setColor1} />
        <FigmaColorPicker label="End Color" hexValue={color2} onChange={setColor2} />
      </>
   );
   return <WorkspaceLayout name="Text Gradient" controls={controls} preview={preview} cssOutput={css} bgType="dark" />;
-};
-
-export const PluginBorder = () => {
-  const [shape, setShape] = useState('box');
-  const [width, setWidth] = useState(4);
-  const [radius, setRadius] = useState(24);
-  const [style, setStyle] = useState('solid');
-  const [color, setColor] = useState('#0ea5e9');
-
-  const css = `.border-element {\n  border: ${width}px ${style} ${color};\n  border-radius: ${shape === 'circle' ? '50%' : shape === 'pill' ? '50px' : `${radius}px`};\n  background-color: transparent;\n}`;
-  const preview = (
-    <div style={{ width: shape === 'circle' ? '200px' : shape === 'pill' ? '300px' : '200px', height: shape === 'circle' ? '200px' : shape === 'pill' ? '100px' : '200px', border: `${width}px ${style} ${color}`, borderRadius: shape === 'circle' ? '50%' : shape === 'pill' ? '50px' : `${radius}px` }} className="flex items-center justify-center transition-all duration-500 overflow-hidden">
-      <span className="text-slate-500 text-[10px] font-bold uppercase tracking-widest">Border Area</span>
-    </div>
-  );
-  const controls = (
-    <>
-      <FigmaSelect label="Target Shape" options={['box', 'circle', 'pill']} value={shape} onChange={setShape} />
-      <div className="my-4 border-t border-[#252526] pt-4"></div>
-      <FigmaSlider label="Border Width" min={0} max={30} value={width} onChange={setWidth} unit="px" />
-      {shape === 'box' && <FigmaSlider label="Border Radius" min={0} max={200} value={radius} onChange={setRadius} unit="px" />}
-      <FigmaSelect label="Border Style" options={['solid', 'dashed', 'dotted']} value={style} onChange={setStyle} />
-      <FigmaColorPicker label="Border Color" hexValue={color} onChange={setColor} />
-    </>
-  );
-  return <WorkspaceLayout name="Border Styling" controls={controls} preview={preview} cssOutput={css} bgType="grid" />;
 };
 
 export const PluginGlassmorphism = () => {
@@ -168,7 +174,7 @@ export const PluginGlassmorphism = () => {
    const controls = (
      <>
         <FigmaSelect label="Target Shape" options={['box', 'circle', 'pill']} value={shape} onChange={setShape} />
-        <div className="my-4 border-t border-[#252526] pt-4"></div>
+        <div className="my-4 border-t border-[#333] pt-4"></div>
         <FigmaColorPicker label="Glass Tint Color" hexValue={color} onChange={setColor} />
         <FigmaSlider label="Opacity" min={0} max={1} step={0.05} value={opacity} onChange={setOpacity} />
         <FigmaSlider label="Blur Radius" min={0} max={50} value={blur} onChange={setBlur} unit="px" />
@@ -194,7 +200,13 @@ export const PluginNeumorphism = () => {
    const css = `.soft-ui {\n  background: ${neuType === 'flat' ? neuBg : bgGradient};\n  border-radius: ${shape === 'circle' ? '50%' : shape === 'pill' ? '50px' : '24px'};\n  box-shadow: ${darkShadow}, ${lightShadow};\n}`;
    
    const preview = (
-     <div style={{ width: shape === 'circle' ? '200px' : shape === 'pill' ? '300px' : '200px', height: shape === 'circle' ? '200px' : shape === 'pill' ? '100px' : '200px', borderRadius: shape === 'circle' ? '50%' : shape === 'pill' ? '50px' : '24px', background: bgGradient, boxShadow: `${darkShadow}, ${lightShadow}` }} className="flex items-center justify-center transition-all duration-500 max-w-[90%] max-h-[90%]">
+     <div style={{
+       width: shape === 'circle' ? '200px' : shape === 'pill' ? '300px' : '200px',
+       height: shape === 'circle' ? '200px' : shape === 'pill' ? '100px' : '200px',
+       borderRadius: shape === 'circle' ? '50%' : shape === 'pill' ? '50px' : '24px',
+       background: bgGradient,
+       boxShadow: `${darkShadow}, ${lightShadow}`
+     }} className="flex items-center justify-center transition-all duration-500 max-w-[90%] max-h-[90%]">
        <span className="text-slate-400 font-bold tracking-widest uppercase text-[10px]">Soft UI</span>
      </div>
    );
@@ -203,7 +215,7 @@ export const PluginNeumorphism = () => {
         <div className="p-2 mb-3 bg-[#3f3f46] border border-[#555] rounded text-[9px] text-slate-300 font-medium leading-relaxed">Penting: Warna Surface harus sama dengan warna latar belakang.</div>
         <FigmaSelect label="Target Shape" options={['box', 'circle', 'pill']} value={shape} onChange={setShape} />
         <FigmaSelect label="Light Direction" options={['flat', 'concave', 'convex']} value={neuType} onChange={setNeuType} />
-        <div className="my-4 border-t border-[#252526] pt-4"></div>
+        <div className="my-4 border-t border-[#333] pt-4"></div>
         <FigmaColorPicker label="Surface Color" hexValue={neuBg} onChange={setNeuBg} />
         <FigmaSlider label="Distance" min={2} max={30} step={0.5} value={distance} onChange={setDistance} unit="px" />
         <FigmaSlider label="Blur Radius" min={0} max={60} step={0.5} value={blur} onChange={setBlur} unit="px" />
@@ -235,8 +247,8 @@ export const PluginShadow = () => {
    );
    const controls = (
      <>
-       <FigmaSelect label="Target Shape" options={['box', 'circle', 'pill']} value={shape} onChange={setShape} />
-       <div className="my-4 border-t border-[#252526] pt-4"></div>
+       <FigmaSelect label="Shape Builder" options={['box', 'circle', 'pill']} value={shape} onChange={setShape} />
+       <div className="my-4 border-t border-[#333] pt-4"></div>
        <FigmaSlider label="Smooth Layers" min={1} max={6} value={layers} onChange={setLayers} />
        <FigmaSlider label="Y Offset" min={-50} max={50} value={y} onChange={setY} unit="px" />
        <FigmaSlider label="Blur Radius" min={0} max={100} value={blur} onChange={setBlur} unit="px" />
@@ -264,8 +276,8 @@ export const PluginGlow = () => {
    );
    const controls = (
      <>
-       <FigmaSelect label="Target Shape" options={['box', 'circle', 'pill']} value={shape} onChange={setShape} />
-       <div className="my-4 border-t border-[#252526] pt-4"></div>
+       <FigmaSelect label="Shape Builder" options={['box', 'circle', 'pill']} value={shape} onChange={setShape} />
+       <div className="my-4 border-t border-[#333] pt-4"></div>
        <FigmaColorPicker label="Glow Color" hexValue={color} onChange={setColor} />
        <FigmaSlider label="Blur Radius" min={0} max={100} value={blur} onChange={setBlur} unit="px" />
        <FigmaSlider label="Spread Radius" min={-20} max={50} value={spread} onChange={setSpread} unit="px" />
@@ -292,7 +304,7 @@ export const PluginFilters = () => {
    );
    const controls = (
      <>
-       <div className="p-2 mb-4 bg-[#3f3f46] border border-[#555] rounded text-[9px] text-slate-300 font-medium">Filter diterapkan ke gambar utuh.</div>
+       <div className="p-2 mb-4 bg-[#3f3f46] border border-[#555] rounded text-[9px] text-slate-300 font-medium">Filter diterapkan ke elemen gambar utuh.</div>
        <FigmaSlider label="Blur" min={0} max={20} step={0.5} value={blur} onChange={setBlur} unit="px" />
        <FigmaSlider label="Brightness" min={0} max={200} value={brightness} onChange={setBrightness} unit="%" />
        <FigmaSlider label="Contrast" min={0} max={200} value={contrast} onChange={setContrast} unit="%" />
@@ -345,7 +357,7 @@ export const PluginAnimation = () => {
    const controls = (
      <>
        <FigmaSelect label="Target Shape" options={['box', 'circle', 'pill']} value={shape} onChange={setShape} />
-       <div className="my-4 border-t border-[#252526] pt-4"></div>
+       <div className="my-4 border-t border-[#333] pt-4"></div>
        <div className="mb-4">
          <label className="text-[10px] font-medium text-slate-400 block mb-2">Animation Keyframes</label>
          <div className="flex flex-col gap-1.5">
