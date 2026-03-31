@@ -294,17 +294,13 @@ export const WorkspaceLayout = ({ name, controls, preview, cssOutput, bgType = '
 // 5. THE PLUGINS (V16 ULTIMATE - FIGMA LEVEL)
 // =========================================================================
 
-// --- 5.1 BACKGROUND GRADIENT (Responsif) ---
 export const PluginBackgroundGradient = () => {
   const [color1, setColor1] = useState('#0ea5e9');
   const [color2, setColor2] = useState('#8b5cf6');
   const [angle, setAngle] = useState(145);
 
   const css = `background: linear-gradient(${angle}deg, ${color1}, ${color2});\nborder-radius: 12px;`;
-  
-  // FIX BUG: Menambahkan 'w-full max-w-[300px] aspect-video' agar box tidak akan pernah nabrak layar di HP terkecil sekalipun
   const preview = <div style={{ background: `linear-gradient(${angle}deg, ${color1}, ${color2})`, borderRadius: '12px', boxShadow: '0 20px 40px rgba(0,0,0,0.4)' }} className="w-full max-w-[300px] aspect-[2/1]"></div>;
-  
   const controls = (
     <>
       <PluginTip text="Pilih warna awal dan akhir, lalu putar angle untuk mendapatkan arah gradasi yang kamu inginkan." />
@@ -316,7 +312,6 @@ export const PluginBackgroundGradient = () => {
   return <WorkspaceLayout name="Box Gradient" controls={controls} preview={preview} cssOutput={css} />;
 };
 
-// --- 5.2 TEXT GRADIENT (Bug Box Solid Diperbaiki Total) ---
 export const PluginTextGradient = () => {
   const [text, setText] = useState('');
   const [color1, setColor1] = useState('#ec4899');
@@ -337,7 +332,7 @@ export const PluginTextGradient = () => {
         fontWeight: '900', 
         textTransform: 'uppercase',
         letterSpacing: '2px',
-        display: 'inline-block' // Penting agar gradient terpotong benar di beberapa browser
+        display: 'inline-block'
       }}>
         {text || 'GRADIENT'}
       </span>
@@ -356,7 +351,6 @@ export const PluginTextGradient = () => {
   return <WorkspaceLayout name="Text Gradient" controls={controls} preview={preview} cssOutput={css} />;
 };
 
-// --- 5.3 TYPOGRAPHY PRO (Figma Style: Align, Transform, Placeholder) ---
 const FONTS_DATA = {
   "Sans Serif Popular": [
     { name: "Inter", val: "Inter" }, { name: "Roboto", val: "Roboto" }, { name: "Open Sans", val: "Open Sans" }, 
@@ -373,9 +367,8 @@ const FONTS_DATA = {
 };
 
 export const PluginTypography = () => {
-  const [tab, setTab] = useState('Heading'); // 'Heading', 'Subheading', 'Paragraph'
+  const [tab, setTab] = useState('Heading');
   
-  // State Heading
   const [h1Text, setH1Text] = useState('');
   const [h1Font, setH1Font] = useState('Montserrat');
   const [h1Size, setH1Size] = useState(42);
@@ -383,7 +376,6 @@ export const PluginTypography = () => {
   const [h1Align, setH1Align] = useState('center');
   const [h1Trans, setH1Trans] = useState('none');
   
-  // State Subheading
   const [h2Text, setH2Text] = useState('');
   const [h2Font, setH2Font] = useState('Inter');
   const [h2Size, setH2Size] = useState(20);
@@ -391,7 +383,6 @@ export const PluginTypography = () => {
   const [h2Align, setH2Align] = useState('center');
   const [h2Trans, setH2Trans] = useState('none');
 
-  // State Paragraph
   const [pText, setPText] = useState('');
   const [pFont, setPFont] = useState('Inter');
   const [pSize, setPSize] = useState(14);
@@ -399,7 +390,6 @@ export const PluginTypography = () => {
   const [pAlign, setPAlign] = useState('center');
   const [pTrans, setPTrans] = useState('none');
 
-  // Load Google Fonts Dynamic
   useEffect(() => {
     [h1Font, h2Font, pFont].forEach(f => {
       const linkId = `gfont-${f.replace(/\s+/g, '-')}`;
@@ -423,14 +413,12 @@ export const PluginTypography = () => {
     </div>
   );
 
-  // Reusable Typography Control Block
   const TextControls = ({ text, setText, font, setFont, color, setColor, size, setSize, align, setAlign, trans, setTrans, isPara = false }) => (
     <div className="animate-fade-in space-y-2">
       <FigmaTextInput label="Edit Text" value={text} onChange={setText} placeholder={isPara ? "Ketik paragraf panjang disini..." : "Ketik judul..."} isTextArea={isPara} />
       <FigmaCustomDropdown label="Font Family" groups={FONTS_DATA} value={font} onChange={setFont} />
       <FigmaColorPicker label="Text Color" hexValue={color} onChange={setColor} />
       <FigmaSlider label="Font Size" min={isPara ? 10 : 20} max={isPara ? 36 : 100} value={size} onChange={setSize} unit="px" />
-      
       <div className="grid grid-cols-2 gap-4">
         <FigmaSelect label="Alignment" options={['left', 'center', 'right', 'justify']} value={align} onChange={setAlign} />
         <FigmaSelect label="Transform" options={['none', 'uppercase', 'lowercase', 'capitalize']} value={trans} onChange={setTrans} />
@@ -446,7 +434,6 @@ export const PluginTypography = () => {
           <button key={t} onClick={() => setTab(t)} className={`flex-1 py-2 rounded-md text-[9px] font-bold uppercase transition-all ${tab === t ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30' : 'text-slate-500 hover:text-slate-300'}`}>{t}</button>
         ))}
       </div>
-
       {tab === 'Heading' && <TextControls text={h1Text} setText={setH1Text} font={h1Font} setFont={setH1Font} color={h1Color} setColor={setH1Color} size={h1Size} setSize={setH1Size} align={h1Align} setAlign={setH1Align} trans={h1Trans} setTrans={setH1Trans} />}
       {tab === 'Subheading' && <TextControls text={h2Text} setText={setH2Text} font={h2Font} setFont={setH2Font} color={h2Color} setColor={setH2Color} size={h2Size} setSize={setH2Size} align={h2Align} setAlign={setH2Align} trans={h2Trans} setTrans={setH2Trans} />}
       {tab === 'Paragraph' && <TextControls text={pText} setText={setPText} font={pFont} setFont={setPFont} color={pColor} setColor={setPColor} size={pSize} setSize={setPSize} align={pAlign} setAlign={setPAlign} trans={pTrans} setTrans={setPTrans} isPara={true} />}
@@ -857,13 +844,11 @@ export const PluginTransitions = () => {
   return <WorkspaceLayout name="Hover Transitions" controls={controls} preview={preview} cssOutput={css} bgType="dark" />;
 };
 
-// --- 5.9 CSS PIXEL ART BUILDER (Dengan Pilihan Ukuran Canvas) ---
 export const PluginPixelArt = () => {
   const [gridSize, setGridSize] = useState(8); // 8, 12, 16
   const [pixels, setPixels] = useState(Array(64).fill('transparent'));
   const [color, setColor] = useState('#0ea5e9');
   
-  // Update canvas ketika ukuran grid diubah
   useEffect(() => {
     setPixels(Array(gridSize * gridSize).fill('transparent'));
   }, [gridSize]);
@@ -876,7 +861,6 @@ export const PluginPixelArt = () => {
 
   const clearCanvas = () => setPixels(Array(gridSize * gridSize).fill('transparent'));
 
-  // Ukuran base pixel di CSS output bergantung pada resolusi (misal makin besar resolusi, pixel aslinya makin kecil di CSS)
   const pixelSizePx = gridSize === 8 ? 10 : gridSize === 12 ? 8 : 6;
 
   const generateBoxShadow = () => {
@@ -895,7 +879,6 @@ export const PluginPixelArt = () => {
 
   const preview = (
     <div className="flex flex-col items-center">
-      {/* Container menyesuaikan lebar yang konsisten, pixel size adaptif secara visual */}
       <div 
         className="w-[200px] h-[200px] sm:w-[240px] sm:h-[240px] grid border border-[#333] bg-[#111]"
         style={{ gridTemplateColumns: `repeat(${gridSize}, minmax(0, 1fr))` }}
