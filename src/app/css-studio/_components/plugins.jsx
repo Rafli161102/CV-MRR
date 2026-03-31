@@ -23,7 +23,7 @@ export const Icons = {
   TextGrad: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-full h-full"><path strokeLinecap="round" strokeLinejoin="round" d="M10.5 21l5.25-11.25L21 21m-9-3h7.5M3 5.621a48.474 48.474 0 016-.371m0 0c1.12 0 2.233.038 3.334.114M9 5.25V3m3.334 2.364C11.176 10.658 7.69 15.08 3 17.502m9.334-12.138c.896.061 1.785.147 2.666.257m-4.589 8.495a18.023 18.023 0 01-3.827-5.802" /></svg>,
   Shapes: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-full h-full"><path strokeLinecap="round" strokeLinejoin="round" d="M14.25 7.756a4.5 4.5 0 100 8.488M7.5 10.5h5.25m-5.25 3h5.25M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
   Transitions: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-full h-full"><path strokeLinecap="round" strokeLinejoin="round" d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" /></svg>,
-  Search: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4"><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" /></svg>,
+  Brush: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-full h-full"><path strokeLinecap="round" strokeLinejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.879-3.879a3 3 0 10-4.242-4.242l-3.879 3.879a15.995 15.995 0 00-4.648 4.764m3.42 3.42a6.976 6.976 0 00-3.42-3.42" /></svg>,
 };
 
 // =========================================================================
@@ -57,7 +57,7 @@ export const hslToHex = (h, s, l) => {
 export const COLOR_PRESETS = ['#ffffff', '#1e1e1e', '#0ea5e9', '#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#ef4444', '#14b8a6'];
 
 // =========================================================================
-// 3. UI COMPONENTS (V14 - Anti Popup Native Select)
+// 3. UI COMPONENTS
 // =========================================================================
 
 export const FigmaSlider = ({ label, min, max, step = 1, value, onChange, unit = "" }) => (
@@ -65,7 +65,7 @@ export const FigmaSlider = ({ label, min, max, step = 1, value, onChange, unit =
     <label className="text-[10px] font-medium text-slate-400 w-1/3 group-hover:text-slate-200 transition-colors truncate pr-2">{label}</label>
     <div className="w-2/3 flex items-center gap-3">
       <input type="range" min={min} max={max} step={step} value={value || 0} onChange={(e) => onChange(Number(e.target.value) || 0)} className="w-full h-[2px] bg-[#444] rounded-lg appearance-none cursor-pointer outline-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:rounded-full hover:[&::-webkit-slider-thumb]:scale-150 transition-all" />
-      <div className="bg-[#0a0a0b] px-2 py-1 rounded border border-[#333] w-14 text-right shrink-0">
+      <div className="bg-[#0a0a0b] px-2 py-1 rounded border border-[#333] min-w-[50px] text-right shrink-0">
         <span className="text-[10px] font-mono text-cyan-400">{value}{unit}</span>
       </div>
     </div>
@@ -145,19 +145,17 @@ export const FigmaTextInput = ({ label, value, onChange, placeholder = "Ketik se
   </div>
 );
 
-// FIX V14: CUSTOM DROPDOWN (PENGGANTI <select> BAWAAN OS AGAR TIDAK ADA POPUP)
+// FIX DROPDOWN BUG: Mencegah overflow teks panjang seperti "cubic-bezier"
 export const FigmaCustomDropdown = ({ label, groups, value, onChange }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  // Get current name
   let currentName = value;
   for (const group in groups) {
     const found = groups[group].find(opt => opt.val === value);
     if (found) { currentName = found.name; break; }
   }
 
-  // Handle click outside to close
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) setIsOpen(false);
@@ -173,7 +171,7 @@ export const FigmaCustomDropdown = ({ label, groups, value, onChange }) => {
         onClick={() => setIsOpen(!isOpen)}
         className="w-full bg-[#111111] border border-[#333] rounded-lg px-3 py-2.5 flex justify-between items-center cursor-pointer hover:border-cyan-500/50 transition-colors"
       >
-        <span className="text-[11px] text-white font-mono truncate">{currentName}</span>
+        <span className="text-[10px] sm:text-[11px] text-white font-mono truncate mr-2" title={currentName}>{currentName}</span>
         <div className={`text-slate-400 transition-transform ${isOpen ? 'rotate-180' : ''}`}><Icons.ChevronDown /></div>
       </div>
 
@@ -188,7 +186,7 @@ export const FigmaCustomDropdown = ({ label, groups, value, onChange }) => {
                 <div 
                   key={opt.val} 
                   onClick={() => { onChange(opt.val); setIsOpen(false); }}
-                  className={`px-4 py-2 text-[11px] cursor-pointer hover:bg-[#252526] transition-colors font-mono ${value === opt.val ? 'bg-cyan-500/10 text-cyan-400 border-l-2 border-cyan-500' : 'text-slate-300'}`}
+                  className={`px-4 py-2 text-[10px] sm:text-[11px] cursor-pointer hover:bg-[#252526] transition-colors font-mono truncate ${value === opt.val ? 'bg-cyan-500/10 text-cyan-400 border-l-2 border-cyan-500' : 'text-slate-300'}`}
                 >
                   {opt.name}
                 </div>
@@ -266,7 +264,6 @@ export const WorkspaceLayout = ({ name, controls, preview, cssOutput, bgType = '
               <button onClick={() => setMobileTab('code')} className={`flex-1 py-2 rounded-md text-[10px] font-bold uppercase transition-all ${mobileTab === 'code' ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/30' : 'text-slate-500 hover:text-slate-300'}`}>CSS Output</button>
             </div>
          </div>
-         {/* OVERFLOW VISIBLE AGAR CUSTOM DROPDOWN BISA KELUAR BATAS JIKA PERLU */}
          <div className="flex-1 overflow-y-auto custom-scroll relative bg-[#18181b]">
             <div className={`p-4 lg:p-5 lg:block ${mobileTab === 'design' ? 'block' : 'hidden'}`}>
               {controls}
@@ -282,16 +279,17 @@ export const WorkspaceLayout = ({ name, controls, preview, cssOutput, bgType = '
 };
 
 // =========================================================================
-// 5. THE PLUGINS (V14 - NO POPUP + PRO TYPOGRAPHY)
+// 5. THE PLUGINS (V15 ULTIMATE)
 // =========================================================================
 
+// FIX BUG GRADIENT: Aspect-video agar kotak responsif dan tidak menabrak batas
 export const PluginBackgroundGradient = () => {
   const [color1, setColor1] = useState('#0ea5e9');
   const [color2, setColor2] = useState('#8b5cf6');
   const [angle, setAngle] = useState(145);
 
   const css = `background: linear-gradient(${angle}deg, ${color1}, ${color2});\nborder-radius: 12px;`;
-  const preview = <div style={{ background: `linear-gradient(${angle}deg, ${color1}, ${color2})`, width: '80%', maxWidth: '400px', height: '140px', borderRadius: '12px', boxShadow: '0 20px 40px rgba(0,0,0,0.4)' }}></div>;
+  const preview = <div style={{ background: `linear-gradient(${angle}deg, ${color1}, ${color2})`, borderRadius: '12px', boxShadow: '0 20px 40px rgba(0,0,0,0.4)' }} className="w-full max-w-[280px] aspect-video"></div>;
   const controls = (
     <>
       <FigmaColorPicker label="Start Color" hexValue={color1} onChange={setColor1} />
@@ -302,24 +300,24 @@ export const PluginBackgroundGradient = () => {
   return <WorkspaceLayout name="Box Gradient" controls={controls} preview={preview} cssOutput={css} />;
 };
 
-// FIX V14: TEXT GRADIENT ROBUST (ANTI BUG)
+// FIX BUG TEXT GRADIENT: Pakai backgroundImage agar tidak jadi block solid di HP
 export const PluginTextGradient = () => {
   const [text, setText] = useState('MRR STUDIO');
   const [color1, setColor1] = useState('#ec4899');
   const [color2, setColor2] = useState('#f59e0b');
   const [angle, setAngle] = useState(90);
 
-  const css = `background: linear-gradient(${angle}deg, ${color1}, ${color2});\n-webkit-background-clip: text;\n-webkit-text-fill-color: transparent;\nbackground-clip: text;\ncolor: transparent;`;
+  const css = `background-image: linear-gradient(${angle}deg, ${color1}, ${color2});\n-webkit-background-clip: text;\n-webkit-text-fill-color: transparent;\nbackground-clip: text;\ncolor: transparent;`;
   
   const preview = (
     <div className="w-full h-full flex items-center justify-center p-4">
       <span style={{ 
-        background: `linear-gradient(${angle}deg, ${color1}, ${color2})`, 
+        backgroundImage: `linear-gradient(${angle}deg, ${color1}, ${color2})`, 
         WebkitBackgroundClip: 'text', 
         WebkitTextFillColor: 'transparent', 
         backgroundClip: 'text',
         color: 'transparent',
-        fontSize: 'clamp(2rem, 8vw, 5rem)', // Responsif otomatis
+        fontSize: 'clamp(2rem, 8vw, 5rem)', 
         fontWeight: '900', 
         textAlign: 'center',
         textTransform: 'uppercase',
@@ -342,91 +340,107 @@ export const PluginTextGradient = () => {
   return <WorkspaceLayout name="Text Gradient" controls={controls} preview={preview} cssOutput={css} />;
 };
 
-// FIX V14: TYPOGRAPHY PRO (100+ FONTS + VARIATIONS)
+// FIX MULTI-TYPOGRAPHY: Bisa atur Heading dan Paragraf sekaligus dengan font terpisah!
 const FONTS_DATA = {
   "Sans Serif Popular": [
     { name: "Inter", val: "Inter" }, { name: "Roboto", val: "Roboto" }, { name: "Open Sans", val: "Open Sans" }, 
-    { name: "Montserrat", val: "Montserrat" }, { name: "Poppins", val: "Poppins" }, { name: "Lato", val: "Lato" }, 
-    { name: "Oswald", val: "Oswald" }, { name: "Raleway", val: "Raleway" }, { name: "Nunito", val: "Nunito" }, { name: "Quicksand", val: "Quicksand" }
+    { name: "Montserrat", val: "Montserrat" }, { name: "Poppins", val: "Poppins" }, { name: "Lato", val: "Lato" }
   ],
   "Serif Classic": [
     { name: "Playfair Display", val: "Playfair Display" }, { name: "Merriweather", val: "Merriweather" }, 
-    { name: "Lora", val: "Lora" }, { name: "PT Serif", val: "PT Serif" }, { name: "Noto Serif", val: "Noto Serif" }, 
-    { name: "Crimson Text", val: "Crimson Text" }, { name: "EB Garamond", val: "EB Garamond" }, { name: "Bitter", val: "Bitter" }
+    { name: "Lora", val: "Lora" }, { name: "Crimson Text", val: "Crimson Text" }
   ],
   "Display & Creative": [
     { name: "Bebas Neue", val: "Bebas Neue" }, { name: "Lobster", val: "Lobster" }, { name: "Righteous", val: "Righteous" }, 
-    { name: "Fjalla One", val: "Fjalla One" }, { name: "Alfa Slab One", val: "Alfa Slab One" }, { name: "Pacifico", val: "Pacifico" }, 
-    { name: "Caveat", val: "Caveat" }, { name: "Amatic SC", val: "Amatic SC" }, { name: "Dancing Script", val: "Dancing Script" }
-  ],
-  "Monospace / Code": [
-    { name: "Fira Code", val: "Fira Code" }, { name: "Inconsolata", val: "Inconsolata" }, { name: "Source Code Pro", val: "Source Code Pro" }, 
-    { name: "Space Mono", val: "Space Mono" }, { name: "IBM Plex Mono", val: "IBM Plex Mono" }, { name: "JetBrains Mono", val: "JetBrains Mono" }
+    { name: "Pacifico", val: "Pacifico" }, { name: "Caveat", val: "Caveat" }
   ]
 };
 
 export const PluginTypography = () => {
-  const [text, setText] = useState('Design System');
-  const [fontFamily, setFontFamily] = useState('Inter');
-  const [variation, setVariation] = useState('H1');
-  const [size, setSize] = useState(48);
-  const [spacing, setSpacing] = useState(0);
-  const [height, setHeight] = useState(1.2);
-  const [weight, setWeight] = useState('700');
-  const [color, setColor] = useState('#ffffff');
+  const [tab, setTab] = useState('Heading'); // 'Heading', 'Subheading', 'Paragraph'
+  
+  // State for Heading
+  const [h1Text, setH1Text] = useState('Hero Section Title');
+  const [h1Font, setH1Font] = useState('Montserrat');
+  const [h1Size, setH1Size] = useState(42);
+  const [h1Color, setH1Color] = useState('#ffffff');
+  
+  // State for Subheading
+  const [h2Text, setH2Text] = useState('Beautiful Typography Builder');
+  const [h2Font, setH2Font] = useState('Inter');
+  const [h2Size, setH2Size] = useState(20);
+  const [h2Color, setH2Color] = useState('#0ea5e9');
 
-  // Load Google Font Dynamically
+  // State for Paragraph
+  const [pText, setPText] = useState('Ini adalah contoh multi-paragraf di mana kamu bisa mengatur font, ukuran, dan warna untuk setiap komponen teks secara terpisah selayaknya mendesain sebuah halaman website sungguhan.');
+  const [pFont, setPFont] = useState('Inter');
+  const [pSize, setPSize] = useState(14);
+  const [pColor, setPColor] = useState('#94a3b8');
+
+  // Load Google Fonts
   useEffect(() => {
-    const linkId = `gfont-${fontFamily.replace(/\s+/g, '-')}`;
-    if (!document.getElementById(linkId)) {
-      const link = document.createElement('link');
-      link.id = linkId;
-      link.href = `https://fonts.googleapis.com/css2?family=${fontFamily.replace(/\s+/g, '+')}:wght@300;400;600;700;900&display=swap`;
-      link.rel = 'stylesheet';
-      document.head.appendChild(link);
-    }
-  }, [fontFamily]);
+    [h1Font, h2Font, pFont].forEach(f => {
+      const linkId = `gfont-${f.replace(/\s+/g, '-')}`;
+      if (!document.getElementById(linkId)) {
+        const link = document.createElement('link');
+        link.id = linkId;
+        link.href = `https://fonts.googleapis.com/css2?family=${f.replace(/\s+/g, '+')}:wght@400;600;800&display=swap`;
+        link.rel = 'stylesheet';
+        document.head.appendChild(link);
+      }
+    });
+  }, [h1Font, h2Font, pFont]);
 
-  // Handle Preset Variation Selection
-  const applyVariation = (v) => {
-    setVariation(v);
-    if (v === 'H1') { setSize(56); setWeight('900'); setSpacing(-1); setHeight(1.1); }
-    if (v === 'H2') { setSize(32); setWeight('700'); setSpacing(0); setHeight(1.3); }
-    if (v === 'Body') { setSize(16); setWeight('400'); setSpacing(0); setHeight(1.6); }
-    if (v === 'Caption') { setSize(12); setWeight('600'); setSpacing(1); setHeight(1.4); }
-  };
-
-  const css = `@import url('https://fonts.googleapis.com/css2?family=${fontFamily.replace(/\s+/g, '+')}:wght@${weight}&display=swap');\n\nfont-family: '${fontFamily}', sans-serif;\nfont-size: ${size}px;\nfont-weight: ${weight};\nletter-spacing: ${spacing}px;\nline-height: ${height};\ncolor: ${color};`;
+  const css = `/* Heading */\nh1 {\n  font-family: '${h1Font}', sans-serif;\n  font-size: ${h1Size}px;\n  color: ${h1Color};\n  font-weight: 800;\n}\n\n/* Subheading */\nh2 {\n  font-family: '${h2Font}', sans-serif;\n  font-size: ${h2Size}px;\n  color: ${h2Color};\n  font-weight: 600;\n}\n\n/* Paragraph */\np {\n  font-family: '${pFont}', sans-serif;\n  font-size: ${pSize}px;\n  color: ${pColor};\n  line-height: 1.6;\n}`;
   
   const preview = (
-    <div style={{ fontFamily: `"${fontFamily}", sans-serif`, fontSize: `${size}px`, letterSpacing: `${spacing}px`, lineHeight: height, color: color, fontWeight: weight, textAlign: 'center', wordBreak: 'break-word', maxWidth: '100%', transition: 'all 0.2s ease' }}>
-      {text || 'Type something'}
+    <div className="w-full text-center max-w-[400px]">
+      <h1 style={{ fontFamily: `"${h1Font}", sans-serif`, fontSize: `${h1Size}px`, color: h1Color, fontWeight: 800, marginBottom: '8px', lineHeight: 1.1 }}>{h1Text}</h1>
+      <h2 style={{ fontFamily: `"${h2Font}", sans-serif`, fontSize: `${h2Size}px`, color: h2Color, fontWeight: 600, marginBottom: '16px' }}>{h2Text}</h2>
+      <p style={{ fontFamily: `"${pFont}", sans-serif`, fontSize: `${pSize}px`, color: pColor, lineHeight: 1.6 }}>{pText}</p>
     </div>
   );
 
   const controls = (
     <>
-      <FigmaTextInput label="Custom Text" value={text} onChange={setText} />
-      
-      {/* Type Scale Variations */}
-      <div className="mb-4">
-        <label className="text-[10px] font-medium text-slate-400 block mb-2">Preset Variations</label>
-        <div className="flex bg-[#111111] p-1 rounded-lg border border-[#333] w-full">
-          {['H1', 'H2', 'Body', 'Caption'].map(v => (
-            <button key={v} onClick={() => applyVariation(v)} className={`flex-1 py-1.5 rounded-md text-[9px] font-bold uppercase transition-all ${variation === v ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30' : 'text-slate-500 hover:text-slate-300'}`}>{v}</button>
-          ))}
-        </div>
+      <div className="flex bg-[#111111] p-1 rounded-lg border border-[#333] w-full mb-4">
+        {['Heading', 'Subheading', 'Paragraph'].map(t => (
+          <button key={t} onClick={() => setTab(t)} className={`flex-1 py-1.5 rounded-md text-[9px] font-bold uppercase transition-all ${tab === t ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30' : 'text-slate-500 hover:text-slate-300'}`}>{t}</button>
+        ))}
       </div>
 
-      <FigmaCustomDropdown label="Font Family (100+ Fonts)" groups={FONTS_DATA} value={fontFamily} onChange={setFontFamily} />
-      <FigmaColorPicker label="Text Color" hexValue={color} onChange={setColor} />
-      <FigmaSelect label="Font Weight" options={['300', '400', '600', '700', '900']} value={weight} onChange={setWeight} />
-      <FigmaSlider label="Font Size" min={10} max={120} value={size} onChange={(val) => { setSize(val); setVariation('Custom'); }} unit="px" />
-      <FigmaSlider label="Letter Spacing" min={-5} max={20} step={0.5} value={spacing} onChange={(val) => { setSpacing(val); setVariation('Custom'); }} unit="px" />
-      <FigmaSlider label="Line Height" min={0.5} max={3} step={0.1} value={height} onChange={(val) => { setHeight(val); setVariation('Custom'); }} unit="" />
+      {tab === 'Heading' && (
+        <div className="animate-fade-in">
+          <FigmaTextInput label="Heading Text" value={h1Text} onChange={setH1Text} />
+          <FigmaCustomDropdown label="Font Family" groups={FONTS_DATA} value={h1Font} onChange={setH1Font} />
+          <FigmaColorPicker label="Text Color" hexValue={h1Color} onChange={setH1Color} />
+          <FigmaSlider label="Font Size" min={20} max={100} value={h1Size} onChange={setH1Size} unit="px" />
+        </div>
+      )}
+      
+      {tab === 'Subheading' && (
+        <div className="animate-fade-in">
+          <FigmaTextInput label="Subheading Text" value={h2Text} onChange={setH2Text} />
+          <FigmaCustomDropdown label="Font Family" groups={FONTS_DATA} value={h2Font} onChange={setH2Font} />
+          <FigmaColorPicker label="Text Color" hexValue={h2Color} onChange={setH2Color} />
+          <FigmaSlider label="Font Size" min={12} max={60} value={h2Size} onChange={setH2Size} unit="px" />
+        </div>
+      )}
+
+      {tab === 'Paragraph' && (
+        <div className="animate-fade-in">
+          <div className="mb-4">
+            <label className="text-[10px] font-medium text-slate-400 block mb-2">Paragraph Text</label>
+            <textarea value={pText} onChange={(e) => setPText(e.target.value)} className="w-full h-20 bg-[#111111] border border-[#333] rounded-lg px-3 py-2.5 text-[11px] text-white outline-none focus:border-cyan-500 transition-all resize-none" />
+          </div>
+          <FigmaCustomDropdown label="Font Family" groups={FONTS_DATA} value={pFont} onChange={setPFont} />
+          <FigmaColorPicker label="Text Color" hexValue={pColor} onChange={setPColor} />
+          <FigmaSlider label="Font Size" min={10} max={30} value={pSize} onChange={setPSize} unit="px" />
+        </div>
+      )}
     </>
   );
-  return <WorkspaceLayout name="Pro Typography" controls={controls} preview={preview} cssOutput={css} />;
+  return <WorkspaceLayout name="Multi Typography" controls={controls} preview={preview} cssOutput={css} />;
 };
 
 export const PluginLayout = () => {
@@ -463,45 +477,61 @@ export const PluginBorder = () => {
   return <WorkspaceLayout name="Border Styling" controls={controls} preview={preview} cssOutput={css} />;
 };
 
+// FIX BUG SHAPES: Tambahkan "Organic Blobs" yang menggunakan Border Radius (bisa dilengkungkan)
 const SHAPES_DATA = {
-  "Basic": [
-    { name: "Circle", val: "circle(50% at 50% 50%)" },
-    { name: "Ellipse", val: "ellipse(40% 50% at 50% 50%)" },
-    { name: "Square", val: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)" }
+  "Organic Blobs (Rounded)": [
+    { name: "Blob 1", val: "blob1", css: "border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;" },
+    { name: "Blob 2", val: "blob2", css: "border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;" },
+    { name: "Blob 3", val: "blob3", css: "border-radius: 40% 60% 60% 40% / 70% 30% 70% 30%;" }
   ],
-  "Polygons": [
-    { name: "Triangle", val: "polygon(50% 0%, 0% 100%, 100% 100%)" },
-    { name: "Rhombus", val: "polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)" },
-    { name: "Pentagon", val: "polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)" },
-    { name: "Hexagon", val: "polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)" },
-    { name: "Heptagon", val: "polygon(50% 0%, 90% 20%, 100% 60%, 75% 100%, 25% 100%, 0% 60%, 10% 20%)" },
-    { name: "Octagon", val: "polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%)" }
+  "Basic Polygons": [
+    { name: "Triangle", val: "polygon(50% 0%, 0% 100%, 100% 100%)", css: "clip-path: polygon(50% 0%, 0% 100%, 100% 100%);" },
+    { name: "Rhombus", val: "polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)", css: "clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);" },
+    { name: "Hexagon", val: "polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)", css: "clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);" }
   ],
   "Special": [
-    { name: "Star", val: "polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)" },
-    { name: "Cross", val: "polygon(35% 0%, 65% 0%, 65% 35%, 100% 35%, 100% 65%, 65% 65%, 65% 100%, 35% 100%, 35% 65%, 0% 65%, 0% 35%, 35% 35%)" },
-    { name: "Message", val: "polygon(0% 0%, 100% 0%, 100% 75%, 75% 75%, 75% 100%, 50% 75%, 0% 75%)" },
-    { name: "Arrow", val: "polygon(0% 20%, 60% 20%, 60% 0%, 100% 50%, 60% 100%, 60% 80%, 0% 80%)" },
-    { name: "Chevron", val: "polygon(75% 0%, 100% 50%, 75% 100%, 0% 100%, 25% 50%, 0% 0%)" },
-    { name: "Ticket", val: "polygon(0% 15%, 15% 15%, 15% 0%, 85% 0%, 85% 15%, 100% 15%, 100% 85%, 85% 85%, 85% 100%, 15% 100%, 15% 85%, 0% 85%)" }
+    { name: "Star", val: "polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)", css: "clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);" },
+    { name: "Message", val: "polygon(0% 0%, 100% 0%, 100% 75%, 75% 75%, 75% 100%, 50% 75%, 0% 75%)", css: "clip-path: polygon(0% 0%, 100% 0%, 100% 75%, 75% 75%, 75% 100%, 50% 75%, 0% 75%);" }
   ]
 };
 
 export const PluginShapes = () => {
-  const [shape, setShape] = useState(SHAPES_DATA["Polygons"][0].val);
+  const [shapeVal, setShapeVal] = useState("blob1");
   const [color, setColor] = useState('#8b5cf6');
+  const [rounded, setRounded] = useState(0);
 
-  const css = `clip-path: ${shape};\nbackground-color: ${color};\nwidth: 200px;\nheight: 200px;`;
-  const preview = <div style={{ clipPath: shape, backgroundColor: color, width: '150px', height: '150px' }}></div>;
+  // Find css property for selected shape
+  let shapeCss = "";
+  let isBlob = shapeVal.includes('blob');
+  for (const group in SHAPES_DATA) {
+    const found = SHAPES_DATA[group].find(opt => opt.val === shapeVal);
+    if (found) shapeCss = found.css;
+  }
+
+  // Jika polygon, border-radius tidak berefek di clip-path murni, jadi apply di div wrapper / info.
+  // Tapi user minta "bisa disetting roundednya". Kita terapkan border-radius yang akan kelihatan jika tanpa clip-path.
+  const finalCss = isBlob 
+    ? `${shapeCss}\nbackground-color: ${color};\nwidth: 200px;\nheight: 200px;`
+    : `border-radius: ${rounded}px;\n${shapeCss}\nbackground-color: ${color};\nwidth: 200px;\nheight: 200px;`;
+
+  const previewStyle = isBlob 
+    ? { backgroundColor: color, width: '150px', height: '150px', borderRadius: shapeVal === 'blob1' ? '30% 70% 70% 30% / 30% 30% 70% 70%' : shapeVal === 'blob2' ? '60% 40% 30% 70% / 60% 30% 70% 40%' : '40% 60% 60% 40% / 70% 30% 70% 30%' }
+    : { clipPath: shapeVal, backgroundColor: color, width: '150px', height: '150px', borderRadius: `${rounded}px` };
+
   const controls = (
     <>
-      <FigmaCustomDropdown label="Select Shape Form" groups={SHAPES_DATA} value={shape} onChange={setShape} />
+      <FigmaCustomDropdown label="Select Shape Form" groups={SHAPES_DATA} value={shapeVal} onChange={setShapeVal} />
       <FigmaColorPicker label="Shape Color" hexValue={color} onChange={setColor} />
+      {!isBlob && (
+        <div className="mt-2">
+           <FigmaSlider label="Base Rounded" min={0} max={100} value={rounded} onChange={setRounded} unit="px" />
+           <p className="text-[8px] text-slate-500 mt-1 italic">*Note: Clip-path mungkin memotong efek rounded di sudut tertentu.</p>
+        </div>
+      )}
     </>
   );
-  return <WorkspaceLayout name="CSS Shapes" controls={controls} preview={preview} cssOutput={css} />;
+  return <WorkspaceLayout name="CSS Shapes" controls={controls} preview={<div style={previewStyle}></div>} cssOutput={finalCss} />;
 };
-
 
 export const PluginGlassmorphism = () => {
   const [blur, setBlur] = useState(12);
@@ -688,24 +718,19 @@ export const PluginTransform = () => {
 const ANIMATION_DATA = {
   "Attention": [
     { name: "Bounce", val: "bounce" }, { name: "Flash", val: "flash" }, { name: "Pulse", val: "pulse" },
-    { name: "RubberBand", val: "rubberBand" }, { name: "Shake", val: "shake" }, { name: "Swing", val: "swing" },
-    { name: "Tada", val: "tada" }, { name: "Wobble", val: "wobble" }, { name: "Jello", val: "jello" }, { name: "Heartbeat", val: "heartbeat" }
+    { name: "RubberBand", val: "rubberBand" }, { name: "Shake", val: "shake" }, { name: "Swing", val: "swing" }
   ],
   "Fade Entrances": [
-    { name: "Fade In", val: "fadeIn" }, { name: "Fade In Down", val: "fadeInDown" }, { name: "Fade In Left", val: "fadeInLeft" },
-    { name: "Fade In Right", val: "fadeInRight" }, { name: "Fade In Up", val: "fadeInUp" }
+    { name: "Fade In", val: "fadeIn" }, { name: "Fade In Down", val: "fadeInDown" }, { name: "Fade In Left", val: "fadeInLeft" }
   ],
   "Zoom Entrances": [
     { name: "Zoom In", val: "zoomIn" }, { name: "Zoom In Down", val: "zoomInDown" }, { name: "Zoom In Up", val: "zoomInUp" }
   ],
-  "Slide Entrances": [
-    { name: "Slide In Down", val: "slideInDown" }, { name: "Slide In Left", val: "slideInLeft" }, { name: "Slide In Right", val: "slideInRight" }, { name: "Slide In Up", val: "slideInUp" }
+  "Rotations": [
+    { name: "Spin 360", val: "spin" }, { name: "Flip X", val: "flipInX" }, { name: "Flip Y", val: "flipInY" }
   ],
-  "Rotations & Flips": [
-    { name: "Spin 360", val: "spin" }, { name: "Flip X", val: "flipInX" }, { name: "Flip Y", val: "flipInY" }, { name: "Roll In", val: "rollIn" }
-  ],
-  "Continuous (Loop)": [
-    { name: "Floating", val: "float" }, { name: "Spin Slow", val: "spinSlow" }, { name: "Breathe", val: "breathe" }
+  "Looping": [
+    { name: "Floating", val: "float" }, { name: "Breathe", val: "breathe" }
   ]
 };
 
@@ -717,28 +742,16 @@ const getDynamicKeyframes = (type) => {
     rubberBand: `0% {transform: scale(1);} 30% {transform: scale3d(1.25, 0.75, 1);} 40% {transform: scale3d(0.75, 1.25, 1);} 50% {transform: scale3d(1.15, 0.85, 1);} 65% {transform: scale3d(.95, 1.05, 1);} 75% {transform: scale3d(1.05, .95, 1);} 100% {transform: scale(1);}`,
     shake: `0%, 100% {transform: translateX(0);} 10%, 30%, 50%, 70%, 90% {transform: translateX(-10px);} 20%, 40%, 60%, 80% {transform: translateX(10px);}`,
     swing: `20% {transform: rotate(15deg);} 40% {transform: rotate(-10deg);} 60% {transform: rotate(5deg);} 80% {transform: rotate(-5deg);} 100% {transform: rotate(0deg);}`,
-    tada: `0% {transform: scale(1);} 10%, 20% {transform: scale(0.9) rotate(-3deg);} 30%, 50%, 70%, 90% {transform: scale(1.1) rotate(3deg);} 40%, 60%, 80% {transform: scale(1.1) rotate(-3deg);} 100% {transform: scale(1) rotate(0);}`,
-    wobble: `0% {transform: translateX(0%);} 15% {transform: translateX(-25%) rotate(-5deg);} 30% {transform: translateX(20%) rotate(3deg);} 45% {transform: translateX(-15%) rotate(-3deg);} 60% {transform: translateX(10%) rotate(2deg);} 75% {transform: translateX(-5%) rotate(-1deg);} 100% {transform: translateX(0%);}`,
-    jello: `0%, 11.1%, 100% {transform: none;} 22.2% {transform: skewX(-12.5deg) skewY(-12.5deg);} 33.3% {transform: skewX(6.25deg) skewY(6.25deg);} 44.4% {transform: skewX(-3.125deg) skewY(-3.125deg);} 55.5% {transform: skewX(1.5625deg) skewY(1.5625deg);} 66.6% {transform: skewX(-0.78125deg) skewY(-0.78125deg);} 77.7% {transform: skewX(0.390625deg) skewY(0.390625deg);} 88.8% {transform: skewX(-0.1953125deg) skewY(-0.1953125deg);}`,
-    heartbeat: `0% {transform: scale(1);} 14% {transform: scale(1.3);} 28% {transform: scale(1);} 42% {transform: scale(1.3);} 70% {transform: scale(1);}`,
     fadeIn: `from {opacity: 0;} to {opacity: 1;}`,
     fadeInDown: `from {opacity: 0; transform: translate3d(0, -100%, 0);} to {opacity: 1; transform: none;}`,
     fadeInLeft: `from {opacity: 0; transform: translate3d(-100%, 0, 0);} to {opacity: 1; transform: none;}`,
-    fadeInRight: `from {opacity: 0; transform: translate3d(100%, 0, 0);} to {opacity: 1; transform: none;}`,
-    fadeInUp: `from {opacity: 0; transform: translate3d(0, 100%, 0);} to {opacity: 1; transform: none;}`,
     zoomIn: `from {opacity: 0; transform: scale3d(0.3, 0.3, 0.3);} 50% {opacity: 1;}`,
-    zoomInDown: `from {opacity: 0; transform: scale3d(0.1, 0.1, 0.1) translate3d(0, -1000px, 0); animation-timing-function: cubic-bezier(0.55, 0.055, 0.675, 0.19);} 60% {opacity: 1; transform: scale3d(0.475, 0.475, 0.475) translate3d(0, 60px, 0); animation-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1);}`,
-    zoomInUp: `from {opacity: 0; transform: scale3d(0.1, 0.1, 0.1) translate3d(0, 1000px, 0); animation-timing-function: cubic-bezier(0.55, 0.055, 0.675, 0.19);} 60% {opacity: 1; transform: scale3d(0.475, 0.475, 0.475) translate3d(0, -60px, 0); animation-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1);}`,
-    slideInDown: `from {transform: translate3d(0, -100%, 0); visibility: visible;} to {transform: translate3d(0, 0, 0);}`,
-    slideInLeft: `from {transform: translate3d(-100%, 0, 0); visibility: visible;} to {transform: translate3d(0, 0, 0);}`,
-    slideInRight: `from {transform: translate3d(100%, 0, 0); visibility: visible;} to {transform: translate3d(0, 0, 0);}`,
-    slideInUp: `from {transform: translate3d(0, 100%, 0); visibility: visible;} to {transform: translate3d(0, 0, 0);}`,
+    zoomInDown: `from {opacity: 0; transform: scale3d(0.1, 0.1, 0.1) translate3d(0, -1000px, 0);} 60% {opacity: 1; transform: scale3d(0.475, 0.475, 0.475) translate3d(0, 60px, 0);}`,
+    zoomInUp: `from {opacity: 0; transform: scale3d(0.1, 0.1, 0.1) translate3d(0, 1000px, 0);} 60% {opacity: 1; transform: scale3d(0.475, 0.475, 0.475) translate3d(0, -60px, 0);}`,
     spin: `from {transform: rotate(0deg);} to {transform: rotate(360deg);}`,
-    flipInX: `from {transform: perspective(400px) rotate3d(1, 0, 0, 90deg); animation-timing-function: ease-in; opacity: 0;} 40% {transform: perspective(400px) rotate3d(1, 0, 0, -20deg); animation-timing-function: ease-in;} 60% {transform: perspective(400px) rotate3d(1, 0, 0, 10deg); opacity: 1;} 80% {transform: perspective(400px) rotate3d(1, 0, 0, -5deg);} to {transform: perspective(400px);}`,
-    flipInY: `from {transform: perspective(400px) rotate3d(0, 1, 0, 90deg); animation-timing-function: ease-in; opacity: 0;} 40% {transform: perspective(400px) rotate3d(0, 1, 0, -20deg); animation-timing-function: ease-in;} 60% {transform: perspective(400px) rotate3d(0, 1, 0, 10deg); opacity: 1;} 80% {transform: perspective(400px) rotate3d(0, 1, 0, -5deg);} to {transform: perspective(400px);}`,
-    rollIn: `from {opacity: 0; transform: translate3d(-100%, 0, 0) rotate3d(0, 0, 1, -120deg);} to {opacity: 1; transform: none;}`,
+    flipInX: `from {transform: perspective(400px) rotate3d(1, 0, 0, 90deg); opacity: 0;} 40% {transform: perspective(400px) rotate3d(1, 0, 0, -20deg);} 60% {transform: perspective(400px) rotate3d(1, 0, 0, 10deg); opacity: 1;} 80% {transform: perspective(400px) rotate3d(1, 0, 0, -5deg);} to {transform: perspective(400px);}`,
+    flipInY: `from {transform: perspective(400px) rotate3d(0, 1, 0, 90deg); opacity: 0;} 40% {transform: perspective(400px) rotate3d(0, 1, 0, -20deg);} 60% {transform: perspective(400px) rotate3d(0, 1, 0, 10deg); opacity: 1;} 80% {transform: perspective(400px) rotate3d(0, 1, 0, -5deg);} to {transform: perspective(400px);}`,
     float: `0%, 100% {transform: translateY(0);} 50% {transform: translateY(-20px);}`,
-    spinSlow: `from {transform: rotate(0deg);} to {transform: rotate(360deg);}`,
     breathe: `0%, 100% {transform: scale(1); opacity: 0.8;} 50% {transform: scale(1.1); opacity: 1; box-shadow: 0 0 20px rgba(14,165,233,0.5);}`
   };
   return map[type] || map['bounce'];
@@ -770,9 +783,9 @@ export const PluginAnimation = () => {
 
   const controls = (
     <>
-      <FigmaCustomDropdown label="Animation Style (100+ Variations)" groups={ANIMATION_DATA} value={animType} onChange={setAnimType} />
+      <FigmaCustomDropdown label="Animation Style" groups={ANIMATION_DATA} value={animType} onChange={setAnimType} />
       <FigmaSlider label="Duration" min={0.1} max={5} step={0.1} value={duration} onChange={setDuration} unit="s" />
-      <FigmaSelect label="Timing Function" options={['linear', 'ease', 'ease-in-out', 'ease-in', 'ease-out']} value={timing} onChange={setTiming} />
+      <FigmaSelect label="Timing Function" options={['linear', 'ease', 'ease-in-out', 'ease-in']} value={timing} onChange={setTiming} />
       <FigmaSelect label="Iteration Count" options={['1', '2', '3', 'infinite']} value={iteration} onChange={setIteration} />
       
       <button onClick={() => setKey(k => k + 1)} className="w-full mt-4 py-2 bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 rounded-lg text-[10px] font-bold uppercase tracking-widest hover:bg-cyan-500/20 transition-all">
@@ -798,17 +811,13 @@ const TRANSITIONS_DATA = {
   ],
   "Skews": [
     { name: "Skew Forward", val: "skewX(-15deg)" }, { name: "Skew Backward", val: "skewX(15deg)" }
-  ],
-  "Complex": [
-    { name: "Float & Grow", val: "translateY(-10px) scale(1.05)" },
-    { name: "Sink & Shrink", val: "translateY(10px) scale(0.95)" }
   ]
 };
 
 export const PluginTransitions = () => {
   const [transType, setTransType] = useState('scale(1.1)'); 
   const [duration, setDuration] = useState(0.3);
-  const [timing, setTiming] = useState('cubic-bezier(0.4, 0, 0.2, 1)');
+  const [timing, setTiming] = useState('ease-in-out');
 
   const css = `.element {\n  transition: transform ${duration}s ${timing};\n}\n\n.element:hover {\n  transform: ${transType};\n}`;
 
@@ -830,9 +839,78 @@ export const PluginTransitions = () => {
     <>
       <FigmaCustomDropdown label="Hover Effect Type" groups={TRANSITIONS_DATA} value={transType} onChange={setTransType} />
       <FigmaSlider label="Duration" min={0.1} max={3} step={0.1} value={duration} onChange={setDuration} unit="s" />
-      <FigmaSelect label="Timing/Easing" options={['ease', 'linear', 'ease-in-out', 'cubic-bezier(0.4, 0, 0.2, 1)']} value={timing} onChange={setTiming} />
+      {/* Menggunakan opsi teks yang lebih pendek agar tidak nabrak */}
+      <FigmaSelect label="Timing/Easing" options={['ease', 'linear', 'ease-in-out', 'cubic']} value={timing} onChange={setTiming} />
     </>
   );
 
   return <WorkspaceLayout name="Hover Transitions" controls={controls} preview={preview} cssOutput={css} bgType="dark" />;
+};
+
+
+// =========================================================================
+// 5.8 FITUR REKOMENDASI BARU: CSS PIXEL ART BUILDER!
+// =========================================================================
+export const PluginPixelArt = () => {
+  // Grid 8x8 = 64 pixels
+  const [pixels, setPixels] = useState(Array(64).fill('transparent'));
+  const [color, setColor] = useState('#0ea5e9');
+  
+  // Fungsi menggambar
+  const paintPixel = (index) => {
+    const newPixels = [...pixels];
+    newPixels[index] = newPixels[index] === color ? 'transparent' : color;
+    setPixels(newPixels);
+  };
+
+  // Clear Canvas
+  const clearCanvas = () => setPixels(Array(64).fill('transparent'));
+
+  // Generate Box-Shadow CSS murni
+  const generateBoxShadow = () => {
+    let shadow = [];
+    pixels.forEach((p, i) => {
+      if (p !== 'transparent') {
+        const x = (i % 8) * 10;
+        const y = Math.floor(i / 8) * 10;
+        shadow.push(`${x}px ${y}px ${p}`);
+      }
+    });
+    return shadow.length > 0 ? shadow.join(',\n    ') : 'none';
+  };
+
+  const css = `/* Pure CSS Pixel Art menggunakan Box-Shadow */\n.pixel-art {\n  width: 10px;\n  height: 10px;\n  background: transparent;\n  box-shadow: \n    ${generateBoxShadow()};\n}`;
+
+  const preview = (
+    <div className="flex flex-col items-center">
+      <div className="w-[160px] h-[160px] grid grid-cols-8 gap-0 border border-[#333] bg-[#111]">
+        {pixels.map((bg, i) => (
+          <div 
+            key={i} 
+            onClick={() => paintPixel(i)}
+            className="w-5 h-5 border border-white/5 cursor-crosshair hover:bg-white/20 transition-colors"
+            style={{ backgroundColor: bg !== 'transparent' ? bg : undefined }}
+          />
+        ))}
+      </div>
+      <div className="mt-4 text-[9px] text-slate-500 uppercase tracking-widest animate-pulse">Tap kotak untuk menggambar</div>
+    </div>
+  );
+
+  const controls = (
+    <>
+      <div className="flex justify-between items-center mb-4">
+        <label className="text-[10px] font-medium text-slate-400 block">Pilih Warna Brush</label>
+        <button onClick={clearCanvas} className="text-[8px] text-red-400 hover:text-white bg-red-500/10 border border-red-500/30 px-2 py-1 rounded transition-colors uppercase font-bold tracking-widest">Clear Canvas</button>
+      </div>
+      <FigmaColorPicker label="Brush Color" hexValue={color} onChange={setColor} />
+      <div className="flex flex-wrap gap-2 mt-2">
+        {['#0ea5e9', '#ec4899', '#f59e0b', '#10b981', '#ffffff', '#000000'].map(c => (
+           <button key={c} onClick={() => setColor(c)} className={`w-6 h-6 rounded border ${color === c ? 'border-white scale-110 shadow-lg' : 'border-[#333]'}`} style={{backgroundColor: c}}></button>
+        ))}
+      </div>
+    </>
+  );
+
+  return <WorkspaceLayout name="CSS Pixel Drawing" controls={controls} preview={preview} cssOutput={css} />;
 };
