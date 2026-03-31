@@ -65,7 +65,7 @@ export const hexToRgba = (hex, alpha) => `rgba(${hexToRgb(hex)}, ${alpha})`;
 export const COLOR_PRESETS = ['#ffffff', '#1e1e1e', '#0ea5e9', '#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981'];
 
 // =========================================================================
-// 3. UI COMPONENTS (Figma Style Workspace)
+// 3. UI COMPONENTS
 // =========================================================================
 
 export const FigmaSlider = ({ label, min, max, step = 1, value, onChange, unit = "" }) => (
@@ -73,23 +73,20 @@ export const FigmaSlider = ({ label, min, max, step = 1, value, onChange, unit =
     <label className="text-[10px] font-medium text-slate-400 w-1/3 group-hover:text-slate-200 transition-colors truncate pr-2">{label}</label>
     <div className="w-2/3 flex items-center gap-2">
       <input type="range" min={min} max={max} step={step} value={value || 0} onChange={(e) => onChange(Number(e.target.value) || 0)} className="w-full h-[2px] bg-[#444] rounded-lg appearance-none cursor-pointer outline-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-2.5 [&::-webkit-slider-thumb]:h-2.5 [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:rounded-full hover:[&::-webkit-slider-thumb]:scale-150 transition-all" />
-      <div className="bg-[#111111] px-1.5 py-0.5 rounded border border-[#252526] w-12 text-right shrink-0">
+      <div className="bg-[#111111] px-1.5 py-0.5 rounded border border-[#333] w-12 text-right shrink-0">
         <span className="text-[9px] font-mono text-cyan-400">{value}{unit}</span>
       </div>
     </div>
   </div>
 );
 
-// FIX BUG KEPOTONG: Color Picker menggunakan Accordion Inline agar layarnya tidak tertutup.
 export const FigmaColorPicker = ({ label, hexValue, onChange }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const safeColor = safeHex(hexValue);
-  const [hsl, setHsl] = useState(hexToHsl(safeColor));
-  
-  useEffect(() => { setHsl(hexToHsl(safeColor)); }, [safeColor]);
+  const [hsl, setHsl] = useState(hexToHsl(hexValue));
+  useEffect(() => { setHsl(hexToHsl(hexValue)); }, [hexValue]);
 
   const handleHslChange = (part, val) => {
-    const newHsl = { ...hsl, [part]: Number(val) || 0 };
+    const newHsl = { ...hsl, [part]: val };
     setHsl(newHsl);
     onChange(hslToHex(newHsl.h, newHsl.s, newHsl.l));
   };
@@ -99,37 +96,37 @@ export const FigmaColorPicker = ({ label, hexValue, onChange }) => {
       <div className="flex justify-between items-center mb-1.5">
         <label className="text-[10px] font-medium text-slate-400">{label}</label>
       </div>
-      <div className="bg-[#111111] border border-[#252526] rounded-lg overflow-hidden transition-all duration-300 shadow-sm">
+      <div className="bg-[#111111] border border-[#333] rounded-lg overflow-hidden transition-all duration-300 shadow-sm">
         <div className="flex items-center justify-between p-2 cursor-pointer hover:bg-[#1a1a1c] transition-colors" onClick={() => setIsOpen(!isOpen)}>
           <div className="flex items-center gap-2.5">
-            <div className="w-5 h-5 rounded shadow-inner border border-white/10" style={{backgroundColor: safeColor}}></div>
+            <div className="w-5 h-5 rounded shadow-inner border border-white/10" style={{backgroundColor: hexValue}}></div>
             <div className="flex flex-col">
                <span className="text-[10px] font-bold text-slate-300 uppercase leading-none">{label}</span>
-               <span className="text-[9px] font-mono text-slate-500 uppercase mt-0.5">{safeColor}</span>
+               <span className="text-[9px] font-mono text-slate-500 uppercase mt-0.5">{hexValue}</span>
             </div>
           </div>
-          <div className={`transform transition-transform duration-300 text-slate-500 ${isOpen ? 'rotate-180' : ''}`}>
+          <div className={`transform transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}>
              <Icons.ChevronDown />
           </div>
         </div>
-        <div className={`overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? 'max-h-[250px] border-t border-[#252526] p-3 opacity-100' : 'max-h-0 opacity-0'}`}>
+        <div className={`overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? 'max-h-[250px] border-t border-[#333] p-3 opacity-100' : 'max-h-0 opacity-0'}`}>
           <div className="space-y-3">
             <div>
               <div className="flex justify-between mb-1"><span className="text-[9px] text-slate-500">Hue</span></div>
-              <input type="range" min="0" max="360" value={hsl.h} onChange={(e) => handleHslChange('h', e.target.value)} className="w-full h-1.5 rounded-full appearance-none cursor-pointer custom-color-slider" style={{background: 'linear-gradient(to right, #f00 0%, #ff0 17%, #0f0 33%, #0ff 50%, #00f 67%, #f0f 83%, #f00 100%)'}} />
+              <input type="range" min="0" max="360" value={hsl.h} onChange={(e) => handleHslChange('h', Number(e.target.value))} className="w-full h-1.5 rounded-full appearance-none cursor-pointer custom-color-slider" style={{background: 'linear-gradient(to right, #f00 0%, #ff0 17%, #0f0 33%, #0ff 50%, #00f 67%, #f0f 83%, #f00 100%)'}} />
             </div>
             <div>
               <div className="flex justify-between mb-1"><span className="text-[9px] text-slate-500">Saturation</span></div>
-              <input type="range" min="0" max="100" value={hsl.s} onChange={(e) => handleHslChange('s', e.target.value)} className="w-full h-1.5 rounded-full appearance-none cursor-pointer custom-color-slider" style={{background: `linear-gradient(to right, #808080, ${hslToHex(hsl.h, 100, 50)})`}} />
+              <input type="range" min="0" max="100" value={hsl.s} onChange={(e) => handleHslChange('s', Number(e.target.value))} className="w-full h-1.5 rounded-full appearance-none cursor-pointer custom-color-slider" style={{background: `linear-gradient(to right, #808080, ${hslToHex(hsl.h, 100, 50)})`}} />
             </div>
             <div>
               <div className="flex justify-between mb-1"><span className="text-[9px] text-slate-500">Lightness</span></div>
-              <input type="range" min="0" max="100" value={hsl.l} onChange={(e) => handleHslChange('l', e.target.value)} className="w-full h-1.5 rounded-full appearance-none cursor-pointer custom-color-slider" style={{background: `linear-gradient(to right, #000, ${hslToHex(hsl.h, hsl.s, 50)}, #fff)`}} />
+              <input type="range" min="0" max="100" value={hsl.l} onChange={(e) => handleHslChange('l', Number(e.target.value))} className="w-full h-1.5 rounded-full appearance-none cursor-pointer custom-color-slider" style={{background: `linear-gradient(to right, #000, ${hslToHex(hsl.h, hsl.s, 50)}, #fff)`}} />
             </div>
           </div>
-          <div className="flex flex-wrap gap-1.5 mt-3 pt-3 border-t border-[#252526]">
+          <div className="flex flex-wrap gap-1.5 mt-3 pt-3 border-t border-[#333]">
             {COLOR_PRESETS.map((c) => (
-              <button key={c} onClick={() => onChange(c)} className={`w-4 h-4 rounded-full border transition-transform hover:scale-125 ${safeColor===c ? 'border-white scale-110 shadow-lg' : 'border-white/20'}`} style={{ backgroundColor: c }} />
+              <button key={c} onClick={() => onChange(c)} className={`w-4 h-4 rounded-full border transition-transform hover:scale-125 ${hexValue===c ? 'border-white scale-110 shadow-lg' : 'border-white/20'}`} style={{ backgroundColor: c }} />
             ))}
           </div>
         </div>
@@ -141,9 +138,9 @@ export const FigmaColorPicker = ({ label, hexValue, onChange }) => {
 export const FigmaSelect = ({ label, options, value, onChange }) => (
   <div className="mb-4">
      <label className="text-[10px] font-medium text-slate-400 block mb-2">{label}</label>
-     <div className="flex bg-[#111111] p-1 rounded border border-[#252526]">
+     <div className="flex bg-[#111111] p-1 rounded border border-[#333]">
         {options.map(opt => (
-           <button key={opt} onClick={() => onChange(opt)} className={`flex-1 py-1 rounded-sm text-[9px] font-bold uppercase transition-all ${value === opt ? 'bg-[#333333] text-white shadow-sm' : 'text-slate-500 hover:text-slate-300'}`}>{opt}</button>
+           <button key={opt} onClick={() => onChange(opt)} className={`flex-1 py-1 rounded-sm text-[9px] font-bold uppercase transition-all ${value === opt ? 'bg-[#3f3f46] text-white shadow-sm' : 'text-slate-500 hover:text-slate-300'}`}>{opt}</button>
         ))}
      </div>
   </div>
@@ -152,7 +149,7 @@ export const FigmaSelect = ({ label, options, value, onChange }) => (
 export const FigmaTextInput = ({ label, value, onChange }) => (
   <div className="mb-4">
      <label className="text-[10px] font-medium text-slate-400 block mb-2">{label}</label>
-     <input type="text" value={value} onChange={(e) => onChange(e.target.value)} className="w-full bg-[#111111] border border-[#252526] rounded px-3 py-2 text-[10px] text-white outline-none focus:border-cyan-500 transition-colors" />
+     <input type="text" value={value} onChange={(e) => onChange(e.target.value)} className="w-full bg-[#111111] border border-[#333] rounded px-3 py-2 text-[10px] text-white outline-none focus:border-cyan-500 transition-colors" />
   </div>
 );
 
@@ -164,11 +161,11 @@ export const CodeOutput = ({ code }) => {
     setTimeout(() => setCopied(false), 2000);
   };
   return (
-    <div className="w-full h-[220px] bg-[#1e1e1e] relative flex flex-col overflow-hidden">
-       <button onClick={handleCopy} className="absolute top-3 right-4 z-10 flex items-center gap-2 px-3 py-1.5 rounded bg-[#252526] border border-[#333333] text-slate-300 hover:bg-cyan-500 hover:text-[#111] transition-all text-[9px] font-bold uppercase tracking-wider shadow-md">
+    <div className="w-full h-[220px] lg:h-full bg-[#1e1e1e] relative flex flex-col overflow-hidden">
+       <button onClick={handleCopy} className="absolute top-3 right-4 z-10 flex items-center gap-2 px-3 py-1.5 rounded bg-[#252526] border border-[#444] text-slate-300 hover:bg-cyan-500 hover:text-[#111] transition-all text-[9px] font-bold uppercase tracking-wider shadow-md">
          {copied ? <><Icons.Check /> COPIED</> : <><Icons.Copy /> COPY CSS</>}
        </button>
-       <div className="px-4 py-2.5 border-b border-[#252526] bg-[#18181b] shrink-0">
+       <div className="px-4 py-2.5 border-b border-[#333] bg-[#252526] shrink-0">
          <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">CSS Output Code</span>
        </div>
        <div className="p-4 overflow-y-auto flex-grow bg-[#111111] custom-scroll">
@@ -178,14 +175,16 @@ export const CodeOutput = ({ code }) => {
   )
 };
 
+// FIX BUG KEPOTONG SCROLL: Container layout dibuat fleksibel di mobile.
 export const WorkspaceLayout = ({ name, controls, preview, cssOutput, bgType = 'grid', bgHex }) => {
   return (
-    <div className="flex flex-col lg:flex-row w-full h-full animate-fade-in bg-[#0a0a0b] lg:bg-transparent">
+    <div className="flex flex-col lg:flex-row w-full min-h-full lg:h-full animate-fade-in bg-[#0a0a0b] lg:bg-transparent pb-6 lg:pb-0">
        
        {/* MIDDLE: CANVAS & CSS CODE */}
        <div className="flex-1 flex flex-col min-w-0 lg:border-r border-[#252526]">
          
-         <div className="h-[35vh] shrink-0 lg:h-auto lg:flex-1 relative flex items-center justify-center overflow-hidden bg-[#0a0a0b] border-b lg:border-b-0 border-[#252526] z-30 sticky top-0 lg:static transition-colors duration-500" style={{backgroundColor: bgHex || 'transparent'}}>
+         {/* CANVAS AREA (Sticky on Mobile, menempel di bawah toolbar) */}
+         <div className="h-[280px] sm:h-[350px] shrink-0 lg:h-auto lg:flex-1 relative flex items-center justify-center overflow-hidden bg-[#0a0a0b] border-b lg:border-b-0 border-[#252526] z-30 sticky top-0 lg:static transition-colors duration-500 shadow-lg lg:shadow-inner" style={{backgroundColor: bgHex || 'transparent'}}>
             {bgType === 'grid' && <div className="absolute inset-0 opacity-[0.15] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '24px 24px'}}></div>}
             {bgType === 'image' && <div className="absolute inset-0 bg-cover bg-center opacity-60" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200')" }}></div>}
             {bgType === 'light' && <div className="absolute inset-0 bg-[#e5e7eb]"></div>}
@@ -193,21 +192,25 @@ export const WorkspaceLayout = ({ name, controls, preview, cssOutput, bgType = '
             <div className="relative z-10 w-full h-full flex items-center justify-center p-4 overflow-hidden">{preview}</div>
          </div>
          
-         <div className="hidden lg:block border-t border-[#252526] shrink-0">
+         {/* CODE OUTPUT (Desktop Only) */}
+         <div className="hidden lg:block h-[220px] border-t border-[#252526] shrink-0">
             <CodeOutput code={cssOutput} />
          </div>
        </div>
 
        {/* RIGHT: PROPERTIES PANEL */}
-       <div className="w-full lg:w-[320px] bg-[#18181b] flex flex-col shrink-0 z-20">
-         <div className="px-4 py-3 border-b border-[#252526] bg-[#18181b] sticky top-0 z-20 shrink-0">
+       <div className="w-full lg:w-[320px] bg-[#18181b] flex flex-col shrink-0 z-20 lg:h-full">
+         <div className="px-4 py-3 border-b border-[#252526] bg-[#18181b] lg:sticky lg:top-0 z-20 shrink-0">
             <h2 className="text-[10px] font-bold text-cyan-400 uppercase tracking-widest">{name} Properties</h2>
          </div>
-         {/* FIX BUG SCROLL: Menambahkan pb-[180px] agar menu dropdown paling bawah bisa ditarik tanpa terpotong! */}
-         <div className="p-4 pb-[180px] lg:pb-10 overflow-y-auto custom-scroll flex-1 h-[45vh] lg:h-auto">
+         
+         {/* Properties Content: Tidak ada tinggi statis di mobile agar bebas memanjang tanpa terpotong! */}
+         <div className="p-4 lg:overflow-y-auto lg:custom-scroll flex-1">
             {controls}
          </div>
-         <div className="lg:hidden border-t border-[#252526] shrink-0 w-full bg-[#111111]">
+         
+         {/* CODE OUTPUT (Mobile Only - diletakkan di paling bawah) */}
+         <div className="lg:hidden border-t border-[#252526] shrink-0 w-full bg-[#111111] mt-6">
             <CodeOutput code={cssOutput} />
          </div>
        </div>
