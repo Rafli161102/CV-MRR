@@ -129,8 +129,9 @@ export const PluginTextGradient = () => {
   const [color2, setColor2] = useState('#8b5cf6');
 
   const css = `.gradient-text {\n  font-size: ${size}px;\n  font-weight: ${weight};\n  background-image: linear-gradient(${angle}deg, ${color1}, ${color2});\n  -webkit-background-clip: text;\n  -webkit-text-fill-color: transparent;\n  background-clip: text;\n  color: transparent;\n  display: inline-block;\n}`;
+  
   const preview = (
-     <div className="w-full text-center px-4 overflow-hidden flex items-center justify-center">
+     <div className="w-full text-center px-4 flex items-center justify-center relative overflow-visible">
        <h2 className="tracking-tighter transition-all duration-300" 
            style={{ 
               display: 'inline-block',
@@ -147,6 +148,7 @@ export const PluginTextGradient = () => {
        </h2>
      </div>
   );
+  
   const controls = (
      <>
        <FigmaTextInput label="Text Input" value={text} onChange={setText} />
@@ -325,34 +327,74 @@ export const PluginGlow = () => {
 };
 
 // =========================================================================
-// 9. IMAGE FILTERS PLUGIN
+// 9. IMAGE FILTERS PLUGIN (LIGHTROOM EDITION)
 // =========================================================================
 export const PluginFilters = () => {
+   // State untuk mengatur gambar kustom dari user
+   const [imgUrl, setImgUrl] = useState('https://images.unsplash.com/photo-1493246507139-91e8fad9978e?q=80&w=800&auto=format&fit=crop');
+   
+   // State untuk kontrol filter
+   const [blurEnabled, setBlurEnabled] = useState(false);
    const [blur, setBlur] = useState(0);
    const [brightness, setBrightness] = useState(100);
    const [contrast, setContrast] = useState(100);
    const [grayscale, setGrayscale] = useState(0);
    const [sepia, setSepia] = useState(0);
 
-   const css = `.filter-image {\n  filter: blur(${blur}px) brightness(${brightness}%) contrast(${contrast}%) grayscale(${grayscale}%) sepia(${sepia}%);\n  border-radius: 16px;\n}`;
+   // Filter resetter
+   const handleReset = () => {
+      setBlurEnabled(false);
+      setBlur(0);
+      setBrightness(100);
+      setContrast(100);
+      setGrayscale(0);
+      setSepia(0);
+   };
+
+   // CSS Generator
+   const css = `.filter-image {\n  filter: ${blurEnabled ? `blur(${blur}px) ` : ''}brightness(${brightness}%) contrast(${contrast}%) grayscale(${grayscale}%) sepia(${sepia}%);\n  border-radius: 16px;\n}`;
    
+   // Preview
    const preview = (
-     <div className="w-[90%] max-w-[400px] aspect-video rounded-2xl overflow-hidden shadow-2xl relative">
-       <img src="https://images.unsplash.com/photo-1493246507139-91e8fad9978e?q=80&w=800&auto=format&fit=crop" alt="Filter preview" className="w-full h-full object-cover transition-all duration-300" style={{ filter: `blur(${blur}px) brightness(${brightness}%) contrast(${contrast}%) grayscale(${grayscale}%) sepia(${sepia}%)` }} />
-       <div className="absolute bottom-3 right-3 bg-black/50 backdrop-blur-md px-2 py-1 rounded text-[8px] text-white font-mono uppercase">Image Element</div>
+     <div className="w-[90%] max-w-[500px] aspect-video rounded-2xl overflow-hidden shadow-2xl relative border border-white/10">
+       <img 
+          src={imgUrl || 'https://images.unsplash.com/photo-1493246507139-91e8fad9978e?q=80&w=800&auto=format&fit=crop'} 
+          alt="Filter preview" 
+          className="w-full h-full object-cover transition-all duration-300" 
+          style={{ filter: `${blurEnabled ? `blur(${blur}px) ` : ''}brightness(${brightness}%) contrast(${contrast}%) grayscale(${grayscale}%) sepia(${sepia}%)` }} 
+          onError={(e) => e.target.src = 'https://images.unsplash.com/photo-1493246507139-91e8fad9978e?q=80&w=800'}
+        />
+       <div className="absolute bottom-3 right-3 bg-black/60 backdrop-blur-md px-2 py-1 rounded text-[8px] text-white font-mono uppercase">IMAGE ELEMENT</div>
      </div>
    );
+
+   // Lightroom-style Controls
    const controls = (
      <>
-       <div className="p-2 mb-4 bg-[#3f3f46] border border-[#555] rounded text-[9px] text-slate-300 font-medium">Filter diterapkan ke elemen gambar utuh.</div>
-       <FigmaSlider label="Blur" min={0} max={20} step={0.5} value={blur} onChange={setBlur} unit="px" />
+       <div className="flex items-center justify-between mb-4">
+          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Image Source</label>
+          <button onClick={handleReset} className="text-[9px] text-cyan-400 hover:text-cyan-300 px-2 py-1 bg-cyan-900/30 rounded border border-cyan-800/50">Reset Filters</button>
+       </div>
+       <FigmaTextInput label="Custom Image URL" value={imgUrl} onChange={setImgUrl} />
+       
+       <div className="my-4 border-t border-[#252526] pt-4"></div>
+       <div className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-3">Color Grading</div>
+       
        <FigmaSlider label="Brightness" min={0} max={200} value={brightness} onChange={setBrightness} unit="%" />
        <FigmaSlider label="Contrast" min={0} max={200} value={contrast} onChange={setContrast} unit="%" />
        <FigmaSlider label="Grayscale" min={0} max={100} value={grayscale} onChange={setGrayscale} unit="%" />
        <FigmaSlider label="Sepia" min={0} max={100} value={sepia} onChange={setSepia} unit="%" />
+       
+       <div className="mt-4 pt-4 border-t border-[#252526]">
+          <div className="flex items-center justify-between mb-3">
+             <label className="text-[10px] font-medium text-slate-400">Enable Blur</label>
+             <input type="checkbox" checked={blurEnabled} onChange={(e) => setBlurEnabled(e.target.checked)} className="accent-cyan-500 cursor-pointer" />
+          </div>
+          {blurEnabled && <FigmaSlider label="Blur Radius" min={0} max={20} step={0.5} value={blur} onChange={setBlur} unit="px" />}
+       </div>
      </>
    );
-   return <WorkspaceLayout name="CSS Filters" controls={controls} preview={preview} cssOutput={css} bgType="grid" />;
+   return <WorkspaceLayout name="Image Filters" controls={controls} preview={preview} cssOutput={css} bgType="grid" />;
 };
 
 // =========================================================================
@@ -383,9 +425,8 @@ export const PluginTransform = () => {
 };
 
 // =========================================================================
-// 11. CSS ANIMATION PLUGIN (45+ ANIMATIONS LIBRARY)
+// 11. CSS ANIMATION PLUGIN
 // =========================================================================
-
 // Database 45 Animasi CSS Lengkap yang Dikategorikan
 const ANIMATION_LIST = [
   // 1. BASE
@@ -457,7 +498,7 @@ export const PluginAnimation = () => {
    // Hanya render keyframes yang SEDANG aktif (Mencegah ratusan baris CSS menumpuk di Output)
    const css = `.animated-element {\n  animation: ${currentAnim.id} ${duration}s infinite ${currentAnim.timing};\n}\n\n/* Keyframes Khusus ${currentAnim.name} */\n${currentAnim.keyframes}`;
    
-   const preview = (
+constnsconstt preview = (
      <>
        {/* Inject Keyframes langsung ke DOM */}
        <style dangerouslySetInnerHTML={{__html: currentAnim.keyframes}} />
