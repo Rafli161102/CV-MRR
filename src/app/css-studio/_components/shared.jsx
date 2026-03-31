@@ -9,7 +9,7 @@ export const Icons = {
   ArrowLeft: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4"><path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" /></svg>,
   Copy: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4"><path strokeLinecap="round" strokeLinejoin="round" d="M15.666 3.888A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 01-.75.75H9a.75.75 0 01-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184" /></svg>,
   Check: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 text-emerald-400"><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>,
-  ChevronDown: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-3 h-3"><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>,
+  ChevronDown: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-3.5 h-3.5"><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>,
   Layout: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M9 4.5v15m6-15v15m-10.5-6h15m-15-6h15m-3-4.5H5.25C4.007 3 3 4.007 3 5.25v13.5c0 1.243 1.007 2.25 2.25 2.25h13.5c1.243 0 2.25-2.25V5.25c0-1.243-1.007-2.25-2.25-2.25z" /></svg>,
   Typography: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0l-3.75-3.75M17.25 21L21 17.25" /></svg>,
   Border: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" /></svg>,
@@ -24,7 +24,7 @@ export const Icons = {
 };
 
 // =========================================================================
-// 2. COLOR ENGINE (Helper HSL Anti Bug Vercel)
+// 2. COLOR ENGINE (Mencegah Error Vercel & Mengatur HSL Konversi)
 // =========================================================================
 export const safeHex = (hex) => (typeof hex === 'string' && hex.startsWith('#') && (hex.length === 4 || hex.length === 7)) ? hex : '#000000';
 
@@ -72,7 +72,7 @@ export const FigmaSlider = ({ label, min, max, step = 1, value, onChange, unit =
   <div className="flex items-center justify-between py-1.5 group">
     <label className="text-[10px] font-medium text-slate-400 w-1/3 group-hover:text-slate-200 transition-colors truncate pr-2">{label}</label>
     <div className="w-2/3 flex items-center gap-2">
-      <input type="range" min={min} max={max} step={step} value={value || 0} onChange={(e) => onChange(Number(e.target.value) || 0)} className="w-full h-[2px] bg-[#333333] rounded-lg appearance-none cursor-pointer outline-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:rounded-full hover:[&::-webkit-slider-thumb]:scale-150 transition-all" />
+      <input type="range" min={min} max={max} step={step} value={value || 0} onChange={(e) => onChange(Number(e.target.value) || 0)} className="w-full h-[2px] bg-[#444] rounded-lg appearance-none cursor-pointer outline-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:rounded-full hover:[&::-webkit-slider-thumb]:scale-150 transition-all" />
       <div className="bg-[#111111] px-1.5 py-0.5 rounded border border-[#252526] w-12 text-right shrink-0">
         <span className="text-[9px] font-mono text-cyan-400">{value}{unit}</span>
       </div>
@@ -95,6 +95,9 @@ export const FigmaColorPicker = ({ label, hexValue, onChange }) => {
 
   return (
     <div className="mb-4">
+      <div className="flex justify-between items-center mb-1.5">
+        <label className="text-[10px] font-medium text-slate-400">{label}</label>
+      </div>
       <div className="bg-[#111111] border border-[#252526] rounded-lg overflow-hidden transition-all duration-300 shadow-sm">
         <div className="flex items-center justify-between p-2 cursor-pointer hover:bg-[#1a1a1c] transition-colors" onClick={() => setIsOpen(!isOpen)}>
           <div className="flex items-center gap-2.5">
@@ -152,7 +155,6 @@ export const FigmaTextInput = ({ label, value, onChange }) => (
   </div>
 );
 
-// Kotak Terminal Output CSS
 export const CodeOutput = ({ code }) => {
   const [copied, setCopied] = useState(false);
   const handleCopy = () => {
@@ -168,19 +170,19 @@ export const CodeOutput = ({ code }) => {
        <div className="px-4 py-2 border-b border-[#252526] bg-[#18181b] shrink-0">
          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">CSS Output Code</span>
        </div>
-       <div className="p-4 overflow-y-auto flex-grow bg-[#111111] custom-scroll">
+       {/* FIX BUG: Padding Bottom ekstra di Mobile agar CSS Code tidak tertutup layar bawah */}
+       <div className="p-4 pb-20 lg:pb-4 overflow-y-auto flex-grow bg-[#111111] custom-scroll">
           <pre className="text-[11px] font-mono text-cyan-300/80 leading-relaxed whitespace-pre-wrap break-words"><code>{code}</code></pre>
        </div>
     </div>
   )
 };
 
-// Workspace Master Layout (Responsif Total - Anti Ketiban/Cut Off)
 export const WorkspaceLayout = ({ name, controls, preview, cssOutput, bgType = 'grid', bgHex }) => {
   return (
-    <div className="flex flex-col lg:flex-row w-full h-full animate-fade-in bg-[#0a0a0b] lg:bg-transparent">
+    <div className="flex flex-col lg:flex-row gap-4 lg:gap-6 w-full h-full animate-fade-in bg-[#0a0a0b] lg:bg-transparent">
        
-       {/* KIRI/ATAS: CANVAS & CSS CODE */}
+       {/* MIDDLE: CANVAS & CSS CODE */}
        <div className="flex-1 flex flex-col min-w-0 lg:border-r border-[#252526]">
          
          {/* CANVAS AREA (Sticky on Mobile) */}
@@ -198,20 +200,19 @@ export const WorkspaceLayout = ({ name, controls, preview, cssOutput, bgType = '
          </div>
        </div>
 
-       {/* KANAN/BAWAH: PROPERTIES */}
+       {/* RIGHT: PROPERTIES */}
        <div className="w-full lg:w-[320px] bg-[#18181b] flex flex-col shrink-0 z-20">
          <div className="px-4 py-3 border-b border-[#252526] bg-[#18181b] sticky top-0 z-20 shrink-0">
             <h2 className="text-[10px] font-bold text-cyan-400 uppercase tracking-widest">{name} Properties</h2>
          </div>
-         {/* Properties Scroll (BUG FIX 3: Tambah Padding Bottom (pb-32) agar menu tidak tertutup bar HP) */}
-         <div className="p-4 pb-32 lg:pb-10 overflow-y-auto custom-scroll flex-1 h-[45vh] lg:h-auto">
+         {/* Properties Scroll - FIX BUG: Huge padding bottom so dropdowns aren't cut off */}
+         <div className="p-4 overflow-y-auto custom-scroll flex-1 h-[40vh] lg:h-auto pb-48 lg:pb-10">
             {controls}
          </div>
-       </div>
-
-       {/* Mobile Code Output (Paling Bawah) */}
-       <div className="lg:hidden w-full h-[200px] border-t border-[#252526] shrink-0">
-          <CodeOutput code={cssOutput} />
+         {/* CODE OUTPUT (Mobile Only - ditempelkan di bagian bawah) */}
+         <div className="lg:hidden h-[250px] shrink-0 border-t border-[#252526] z-50 bg-[#111111]">
+            <CodeOutput code={cssOutput} />
+         </div>
        </div>
     </div>
   );
