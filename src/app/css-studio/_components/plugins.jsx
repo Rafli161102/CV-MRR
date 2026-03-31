@@ -24,6 +24,7 @@ export const Icons = {
   Shapes: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-full h-full"><path strokeLinecap="round" strokeLinejoin="round" d="M14.25 7.756a4.5 4.5 0 100 8.488M7.5 10.5h5.25m-5.25 3h5.25M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
   Transitions: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-full h-full"><path strokeLinecap="round" strokeLinejoin="round" d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" /></svg>,
   Brush: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-full h-full"><path strokeLinecap="round" strokeLinejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.879-3.879a3 3 0 10-4.242-4.242l-3.879 3.879a15.995 15.995 0 00-4.648 4.764m3.42 3.42a6.976 6.976 0 00-3.42-3.42" /></svg>,
+  Info: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4"><path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" /></svg>
 };
 
 // =========================================================================
@@ -60,6 +61,13 @@ export const COLOR_PRESETS = ['#ffffff', '#1e1e1e', '#0ea5e9', '#3b82f6', '#8b5c
 // 3. UI COMPONENTS
 // =========================================================================
 
+export const PluginTip = ({ text }) => (
+  <div className="bg-cyan-500/10 border border-cyan-500/20 rounded-lg p-3 flex gap-3 items-start mb-5">
+    <div className="text-cyan-400 mt-0.5 shrink-0"><Icons.Info /></div>
+    <p className="text-[10px] text-cyan-100/70 leading-relaxed font-medium">{text}</p>
+  </div>
+);
+
 export const FigmaSlider = ({ label, min, max, step = 1, value, onChange, unit = "" }) => (
   <div className="flex items-center justify-between py-2 group border-b border-white/5 last:border-0">
     <label className="text-[10px] font-medium text-slate-400 w-1/3 group-hover:text-slate-200 transition-colors truncate pr-2">{label}</label>
@@ -88,7 +96,7 @@ export const FigmaColorPicker = ({ label, hexValue, onChange }) => {
       <div className="flex justify-between items-center mb-1.5">
         <label className="text-[10px] font-medium text-slate-400">{label}</label>
       </div>
-      <div className="bg-[#111111] border border-[#333] rounded-lg overflow-hidden transition-all duration-300 shadow-sm">
+      <div className="bg-[#111111] border border-[#333] rounded-lg overflow-hidden transition-all duration-300 shadow-sm hover:border-[#555]">
         <div className="flex items-center justify-between p-2 cursor-pointer hover:bg-[#1a1a1c] transition-colors" onClick={() => setIsOpen(!isOpen)}>
           <div className="flex items-center gap-2.5">
             <div className="w-6 h-6 rounded shadow-inner border border-white/10" style={{backgroundColor: hexValue}}></div>
@@ -97,7 +105,7 @@ export const FigmaColorPicker = ({ label, hexValue, onChange }) => {
                <span className="text-[9px] font-mono text-slate-500 uppercase mt-0.5">{hexValue}</span>
             </div>
           </div>
-          <div className={`transform transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}>
+          <div className={`text-slate-400 transform transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}>
              <Icons.ChevronDown />
           </div>
         </div>
@@ -138,14 +146,17 @@ export const FigmaSelect = ({ label, options, value, onChange }) => (
   </div>
 );
 
-export const FigmaTextInput = ({ label, value, onChange, placeholder = "Ketik sesuatu..." }) => (
+export const FigmaTextInput = ({ label, value, onChange, placeholder = "Ketik sesuatu...", isTextArea = false }) => (
   <div className="mb-4">
      <label className="text-[10px] font-medium text-slate-400 block mb-2">{label}</label>
-     <input type="text" value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} className="w-full bg-[#111111] border border-[#333] rounded-lg px-3 py-2.5 text-[11px] text-white outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500/50 transition-all placeholder:text-slate-600" />
+     {isTextArea ? (
+       <textarea value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} className="w-full h-20 bg-[#111111] border border-[#333] rounded-lg px-3 py-2.5 text-[11px] text-white outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500/50 transition-all placeholder:text-slate-600 resize-none" />
+     ) : (
+       <input type="text" value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} className="w-full bg-[#111111] border border-[#333] rounded-lg px-3 py-2.5 text-[11px] text-white outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500/50 transition-all placeholder:text-slate-600" />
+     )}
   </div>
 );
 
-// FIX DROPDOWN BUG: Mencegah overflow teks panjang seperti "cubic-bezier"
 export const FigmaCustomDropdown = ({ label, groups, value, onChange }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -237,7 +248,7 @@ export const WorkspaceLayout = ({ name, controls, preview, cssOutput, bgType = '
           {bgType === 'grid' && <div className="absolute inset-0 opacity-[0.2] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '24px 24px'}}></div>}
           {bgType === 'image' && <div className="absolute inset-0 bg-cover bg-center opacity-40" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200')" }}></div>}
           {bgType === 'light' && <div className="absolute inset-0 bg-[#f8fafc]"></div>}
-          <div className="relative z-10 w-full h-full flex items-center justify-center p-4 overflow-hidden perspective-1000">{preview}</div>
+          <div className="relative z-10 w-full h-full flex items-center justify-center p-6 overflow-hidden perspective-1000">{preview}</div>
        </div>
 
        {/* DESKTOP COLUMN */}
@@ -248,14 +259,14 @@ export const WorkspaceLayout = ({ name, controls, preview, cssOutput, bgType = '
             {bgType === 'light' && <div className="absolute inset-0 bg-[#f8fafc]"></div>}
             <div className="relative z-10 w-full h-full flex items-center justify-center p-8 overflow-hidden perspective-1000">{preview}</div>
          </div>
-         <div className="h-[260px] shrink-0 p-4 bg-[#111111]">
+         <div className="h-[280px] shrink-0 p-4 bg-[#111111]">
             <CodeOutput code={cssOutput} />
          </div>
        </div>
 
        {/* PROPERTIES PANEL */}
-       <div className="flex-1 lg:w-[360px] lg:flex-none bg-[#18181b] flex flex-col z-20 overflow-hidden shadow-2xl">
-         <div className="px-4 py-4 border-b border-[#252526] bg-[#18181b] shrink-0">
+       <div className="flex-1 lg:w-[380px] lg:flex-none bg-[#18181b] flex flex-col z-20 overflow-hidden shadow-2xl relative">
+         <div className="px-4 py-4 border-b border-[#252526] bg-[#18181b] shrink-0 z-10 relative">
             <h2 className="text-[12px] font-bold text-white uppercase tracking-widest hidden lg:block flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-cyan-500 inline-block animate-pulse"></span> {name} Properties
             </h2>
@@ -264,10 +275,11 @@ export const WorkspaceLayout = ({ name, controls, preview, cssOutput, bgType = '
               <button onClick={() => setMobileTab('code')} className={`flex-1 py-2 rounded-md text-[10px] font-bold uppercase transition-all ${mobileTab === 'code' ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/30' : 'text-slate-500 hover:text-slate-300'}`}>CSS Output</button>
             </div>
          </div>
+         
          <div className="flex-1 overflow-y-auto custom-scroll relative bg-[#18181b]">
             <div className={`p-4 lg:p-5 lg:block ${mobileTab === 'design' ? 'block' : 'hidden'}`}>
               {controls}
-              <div className="h-48 lg:h-12"></div> 
+              <div className="h-40 lg:h-12"></div> {/* Extra space at bottom to scroll past sticky buttons */}
             </div>
             <div className={`h-full lg:hidden ${mobileTab === 'code' ? 'block' : 'hidden'}`}>
               <CodeOutput code={cssOutput} isMobileTab={true} />
@@ -279,19 +291,23 @@ export const WorkspaceLayout = ({ name, controls, preview, cssOutput, bgType = '
 };
 
 // =========================================================================
-// 5. THE PLUGINS (V15 ULTIMATE)
+// 5. THE PLUGINS (V16 ULTIMATE - FIGMA LEVEL)
 // =========================================================================
 
-// FIX BUG GRADIENT: Aspect-video agar kotak responsif dan tidak menabrak batas
+// --- 5.1 BACKGROUND GRADIENT (Responsif) ---
 export const PluginBackgroundGradient = () => {
   const [color1, setColor1] = useState('#0ea5e9');
   const [color2, setColor2] = useState('#8b5cf6');
   const [angle, setAngle] = useState(145);
 
   const css = `background: linear-gradient(${angle}deg, ${color1}, ${color2});\nborder-radius: 12px;`;
-  const preview = <div style={{ background: `linear-gradient(${angle}deg, ${color1}, ${color2})`, borderRadius: '12px', boxShadow: '0 20px 40px rgba(0,0,0,0.4)' }} className="w-full max-w-[280px] aspect-video"></div>;
+  
+  // FIX BUG: Menambahkan 'w-full max-w-[300px] aspect-video' agar box tidak akan pernah nabrak layar di HP terkecil sekalipun
+  const preview = <div style={{ background: `linear-gradient(${angle}deg, ${color1}, ${color2})`, borderRadius: '12px', boxShadow: '0 20px 40px rgba(0,0,0,0.4)' }} className="w-full max-w-[300px] aspect-[2/1]"></div>;
+  
   const controls = (
     <>
+      <PluginTip text="Pilih warna awal dan akhir, lalu putar angle untuk mendapatkan arah gradasi yang kamu inginkan." />
       <FigmaColorPicker label="Start Color" hexValue={color1} onChange={setColor1} />
       <FigmaColorPicker label="End Color" hexValue={color2} onChange={setColor2} />
       <FigmaSlider label="Angle" min={0} max={360} value={angle} onChange={setAngle} unit="°" />
@@ -300,9 +316,9 @@ export const PluginBackgroundGradient = () => {
   return <WorkspaceLayout name="Box Gradient" controls={controls} preview={preview} cssOutput={css} />;
 };
 
-// FIX BUG TEXT GRADIENT: Pakai backgroundImage agar tidak jadi block solid di HP
+// --- 5.2 TEXT GRADIENT (Bug Box Solid Diperbaiki Total) ---
 export const PluginTextGradient = () => {
-  const [text, setText] = useState('MRR STUDIO');
+  const [text, setText] = useState('');
   const [color1, setColor1] = useState('#ec4899');
   const [color2, setColor2] = useState('#f59e0b');
   const [angle, setAngle] = useState(90);
@@ -310,7 +326,7 @@ export const PluginTextGradient = () => {
   const css = `background-image: linear-gradient(${angle}deg, ${color1}, ${color2});\n-webkit-background-clip: text;\n-webkit-text-fill-color: transparent;\nbackground-clip: text;\ncolor: transparent;`;
   
   const preview = (
-    <div className="w-full h-full flex items-center justify-center p-4">
+    <div className="w-full h-full flex items-center justify-center p-2 text-center">
       <span style={{ 
         backgroundImage: `linear-gradient(${angle}deg, ${color1}, ${color2})`, 
         WebkitBackgroundClip: 'text', 
@@ -319,10 +335,9 @@ export const PluginTextGradient = () => {
         color: 'transparent',
         fontSize: 'clamp(2rem, 8vw, 5rem)', 
         fontWeight: '900', 
-        textAlign: 'center',
         textTransform: 'uppercase',
         letterSpacing: '2px',
-        display: 'inline-block'
+        display: 'inline-block' // Penting agar gradient terpotong benar di beberapa browser
       }}>
         {text || 'GRADIENT'}
       </span>
@@ -331,7 +346,8 @@ export const PluginTextGradient = () => {
 
   const controls = (
     <>
-      <FigmaTextInput label="Custom Text" value={text} onChange={setText} placeholder="Masukkan teks..." />
+      <PluginTip text="Teks akan otomatis menyesuaikan ukuran layar (clamp). Jika di HP, teks akan mengecil agar tidak terpotong." />
+      <FigmaTextInput label="Custom Text" value={text} onChange={setText} placeholder="Misal: MRR STUDIO" />
       <FigmaColorPicker label="Start Color" hexValue={color1} onChange={setColor1} />
       <FigmaColorPicker label="End Color" hexValue={color2} onChange={setColor2} />
       <FigmaSlider label="Angle" min={0} max={360} value={angle} onChange={setAngle} unit="°" />
@@ -340,11 +356,11 @@ export const PluginTextGradient = () => {
   return <WorkspaceLayout name="Text Gradient" controls={controls} preview={preview} cssOutput={css} />;
 };
 
-// FIX MULTI-TYPOGRAPHY: Bisa atur Heading dan Paragraf sekaligus dengan font terpisah!
+// --- 5.3 TYPOGRAPHY PRO (Figma Style: Align, Transform, Placeholder) ---
 const FONTS_DATA = {
   "Sans Serif Popular": [
     { name: "Inter", val: "Inter" }, { name: "Roboto", val: "Roboto" }, { name: "Open Sans", val: "Open Sans" }, 
-    { name: "Montserrat", val: "Montserrat" }, { name: "Poppins", val: "Poppins" }, { name: "Lato", val: "Lato" }
+    { name: "Montserrat", val: "Montserrat" }, { name: "Poppins", val: "Poppins" }
   ],
   "Serif Classic": [
     { name: "Playfair Display", val: "Playfair Display" }, { name: "Merriweather", val: "Merriweather" }, 
@@ -352,32 +368,38 @@ const FONTS_DATA = {
   ],
   "Display & Creative": [
     { name: "Bebas Neue", val: "Bebas Neue" }, { name: "Lobster", val: "Lobster" }, { name: "Righteous", val: "Righteous" }, 
-    { name: "Pacifico", val: "Pacifico" }, { name: "Caveat", val: "Caveat" }
+    { name: "Pacifico", val: "Pacifico" }
   ]
 };
 
 export const PluginTypography = () => {
   const [tab, setTab] = useState('Heading'); // 'Heading', 'Subheading', 'Paragraph'
   
-  // State for Heading
-  const [h1Text, setH1Text] = useState('Hero Section Title');
+  // State Heading
+  const [h1Text, setH1Text] = useState('');
   const [h1Font, setH1Font] = useState('Montserrat');
   const [h1Size, setH1Size] = useState(42);
   const [h1Color, setH1Color] = useState('#ffffff');
+  const [h1Align, setH1Align] = useState('center');
+  const [h1Trans, setH1Trans] = useState('none');
   
-  // State for Subheading
-  const [h2Text, setH2Text] = useState('Beautiful Typography Builder');
+  // State Subheading
+  const [h2Text, setH2Text] = useState('');
   const [h2Font, setH2Font] = useState('Inter');
   const [h2Size, setH2Size] = useState(20);
   const [h2Color, setH2Color] = useState('#0ea5e9');
+  const [h2Align, setH2Align] = useState('center');
+  const [h2Trans, setH2Trans] = useState('none');
 
-  // State for Paragraph
-  const [pText, setPText] = useState('Ini adalah contoh multi-paragraf di mana kamu bisa mengatur font, ukuran, dan warna untuk setiap komponen teks secara terpisah selayaknya mendesain sebuah halaman website sungguhan.');
+  // State Paragraph
+  const [pText, setPText] = useState('');
   const [pFont, setPFont] = useState('Inter');
   const [pSize, setPSize] = useState(14);
   const [pColor, setPColor] = useState('#94a3b8');
+  const [pAlign, setPAlign] = useState('center');
+  const [pTrans, setPTrans] = useState('none');
 
-  // Load Google Fonts
+  // Load Google Fonts Dynamic
   useEffect(() => {
     [h1Font, h2Font, pFont].forEach(f => {
       const linkId = `gfont-${f.replace(/\s+/g, '-')}`;
@@ -391,53 +413,43 @@ export const PluginTypography = () => {
     });
   }, [h1Font, h2Font, pFont]);
 
-  const css = `/* Heading */\nh1 {\n  font-family: '${h1Font}', sans-serif;\n  font-size: ${h1Size}px;\n  color: ${h1Color};\n  font-weight: 800;\n}\n\n/* Subheading */\nh2 {\n  font-family: '${h2Font}', sans-serif;\n  font-size: ${h2Size}px;\n  color: ${h2Color};\n  font-weight: 600;\n}\n\n/* Paragraph */\np {\n  font-family: '${pFont}', sans-serif;\n  font-size: ${pSize}px;\n  color: ${pColor};\n  line-height: 1.6;\n}`;
+  const css = `/* Heading */\nh1 {\n  font-family: '${h1Font}', sans-serif;\n  font-size: ${h1Size}px;\n  color: ${h1Color};\n  font-weight: 800;\n  text-align: ${h1Align};\n  text-transform: ${h1Trans};\n}\n\n/* Subheading */\nh2 {\n  font-family: '${h2Font}', sans-serif;\n  font-size: ${h2Size}px;\n  color: ${h2Color};\n  font-weight: 600;\n  text-align: ${h2Align};\n  text-transform: ${h2Trans};\n}\n\n/* Paragraph */\np {\n  font-family: '${pFont}', sans-serif;\n  font-size: ${pSize}px;\n  color: ${pColor};\n  line-height: 1.6;\n  text-align: ${pAlign};\n  text-transform: ${pTrans};\n}`;
   
   const preview = (
-    <div className="w-full text-center max-w-[400px]">
-      <h1 style={{ fontFamily: `"${h1Font}", sans-serif`, fontSize: `${h1Size}px`, color: h1Color, fontWeight: 800, marginBottom: '8px', lineHeight: 1.1 }}>{h1Text}</h1>
-      <h2 style={{ fontFamily: `"${h2Font}", sans-serif`, fontSize: `${h2Size}px`, color: h2Color, fontWeight: 600, marginBottom: '16px' }}>{h2Text}</h2>
-      <p style={{ fontFamily: `"${pFont}", sans-serif`, fontSize: `${pSize}px`, color: pColor, lineHeight: 1.6 }}>{pText}</p>
+    <div className="w-full flex flex-col justify-center max-w-[440px]">
+      <h1 style={{ fontFamily: `"${h1Font}", sans-serif`, fontSize: `${h1Size}px`, color: h1Color, fontWeight: 800, marginBottom: '8px', lineHeight: 1.1, textAlign: h1Align, textTransform: h1Trans }}>{h1Text || 'Hero Title'}</h1>
+      <h2 style={{ fontFamily: `"${h2Font}", sans-serif`, fontSize: `${h2Size}px`, color: h2Color, fontWeight: 600, marginBottom: '16px', textAlign: h2Align, textTransform: h2Trans }}>{h2Text || 'Beautiful Typography'}</h2>
+      <p style={{ fontFamily: `"${pFont}", sans-serif`, fontSize: `${pSize}px`, color: pColor, lineHeight: 1.6, textAlign: pAlign, textTransform: pTrans }}>{pText || 'Ini adalah contoh multi-paragraf di mana kamu bisa mengatur font, ukuran, dan warna untuk setiap komponen teks secara terpisah selayaknya mendesain sebuah halaman website sungguhan.'}</p>
+    </div>
+  );
+
+  // Reusable Typography Control Block
+  const TextControls = ({ text, setText, font, setFont, color, setColor, size, setSize, align, setAlign, trans, setTrans, isPara = false }) => (
+    <div className="animate-fade-in space-y-2">
+      <FigmaTextInput label="Edit Text" value={text} onChange={setText} placeholder={isPara ? "Ketik paragraf panjang disini..." : "Ketik judul..."} isTextArea={isPara} />
+      <FigmaCustomDropdown label="Font Family" groups={FONTS_DATA} value={font} onChange={setFont} />
+      <FigmaColorPicker label="Text Color" hexValue={color} onChange={setColor} />
+      <FigmaSlider label="Font Size" min={isPara ? 10 : 20} max={isPara ? 36 : 100} value={size} onChange={setSize} unit="px" />
+      
+      <div className="grid grid-cols-2 gap-4">
+        <FigmaSelect label="Alignment" options={['left', 'center', 'right', 'justify']} value={align} onChange={setAlign} />
+        <FigmaSelect label="Transform" options={['none', 'uppercase', 'lowercase', 'capitalize']} value={trans} onChange={setTrans} />
+      </div>
     </div>
   );
 
   const controls = (
     <>
-      <div className="flex bg-[#111111] p-1 rounded-lg border border-[#333] w-full mb-4">
+      <PluginTip text="Pilih elemen yang ingin diedit di bawah ini. Layaknya editor profesional, kamu bisa memberikan properti berbeda untuk setiap elemen (Judul, Sub, Isi)." />
+      <div className="flex bg-[#111111] p-1 rounded-lg border border-[#333] w-full mb-5">
         {['Heading', 'Subheading', 'Paragraph'].map(t => (
-          <button key={t} onClick={() => setTab(t)} className={`flex-1 py-1.5 rounded-md text-[9px] font-bold uppercase transition-all ${tab === t ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30' : 'text-slate-500 hover:text-slate-300'}`}>{t}</button>
+          <button key={t} onClick={() => setTab(t)} className={`flex-1 py-2 rounded-md text-[9px] font-bold uppercase transition-all ${tab === t ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30' : 'text-slate-500 hover:text-slate-300'}`}>{t}</button>
         ))}
       </div>
 
-      {tab === 'Heading' && (
-        <div className="animate-fade-in">
-          <FigmaTextInput label="Heading Text" value={h1Text} onChange={setH1Text} />
-          <FigmaCustomDropdown label="Font Family" groups={FONTS_DATA} value={h1Font} onChange={setH1Font} />
-          <FigmaColorPicker label="Text Color" hexValue={h1Color} onChange={setH1Color} />
-          <FigmaSlider label="Font Size" min={20} max={100} value={h1Size} onChange={setH1Size} unit="px" />
-        </div>
-      )}
-      
-      {tab === 'Subheading' && (
-        <div className="animate-fade-in">
-          <FigmaTextInput label="Subheading Text" value={h2Text} onChange={setH2Text} />
-          <FigmaCustomDropdown label="Font Family" groups={FONTS_DATA} value={h2Font} onChange={setH2Font} />
-          <FigmaColorPicker label="Text Color" hexValue={h2Color} onChange={setH2Color} />
-          <FigmaSlider label="Font Size" min={12} max={60} value={h2Size} onChange={setH2Size} unit="px" />
-        </div>
-      )}
-
-      {tab === 'Paragraph' && (
-        <div className="animate-fade-in">
-          <div className="mb-4">
-            <label className="text-[10px] font-medium text-slate-400 block mb-2">Paragraph Text</label>
-            <textarea value={pText} onChange={(e) => setPText(e.target.value)} className="w-full h-20 bg-[#111111] border border-[#333] rounded-lg px-3 py-2.5 text-[11px] text-white outline-none focus:border-cyan-500 transition-all resize-none" />
-          </div>
-          <FigmaCustomDropdown label="Font Family" groups={FONTS_DATA} value={pFont} onChange={setPFont} />
-          <FigmaColorPicker label="Text Color" hexValue={pColor} onChange={setPColor} />
-          <FigmaSlider label="Font Size" min={10} max={30} value={pSize} onChange={setPSize} unit="px" />
-        </div>
-      )}
+      {tab === 'Heading' && <TextControls text={h1Text} setText={setH1Text} font={h1Font} setFont={setH1Font} color={h1Color} setColor={setH1Color} size={h1Size} setSize={setH1Size} align={h1Align} setAlign={setH1Align} trans={h1Trans} setTrans={setH1Trans} />}
+      {tab === 'Subheading' && <TextControls text={h2Text} setText={setH2Text} font={h2Font} setFont={setH2Font} color={h2Color} setColor={setH2Color} size={h2Size} setSize={setH2Size} align={h2Align} setAlign={setH2Align} trans={h2Trans} setTrans={setH2Trans} />}
+      {tab === 'Paragraph' && <TextControls text={pText} setText={setPText} font={pFont} setFont={setPFont} color={pColor} setColor={setPColor} size={pSize} setSize={setPSize} align={pAlign} setAlign={setPAlign} trans={pTrans} setTrans={setPTrans} isPara={true} />}
     </>
   );
   return <WorkspaceLayout name="Multi Typography" controls={controls} preview={preview} cssOutput={css} />;
@@ -451,6 +463,7 @@ export const PluginLayout = () => {
   const preview = <div style={{ padding: `${padding}px`, borderRadius: `${radius}px`, backgroundColor: '#252526', color: '#fff', textAlign: 'center', border: '1px solid #333' }}>Box Container</div>;
   const controls = (
     <>
+      <PluginTip text="Paddings menentukan jarak dari dalam kotak (konten ke tepi), Border Radius untuk melengkungkan sudut box." />
       <FigmaSlider label="Padding" min={0} max={100} value={padding} onChange={setPadding} unit="px" />
       <FigmaSlider label="Border Radius" min={0} max={100} value={radius} onChange={setRadius} unit="px" />
     </>
@@ -477,7 +490,6 @@ export const PluginBorder = () => {
   return <WorkspaceLayout name="Border Styling" controls={controls} preview={preview} cssOutput={css} />;
 };
 
-// FIX BUG SHAPES: Tambahkan "Organic Blobs" yang menggunakan Border Radius (bisa dilengkungkan)
 const SHAPES_DATA = {
   "Organic Blobs (Rounded)": [
     { name: "Blob 1", val: "blob1", css: "border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;" },
@@ -500,7 +512,6 @@ export const PluginShapes = () => {
   const [color, setColor] = useState('#8b5cf6');
   const [rounded, setRounded] = useState(0);
 
-  // Find css property for selected shape
   let shapeCss = "";
   let isBlob = shapeVal.includes('blob');
   for (const group in SHAPES_DATA) {
@@ -508,8 +519,6 @@ export const PluginShapes = () => {
     if (found) shapeCss = found.css;
   }
 
-  // Jika polygon, border-radius tidak berefek di clip-path murni, jadi apply di div wrapper / info.
-  // Tapi user minta "bisa disetting roundednya". Kita terapkan border-radius yang akan kelihatan jika tanpa clip-path.
   const finalCss = isBlob 
     ? `${shapeCss}\nbackground-color: ${color};\nwidth: 200px;\nheight: 200px;`
     : `border-radius: ${rounded}px;\n${shapeCss}\nbackground-color: ${color};\nwidth: 200px;\nheight: 200px;`;
@@ -520,12 +529,13 @@ export const PluginShapes = () => {
 
   const controls = (
     <>
+      <PluginTip text="Pilih Organic Blobs untuk bentuk melengkung alami, atau Polygons untuk bentuk tegas (bisa ditambah border radius)." />
       <FigmaCustomDropdown label="Select Shape Form" groups={SHAPES_DATA} value={shapeVal} onChange={setShapeVal} />
       <FigmaColorPicker label="Shape Color" hexValue={color} onChange={setColor} />
       {!isBlob && (
-        <div className="mt-2">
+        <div className="mt-2 border-t border-[#333] pt-4">
            <FigmaSlider label="Base Rounded" min={0} max={100} value={rounded} onChange={setRounded} unit="px" />
-           <p className="text-[8px] text-slate-500 mt-1 italic">*Note: Clip-path mungkin memotong efek rounded di sudut tertentu.</p>
+           <p className="text-[9px] text-slate-500 mt-2 italic">*Border Radius mungkin akan terpotong (tidak terlihat) jika clip-path terlalu tajam.</p>
         </div>
       )}
     </>
@@ -540,9 +550,10 @@ export const PluginGlassmorphism = () => {
 
   const rgb = hexToRgb(color);
   const css = `background: rgba(${rgb}, ${opacity / 100});\nbackdrop-filter: blur(${blur}px);\n-webkit-backdrop-filter: blur(${blur}px);\nborder: 1px solid rgba(${rgb}, 0.3);\nborder-radius: 16px;`;
-  const preview = <div style={{ width: 180, height: 120, background: `rgba(${rgb}, ${opacity / 100})`, backdropFilter: `blur(${blur}px)`, WebkitBackdropFilter: `blur(${blur}px)`, border: `1px solid rgba(${rgb}, 0.3)`, borderRadius: '16px', boxShadow: '0 4px 30px rgba(0,0,0,0.1)' }}></div>;
+  const preview = <div style={{ width: '80%', maxWidth: '240px', height: '140px', background: `rgba(${rgb}, ${opacity / 100})`, backdropFilter: `blur(${blur}px)`, WebkitBackdropFilter: `blur(${blur}px)`, border: `1px solid rgba(${rgb}, 0.3)`, borderRadius: '16px', boxShadow: '0 4px 30px rgba(0,0,0,0.1)' }}></div>;
   const controls = (
     <>
+      <PluginTip text="Gunakan fitur ini di atas background image atau gradien. Ubah Opacity rendah dan Blur tinggi untuk efek kaca yang elegan." />
       <FigmaColorPicker label="Glass Tint" hexValue={color} onChange={setColor} />
       <FigmaSlider label="Opacity" min={1} max={100} value={opacity} onChange={setOpacity} unit="%" />
       <FigmaSlider label="Blur Intensity" min={0} max={50} value={blur} onChange={setBlur} unit="px" />
@@ -557,7 +568,7 @@ export const PluginNeumorphism = () => {
   const [blur, setBlur] = useState(20);
 
   const css = `background-color: ${bg};\nborder-radius: 20px;\nbox-shadow: ${dist}px ${dist}px ${blur}px #a3b1c6,\n            -${dist}px -${dist}px ${blur}px #ffffff;`;
-  const preview = <div style={{ width: 120, height: 120, backgroundColor: bg, borderRadius: 20, boxShadow: `${dist}px ${dist}px ${blur}px #a3b1c6, -${dist}px -${dist}px ${blur}px #ffffff` }}></div>;
+  const preview = <div style={{ width: 140, height: 140, backgroundColor: bg, borderRadius: 20, boxShadow: `${dist}px ${dist}px ${blur}px #a3b1c6, -${dist}px -${dist}px ${blur}px #ffffff` }}></div>;
   const controls = (
     <>
       <FigmaColorPicker label="Base Background" hexValue={bg} onChange={setBg} />
@@ -621,14 +632,12 @@ export const PluginFilters = () => {
   const css = `/* Pro Image Filters */\nfilter: \n  brightness(${brightness}%)\n  contrast(${contrast}%)\n  saturate(${saturate}%)\n  hue-rotate(${hue}deg)\n  blur(${blur}px)\n  sepia(${sepia}%)\n  grayscale(${grayscale}%)\n  invert(${invert}%);`;
   
   const preview = (
-    <div className="relative w-full h-full max-w-[360px] max-h-[260px] rounded-xl overflow-hidden shadow-2xl ring-1 ring-white/10 group">
+    <div className="relative w-full h-full max-w-[360px] max-h-[260px] rounded-xl overflow-hidden shadow-2xl ring-1 ring-white/10 group aspect-video">
        <img 
          src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800" 
          alt="Filter Demo" 
          className="w-full h-full object-cover transition-all duration-200"
-         style={{ 
-           filter: `brightness(${brightness}%) contrast(${contrast}%) saturate(${saturate}%) hue-rotate(${hue}deg) blur(${blur}px) sepia(${sepia}%) grayscale(${grayscale}%) invert(${invert}%)`
-         }} 
+         style={{ filter: `brightness(${brightness}%) contrast(${contrast}%) saturate(${saturate}%) hue-rotate(${hue}deg) blur(${blur}px) sepia(${sepia}%) grayscale(${grayscale}%) invert(${invert}%)` }} 
        />
     </div>
   );
@@ -676,7 +685,7 @@ export const PluginTransform = () => {
   const preview = (
     <div className="relative w-full h-full flex items-center justify-center" style={{ perspective: '1000px', transformStyle: 'preserve-3d' }}>
       <div 
-        className="w-32 h-32 bg-gradient-to-tr from-cyan-500 to-blue-600 shadow-2xl flex flex-col items-center justify-center border border-white/30 rounded-xl"
+        className="w-28 h-28 sm:w-32 sm:h-32 bg-gradient-to-tr from-cyan-500 to-blue-600 shadow-2xl flex flex-col items-center justify-center border border-white/30 rounded-xl"
         style={{ 
           transform: `rotateX(${rotateX}deg) rotateY(${rotateY}deg) rotateZ(${rotateZ}deg) translate3d(${translateX}px, ${translateY}px, ${translateZ}px) scale(${scale})`,
           transition: 'transform 0.1s linear',
@@ -692,6 +701,7 @@ export const PluginTransform = () => {
 
   const controls = (
     <>
+      <PluginTip text="Penting: Untuk mengaktifkan rotasi dan translasi 3D ini, elemen Parent (pembungkus) harus memiliki properti CSS 'perspective: 1000px'." />
       <div className="mb-2 text-[10px] font-bold text-cyan-400 uppercase tracking-widest border-b border-[#333] pb-2">3D Rotation</div>
       <FigmaSlider label="Rotate X (Pitch)" min={-180} max={180} value={rotateX} onChange={setRotateX} unit="°" />
       <FigmaSlider label="Rotate Y (Yaw)" min={-180} max={180} value={rotateY} onChange={setRotateY} unit="°" />
@@ -837,9 +847,9 @@ export const PluginTransitions = () => {
 
   const controls = (
     <>
+      <PluginTip text="Penting: Tempatkan output CSS '.element' di class default, dan '.element:hover' untuk memicu efeknya." />
       <FigmaCustomDropdown label="Hover Effect Type" groups={TRANSITIONS_DATA} value={transType} onChange={setTransType} />
       <FigmaSlider label="Duration" min={0.1} max={3} step={0.1} value={duration} onChange={setDuration} unit="s" />
-      {/* Menggunakan opsi teks yang lebih pendek agar tidak nabrak */}
       <FigmaSelect label="Timing/Easing" options={['ease', 'linear', 'ease-in-out', 'cubic']} value={timing} onChange={setTiming} />
     </>
   );
@@ -847,59 +857,68 @@ export const PluginTransitions = () => {
   return <WorkspaceLayout name="Hover Transitions" controls={controls} preview={preview} cssOutput={css} bgType="dark" />;
 };
 
-
-// =========================================================================
-// 5.8 FITUR REKOMENDASI BARU: CSS PIXEL ART BUILDER!
-// =========================================================================
+// --- 5.9 CSS PIXEL ART BUILDER (Dengan Pilihan Ukuran Canvas) ---
 export const PluginPixelArt = () => {
-  // Grid 8x8 = 64 pixels
+  const [gridSize, setGridSize] = useState(8); // 8, 12, 16
   const [pixels, setPixels] = useState(Array(64).fill('transparent'));
   const [color, setColor] = useState('#0ea5e9');
   
-  // Fungsi menggambar
+  // Update canvas ketika ukuran grid diubah
+  useEffect(() => {
+    setPixels(Array(gridSize * gridSize).fill('transparent'));
+  }, [gridSize]);
+
   const paintPixel = (index) => {
     const newPixels = [...pixels];
     newPixels[index] = newPixels[index] === color ? 'transparent' : color;
     setPixels(newPixels);
   };
 
-  // Clear Canvas
-  const clearCanvas = () => setPixels(Array(64).fill('transparent'));
+  const clearCanvas = () => setPixels(Array(gridSize * gridSize).fill('transparent'));
 
-  // Generate Box-Shadow CSS murni
+  // Ukuran base pixel di CSS output bergantung pada resolusi (misal makin besar resolusi, pixel aslinya makin kecil di CSS)
+  const pixelSizePx = gridSize === 8 ? 10 : gridSize === 12 ? 8 : 6;
+
   const generateBoxShadow = () => {
     let shadow = [];
     pixels.forEach((p, i) => {
       if (p !== 'transparent') {
-        const x = (i % 8) * 10;
-        const y = Math.floor(i / 8) * 10;
+        const x = (i % gridSize) * pixelSizePx;
+        const y = Math.floor(i / gridSize) * pixelSizePx;
         shadow.push(`${x}px ${y}px ${p}`);
       }
     });
     return shadow.length > 0 ? shadow.join(',\n    ') : 'none';
   };
 
-  const css = `/* Pure CSS Pixel Art menggunakan Box-Shadow */\n.pixel-art {\n  width: 10px;\n  height: 10px;\n  background: transparent;\n  box-shadow: \n    ${generateBoxShadow()};\n}`;
+  const css = `/* Pure CSS Pixel Art (${gridSize}x${gridSize}) */\n.pixel-art {\n  width: ${pixelSizePx}px;\n  height: ${pixelSizePx}px;\n  background: transparent;\n  box-shadow: \n    ${generateBoxShadow()};\n}`;
 
   const preview = (
     <div className="flex flex-col items-center">
-      <div className="w-[160px] h-[160px] grid grid-cols-8 gap-0 border border-[#333] bg-[#111]">
+      {/* Container menyesuaikan lebar yang konsisten, pixel size adaptif secara visual */}
+      <div 
+        className="w-[200px] h-[200px] sm:w-[240px] sm:h-[240px] grid border border-[#333] bg-[#111]"
+        style={{ gridTemplateColumns: `repeat(${gridSize}, minmax(0, 1fr))` }}
+      >
         {pixels.map((bg, i) => (
           <div 
             key={i} 
             onClick={() => paintPixel(i)}
-            className="w-5 h-5 border border-white/5 cursor-crosshair hover:bg-white/20 transition-colors"
+            className="border border-white/5 cursor-crosshair hover:bg-white/20 transition-colors w-full h-full"
             style={{ backgroundColor: bg !== 'transparent' ? bg : undefined }}
           />
         ))}
       </div>
-      <div className="mt-4 text-[9px] text-slate-500 uppercase tracking-widest animate-pulse">Tap kotak untuk menggambar</div>
+      <div className="mt-4 text-[9px] text-slate-500 uppercase tracking-widest animate-pulse">Tap grid untuk mulai menggambar</div>
     </div>
   );
 
   const controls = (
     <>
-      <div className="flex justify-between items-center mb-4">
+      <PluginTip text="Ubah ukuran kanvas untuk detail lebih tinggi. Sistem akan mem-build gambar kamu menjadi 1 line CSS Box-Shadow murni tanpa img src!" />
+      <FigmaSelect label="Canvas Size (Resolution)" options={['8', '12', '16']} value={gridSize.toString()} onChange={(val) => setGridSize(Number(val))} />
+      
+      <div className="flex justify-between items-center mb-4 mt-6 border-t border-[#333] pt-4">
         <label className="text-[10px] font-medium text-slate-400 block">Pilih Warna Brush</label>
         <button onClick={clearCanvas} className="text-[8px] text-red-400 hover:text-white bg-red-500/10 border border-red-500/30 px-2 py-1 rounded transition-colors uppercase font-bold tracking-widest">Clear Canvas</button>
       </div>
