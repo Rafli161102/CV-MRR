@@ -83,7 +83,6 @@ export const FigmaSlider = ({ label, min, max, step = 1, value, onChange, unit =
 export const FigmaColorPicker = ({ label, hexValue, onChange }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [hsl, setHsl] = useState(hexToHsl(hexValue));
-  
   useEffect(() => { setHsl(hexToHsl(hexValue)); }, [hexValue]);
 
   const handleHslChange = (part, val) => {
@@ -136,24 +135,6 @@ export const FigmaColorPicker = ({ label, hexValue, onChange }) => {
   );
 };
 
-export const FigmaSelect = ({ label, options, value, onChange }) => (
-  <div className="mb-4">
-     <label className="text-[10px] font-medium text-slate-400 block mb-2">{label}</label>
-     <div className="flex bg-[#111111] p-1 rounded border border-[#333]">
-        {options.map(opt => (
-           <button key={opt} onClick={() => onChange(opt)} className={`flex-1 py-1 rounded-sm text-[9px] font-bold uppercase transition-all ${value === opt ? 'bg-[#3f3f46] text-white shadow-sm' : 'text-slate-500 hover:text-slate-300'}`}>{opt}</button>
-        ))}
-     </div>
-  </div>
-);
-
-export const FigmaTextInput = ({ label, value, onChange }) => (
-  <div className="mb-4">
-     <label className="text-[10px] font-medium text-slate-400 block mb-2">{label}</label>
-     <input type="text" value={value} onChange={(e) => onChange(e.target.value)} className="w-full bg-[#111111] border border-[#333] rounded px-3 py-2 text-[10px] text-white outline-none focus:border-cyan-500 transition-colors" />
-  </div>
-);
-
 export const CodeOutput = ({ code, isMobileTab }) => {
   const [copied, setCopied] = useState(false);
   const handleCopy = () => {
@@ -179,61 +160,216 @@ export const CodeOutput = ({ code, isMobileTab }) => {
 };
 
 // =========================================================================
-// 4. MASTER WORKSPACE LAYOUT (LOCKED CANVAS, SCROLLABLE PROPERTIES)
+// 4. MASTER WORKSPACE LAYOUT (FIXED CANVAS + MOBILE TABS)
 // =========================================================================
 export const WorkspaceLayout = ({ name, controls, preview, cssOutput, bgType = 'grid', bgHex }) => {
-  const [mobileTab, setMobileTab] = useState('design'); // 'design' | 'code'
+  const [mobileTab, setMobileTab] = useState('design'); 
 
   return (
-    // FIX LOCK PREVIEW: Gunakan h-full flex overflow-hidden pada parent terluar di sini
-    // Memastikan tinggi tidak bablas ke bawah di HP
-    <div className="flex flex-col lg:flex-row w-full h-full overflow-hidden bg-[#0a0a0b] lg:bg-transparent">
-       
-       {/* KIRI/ATAS: CANVAS (Terkunci & Tidak Ikut Terscroll) */}
-       <div className="flex flex-col lg:flex-1 min-w-0 lg:border-r border-[#252526] shrink-0">
-         
-         <div className="h-[35vh] lg:h-full relative flex items-center justify-center overflow-hidden bg-[#0a0a0b] border-b lg:border-b-0 border-[#252526] z-10 transition-colors duration-500 shadow-sm" style={{backgroundColor: bgHex || 'transparent'}}>
+    <div className="flex flex-col lg:flex-row w-full h-full animate-fade-in bg-[#0a0a0b] lg:bg-transparent">
+       <div className="h-[30vh] sm:h-[35vh] lg:hidden relative flex items-center justify-center overflow-hidden border-b border-[#333] z-30 transition-colors duration-500 shadow-lg shrink-0" style={{backgroundColor: bgHex || '#0a0a0b'}}>
+          {bgType === 'grid' && <div className="absolute inset-0 opacity-[0.15] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '24px 24px'}}></div>}
+          {bgType === 'image' && <div className="absolute inset-0 bg-cover bg-center opacity-60" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200')" }}></div>}
+          {bgType === 'light' && <div className="absolute inset-0 bg-[#e5e7eb]"></div>}
+          {bgType === 'dark' && <div className="absolute inset-0 bg-[#030712]"></div>}
+          <div className="relative z-10 w-full h-full flex items-center justify-center p-4 overflow-hidden">{preview}</div>
+       </div>
+
+       <div className="hidden lg:flex flex-1 flex-col min-w-0 lg:border-r border-[#252526]">
+         <div className="flex-1 relative flex items-center justify-center overflow-hidden bg-[#0a0a0b] border-b border-[#252526] z-10 transition-colors duration-500 shadow-inner" style={{backgroundColor: bgHex || 'transparent'}}>
             {bgType === 'grid' && <div className="absolute inset-0 opacity-[0.15] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '24px 24px'}}></div>}
             {bgType === 'image' && <div className="absolute inset-0 bg-cover bg-center opacity-60" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200')" }}></div>}
             {bgType === 'light' && <div className="absolute inset-0 bg-[#e5e7eb]"></div>}
             {bgType === 'dark' && <div className="absolute inset-0 bg-[#030712]"></div>}
             <div className="relative z-10 w-full h-full flex items-center justify-center p-4 overflow-hidden">{preview}</div>
          </div>
+         <div className="h-[220px] shrink-0 p-4 bg-[#111111]">
+            <CodeOutput code={cssOutput} />
+         </div>
        </div>
 
-       {/* KANAN/BAWAH: PROPERTIES & CSS CODE (Area yang bisa di-scroll secara independen) */}
-       <div className="flex-1 lg:w-[340px] lg:flex-none bg-[#18181b] flex flex-col z-20 overflow-hidden">
-         
-         {/* Header Title / Mobile Tabs (Terkunci di atas properti) */}
-         <div className="px-4 py-3 border-b border-[#252526] bg-[#18181b] shrink-0 flex flex-col justify-center">
+       <div className="flex-1 lg:w-[320px] lg:flex-none bg-[#18181b] flex flex-col z-20 overflow-hidden">
+         <div className="px-4 py-3 border-b border-[#252526] bg-[#18181b] shrink-0">
             <h2 className="text-[10px] font-bold text-cyan-400 uppercase tracking-widest hidden lg:block">{name} Properties</h2>
-            
-            {/* Penempatan Kode CSS Khusus HP (Tabs Mode) */}
             <div className="flex lg:hidden bg-[#111111] p-1 rounded-lg border border-[#333] w-full">
-              <button onClick={() => setMobileTab('design')} className={`flex-1 py-1.5 rounded-md text-[9px] font-bold uppercase transition-all ${mobileTab === 'design' ? 'bg-[#333] text-white shadow-sm' : 'text-slate-500 hover:text-slate-300'}`}>Design</button>
-              <button onClick={() => setMobileTab('code')} className={`flex-1 py-1.5 rounded-md text-[9px] font-bold uppercase transition-all ${mobileTab === 'code' ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30' : 'text-slate-500 hover:text-slate-300'}`}>CSS Code</button>
+              <button onClick={() => setMobileTab('design')} className={`flex-1 py-1.5 rounded-md text-[9px] font-bold uppercase transition-all ${mobileTab === 'design' ? 'bg-[#333] text-white shadow-sm' : 'text-slate-500 hover:text-slate-300'}`}>Design Properties</button>
+              <button onClick={() => setMobileTab('code')} className={`flex-1 py-1.5 rounded-md text-[9px] font-bold uppercase transition-all ${mobileTab === 'code' ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30' : 'text-slate-500 hover:text-slate-300'}`}>View CSS Code</button>
             </div>
          </div>
-         
-         {/* AREA SCROLL: Bebas geser sampai mentok bawah tanpa mempengaruhi canvas */}
          <div className="flex-1 overflow-y-auto custom-scroll relative">
-            {/* Tampilan Design Properties */}
-            <div className={`p-4 pb-20 lg:block ${mobileTab === 'design' ? 'block' : 'hidden'}`}>
+            <div className={`p-4 lg:block ${mobileTab === 'design' ? 'block' : 'hidden'}`}>
               {controls}
+              <div className="h-32 lg:h-4"></div> 
             </div>
-
-            {/* Tampilan Output CSS Code (Hanya di HP) */}
             <div className={`h-full lg:hidden ${mobileTab === 'code' ? 'block' : 'hidden'}`}>
               <CodeOutput code={cssOutput} isMobileTab={true} />
             </div>
-
-            {/* Tampilan CSS Khusus Desktop */}
-            <div className="hidden lg:block h-[280px] border-t border-[#252526] mt-auto">
-              <CodeOutput code={cssOutput} />
-            </div>
          </div>
-
        </div>
     </div>
   );
+};
+
+
+// =========================================================================
+// 5. PLUGIN COMPONENTS (DI SINI LETAK PERBAIKANNYA!)
+// =========================================================================
+// Di bawah ini adalah kode-kode plugin yang selama ini "hilang" (undefined)
+
+export const PluginTextGradient = () => {
+  const [color1, setColor1] = useState('#0ea5e9');
+  const [color2, setColor2] = useState('#8b5cf6');
+  const [angle, setAngle] = useState(45);
+
+  const css = `background: linear-gradient(${angle}deg, ${color1}, ${color2});\n-webkit-background-clip: text;\n-webkit-text-fill-color: transparent;`;
+  const preview = <h1 style={{ background: `linear-gradient(${angle}deg, ${color1}, ${color2})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontSize: '3rem', fontWeight: 'bold', textAlign: 'center' }}>GRADIENT</h1>;
+  const controls = (
+    <>
+      <FigmaColorPicker label="Start Color" hexValue={color1} onChange={setColor1} />
+      <FigmaColorPicker label="End Color" hexValue={color2} onChange={setColor2} />
+      <FigmaSlider label="Angle" min={0} max={360} value={angle} onChange={setAngle} unit="°" />
+    </>
+  );
+  return <WorkspaceLayout name="Text Gradient" controls={controls} preview={preview} cssOutput={css} />;
+};
+
+export const PluginTypography = () => {
+  const [size, setSize] = useState(32);
+  const [spacing, setSpacing] = useState(2);
+  const [color, setColor] = useState('#ffffff');
+
+  const css = `font-size: ${size}px;\nletter-spacing: ${spacing}px;\ncolor: ${color};\nfont-weight: 600;`;
+  const preview = <div style={{ fontSize: `${size}px`, letterSpacing: `${spacing}px`, color: color, fontWeight: 600 }}>Typography</div>;
+  const controls = (
+    <>
+      <FigmaColorPicker label="Text Color" hexValue={color} onChange={setColor} />
+      <FigmaSlider label="Font Size" min={12} max={100} value={size} onChange={setSize} unit="px" />
+      <FigmaSlider label="Letter Spacing" min={0} max={20} value={spacing} onChange={setSpacing} unit="px" />
+    </>
+  );
+  return <WorkspaceLayout name="Typography" controls={controls} preview={preview} cssOutput={css} />;
+};
+
+export const PluginLayout = () => {
+  const [padding, setPadding] = useState(24);
+  const [radius, setRadius] = useState(16);
+
+  const css = `padding: ${padding}px;\nborder-radius: ${radius}px;\nbackground-color: #252526;\ncolor: #ffffff;`;
+  const preview = <div style={{ padding: `${padding}px`, borderRadius: `${radius}px`, backgroundColor: '#252526', color: '#fff', textAlign: 'center' }}>Box Layout Element</div>;
+  const controls = (
+    <>
+      <FigmaSlider label="Padding" min={0} max={100} value={padding} onChange={setPadding} unit="px" />
+      <FigmaSlider label="Border Radius" min={0} max={100} value={radius} onChange={setRadius} unit="px" />
+    </>
+  );
+  return <WorkspaceLayout name="Box Layout" controls={controls} preview={preview} cssOutput={css} />;
+};
+
+export const PluginBorder = () => {
+  const [width, setWidth] = useState(4);
+  const [radius, setRadius] = useState(20);
+  const [color, setColor] = useState('#0ea5e9');
+
+  const css = `border: ${width}px solid ${color};\nborder-radius: ${radius}px;\nbackground-color: transparent;`;
+  const preview = <div style={{ width: 150, height: 100, border: `${width}px solid ${color}`, borderRadius: `${radius}px`, backgroundColor: 'transparent' }}></div>;
+  const controls = (
+    <>
+      <FigmaColorPicker label="Border Color" hexValue={color} onChange={setColor} />
+      <FigmaSlider label="Border Width" min={1} max={30} value={width} onChange={setWidth} unit="px" />
+      <FigmaSlider label="Border Radius" min={0} max={100} value={radius} onChange={setRadius} unit="px" />
+    </>
+  );
+  return <WorkspaceLayout name="Border" controls={controls} preview={preview} cssOutput={css} />;
+};
+
+export const PluginGlassmorphism = () => {
+  const [blur, setBlur] = useState(12);
+  const [opacity, setOpacity] = useState(15);
+  const [color, setColor] = useState('#ffffff');
+
+  const rgb = hexToRgb(color);
+  const css = `background: rgba(${rgb}, ${opacity / 100});\nbackdrop-filter: blur(${blur}px);\n-webkit-backdrop-filter: blur(${blur}px);\nborder: 1px solid rgba(${rgb}, 0.3);\nborder-radius: 16px;`;
+  const preview = <div style={{ width: 180, height: 120, background: `rgba(${rgb}, ${opacity / 100})`, backdropFilter: `blur(${blur}px)`, WebkitBackdropFilter: `blur(${blur}px)`, border: `1px solid rgba(${rgb}, 0.3)`, borderRadius: '16px' }}></div>;
+  const controls = (
+    <>
+      <FigmaColorPicker label="Glass Color" hexValue={color} onChange={setColor} />
+      <FigmaSlider label="Opacity" min={1} max={100} value={opacity} onChange={setOpacity} unit="%" />
+      <FigmaSlider label="Blur Filter" min={0} max={50} value={blur} onChange={setBlur} unit="px" />
+    </>
+  );
+  return <WorkspaceLayout name="Glassmorphism" controls={controls} preview={preview} cssOutput={css} bgType="image" />;
+};
+
+export const PluginNeumorphism = () => {
+  const [bg, setBg] = useState('#e0e5ec');
+  const [dist, setDist] = useState(10);
+  const [blur, setBlur] = useState(20);
+
+  const css = `background-color: ${bg};\nborder-radius: 20px;\nbox-shadow: ${dist}px ${dist}px ${blur}px #a3b1c6,\n            -${dist}px -${dist}px ${blur}px #ffffff;`;
+  const preview = <div style={{ width: 120, height: 120, backgroundColor: bg, borderRadius: 20, boxShadow: `${dist}px ${dist}px ${blur}px #a3b1c6, -${dist}px -${dist}px ${blur}px #ffffff` }}></div>;
+  const controls = (
+    <>
+      <FigmaColorPicker label="Base Background" hexValue={bg} onChange={setBg} />
+      <FigmaSlider label="Distance" min={1} max={30} value={dist} onChange={setDist} unit="px" />
+      <FigmaSlider label="Blur Radius" min={1} max={60} value={blur} onChange={setBlur} unit="px" />
+    </>
+  );
+  return <WorkspaceLayout name="Neumorphism" controls={controls} preview={preview} cssOutput={css} bgType="light" bgHex="#e0e5ec" />;
+};
+
+export const PluginShadow = () => {
+  const [x, setX] = useState(10);
+  const [y, setY] = useState(10);
+  const [blur, setBlur] = useState(25);
+  const [color, setColor] = useState('#000000');
+
+  const css = `box-shadow: ${x}px ${y}px ${blur}px rgba(${hexToRgb(color)}, 0.5);\nborder-radius: 12px;\nbackground-color: #ffffff;`;
+  const preview = <div style={{ width: 120, height: 120, backgroundColor: '#ffffff', borderRadius: 12, boxShadow: `${x}px ${y}px ${blur}px rgba(${hexToRgb(color)}, 0.5)` }}></div>;
+  const controls = (
+    <>
+      <FigmaColorPicker label="Shadow Color" hexValue={color} onChange={setColor} />
+      <FigmaSlider label="X Offset" min={-50} max={50} value={x} onChange={setX} unit="px" />
+      <FigmaSlider label="Y Offset" min={-50} max={50} value={y} onChange={setY} unit="px" />
+      <FigmaSlider label="Blur Radius" min={0} max={100} value={blur} onChange={setBlur} unit="px" />
+    </>
+  );
+  return <WorkspaceLayout name="Drop Shadow" controls={controls} preview={preview} cssOutput={css} bgType="light" />;
+};
+
+export const PluginGlow = () => {
+  const [color, setColor] = useState('#0ea5e9');
+  const [blur, setBlur] = useState(30);
+  const [spread, setSpread] = useState(5);
+
+  const css = `box-shadow: 0 0 ${blur}px ${spread}px rgba(${hexToRgb(color)}, 0.8);\nborder-radius: 50%;\nbackground-color: ${color};`;
+  const preview = <div style={{ width: 80, height: 80, backgroundColor: color, borderRadius: '50%', boxShadow: `0 0 ${blur}px ${spread}px rgba(${hexToRgb(color)}, 0.8)` }}></div>;
+  const controls = (
+    <>
+      <FigmaColorPicker label="Glow Color" hexValue={color} onChange={setColor} />
+      <FigmaSlider label="Blur Radius" min={0} max={100} value={blur} onChange={setBlur} unit="px" />
+      <FigmaSlider label="Spread Radius" min={0} max={50} value={spread} onChange={setSpread} unit="px" />
+    </>
+  );
+  return <WorkspaceLayout name="Neon Glow" controls={controls} preview={preview} cssOutput={css} />;
+};
+
+export const PluginFilters = () => {
+  const [gray, setGray] = useState(0);
+  const [blur, setBlur] = useState(0);
+  const [sepia, setSepia] = useState(0);
+
+  const css = `filter: grayscale(${gray}%) blur(${blur}px) sepia(${sepia}%);`;
+  const preview = (
+    <div style={{ width: '100%', height: '100%', maxWidth: '250px', maxHeight: '180px', borderRadius: '12px', overflow: 'hidden' }}>
+       <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=600" alt="Filter Demo" style={{ width: '100%', height: '100%', objectFit: 'cover', filter: `grayscale(${gray}%) blur(${blur}px) sepia(${sepia}%)` }} />
+    </div>
+  );
+  const controls = (
+    <>
+      <FigmaSlider label="Grayscale" min={0} max={100} value={gray} onChange={setGray} unit="%" />
+      <FigmaSlider label="Blur" min={0} max={20} value={blur} onChange={setBlur} unit="px" />
+      <FigmaSlider label="Sepia" min={0} max={100} value={sepia} onChange={setSepia} unit="%" />
+    </>
+  );
+  return <WorkspaceLayout name="Image Filters" controls={controls} preview={preview} cssOutput={css} />;
 };
