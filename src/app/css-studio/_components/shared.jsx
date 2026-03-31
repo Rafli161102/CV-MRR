@@ -65,7 +65,7 @@ export const hexToRgba = (hex, alpha) => `rgba(${hexToRgb(hex)}, ${alpha})`;
 export const COLOR_PRESETS = ['#ffffff', '#1e1e1e', '#0ea5e9', '#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981'];
 
 // =========================================================================
-// 3. UI COMPONENTS (Figma Style Workspace)
+// 3. UI COMPONENTS
 // =========================================================================
 
 export const FigmaSlider = ({ label, min, max, step = 1, value, onChange, unit = "" }) => (
@@ -82,13 +82,11 @@ export const FigmaSlider = ({ label, min, max, step = 1, value, onChange, unit =
 
 export const FigmaColorPicker = ({ label, hexValue, onChange }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const safeColor = safeHex(hexValue);
-  const [hsl, setHsl] = useState(hexToHsl(safeColor));
-  
-  useEffect(() => { setHsl(hexToHsl(safeColor)); }, [safeColor]);
+  const [hsl, setHsl] = useState(hexToHsl(hexValue));
+  useEffect(() => { setHsl(hexToHsl(hexValue)); }, [hexValue]);
 
   const handleHslChange = (part, val) => {
-    const newHsl = { ...hsl, [part]: Number(val) || 0 };
+    const newHsl = { ...hsl, [part]: val };
     setHsl(newHsl);
     onChange(hslToHex(newHsl.h, newHsl.s, newHsl.l));
   };
@@ -101,10 +99,10 @@ export const FigmaColorPicker = ({ label, hexValue, onChange }) => {
       <div className="bg-[#111111] border border-[#333] rounded-lg overflow-hidden transition-all duration-300 shadow-sm">
         <div className="flex items-center justify-between p-2 cursor-pointer hover:bg-[#1a1a1c] transition-colors" onClick={() => setIsOpen(!isOpen)}>
           <div className="flex items-center gap-2.5">
-            <div className="w-5 h-5 rounded shadow-inner border border-white/10" style={{backgroundColor: safeColor}}></div>
+            <div className="w-5 h-5 rounded shadow-inner border border-white/10" style={{backgroundColor: hexValue}}></div>
             <div className="flex flex-col">
                <span className="text-[10px] font-bold text-slate-300 uppercase leading-none">{label}</span>
-               <span className="text-[9px] font-mono text-slate-500 uppercase mt-0.5">{safeColor}</span>
+               <span className="text-[9px] font-mono text-slate-500 uppercase mt-0.5">{hexValue}</span>
             </div>
           </div>
           <div className={`transform transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}>
@@ -128,7 +126,7 @@ export const FigmaColorPicker = ({ label, hexValue, onChange }) => {
           </div>
           <div className="flex flex-wrap gap-1.5 mt-3 pt-3 border-t border-[#333]">
             {COLOR_PRESETS.map((c) => (
-              <button key={c} onClick={() => onChange(c)} className={`w-4 h-4 rounded-full border transition-transform hover:scale-125 ${safeColor===c ? 'border-white scale-110 shadow-lg' : 'border-white/20'}`} style={{ backgroundColor: c }} />
+              <button key={c} onClick={() => onChange(c)} className={`w-4 h-4 rounded-full border transition-transform hover:scale-125 ${hexValue===c ? 'border-white scale-110 shadow-lg' : 'border-white/20'}`} style={{ backgroundColor: c }} />
             ))}
           </div>
         </div>
@@ -155,7 +153,7 @@ export const FigmaTextInput = ({ label, value, onChange }) => (
   </div>
 );
 
-export const CodeOutput = ({ code }) => {
+export const CodeOutput = ({ code, isMobileTab }) => {
   const [copied, setCopied] = useState(false);
   const handleCopy = () => {
     navigator.clipboard.writeText(code);
@@ -163,14 +161,17 @@ export const CodeOutput = ({ code }) => {
     setTimeout(() => setCopied(false), 2000);
   };
   return (
-    <div className="w-full flex flex-col bg-[#1e1e1e] relative h-[250px] lg:h-full shrink-0">
-       <button onClick={handleCopy} className="absolute top-3 right-4 z-10 flex items-center gap-2 px-3 py-1.5 rounded bg-[#252526] border border-[#444] text-slate-300 hover:bg-cyan-500 hover:text-[#111] transition-all text-[9px] font-bold uppercase tracking-wider shadow-md">
+    <div className={`w-full h-full bg-[#111111] relative flex flex-col overflow-hidden ${isMobileTab ? '' : 'border-t lg:border border-[#252526] lg:rounded-2xl shadow-xl'}`}>
+       <button onClick={handleCopy} className="absolute top-3 right-4 z-10 flex items-center gap-2 px-3 py-1.5 rounded bg-[#252526] border border-[#333333] text-slate-300 hover:bg-cyan-500 hover:text-[#111] transition-all text-[9px] font-bold uppercase tracking-wider shadow-md">
          {copied ? <><Icons.Check /> COPIED</> : <><Icons.Copy /> COPY CSS</>}
        </button>
-       <div className="px-4 py-2.5 border-b border-[#333] bg-[#252526] shrink-0">
-         <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">CSS Output Code</span>
-       </div>
-       <div className="flex-1 p-4 overflow-y-auto bg-[#111111] custom-scroll">
+       {!isMobileTab && (
+         <div className="px-4 py-2.5 border-b border-[#252526] bg-[#18181b] shrink-0">
+           <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">CSS Output Code</span>
+         </div>
+       )}
+       {/* pb-24 agar bisa di scroll ke bawah di hp */}
+       <div className={`p-4 overflow-y-auto flex-grow bg-[#111111] custom-scroll ${isMobileTab ? 'pb-24' : ''}`}>
           <pre className="text-[11px] font-mono text-cyan-300/80 leading-relaxed whitespace-pre-wrap break-words"><code>{code}</code></pre>
        </div>
     </div>
@@ -178,45 +179,69 @@ export const CodeOutput = ({ code }) => {
 };
 
 // =========================================================================
-// WORKSPACE LAYOUT (Full Screen & Responsive)
+// 4. MASTER WORKSPACE LAYOUT (FIXED CANVAS + MOBILE TABS)
 // =========================================================================
 export const WorkspaceLayout = ({ name, controls, preview, cssOutput, bgType = 'grid', bgHex }) => {
+  // Sistem Tab Khusus HP (Design / Code) agar layout rapi dan tidak makan tempat
+  const [mobileTab, setMobileTab] = useState('design'); 
+
   return (
-    // pb-28 di Mobile memastikan layar bisa di-scroll sampai ke ujung bawah (menghindari menu ketutup batas HP)
-    <div className="flex flex-col lg:flex-row w-full h-full animate-fade-in pb-28 lg:pb-0">
+    <div className="flex flex-col lg:flex-row w-full h-full animate-fade-in bg-[#0a0a0b] lg:bg-transparent">
        
-       {/* AREA KIRI: CANVAS & CSS CODE (Desktop) */}
-       <div className="flex-1 flex flex-col min-w-0 lg:border-r border-[#252526]">
-         
-         {/* CANVAS AREA (Tidak lagi sticky di mobile agar natural saat di scroll) */}
-         <div className="h-[300px] sm:h-[350px] lg:h-auto lg:flex-1 relative flex items-center justify-center overflow-hidden bg-[#0a0a0b] border-b border-[#252526] transition-colors duration-500 shadow-sm" style={{backgroundColor: bgHex || 'transparent'}}>
+       {/* MOBILE: CANVAS (LOCKED / STICKY ATAS) */}
+       <div className="h-[30vh] sm:h-[35vh] lg:hidden relative flex items-center justify-center overflow-hidden border-b border-[#333] z-30 transition-colors duration-500 shadow-lg shrink-0" style={{backgroundColor: bgHex || '#0a0a0b'}}>
+          {bgType === 'grid' && <div className="absolute inset-0 opacity-[0.15] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '24px 24px'}}></div>}
+          {bgType === 'image' && <div className="absolute inset-0 bg-cover bg-center opacity-60" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200')" }}></div>}
+          {bgType === 'light' && <div className="absolute inset-0 bg-[#e5e7eb]"></div>}
+          {bgType === 'dark' && <div className="absolute inset-0 bg-[#030712]"></div>}
+          <div className="relative z-10 w-full h-full flex items-center justify-center p-4 overflow-hidden">{preview}</div>
+       </div>
+
+       {/* DESKTOP: MIDDLE COLUMN (CANVAS + CODE) */}
+       <div className="hidden lg:flex flex-1 flex-col min-w-0 lg:border-r border-[#252526]">
+         {/* Canvas Desktop */}
+         <div className="flex-1 relative flex items-center justify-center overflow-hidden bg-[#0a0a0b] border-b border-[#252526] z-10 transition-colors duration-500 shadow-inner" style={{backgroundColor: bgHex || 'transparent'}}>
             {bgType === 'grid' && <div className="absolute inset-0 opacity-[0.15] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '24px 24px'}}></div>}
             {bgType === 'image' && <div className="absolute inset-0 bg-cover bg-center opacity-60" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200')" }}></div>}
             {bgType === 'light' && <div className="absolute inset-0 bg-[#e5e7eb]"></div>}
             {bgType === 'dark' && <div className="absolute inset-0 bg-[#030712]"></div>}
             <div className="relative z-10 w-full h-full flex items-center justify-center p-4 overflow-hidden">{preview}</div>
          </div>
-         
-         {/* CODE OUTPUT (Hanya terlihat di Desktop) */}
-         <div className="hidden lg:flex flex-col h-[220px] shrink-0 border-t border-[#252526]">
+         {/* Code Desktop */}
+         <div className="h-[220px] shrink-0 p-4 bg-[#111111]">
             <CodeOutput code={cssOutput} />
          </div>
        </div>
 
-       {/* AREA KANAN: PROPERTIES PANEL */}
-       <div className="w-full lg:w-[320px] bg-[#18181b] flex flex-col shrink-0 lg:h-full shadow-xl z-20">
-         <div className="px-4 py-3 border-b border-[#252526] bg-[#18181b] sticky top-0 z-20 shrink-0">
-            <h2 className="text-[10px] font-bold text-cyan-400 uppercase tracking-widest">{name} Properties</h2>
+       {/* PROPERTIES PANEL (Scrollable Bottom for Mobile, Right Panel for Desktop) */}
+       <div className="flex-1 lg:w-[320px] lg:flex-none bg-[#18181b] flex flex-col z-20 overflow-hidden">
+         
+         {/* Header Properties (Desktop) & Tabs (Mobile) */}
+         <div className="px-4 py-3 border-b border-[#252526] bg-[#18181b] shrink-0">
+            <h2 className="text-[10px] font-bold text-cyan-400 uppercase tracking-widest hidden lg:block">{name} Properties</h2>
+            
+            {/* Mobile Navigation Tabs */}
+            <div className="flex lg:hidden bg-[#111111] p-1 rounded-lg border border-[#333] w-full">
+              <button onClick={() => setMobileTab('design')} className={`flex-1 py-1.5 rounded-md text-[9px] font-bold uppercase transition-all ${mobileTab === 'design' ? 'bg-[#333] text-white shadow-sm' : 'text-slate-500 hover:text-slate-300'}`}>Design Properties</button>
+              <button onClick={() => setMobileTab('code')} className={`flex-1 py-1.5 rounded-md text-[9px] font-bold uppercase transition-all ${mobileTab === 'code' ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30' : 'text-slate-500 hover:text-slate-300'}`}>View CSS Code</button>
+            </div>
          </div>
          
-         {/* Properties Content */}
-         <div className="p-4 flex flex-col gap-1 lg:overflow-y-auto custom-scroll lg:flex-1">
-            {controls}
-         </div>
-         
-         {/* CODE OUTPUT (Hanya terlihat di Mobile, ditempelkan di bagian bawah menu) */}
-         <div className="lg:hidden flex flex-col mt-4 border-t border-[#252526] shadow-[0_-10px_20px_rgba(0,0,0,0.5)]">
-            <CodeOutput code={cssOutput} />
+         {/* Properties Scrollable Area (Hanya ini yang bisa di-scroll di HP) */}
+         <div className="flex-1 overflow-y-auto custom-scroll relative">
+            
+            {/* Tampilan Design Properties */}
+            <div className={`p-4 lg:block ${mobileTab === 'design' ? 'block' : 'hidden'}`}>
+              {controls}
+              {/* Padding super longgar agar Color picker terbawah tidak tertutup nav hp */}
+              <div className="h-32 lg:h-4"></div> 
+            </div>
+
+            {/* Tampilan CSS Code (Hanya di HP) */}
+            <div className={`h-full lg:hidden ${mobileTab === 'code' ? 'block' : 'hidden'}`}>
+              <CodeOutput code={cssOutput} isMobileTab={true} />
+            </div>
+
          </div>
        </div>
     </div>
