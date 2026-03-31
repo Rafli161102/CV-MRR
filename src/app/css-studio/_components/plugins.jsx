@@ -12,11 +12,11 @@ export const PluginLayout = () => {
   const [bgColor, setBgColor] = useState('#0ea5e9');
   const [align, setAlign] = useState('center');
 
-  const css = `.box-element {\n  display: flex;\n  align-items: ${align};\n  justify-content: ${align};\n  width: ${shape === 'circle' ? '200' : shape === 'pill' ? '300' : width}px;\n  height: ${shape === 'circle' ? '200' : shape === 'pill' ? '100' : height}px;\n  padding: ${padding}px;\n  border-radius: ${shape === 'circle' ? '50%' : shape === 'pill' ? '50px' : `${radius}px`};\n  background-color: ${bgColor};\n}`;
+  const css = `.layout-box {\n  display: flex;\n  align-items: ${align};\n  justify-content: ${align};\n  width: ${shape === 'circle' ? '200' : shape === 'pill' ? '300' : width}px;\n  height: ${shape === 'circle' ? '200' : shape === 'pill' ? '100' : height}px;\n  padding: ${padding}px;\n  border-radius: ${shape === 'circle' ? '50%' : shape === 'pill' ? '50px' : `${radius}px`};\n  background-color: ${bgColor};\n}`;
   const preview = (
     <div style={{ display: 'flex', alignItems: align, justifyContent: align, width: `${shape === 'circle' ? 200 : shape === 'pill' ? 300 : width}px`, height: `${shape === 'circle' ? 200 : shape === 'pill' ? 100 : height}px`, padding: `${padding}px`, borderRadius: shape === 'circle' ? '50%' : shape === 'pill' ? '50px' : `${radius}px`, backgroundColor: bgColor }} className="transition-all duration-300 shadow-xl max-w-full max-h-full">
-      <div className="bg-black/20 w-full h-full border border-black/10 rounded flex items-center justify-center">
-        <span className="text-white/70 text-[10px] font-bold uppercase tracking-widest text-center">Layout Area</span>
+      <div className="bg-black/20 w-full h-full border border-black/10 rounded flex items-center justify-center overflow-hidden">
+        <span className="text-white/70 text-[10px] font-bold uppercase tracking-widest text-center truncate">Layout Area</span>
       </div>
     </div>
   );
@@ -45,12 +45,7 @@ export const PluginBorder = () => {
 
   const css = `.border-element {\n  border: ${width}px ${style} ${color};\n  border-radius: ${shape === 'circle' ? '50%' : shape === 'pill' ? '50px' : `${radius}px`};\n  background-color: transparent;\n}`;
   const preview = (
-    <div style={{
-      width: shape === 'circle' ? '200px' : shape === 'pill' ? '300px' : '200px',
-      height: shape === 'circle' ? '200px' : shape === 'pill' ? '100px' : '200px',
-      border: `${width}px ${style} ${color}`,
-      borderRadius: shape === 'circle' ? '50%' : shape === 'pill' ? '50px' : `${radius}px`,
-    }} className="flex items-center justify-center transition-all duration-500">
+    <div style={{ width: shape === 'circle' ? '200px' : shape === 'pill' ? '300px' : '200px', height: shape === 'circle' ? '200px' : shape === 'pill' ? '100px' : '200px', border: `${width}px ${style} ${color}`, borderRadius: shape === 'circle' ? '50%' : shape === 'pill' ? '50px' : `${radius}px` }} className="flex items-center justify-center transition-all duration-500 overflow-hidden">
       <span className="text-slate-500 text-[10px] font-bold uppercase tracking-widest">Border Area</span>
     </div>
   );
@@ -82,8 +77,8 @@ export const PluginTypography = () => {
 
   const css = `.text-element {\n  font-size: ${size}px;\n  font-weight: ${weight};\n  letter-spacing: ${letter}px;\n  text-align: ${align};\n  color: ${color};\n  text-shadow: ${shadowX}px ${shadowY}px ${shadowB}px ${hexToRgba(shadowC, shadowO)};\n}`;
   const preview = (
-    <div className="w-full" style={{ textAlign: align }}>
-       <h2 style={{ display: 'inline-block', fontSize: `${size}px`, fontWeight: weight, letterSpacing: `${letter}px`, color: color, textShadow: `${shadowX}px ${shadowY}px ${shadowB}px ${hexToRgba(shadowC, shadowO)}`, transition: 'all 0.3s ease' }}>{text}</h2>
+    <div className="w-full px-4 overflow-hidden" style={{ textAlign: align }}>
+       <h2 style={{ display: 'inline-block', fontSize: `${size}px`, fontWeight: weight, letterSpacing: `${letter}px`, color: color, textShadow: `${shadowX}px ${shadowY}px ${shadowB}px ${hexToRgba(shadowC, shadowO)}`, transition: 'all 0.3s ease', lineHeight: 1.2 }}>{text}</h2>
     </div>
   );
   const controls = (
@@ -107,7 +102,7 @@ export const PluginTypography = () => {
   return <WorkspaceLayout name="Typography" controls={controls} preview={preview} cssOutput={css} />;
 };
 
-// FIX BUG KETIBAN KOTAK: Injecting explicit webkit clip rules
+// FIX BUG KETIBAN KOTAK: Menyematkan WebkitBackgroundClip langsung dan kuat pada style
 export const PluginTextGradient = () => {
   const [text, setText] = useState('Gradient.');
   const [size, setSize] = useState(64);
@@ -116,17 +111,18 @@ export const PluginTextGradient = () => {
   const [color1, setColor1] = useState('#0ea5e9');
   const [color2, setColor2] = useState('#8b5cf6');
 
-  const css = `.gradient-text {\n  font-size: ${size}px;\n  font-weight: ${weight};\n  background: linear-gradient(${angle}deg, ${color1}, ${color2});\n  -webkit-background-clip: text;\n  -webkit-text-fill-color: transparent;\n  background-clip: text;\n  color: transparent;\n  display: inline-block;\n}`;
+  const css = `.gradient-text {\n  font-size: ${size}px;\n  font-weight: ${weight};\n  background: linear-gradient(${angle}deg, ${color1}, ${color2});\n  -webkit-background-clip: text;\n  background-clip: text;\n  -webkit-text-fill-color: transparent;\n  color: transparent;\n  display: inline-block;\n}`;
+  
   const preview = (
-     <div className="w-full text-center px-4 overflow-hidden flex items-center justify-center">
+     <div className="w-full flex items-center justify-center p-4 overflow-hidden">
        <h2 className="tracking-tighter transition-all duration-300" 
            style={{ 
               fontSize: `${size}px`, 
               fontWeight: weight, 
               background: `linear-gradient(${angle}deg, ${color1}, ${color2})`, 
               WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
               backgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
               color: 'transparent',
               display: 'inline-block',
               lineHeight: 1.2 
@@ -135,6 +131,7 @@ export const PluginTextGradient = () => {
        </h2>
      </div>
   );
+  
   const controls = (
      <>
        <FigmaTextInput label="Text Input" value={text} onChange={setText} />
@@ -247,7 +244,7 @@ export const PluginShadow = () => {
    );
    const controls = (
      <>
-       <FigmaSelect label="Shape Builder" options={['box', 'circle', 'pill']} value={shape} onChange={setShape} />
+       <FigmaSelect label="Target Shape" options={['box', 'circle', 'pill']} value={shape} onChange={setShape} />
        <div className="my-4 border-t border-[#333] pt-4"></div>
        <FigmaSlider label="Smooth Layers" min={1} max={6} value={layers} onChange={setLayers} />
        <FigmaSlider label="Y Offset" min={-50} max={50} value={y} onChange={setY} unit="px" />
@@ -276,7 +273,7 @@ export const PluginGlow = () => {
    );
    const controls = (
      <>
-       <FigmaSelect label="Shape Builder" options={['box', 'circle', 'pill']} value={shape} onChange={setShape} />
+       <FigmaSelect label="Target Shape" options={['box', 'circle', 'pill']} value={shape} onChange={setShape} />
        <div className="my-4 border-t border-[#333] pt-4"></div>
        <FigmaColorPicker label="Glow Color" hexValue={color} onChange={setColor} />
        <FigmaSlider label="Blur Radius" min={0} max={100} value={blur} onChange={setBlur} unit="px" />
