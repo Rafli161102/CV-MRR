@@ -101,16 +101,13 @@ export const toolkits = [
     category: "Design Utility",
     tags: ["Layout", "Math", "Proportion"]
   },
-  {
-    id: "glassmorphism-css",
-    title: "Glassmorphism CSS",
-    description: "Generator visual untuk mengatur tingkat blur, transparansi, dan pantulan cahaya efek kaca. Cukup sesuaikan tuas dan salin kodenya.",
-    icon: <Icons.Layers />,
-    link: "/glassmorphism-css",
-    status: "coming_soon",
+    {
+    id: "css-studio",
+    title: "CSS Visual Studio",
     category: "Web Developer",
-    tags: ["CSS", "Generator", "UI/UX"]
-  },
+    description: "Generator visual All-in-One untuk efek Glassmorphism, Neumorphism, dan Soft Shadows. Sesuaikan tuas secara visual dan salin kode CSS-nya secara real-time.",
+    status: "Live" // Ubah dari Coming Soon menjadi Live!
+  }, 
   {
     id: "event-ticket",
     title: "Event Badge Generator",
