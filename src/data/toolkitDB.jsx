@@ -30,10 +30,22 @@ export const toolkits = [
     title: "ATS CV & Cover Letter",
     description: "Buat Curriculum Vitae dan Surat Lamaran Kerja standar mesin HRD (ATS Friendly) secara instan. Drag & Play, aman tanpa simpan data di server.",
     icon: <Icons.Document />, 
-    link: "/cv-maker", // Mengarah ke folder yang sudah kamu buat
+    link: "/cv-maker", 
     status: "active",
     category: "Career & Freelance",
     tags: ["ATS", "Resume", "Cover Letter"]
+  },
+  
+  // --- CSS VISUAL STUDIO (Ubah dari Glassmorphism ke Studio) ---
+  {
+    id: "css-studio",
+    title: "CSS Visual Studio",
+    description: "Generator visual All-in-One untuk efek Glassmorphism, Neumorphism, CSS Animations, dan UI premium lainnya. Atur tuas visual dan salin kodenya.",
+    icon: <Icons.Layers />, // Menambahkan ikon yang hilang
+    link: "/css-studio", // Menyiapkan URL routingnya
+    status: "active", // Harus "active" agar tombolnya berwarna Cyan terang
+    category: "Web Developer",
+    tags: ["CSS", "Generator", "UI Effects"] // Menambahkan tag yang hilang
   },
 
   // --- FASE 2: QUICK WINS & KOMUNITAS ---
@@ -101,13 +113,6 @@ export const toolkits = [
     category: "Design Utility",
     tags: ["Layout", "Math", "Proportion"]
   },
-    {
-    id: "css-studio",
-    title: "CSS Visual Studio",
-    category: "Web Developer",
-    description: "Generator visual All-in-One untuk efek Glassmorphism, Neumorphism, dan Soft Shadows. Sesuaikan tuas secara visual dan salin kode CSS-nya secara real-time.",
-    status: "Live" // Ubah dari Coming Soon menjadi Live!
-  }, 
   {
     id: "event-ticket",
     title: "Event Badge Generator",
