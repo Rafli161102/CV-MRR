@@ -5,8 +5,7 @@ import Link from 'next/link';
 
 // Import Komponen dari folder _components
 import { Icons } from './_components/shared';
-// FIX: PluginTransform dan PluginAnimation dihapus dari import agar tidak error di Vercel
-import { PluginLayout, PluginBorder, PluginTypography, PluginTextGradient, PluginGlassmorphism, PluginNeumorphism, PluginShadow, PluginGlow, PluginFilters } from './_components/plugins';
+import { PluginLayout, PluginBorder, PluginTypography, PluginTextGradient, PluginGlassmorphism, PluginNeumorphism, PluginShadow, PluginGlow, PluginFilters, PluginTransform, PluginAnimation } from './_components/plugins';
 
 // =========================================================================
 // THE MASTER REGISTRY (Sistem Plugin Pusat)
@@ -20,8 +19,9 @@ const PLUGINS = [
   { id: 'neumorphism', title: 'Neumorph', icon: <Icons.Neumorphism />, component: PluginNeumorphism, cat: 'Effects' },
   { id: 'shadow', title: 'Shadow', icon: <Icons.Shadow />, component: PluginShadow, cat: 'Effects' },
   { id: 'glow', title: 'Neon Glow', icon: <Icons.Glow />, component: PluginGlow, cat: 'Effects' },
-  { id: 'filters', title: 'Image Filters', icon: <Icons.Filters />, component: PluginFilters, cat: 'Advanced' }
-  // FIX: PluginTransform dan PluginAnimation dihapus dari sini
+  { id: 'filters', title: 'Image Filters', icon: <Icons.Filters />, component: PluginFilters, cat: 'Advanced' },
+  { id: 'transform', title: '3D Move', icon: <Icons.Cube3D />, component: PluginTransform, cat: 'Advanced' },
+  { id: 'animation', title: 'Animate', icon: <Icons.Animation />, component: PluginAnimation, cat: 'Advanced' }
 ];
 
 export default function CssStudioPage() {
