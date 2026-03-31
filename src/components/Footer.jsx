@@ -1,6 +1,7 @@
 "use client";
 
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 // =========================================================================
 // IKON SVG KUSTOM
@@ -33,12 +34,13 @@ const BoltIcon = () => (
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
+  const pathname = usePathname();
+
+  // FIX BUG: Sembunyikan Footer khusus di halaman CSS Studio agar mode Workspace/App Fullscreen tidak terpotong!
+  if (pathname === '/css-studio') return null;
 
   return (
-    // FIX OVERFLOW: w-full overflow-x-hidden ditambahkan agar super aman
     <footer className="bg-[#030712] relative z-20 w-full overflow-x-hidden pt-16 border-t border-white/5">
-      
-      {/* Background Decor */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] max-w-full h-[400px] bg-cyan-900/10 rounded-full blur-[120px] pointer-events-none"></div>
 
       <div className="w-full max-w-[1400px] mx-auto px-5 sm:px-8 lg:px-12 pb-8 relative z-10">
