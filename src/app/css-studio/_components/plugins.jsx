@@ -14,7 +14,7 @@ export const PluginLayout = () => {
 
   const css = `.layout-box {\n  display: flex;\n  align-items: ${align};\n  justify-content: ${align};\n  width: ${shape === 'circle' ? '200' : shape === 'pill' ? '300' : width}px;\n  height: ${shape === 'circle' ? '200' : shape === 'pill' ? '100' : height}px;\n  padding: ${padding}px;\n  border-radius: ${shape === 'circle' ? '50%' : shape === 'pill' ? '50px' : `${radius}px`};\n  background-color: ${bgColor};\n}`;
   const preview = (
-    <div style={{ display: 'flex', alignItems: align, justifyContent: align, width: `${shape === 'circle' ? 200 : shape === 'pill' ? 300 : width}px`, height: `${shape === 'circle' ? 200 : shape === 'pill' ? 100 : height}px`, padding: `${padding}px`, borderRadius: shape === 'circle' ? '50%' : shape === 'pill' ? '50px' : `${radius}px`, backgroundColor: bgColor }} className="transition-all duration-300 shadow-xl max-w-full max-h-full">
+    <div style={{ display: 'flex', alignItems: align, justifyContent: align, width: `${shape === 'circle' ? 200 : shape === 'pill' ? 300 : width}px`, height: `${shape === 'circle' ? 200 : shape === 'pill' ? 100 : height}px`, padding: `${padding}px`, borderRadius: shape === 'circle' ? '50%' : shape === 'pill' ? '50px' : `${radius}px`, backgroundColor: bgColor }} className="transition-all duration-500 cubic-bezier(0.25, 1, 0.5, 1) shadow-xl max-w-full max-h-full">
       <div className="bg-black/20 w-full h-full border border-black/10 rounded flex items-center justify-center overflow-hidden">
         <span className="text-white/70 text-[10px] font-bold uppercase tracking-widest text-center truncate">Layout Area</span>
       </div>
@@ -45,7 +45,12 @@ export const PluginBorder = () => {
 
   const css = `.border-element {\n  border: ${width}px ${style} ${color};\n  border-radius: ${shape === 'circle' ? '50%' : shape === 'pill' ? '50px' : `${radius}px`};\n  background-color: transparent;\n}`;
   const preview = (
-    <div style={{ width: shape === 'circle' ? '200px' : shape === 'pill' ? '300px' : '200px', height: shape === 'circle' ? '200px' : shape === 'pill' ? '100px' : '200px', border: `${width}px ${style} ${color}`, borderRadius: shape === 'circle' ? '50%' : shape === 'pill' ? '50px' : `${radius}px` }} className="flex items-center justify-center transition-all duration-500 overflow-hidden">
+    <div style={{
+      width: shape === 'circle' ? '200px' : shape === 'pill' ? '300px' : '200px',
+      height: shape === 'circle' ? '200px' : shape === 'pill' ? '100px' : '200px',
+      border: `${width}px ${style} ${color}`,
+      borderRadius: shape === 'circle' ? '50%' : shape === 'pill' ? '50px' : `${radius}px`,
+    }} className="flex items-center justify-center transition-all duration-500">
       <span className="text-slate-500 text-[10px] font-bold uppercase tracking-widest">Border Area</span>
     </div>
   );
@@ -77,8 +82,8 @@ export const PluginTypography = () => {
 
   const css = `.text-element {\n  font-size: ${size}px;\n  font-weight: ${weight};\n  letter-spacing: ${letter}px;\n  text-align: ${align};\n  color: ${color};\n  text-shadow: ${shadowX}px ${shadowY}px ${shadowB}px ${hexToRgba(shadowC, shadowO)};\n}`;
   const preview = (
-    <div className="w-full px-4 overflow-hidden" style={{ textAlign: align }}>
-       <h2 style={{ display: 'inline-block', fontSize: `${size}px`, fontWeight: weight, letterSpacing: `${letter}px`, color: color, textShadow: `${shadowX}px ${shadowY}px ${shadowB}px ${hexToRgba(shadowC, shadowO)}`, transition: 'all 0.3s ease', lineHeight: 1.2 }}>{text}</h2>
+    <div className="w-full" style={{ textAlign: align }}>
+       <h2 style={{ display: 'inline-block', fontSize: `${size}px`, fontWeight: weight, letterSpacing: `${letter}px`, color: color, textShadow: `${shadowX}px ${shadowY}px ${shadowB}px ${hexToRgba(shadowC, shadowO)}`, transition: 'all 0.3s ease' }}>{text}</h2>
     </div>
   );
   const controls = (
@@ -102,7 +107,6 @@ export const PluginTypography = () => {
   return <WorkspaceLayout name="Typography" controls={controls} preview={preview} cssOutput={css} />;
 };
 
-// FIX BUG KETIBAN KOTAK: Menyematkan WebkitBackgroundClip langsung dan kuat pada style
 export const PluginTextGradient = () => {
   const [text, setText] = useState('Gradient.');
   const [size, setSize] = useState(64);
@@ -111,20 +115,21 @@ export const PluginTextGradient = () => {
   const [color1, setColor1] = useState('#0ea5e9');
   const [color2, setColor2] = useState('#8b5cf6');
 
-  const css = `.gradient-text {\n  font-size: ${size}px;\n  font-weight: ${weight};\n  background: linear-gradient(${angle}deg, ${color1}, ${color2});\n  -webkit-background-clip: text;\n  background-clip: text;\n  -webkit-text-fill-color: transparent;\n  color: transparent;\n  display: inline-block;\n}`;
+  const css = `.gradient-text {\n  font-size: ${size}px;\n  font-weight: ${weight};\n  background: linear-gradient(${angle}deg, ${color1}, ${color2});\n  -webkit-background-clip: text;\n  -webkit-text-fill-color: transparent;\n  background-clip: text;\n  color: transparent;\n  display: inline-block;\n}`;
   
+  // FIX BUG GRADIENT: Inject CSS inline-block dan spesifik webkit di dalam React Style agar warna masuk ke dalam teks di Safari/Chrome Mobile
   const preview = (
-     <div className="w-full flex items-center justify-center p-4 overflow-hidden">
+     <div className="w-full text-center px-4 flex items-center justify-center relative overflow-visible">
        <h2 className="tracking-tighter transition-all duration-300" 
            style={{ 
+              display: 'inline-block',
               fontSize: `${size}px`, 
               fontWeight: weight, 
-              background: `linear-gradient(${angle}deg, ${color1}, ${color2})`, 
+              backgroundImage: `linear-gradient(${angle}deg, ${color1}, ${color2})`, 
               WebkitBackgroundClip: 'text',
-              backgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
               color: 'transparent',
-              display: 'inline-block',
               lineHeight: 1.2 
            }}>
            {text}
@@ -209,7 +214,7 @@ export const PluginNeumorphism = () => {
    );
    const controls = (
      <>
-        <div className="p-2 mb-3 bg-[#3f3f46] border border-[#555] rounded text-[9px] text-slate-300 font-medium leading-relaxed">Penting: Warna Surface harus sama dengan warna latar belakang.</div>
+        <div className="p-2 mb-3 bg-[#3f3f46] border border-[#555] rounded text-[9px] text-slate-300 font-medium leading-relaxed">Penting: Warna Surface harus sama dengan warna latar belakang agar menyatu.</div>
         <FigmaSelect label="Target Shape" options={['box', 'circle', 'pill']} value={shape} onChange={setShape} />
         <FigmaSelect label="Light Direction" options={['flat', 'concave', 'convex']} value={neuType} onChange={setNeuType} />
         <div className="my-4 border-t border-[#333] pt-4"></div>
@@ -238,13 +243,19 @@ export const PluginShadow = () => {
    const css = `.shadow-element {\n  background: #ffffff;\n  border-radius: ${shape === 'circle' ? '50%' : shape === 'pill' ? '50px' : '24px'};\n  box-shadow:\n    ${shadows.join(',\n    ')};\n}`;
    
    const preview = (
-     <div style={{ width: shape === 'circle' ? '180px' : shape === 'pill' ? '280px' : '180px', height: shape === 'circle' ? '180px' : shape === 'pill' ? '90px' : '180px', borderRadius: shape === 'circle' ? '50%' : shape === 'pill' ? '50px' : '24px', background: '#ffffff', boxShadow: shadows.join(', ') }} className="flex items-center justify-center transition-all duration-500">
+     <div style={{
+       width: shape === 'circle' ? '180px' : shape === 'pill' ? '280px' : '180px',
+       height: shape === 'circle' ? '180px' : shape === 'pill' ? '90px' : '180px',
+       borderRadius: shape === 'circle' ? '50%' : shape === 'pill' ? '50px' : '24px',
+       background: '#ffffff',
+       boxShadow: shadows.join(', ')
+     }} className="flex items-center justify-center transition-all duration-500">
        <span className="text-slate-800 font-bold tracking-widest uppercase text-[10px]">Shadow</span>
      </div>
    );
    const controls = (
      <>
-       <FigmaSelect label="Target Shape" options={['box', 'circle', 'pill']} value={shape} onChange={setShape} />
+       <FigmaSelect label="Shape Builder" options={['box', 'circle', 'pill']} value={shape} onChange={setShape} />
        <div className="my-4 border-t border-[#333] pt-4"></div>
        <FigmaSlider label="Smooth Layers" min={1} max={6} value={layers} onChange={setLayers} />
        <FigmaSlider label="Y Offset" min={-50} max={50} value={y} onChange={setY} unit="px" />
@@ -267,13 +278,20 @@ export const PluginGlow = () => {
    const css = `.neon-element {\n  background: #111111;\n  border: 1px solid ${hexToRgba(color, 0.5)};\n  border-radius: ${shape === 'circle' ? '50%' : shape === 'pill' ? '50px' : '24px'};\n  box-shadow: 0 0 ${blur}px ${spread}px ${hexToRgba(color, opacity)}, inset 0 0 15px ${hexToRgba(color, opacity * 0.5)};\n}`;
    
    const preview = (
-     <div style={{ width: shape === 'circle' ? '180px' : shape === 'pill' ? '280px' : '180px', height: shape === 'circle' ? '180px' : shape === 'pill' ? '90px' : '180px', borderRadius: shape === 'circle' ? '50%' : shape === 'pill' ? '50px' : '24px', background: '#111111', border: `1px solid ${hexToRgba(color, 0.5)}`, boxShadow: `0 0 ${blur}px ${spread}px ${hexToRgba(color, opacity)}, inset 0 0 15px ${hexToRgba(color, opacity * 0.5)}` }} className="flex items-center justify-center transition-all duration-500">
+     <div style={{
+       width: shape === 'circle' ? '180px' : shape === 'pill' ? '280px' : '180px',
+       height: shape === 'circle' ? '180px' : shape === 'pill' ? '90px' : '180px',
+       borderRadius: shape === 'circle' ? '50%' : shape === 'pill' ? '50px' : '24px',
+       background: '#111111',
+       border: `1px solid ${hexToRgba(color, 0.5)}`,
+       boxShadow: `0 0 ${blur}px ${spread}px ${hexToRgba(color, opacity)}, inset 0 0 15px ${hexToRgba(color, opacity * 0.5)}`
+     }} className="flex items-center justify-center transition-all duration-500">
        <span className="text-white font-bold tracking-widest uppercase text-[10px]">Neon Glow</span>
      </div>
    );
    const controls = (
      <>
-       <FigmaSelect label="Target Shape" options={['box', 'circle', 'pill']} value={shape} onChange={setShape} />
+       <FigmaSelect label="Shape Builder" options={['box', 'circle', 'pill']} value={shape} onChange={setShape} />
        <div className="my-4 border-t border-[#333] pt-4"></div>
        <FigmaColorPicker label="Glow Color" hexValue={color} onChange={setColor} />
        <FigmaSlider label="Blur Radius" min={0} max={100} value={blur} onChange={setBlur} unit="px" />
@@ -301,7 +319,7 @@ export const PluginFilters = () => {
    );
    const controls = (
      <>
-       <div className="p-2 mb-4 bg-[#3f3f46] border border-[#555] rounded text-[9px] text-slate-300 font-medium">Filter diterapkan ke elemen gambar utuh.</div>
+       <div className="p-2 mb-4 bg-cyan-900/20 border border-cyan-500/20 rounded text-[9px] text-cyan-300">Filter diterapkan ke elemen gambar utuh.</div>
        <FigmaSlider label="Blur" min={0} max={20} step={0.5} value={blur} onChange={setBlur} unit="px" />
        <FigmaSlider label="Brightness" min={0} max={200} value={brightness} onChange={setBrightness} unit="%" />
        <FigmaSlider label="Contrast" min={0} max={200} value={contrast} onChange={setContrast} unit="%" />
