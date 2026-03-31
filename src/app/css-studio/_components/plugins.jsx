@@ -98,6 +98,7 @@ export const PluginTypography = () => {
   const controls = (
     <>
       <FigmaTextInput label="Text Input" value={text} onChange={setText} />
+      <div className="my-4 border-t border-[#252526] pt-4"></div>
       <FigmaSlider label="Font Size" min={12} max={120} value={size} onChange={setSize} />
       <FigmaSlider label="Font Weight" min={100} max={900} step={100} value={weight} onChange={setWeight} />
       <FigmaSlider label="Letter Spacing" min={-10} max={30} step={0.5} value={letter} onChange={setLetter} />
@@ -127,10 +128,9 @@ export const PluginTextGradient = () => {
   const [color1, setColor1] = useState('#0ea5e9');
   const [color2, setColor2] = useState('#8b5cf6');
 
-  const css = `.gradient-text {\n  font-size: ${size}px;\n  font-weight: ${weight};\n  background: linear-gradient(${angle}deg, ${color1}, ${color2});\n  -webkit-background-clip: text;\n  -webkit-text-fill-color: transparent;\n  background-clip: text;\n  color: transparent;\n  display: inline-block;\n}`;
-  
+  const css = `.gradient-text {\n  font-size: ${size}px;\n  font-weight: ${weight};\n  background-image: linear-gradient(${angle}deg, ${color1}, ${color2});\n  -webkit-background-clip: text;\n  -webkit-text-fill-color: transparent;\n  background-clip: text;\n  color: transparent;\n  display: inline-block;\n}`;
   const preview = (
-     <div className="w-full text-center px-4 flex items-center justify-center relative overflow-visible">
+     <div className="w-full text-center px-4 overflow-hidden flex items-center justify-center">
        <h2 className="tracking-tighter transition-all duration-300" 
            style={{ 
               display: 'inline-block',
@@ -147,7 +147,6 @@ export const PluginTextGradient = () => {
        </h2>
      </div>
   );
-  
   const controls = (
      <>
        <FigmaTextInput label="Text Input" value={text} onChange={setText} />
@@ -384,47 +383,85 @@ export const PluginTransform = () => {
 };
 
 // =========================================================================
-// 11. CSS ANIMATION PLUGIN (22+ ANIMATIONS)
+// 11. CSS ANIMATION PLUGIN (45+ ANIMATIONS LIBRARY)
 // =========================================================================
 
-// Database 22 Animasi CSS Lengkap
+// Database 45 Animasi CSS Lengkap yang Dikategorikan
 const ANIMATION_LIST = [
-  { id: 'float', name: 'Floating', timing: 'ease-in-out', keyframes: `@keyframes float {\n  0%, 100% { transform: translateY(0); }\n  50% { transform: translateY(-20px); }\n}` },
-  { id: 'pulse-glow', name: 'Pulse Glow', timing: 'ease-in-out', keyframes: `@keyframes pulse-glow {\n  0%, 100% { box-shadow: 0 0 0 0 rgba(14, 165, 233, 0.5); }\n  50% { box-shadow: 0 0 40px 20px rgba(14, 165, 233, 0); }\n}` },
-  { id: 'spin', name: 'Spin', timing: 'linear', keyframes: `@keyframes spin {\n  from { transform: rotate(0deg); }\n  to { transform: rotate(360deg); }\n}` },
-  { id: 'bounce', name: 'Bounce', timing: 'ease-in-out', keyframes: `@keyframes bounce {\n  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }\n  40% { transform: translateY(-30px); }\n  60% { transform: translateY(-15px); }\n}` },
-  { id: 'shake', name: 'Shake', timing: 'linear', keyframes: `@keyframes shake {\n  0%, 100% { transform: translateX(0); }\n  10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }\n  20%, 40%, 60%, 80% { transform: translateX(10px); }\n}` },
-  { id: 'heartbeat', name: 'Heartbeat', timing: 'ease-in-out', keyframes: `@keyframes heartbeat {\n  0% { transform: scale(1); }\n  14% { transform: scale(1.3); }\n  28% { transform: scale(1); }\n  42% { transform: scale(1.3); }\n  70% { transform: scale(1); }\n}` },
-  { id: 'flip-y', name: 'Flip Y', timing: 'ease-in-out', keyframes: `@keyframes flip-y {\n  0% { transform: perspective(400px) rotateY(0); }\n  100% { transform: perspective(400px) rotateY(360deg); }\n}` },
-  { id: 'flip-x', name: 'Flip X', timing: 'ease-in-out', keyframes: `@keyframes flip-x {\n  0% { transform: perspective(400px) rotateX(0); }\n  100% { transform: perspective(400px) rotateX(360deg); }\n}` },
-  { id: 'wobble', name: 'Wobble', timing: 'linear', keyframes: `@keyframes wobble {\n  0% { transform: translateX(0%); }\n  15% { transform: translateX(-25%) rotate(-5deg); }\n  30% { transform: translateX(20%) rotate(3deg); }\n  45% { transform: translateX(-15%) rotate(-3deg); }\n  60% { transform: translateX(10%) rotate(2deg); }\n  75% { transform: translateX(-5%) rotate(-1deg); }\n  100% { transform: translateX(0%); }\n}` },
-  { id: 'jello', name: 'Jello', timing: 'linear', keyframes: `@keyframes jello {\n  0%, 11.1%, 100% { transform: translate3d(0,0,0); }\n  22.2% { transform: skewX(-12.5deg) skewY(-12.5deg); }\n  33.3% { transform: skewX(6.25deg) skewY(6.25deg); }\n  44.4% { transform: skewX(-3.125deg) skewY(-3.125deg); }\n  55.5% { transform: skewX(1.5625deg) skewY(1.5625deg); }\n  66.6% { transform: skewX(-0.78125deg) skewY(-0.78125deg); }\n  77.7% { transform: skewX(0.390625deg) skewY(0.390625deg); }\n  88.8% { transform: skewX(-0.1953125deg) skewY(-0.1953125deg); }\n}` },
-  { id: 'rubber-band', name: 'Rubber Band', timing: 'linear', keyframes: `@keyframes rubber-band {\n  0% { transform: scale3d(1,1,1); }\n  30% { transform: scale3d(1.25, 0.75, 1); }\n  40% { transform: scale3d(0.75, 1.25, 1); }\n  50% { transform: scale3d(1.15, 0.85, 1); }\n  65% { transform: scale3d(0.95, 1.05, 1); }\n  75% { transform: scale3d(1.05, 0.95, 1); }\n  100% { transform: scale3d(1,1,1); }\n}` },
-  { id: 'flash', name: 'Flash', timing: 'linear', keyframes: `@keyframes flash {\n  0%, 50%, 100% { opacity: 1; }\n  25%, 75% { opacity: 0; }\n}` },
-  { id: 'swing', name: 'Swing', timing: 'ease-in-out', keyframes: `@keyframes swing {\n  20% { transform: rotate3d(0, 0, 1, 15deg); }\n  40% { transform: rotate3d(0, 0, 1, -10deg); }\n  60% { transform: rotate3d(0, 0, 1, 5deg); }\n  80% { transform: rotate3d(0, 0, 1, -5deg); }\n  100% { transform: rotate3d(0, 0, 1, 0deg); }\n}` },
-  { id: 'tada', name: 'Tada', timing: 'linear', keyframes: `@keyframes tada {\n  0% { transform: scale3d(1, 1, 1); }\n  10%, 20% { transform: scale3d(0.9, 0.9, 0.9) rotate3d(0, 0, 1, -3deg); }\n  30%, 50%, 70%, 90% { transform: scale3d(1.1, 1.1, 1.1) rotate3d(0, 0, 1, 3deg); }\n  40%, 60%, 80% { transform: scale3d(1.1, 1.1, 1.1) rotate3d(0, 0, 1, -3deg); }\n  100% { transform: scale3d(1, 1, 1); }\n}` },
-  { id: 'zoom-in', name: 'Zoom In', timing: 'ease-in-out', keyframes: `@keyframes zoom-in {\n  0%, 100% { transform: scale(1); }\n  50% { transform: scale(1.2); }\n}` },
-  { id: 'zoom-out', name: 'Zoom Out', timing: 'ease-in-out', keyframes: `@keyframes zoom-out {\n  0%, 100% { transform: scale(1); }\n  50% { transform: scale(0.8); }\n}` },
-  { id: 'slide-up', name: 'Slide Up', timing: 'ease-in-out', keyframes: `@keyframes slide-up {\n  0%, 100% { transform: translateY(0); }\n  50% { transform: translateY(-50px); }\n}` },
-  { id: 'slide-down', name: 'Slide Down', timing: 'ease-in-out', keyframes: `@keyframes slide-down {\n  0%, 100% { transform: translateY(0); }\n  50% { transform: translateY(50px); }\n}` },
-  { id: 'slide-left', name: 'Slide Left', timing: 'ease-in-out', keyframes: `@keyframes slide-left {\n  0%, 100% { transform: translateX(0); }\n  50% { transform: translateX(-50px); }\n}` },
-  { id: 'slide-right', name: 'Slide Right', timing: 'ease-in-out', keyframes: `@keyframes slide-right {\n  0%, 100% { transform: translateX(0); }\n  50% { transform: translateX(50px); }\n}` },
-  { id: 'pendulum', name: 'Pendulum', timing: 'ease-in-out', keyframes: `@keyframes pendulum {\n  0%, 100% { transform: rotate(-10deg); }\n  50% { transform: rotate(10deg); }\n}` },
-  { id: 'rotate-scale', name: 'Rotate Scale', timing: 'linear', keyframes: `@keyframes rotate-scale {\n  0%, 100% { transform: rotate(0deg) scale(1); }\n  50% { transform: rotate(180deg) scale(1.2); }\n}` }
+  // 1. BASE
+  { id: 'float', name: 'Floating', cat: 'Base', timing: 'ease-in-out', keyframes: `@keyframes float {\n  0%, 100% { transform: translateY(0); }\n  50% { transform: translateY(-20px); }\n}` },
+  { id: 'pulse-glow', name: 'Pulse Glow', cat: 'Base', timing: 'ease-in-out', keyframes: `@keyframes pulse-glow {\n  0%, 100% { box-shadow: 0 0 0 0 rgba(14, 165, 233, 0.5); }\n  50% { box-shadow: 0 0 40px 20px rgba(14, 165, 233, 0); }\n}` },
+  { id: 'spin', name: 'Spin', cat: 'Base', timing: 'linear', keyframes: `@keyframes spin {\n  from { transform: rotate(0deg); }\n  to { transform: rotate(360deg); }\n}` },
+  { id: 'spin-reverse', name: 'Spin Rev', cat: 'Base', timing: 'linear', keyframes: `@keyframes spin-reverse {\n  from { transform: rotate(360deg); }\n  to { transform: rotate(0deg); }\n}` },
+  { id: 'breathe', name: 'Breathe', cat: 'Base', timing: 'ease-in-out', keyframes: `@keyframes breathe {\n  0%, 100% { transform: scale(1); }\n  50% { transform: scale(1.05); }\n}` },
+  { id: 'seesaw', name: 'Seesaw', cat: 'Base', timing: 'ease-in-out', keyframes: `@keyframes seesaw {\n  0%, 100% { transform: rotate(0deg); }\n  25% { transform: rotate(5deg); }\n  75% { transform: rotate(-5deg); }\n}` },
+  
+  // 2. ATTENTION SEEKERS
+  { id: 'bounce', name: 'Bounce', cat: 'Attention', timing: 'ease', keyframes: `@keyframes bounce {\n  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }\n  40% { transform: translateY(-30px); }\n  60% { transform: translateY(-15px); }\n}` },
+  { id: 'flash', name: 'Flash', cat: 'Attention', timing: 'ease', keyframes: `@keyframes flash {\n  0%, 50%, 100% { opacity: 1; }\n  25%, 75% { opacity: 0; }\n}` },
+  { id: 'shake-x', name: 'Shake X', cat: 'Attention', timing: 'ease-in-out', keyframes: `@keyframes shake-x {\n  0%, 100% { transform: translateX(0); }\n  10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }\n  20%, 40%, 60%, 80% { transform: translateX(10px); }\n}` },
+  { id: 'shake-y', name: 'Shake Y', cat: 'Attention', timing: 'ease-in-out', keyframes: `@keyframes shake-y {\n  0%, 100% { transform: translateY(0); }\n  10%, 30%, 50%, 70%, 90% { transform: translateY(-10px); }\n  20%, 40%, 60%, 80% { transform: translateY(10px); }\n}` },
+  { id: 'rubber-band', name: 'Rubber Band', cat: 'Attention', timing: 'ease-in-out', keyframes: `@keyframes rubber-band {\n  0% { transform: scale(1); }\n  30% { transform: scaleX(1.25) scaleY(0.75); }\n  40% { transform: scaleX(0.75) scaleY(1.25); }\n  50% { transform: scaleX(1.15) scaleY(0.85); }\n  65% { transform: scaleX(0.95) scaleY(1.05); }\n  75% { transform: scaleX(1.05) scaleY(0.95); }\n  100% { transform: scale(1); }\n}` },
+  { id: 'tada', name: 'Tada', cat: 'Attention', timing: 'ease-in-out', keyframes: `@keyframes tada {\n  0% { transform: scale(1); }\n  10%, 20% { transform: scale(0.9) rotate(-3deg); }\n  30%, 50%, 70%, 90% { transform: scale(1.1) rotate(3deg); }\n  40%, 60%, 80% { transform: scale(1.1) rotate(-3deg); }\n  100% { transform: scale(1); }\n}` },
+  { id: 'wobble', name: 'Wobble', cat: 'Attention', timing: 'ease-in-out', keyframes: `@keyframes wobble {\n  0% { transform: translateX(0%); }\n  15% { transform: translateX(-25%) rotate(-5deg); }\n  30% { transform: translateX(20%) rotate(3deg); }\n  45% { transform: translateX(-15%) rotate(-3deg); }\n  60% { transform: translateX(10%) rotate(2deg); }\n  75% { transform: translateX(-5%) rotate(-1deg); }\n  100% { transform: translateX(0%); }\n}` },
+  { id: 'heartbeat', name: 'Heartbeat', cat: 'Attention', timing: 'ease-in-out', keyframes: `@keyframes heartbeat {\n  0% { transform: scale(1); }\n  14% { transform: scale(1.3); }\n  28% { transform: scale(1); }\n  42% { transform: scale(1.3); }\n  70% { transform: scale(1); }\n}` },
+  { id: 'swing', name: 'Swing', cat: 'Attention', timing: 'ease-in-out', keyframes: `@keyframes swing {\n  20% { transform: rotate(15deg); }\n  40% { transform: rotate(-10deg); }\n  60% { transform: rotate(5deg); }\n  80% { transform: rotate(-5deg); }\n  100% { transform: rotate(0deg); }\n}` },
+  { id: 'jello', name: 'Jello', cat: 'Attention', timing: 'ease-in-out', keyframes: `@keyframes jello {\n  0%, 11.1%, 100% { transform: translate(0,0); }\n  22.2% { transform: skewX(-12.5deg) skewY(-12.5deg); }\n  33.3% { transform: skewX(6.25deg) skewY(6.25deg); }\n  44.4% { transform: skewX(-3.125deg) skewY(-3.125deg); }\n  55.5% { transform: skewX(1.5625deg) skewY(1.5625deg); }\n  66.6% { transform: skewX(-0.78125deg) skewY(-0.78125deg); }\n  77.7% { transform: skewX(0.390625deg) skewY(0.390625deg); }\n  88.8% { transform: skewX(-0.1953125deg) skewY(-0.1953125deg); }\n}` },
+
+  // 3. ENTRANCES
+  { id: 'fade-in', name: 'Fade In', cat: 'Entrance', timing: 'ease-in', keyframes: `@keyframes fade-in {\n  from { opacity: 0; }\n  to { opacity: 1; }\n}` },
+  { id: 'fade-in-up', name: 'Fade In Up', cat: 'Entrance', timing: 'ease-out', keyframes: `@keyframes fade-in-up {\n  from { opacity: 0; transform: translateY(20px); }\n  to { opacity: 1; transform: translateY(0); }\n}` },
+  { id: 'fade-in-down', name: 'Fade In Down', cat: 'Entrance', timing: 'ease-out', keyframes: `@keyframes fade-in-down {\n  from { opacity: 0; transform: translateY(-20px); }\n  to { opacity: 1; transform: translateY(0); }\n}` },
+  { id: 'zoom-in', name: 'Zoom In', cat: 'Entrance', timing: 'ease-out', keyframes: `@keyframes zoom-in {\n  from { opacity: 0; transform: scale(0.5); }\n  to { opacity: 1; transform: scale(1); }\n}` },
+  { id: 'zoom-in-up', name: 'Zoom In Up', cat: 'Entrance', timing: 'ease-out', keyframes: `@keyframes zoom-in-up {\n  from { opacity: 0; transform: scale(0.5) translateY(50px); }\n  to { opacity: 1; transform: scale(1) translateY(0); }\n}` },
+  { id: 'slide-in-left', name: 'Slide Left', cat: 'Entrance', timing: 'ease-out', keyframes: `@keyframes slide-in-left {\n  from { transform: translateX(-100%); }\n  to { transform: translateX(0); }\n}` },
+  { id: 'slide-in-right', name: 'Slide Right', cat: 'Entrance', timing: 'ease-out', keyframes: `@keyframes slide-in-right {\n  from { transform: translateX(100%); }\n  to { transform: translateX(0); }\n}` },
+  { id: 'bounce-in', name: 'Bounce In', cat: 'Entrance', timing: 'cubic-bezier(0.215, 0.61, 0.355, 1)', keyframes: `@keyframes bounce-in {\n  0% { opacity: 0; transform: scale3d(0.3, 0.3, 0.3); }\n  20% { transform: scale3d(1.1, 1.1, 1.1); }\n  40% { transform: scale3d(0.9, 0.9, 0.9); }\n  60% { opacity: 1; transform: scale3d(1.03, 1.03, 1.03); }\n  80% { transform: scale3d(0.97, 0.97, 0.97); }\n  100% { opacity: 1; transform: scale3d(1, 1, 1); }\n}` },
+
+  // 4. EXITS
+  { id: 'fade-out', name: 'Fade Out', cat: 'Exit', timing: 'ease-out', keyframes: `@keyframes fade-out {\n  from { opacity: 1; }\n  to { opacity: 0; }\n}` },
+  { id: 'fade-out-up', name: 'Fade Out Up', cat: 'Exit', timing: 'ease-in', keyframes: `@keyframes fade-out-up {\n  from { opacity: 1; transform: translateY(0); }\n  to { opacity: 0; transform: translateY(-20px); }\n}` },
+  { id: 'fade-out-down', name: 'Fade Out Down', cat: 'Exit', timing: 'ease-in', keyframes: `@keyframes fade-out-down {\n  from { opacity: 1; transform: translateY(0); }\n  to { opacity: 0; transform: translateY(20px); }\n}` },
+  { id: 'zoom-out', name: 'Zoom Out', cat: 'Exit', timing: 'ease-in', keyframes: `@keyframes zoom-out {\n  from { opacity: 1; transform: scale(1); }\n  to { opacity: 0; transform: scale(0.5); }\n}` },
+  { id: 'slide-out-left', name: 'Slide Left', cat: 'Exit', timing: 'ease-in', keyframes: `@keyframes slide-out-left {\n  from { transform: translateX(0); }\n  to { transform: translateX(-100%); }\n}` },
+  { id: 'slide-out-right', name: 'Slide Right', cat: 'Exit', timing: 'ease-in', keyframes: `@keyframes slide-out-right {\n  from { transform: translateX(0); }\n  to { transform: translateX(100%); }\n}` },
+  { id: 'bounce-out', name: 'Bounce Out', cat: 'Exit', timing: 'cubic-bezier(0.215, 0.61, 0.355, 1)', keyframes: `@keyframes bounce-out {\n  20% { transform: scale3d(0.9, 0.9, 0.9); }\n  50%, 55% { opacity: 1; transform: scale3d(1.1, 1.1, 1.1); }\n  100% { opacity: 0; transform: scale3d(0.3, 0.3, 0.3); }\n}` },
+
+  // 5. ROTATING & FLIPPING
+  { id: 'flip-x', name: 'Flip X', cat: 'Rotate', timing: 'ease-in-out', keyframes: `@keyframes flip-x {\n  0% { transform: perspective(400px) rotateX(0); }\n  100% { transform: perspective(400px) rotateX(360deg); }\n}` },
+  { id: 'flip-y', name: 'Flip Y', cat: 'Rotate', timing: 'ease-in-out', keyframes: `@keyframes flip-y {\n  0% { transform: perspective(400px) rotateY(0); }\n  100% { transform: perspective(400px) rotateY(360deg); }\n}` },
+  { id: 'rotate-in', name: 'Rotate In', cat: 'Rotate', timing: 'ease-out', keyframes: `@keyframes rotate-in {\n  from { transform: rotate(-200deg); opacity: 0; }\n  to { transform: translate3d(0, 0, 0); opacity: 1; }\n}` },
+  { id: 'rotate-out', name: 'Rotate Out', cat: 'Rotate', timing: 'ease-in', keyframes: `@keyframes rotate-out {\n  from { transform: translate3d(0, 0, 0); opacity: 1; }\n  to { transform: rotate(200deg); opacity: 0; }\n}` },
+  { id: 'roll-in', name: 'Roll In', cat: 'Rotate', timing: 'ease-out', keyframes: `@keyframes roll-in {\n  from { opacity: 0; transform: translate3d(-100%, 0, 0) rotate3d(0, 0, 1, -120deg); }\n  to { opacity: 1; transform: translate3d(0, 0, 0); }\n}` },
+  { id: 'roll-out', name: 'Roll Out', cat: 'Rotate', timing: 'ease-in', keyframes: `@keyframes roll-out {\n  from { opacity: 1; transform: translate3d(0, 0, 0); }\n  to { opacity: 0; transform: translate3d(100%, 0, 0) rotate3d(0, 0, 1, 120deg); }\n}` },
+
+  // 6. SPECIALS
+  { id: 'hinge', name: 'Hinge', cat: 'Special', timing: 'ease-in-out', keyframes: `@keyframes hinge {\n  0% { transform-origin: top left; }\n  20%, 60% { transform: rotate(80deg); transform-origin: top left; }\n  40%, 80% { transform: rotate(60deg); transform-origin: top left; opacity: 1; }\n  to { transform: translateY(700px); opacity: 0; }\n}` },
+  { id: 'jack-in-the-box', name: 'Jack In Box', cat: 'Special', timing: 'ease-out', keyframes: `@keyframes jack-in-the-box {\n  from { opacity: 0; transform: scale(0.1) rotate(30deg); transform-origin: center bottom; }\n  50% { transform: rotate(-10deg); }\n  70% { transform: rotate(3deg); }\n  to { opacity: 1; transform: scale(1); }\n}` },
+  { id: 'light-speed-in', name: 'Light In', cat: 'Special', timing: 'ease-out', keyframes: `@keyframes light-speed-in {\n  from { transform: translateX(100%) skewX(-30deg); opacity: 0; }\n  60% { transform: skewX(20deg); opacity: 1; }\n  80% { transform: skewX(-5deg); }\n  to { transform: translate(0); }\n}` },
+  { id: 'light-speed-out', name: 'Light Out', cat: 'Special', timing: 'ease-in', keyframes: `@keyframes light-speed-out {\n  from { opacity: 1; }\n  to { transform: translateX(100%) skewX(30deg); opacity: 0; }\n}` },
+  { id: 'drop', name: 'Drop', cat: 'Special', timing: 'ease-in', keyframes: `@keyframes drop {\n  0% { transform: translateY(-200px); opacity: 0; }\n  50% { transform: translateY(0); opacity: 1; }\n  65% { transform: translateY(-15px); }\n  100% { transform: translateY(0); }\n}` },
+  { id: 'blur-in', name: 'Blur In', cat: 'Special', timing: 'ease-out', keyframes: `@keyframes blur-in {\n  from { filter: blur(20px); opacity: 0; }\n  to { filter: blur(0); opacity: 1; }\n}` },
+  { id: 'blur-out', name: 'Blur Out', cat: 'Special', timing: 'ease-in', keyframes: `@keyframes blur-out {\n  from { filter: blur(0); opacity: 1; }\n  to { filter: blur(20px); opacity: 0; }\n}` }
 ];
 
 export const PluginAnimation = () => {
    const [type, setType] = useState('float');
    const [duration, setDuration] = useState(3);
    const [shape, setShape] = useState('box');
+   const [activeCat, setActiveCat] = useState('Base');
 
+   // Temukan data animasi saat ini
    const currentAnim = ANIMATION_LIST.find(a => a.id === type) || ANIMATION_LIST[0];
 
-   const css = `.animated-element {\n  animation: ${currentAnim.id} ${duration}s infinite ${currentAnim.timing};\n}\n\n/* Include Keyframes below */\n${currentAnim.keyframes}`;
+   // Hanya render keyframes yang SEDANG aktif (Mencegah ratusan baris CSS menumpuk di Output)
+   const css = `.animated-element {\n  animation: ${currentAnim.id} ${duration}s infinite ${currentAnim.timing};\n}\n\n/* Keyframes Khusus ${currentAnim.name} */\n${currentAnim.keyframes}`;
    
    const preview = (
      <>
+       {/* Inject Keyframes langsung ke DOM */}
        <style dangerouslySetInnerHTML={{__html: currentAnim.keyframes}} />
+       
        <div style={{ 
          width: shape === 'circle' ? '160px' : shape === 'pill' ? '260px' : '160px', 
          height: shape === 'circle' ? '160px' : shape === 'pill' ? '80px' : '160px', 
@@ -432,20 +469,38 @@ export const PluginAnimation = () => {
          background: 'linear-gradient(135deg, #18181b, #252526)', 
          border: '1px solid rgba(14, 165, 233, 0.3)', 
          animation: `${currentAnim.id} ${duration}s infinite ${currentAnim.timing}` 
-       }} className="flex items-center justify-center overflow-hidden">
-          <span className="text-cyan-400 font-bold tracking-widest uppercase text-[10px] text-center">{currentAnim.name}</span>
+       }} className="flex items-center justify-center overflow-hidden shadow-lg">
+          <span className="text-cyan-400 font-bold tracking-widest uppercase text-[10px] text-center px-4">{currentAnim.name}</span>
        </div>
      </>
    );
+
+   const categories = [...new Set(ANIMATION_LIST.map(a => a.cat))];
    
    const controls = (
      <>
        <FigmaSelect label="Target Shape" options={['box', 'circle', 'pill']} value={shape} onChange={setShape} />
        <div className="my-4 border-t border-[#252526] pt-4"></div>
+       
        <div className="mb-4">
-         <label className="text-[10px] font-medium text-slate-400 block mb-3">Animation Library (22+)</label>
-         <div className="grid grid-cols-2 gap-1.5">
-           {ANIMATION_LIST.map(anim => (
+         <label className="text-[10px] font-medium text-slate-400 block mb-3">Animation Library (45+)</label>
+         
+         {/* Category Navigation Tabs */}
+         <div className="flex overflow-x-auto gap-2 pb-2 mb-3 border-b border-[#252526] custom-scroll">
+           {categories.map(cat => (
+             <button 
+                key={cat} 
+                onClick={() => setActiveCat(cat)} 
+                className={`text-[9px] font-bold px-1 pb-1.5 whitespace-nowrap border-b-2 transition-all ${activeCat === cat ? 'border-cyan-500 text-cyan-400' : 'border-transparent text-slate-500 hover:text-slate-300'}`}
+              >
+               {cat}
+             </button>
+           ))}
+         </div>
+
+         {/* Animasi Buttons Grid */}
+         <div className="grid grid-cols-2 gap-1.5 mt-2">
+           {ANIMATION_LIST.filter(a => a.cat === activeCat).map(anim => (
              <button 
                 key={anim.id} 
                 onClick={() => setType(anim.id)} 
@@ -457,8 +512,9 @@ export const PluginAnimation = () => {
            ))}
          </div>
        </div>
+
        <div className="my-4 border-t border-[#252526] pt-4"></div>
-       <FigmaSlider label="Duration (s)" min={0.5} max={10} step={0.5} value={duration} onChange={setDuration} />
+       <FigmaSlider label="Duration (s)" min={0.5} max={10} step={0.1} value={duration} onChange={setDuration} />
      </>
    );
    return <WorkspaceLayout name="CSS Animations" controls={controls} preview={preview} cssOutput={css} bgType="dark" />;
