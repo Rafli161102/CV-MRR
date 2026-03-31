@@ -135,6 +135,17 @@ export const FigmaColorPicker = ({ label, hexValue, onChange }) => {
   );
 };
 
+export const FigmaSelect = ({ label, options, value, onChange }) => (
+  <div className="mb-4">
+     <label className="text-[10px] font-medium text-slate-400 block mb-2">{label}</label>
+     <div className="flex bg-[#111111] p-1 rounded border border-[#333]">
+        {options.map(opt => (
+           <button key={opt} onClick={() => onChange(opt)} className={`flex-1 py-1 rounded-sm text-[8px] sm:text-[9px] font-bold uppercase transition-all ${value === opt ? 'bg-[#3f3f46] text-white shadow-sm' : 'text-slate-500 hover:text-slate-300'}`}>{opt}</button>
+        ))}
+     </div>
+  </div>
+);
+
 export const CodeOutput = ({ code, isMobileTab }) => {
   const [copied, setCopied] = useState(false);
   const handleCopy = () => {
@@ -167,6 +178,8 @@ export const WorkspaceLayout = ({ name, controls, preview, cssOutput, bgType = '
 
   return (
     <div className="flex flex-col lg:flex-row w-full h-full animate-fade-in bg-[#0a0a0b] lg:bg-transparent">
+       
+       {/* MOBILE: CANVAS */}
        <div className="h-[30vh] sm:h-[35vh] lg:hidden relative flex items-center justify-center overflow-hidden border-b border-[#333] z-30 transition-colors duration-500 shadow-lg shrink-0" style={{backgroundColor: bgHex || '#0a0a0b'}}>
           {bgType === 'grid' && <div className="absolute inset-0 opacity-[0.15] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '24px 24px'}}></div>}
           {bgType === 'image' && <div className="absolute inset-0 bg-cover bg-center opacity-60" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200')" }}></div>}
@@ -175,6 +188,7 @@ export const WorkspaceLayout = ({ name, controls, preview, cssOutput, bgType = '
           <div className="relative z-10 w-full h-full flex items-center justify-center p-4 overflow-hidden">{preview}</div>
        </div>
 
+       {/* DESKTOP: MIDDLE COLUMN (CANVAS + CODE) */}
        <div className="hidden lg:flex flex-1 flex-col min-w-0 lg:border-r border-[#252526]">
          <div className="flex-1 relative flex items-center justify-center overflow-hidden bg-[#0a0a0b] border-b border-[#252526] z-10 transition-colors duration-500 shadow-inner" style={{backgroundColor: bgHex || 'transparent'}}>
             {bgType === 'grid' && <div className="absolute inset-0 opacity-[0.15] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '24px 24px'}}></div>}
@@ -188,6 +202,7 @@ export const WorkspaceLayout = ({ name, controls, preview, cssOutput, bgType = '
          </div>
        </div>
 
+       {/* PROPERTIES PANEL */}
        <div className="flex-1 lg:w-[320px] lg:flex-none bg-[#18181b] flex flex-col z-20 overflow-hidden">
          <div className="px-4 py-3 border-b border-[#252526] bg-[#18181b] shrink-0">
             <h2 className="text-[10px] font-bold text-cyan-400 uppercase tracking-widest hidden lg:block">{name} Properties</h2>
@@ -210,11 +225,9 @@ export const WorkspaceLayout = ({ name, controls, preview, cssOutput, bgType = '
   );
 };
 
-
 // =========================================================================
-// 5. PLUGIN COMPONENTS (DI SINI LETAK PERBAIKANNYA!)
+// 5. PLUGIN COMPONENTS (SEMUA 11 PLUGIN ADA DI SINI)
 // =========================================================================
-// Di bawah ini adalah kode-kode plugin yang selama ini "hilang" (undefined)
 
 export const PluginTextGradient = () => {
   const [color1, setColor1] = useState('#0ea5e9');
@@ -353,23 +366,156 @@ export const PluginGlow = () => {
   return <WorkspaceLayout name="Neon Glow" controls={controls} preview={preview} cssOutput={css} />;
 };
 
+// =========================================================================
+// 5.1 FITUR BARU: LIGHTROOM PROFESSIONAL IMAGE FILTERS
+// =========================================================================
 export const PluginFilters = () => {
-  const [gray, setGray] = useState(0);
+  const [brightness, setBrightness] = useState(100);
+  const [contrast, setContrast] = useState(100);
+  const [saturate, setSaturate] = useState(100);
+  const [hue, setHue] = useState(0);
   const [blur, setBlur] = useState(0);
   const [sepia, setSepia] = useState(0);
+  const [grayscale, setGrayscale] = useState(0);
+  const [invert, setInvert] = useState(0);
 
-  const css = `filter: grayscale(${gray}%) blur(${blur}px) sepia(${sepia}%);`;
+  const css = `/* Lightroom Style Image Filters */\nfilter: \n  brightness(${brightness}%)\n  contrast(${contrast}%)\n  saturate(${saturate}%)\n  hue-rotate(${hue}deg)\n  blur(${blur}px)\n  sepia(${sepia}%)\n  grayscale(${grayscale}%)\n  invert(${invert}%);`;
+  
   const preview = (
-    <div style={{ width: '100%', height: '100%', maxWidth: '250px', maxHeight: '180px', borderRadius: '12px', overflow: 'hidden' }}>
-       <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=600" alt="Filter Demo" style={{ width: '100%', height: '100%', objectFit: 'cover', filter: `grayscale(${gray}%) blur(${blur}px) sepia(${sepia}%)` }} />
+    <div className="relative w-full h-full max-w-[320px] max-h-[240px] rounded-xl overflow-hidden shadow-2xl ring-1 ring-white/10 group">
+       <img 
+         src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=600" 
+         alt="Filter Demo" 
+         className="w-full h-full object-cover transition-all duration-200"
+         style={{ 
+           filter: `brightness(${brightness}%) contrast(${contrast}%) saturate(${saturate}%) hue-rotate(${hue}deg) blur(${blur}px) sepia(${sepia}%) grayscale(${grayscale}%) invert(${invert}%)`
+         }} 
+       />
+       <div className="absolute bottom-2 right-2 bg-black/60 backdrop-blur-md px-2 py-1 rounded text-[8px] text-white/80 font-mono opacity-0 group-hover:opacity-100 transition-opacity">
+         Lightroom Output
+       </div>
     </div>
   );
+
+  const controls = (
+    <div className="space-y-1">
+      <div className="mb-3 pb-2 border-b border-[#333]">
+        <div className="text-[10px] font-bold text-cyan-400 uppercase tracking-widest flex items-center justify-between">
+          <span>Light & Color</span>
+          <button onClick={() => { setBrightness(100); setContrast(100); setSaturate(100); setHue(0); }} className="text-[8px] text-slate-500 hover:text-white bg-[#222] px-1.5 py-0.5 rounded transition-colors">RESET</button>
+        </div>
+      </div>
+      <FigmaSlider label="Exposure" min={0} max={200} value={brightness} onChange={setBrightness} unit="%" />
+      <FigmaSlider label="Contrast" min={0} max={200} value={contrast} onChange={setContrast} unit="%" />
+      <FigmaSlider label="Vibrance" min={0} max={200} value={saturate} onChange={setSaturate} unit="%" />
+      <FigmaSlider label="Tint (Hue)" min={0} max={360} value={hue} onChange={setHue} unit="°" />
+      
+      <div className="mt-5 mb-3 pb-2 border-b border-[#333]">
+        <div className="text-[10px] font-bold text-cyan-400 uppercase tracking-widest flex items-center justify-between">
+          <span>Effects & Details</span>
+          <button onClick={() => { setBlur(0); setSepia(0); setGrayscale(0); setInvert(0); }} className="text-[8px] text-slate-500 hover:text-white bg-[#222] px-1.5 py-0.5 rounded transition-colors">RESET</button>
+        </div>
+      </div>
+      <FigmaSlider label="Lens Blur" min={0} max={20} value={blur} onChange={setBlur} unit="px" />
+      <FigmaSlider label="Vintage (Sepia)" min={0} max={100} value={sepia} onChange={setSepia} unit="%" />
+      <FigmaSlider label="B&W (Grayscale)" min={0} max={100} value={grayscale} onChange={setGrayscale} unit="%" />
+      <FigmaSlider label="Negative (Invert)" min={0} max={100} value={invert} onChange={setInvert} unit="%" />
+    </div>
+  );
+
+  return <WorkspaceLayout name="Pro Image Filters" controls={controls} preview={preview} cssOutput={css} bgType="dark" />;
+};
+
+// =========================================================================
+// 5.2 FITUR BARU: 3D TRANSFORM (DENGAN RESET BUTTON)
+// =========================================================================
+export const PluginTransform = () => {
+  const [translateX, setTranslateX] = useState(0);
+  const [translateY, setTranslateY] = useState(0);
+  const [rotate, setRotate] = useState(0);
+  const [scale, setScale] = useState(1);
+  const [skewX, setSkewX] = useState(0);
+  const [skewY, setSkewY] = useState(0);
+
+  const css = `transform: \n  translate(${translateX}px, ${translateY}px) \n  rotate(${rotate}deg) \n  scale(${scale}) \n  skew(${skewX}deg, ${skewY}deg);`;
+  
+  const preview = (
+    <div className="relative w-full h-full flex items-center justify-center">
+      <div 
+        className="w-28 h-28 rounded-2xl bg-gradient-to-tr from-purple-500 to-pink-500 shadow-2xl flex flex-col items-center justify-center border border-white/20"
+        style={{ 
+          transform: `translate(${translateX}px, ${translateY}px) rotate(${rotate}deg) scale(${scale}) skew(${skewX}deg, ${skewY}deg)`,
+          transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+        }}
+      >
+        <Icons.Cube3D />
+        <span className="text-[10px] font-bold mt-2 text-white">TRANSFORM</span>
+      </div>
+    </div>
+  );
+
   const controls = (
     <>
-      <FigmaSlider label="Grayscale" min={0} max={100} value={gray} onChange={setGray} unit="%" />
-      <FigmaSlider label="Blur" min={0} max={20} value={blur} onChange={setBlur} unit="px" />
-      <FigmaSlider label="Sepia" min={0} max={100} value={sepia} onChange={setSepia} unit="%" />
+      <FigmaSlider label="Translate X" min={-150} max={150} value={translateX} onChange={setTranslateX} unit="px" />
+      <FigmaSlider label="Translate Y" min={-150} max={150} value={translateY} onChange={setTranslateY} unit="px" />
+      <FigmaSlider label="Rotate" min={-360} max={360} value={rotate} onChange={setRotate} unit="°" />
+      <FigmaSlider label="Scale" min={0.5} max={2.5} step={0.1} value={scale} onChange={setScale} unit="x" />
+      <FigmaSlider label="Skew X" min={-90} max={90} value={skewX} onChange={setSkewX} unit="°" />
+      <FigmaSlider label="Skew Y" min={-90} max={90} value={skewY} onChange={setSkewY} unit="°" />
+      
+      <button 
+        onClick={() => { setTranslateX(0); setTranslateY(0); setRotate(0); setScale(1); setSkewX(0); setSkewY(0); }}
+        className="w-full mt-4 py-2 bg-[#252526] hover:bg-[#333] border border-[#333] rounded text-[10px] font-bold text-slate-400 uppercase tracking-widest transition-colors"
+      >
+        Reset Transform
+      </button>
     </>
   );
-  return <WorkspaceLayout name="Image Filters" controls={controls} preview={preview} cssOutput={css} />;
+
+  return <WorkspaceLayout name="3D Transform" controls={controls} preview={preview} cssOutput={css} bgType="grid" />;
+};
+
+// =========================================================================
+// 5.3 FITUR BARU: KEYFRAME ANIMATION BUILDER
+// =========================================================================
+export const PluginAnimation = () => {
+  const [animType, setAnimType] = useState('float'); 
+  const [duration, setDuration] = useState(3);
+  const [timing, setTiming] = useState('ease-in-out');
+  const [iteration, setIteration] = useState('infinite');
+
+  const getKeyframes = () => {
+    switch(animType) {
+      case 'float': return `@keyframes cssAnim { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }`;
+      case 'pulse': return `@keyframes cssAnim { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.1); opacity: 0.7; } }`;
+      case 'spin': return `@keyframes cssAnim { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`;
+      case 'wiggle': return `@keyframes cssAnim { 0%, 100% { transform: rotate(-5deg); } 50% { transform: rotate(5deg); } }`;
+      default: return '';
+    }
+  };
+
+  const css = `${getKeyframes()}\n\n.animate-element {\n  animation: cssAnim ${duration}s ${timing} ${iteration};\n}`;
+
+  const preview = (
+    <div className="relative w-full h-full flex items-center justify-center">
+      <style>{getKeyframes()}</style>
+      <div 
+        className="w-24 h-24 rounded-2xl bg-gradient-to-tr from-cyan-500 to-blue-500 shadow-2xl flex items-center justify-center border border-white/20"
+        style={{ animation: `cssAnim ${duration}s ${timing} ${iteration}` }}
+      >
+        <Icons.Animation />
+      </div>
+    </div>
+  );
+
+  const controls = (
+    <>
+      <FigmaSelect label="Anim Style" options={['float', 'pulse', 'spin', 'wiggle']} value={animType} onChange={setAnimType} />
+      <FigmaSlider label="Duration" min={0.5} max={10} step={0.1} value={duration} onChange={setDuration} unit="s" />
+      <FigmaSelect label="Timing" options={['linear', 'ease', 'ease-in-out']} value={timing} onChange={setTiming} />
+      <FigmaSelect label="Iteration" options={['1', '3', 'infinite']} value={iteration} onChange={setIteration} />
+    </>
+  );
+
+  return <WorkspaceLayout name="Keyframe Animation" controls={controls} preview={preview} cssOutput={css} bgType="grid" />;
 };
