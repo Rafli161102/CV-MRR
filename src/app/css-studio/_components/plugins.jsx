@@ -10,17 +10,19 @@ export const Icons = {
   Copy: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4"><path strokeLinecap="round" strokeLinejoin="round" d="M15.666 3.888A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 01-.75.75H9a.75.75 0 01-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184" /></svg>,
   Check: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 text-emerald-400"><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>,
   ChevronDown: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-3.5 h-3.5"><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>,
-  Layout: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M9 4.5v15m6-15v15m-10.5-6h15m-15-6h15m-3-4.5H5.25C4.007 3 3 4.007 3 5.25v13.5c0 1.243 1.007 2.25 2.25 2.25h13.5c1.243 0 2.25-2.25V5.25c0-1.243-1.007-2.25-2.25-2.25z" /></svg>,
-  Typography: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0l-3.75-3.75M17.25 21L21 17.25" /></svg>,
-  Border: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" /></svg>,
-  Glass: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M6 6h12v12H6z" /><path strokeLinecap="round" strokeLinejoin="round" d="M9 3v18m6-18v18M3 9h18m-18 6h18" opacity="0.3"/></svg>,
-  Glow: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" /></svg>,
-  Shadow: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M16.5 8.25V6a2.25 2.25 0 00-2.25-2.25H6A2.25 2.25 0 003.75 6v8.25A2.25 2.25 0 006 16.5h2.25m8.25-8.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-7.5A2.25 2.25 0 018.25 18v-1.5m8.25-8.25h-6a2.25 2.25 0 00-2.25 2.25v6" /></svg>,
-  Neumorphism: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15.91 11.672a.375.375 0 010 .656l-5.603 3.113a.375.375 0 01-.557-.328V8.887c0-.286.307-.466.557-.327l5.603 3.112z" /></svg>,
-  Filters: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75" /></svg>,
-  Cube3D: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M21 7.5l-9-5.25L3 7.5m18 0l-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9" /></svg>,
-  Animation: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09l2.846.813-2.846.813a4.5 4.5 0 00-3.09 3.09z" /></svg>,
-  TextGrad: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M10.5 21l5.25-11.25L21 21m-9-3h7.5M3 5.621a48.474 48.474 0 016-.371m0 0c1.12 0 2.233.038 3.334.114M9 5.25V3m3.334 2.364C11.176 10.658 7.69 15.08 3 17.502m9.334-12.138c.896.061 1.785.147 2.666.257m-4.589 8.495a18.023 18.023 0 01-3.827-5.802" /></svg>,
+  Layout: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-full h-full"><path strokeLinecap="round" strokeLinejoin="round" d="M9 4.5v15m6-15v15m-10.5-6h15m-15-6h15m-3-4.5H5.25C4.007 3 3 4.007 3 5.25v13.5c0 1.243 1.007 2.25 2.25 2.25h13.5c1.243 0 2.25-2.25V5.25c0-1.243-1.007-2.25-2.25-2.25z" /></svg>,
+  Typography: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-full h-full"><path strokeLinecap="round" strokeLinejoin="round" d="M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0l-3.75-3.75M17.25 21L21 17.25" /></svg>,
+  Border: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-full h-full"><path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" /></svg>,
+  Glass: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-full h-full"><path strokeLinecap="round" strokeLinejoin="round" d="M6 6h12v12H6z" /><path strokeLinecap="round" strokeLinejoin="round" d="M9 3v18m6-18v18M3 9h18m-18 6h18" opacity="0.3"/></svg>,
+  Glow: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-full h-full"><path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" /></svg>,
+  Shadow: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-full h-full"><path strokeLinecap="round" strokeLinejoin="round" d="M16.5 8.25V6a2.25 2.25 0 00-2.25-2.25H6A2.25 2.25 0 003.75 6v8.25A2.25 2.25 0 006 16.5h2.25m8.25-8.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-7.5A2.25 2.25 0 018.25 18v-1.5m8.25-8.25h-6a2.25 2.25 0 00-2.25 2.25v6" /></svg>,
+  Neumorphism: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-full h-full"><path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15.91 11.672a.375.375 0 010 .656l-5.603 3.113a.375.375 0 01-.557-.328V8.887c0-.286.307-.466.557-.327l5.603 3.112z" /></svg>,
+  Filters: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-full h-full"><path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75" /></svg>,
+  Cube3D: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-full h-full"><path strokeLinecap="round" strokeLinejoin="round" d="M21 7.5l-9-5.25L3 7.5m18 0l-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9" /></svg>,
+  Animation: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-full h-full"><path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09l2.846.813-2.846.813a4.5 4.5 0 00-3.09 3.09z" /></svg>,
+  TextGrad: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-full h-full"><path strokeLinecap="round" strokeLinejoin="round" d="M10.5 21l5.25-11.25L21 21m-9-3h7.5M3 5.621a48.474 48.474 0 016-.371m0 0c1.12 0 2.233.038 3.334.114M9 5.25V3m3.334 2.364C11.176 10.658 7.69 15.08 3 17.502m9.334-12.138c.896.061 1.785.147 2.666.257m-4.589 8.495a18.023 18.023 0 01-3.827-5.802" /></svg>,
+  Shapes: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-full h-full"><path strokeLinecap="round" strokeLinejoin="round" d="M14.25 7.756a4.5 4.5 0 100 8.488M7.5 10.5h5.25m-5.25 3h5.25M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
+  Transitions: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-full h-full"><path strokeLinecap="round" strokeLinejoin="round" d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" /></svg>,
 };
 
 // =========================================================================
@@ -61,20 +63,19 @@ export const hslToHex = (h, s, l) => {
   return `#${f(0)}${f(8)}${f(4)}`;
 };
 
-export const hexToRgba = (hex, alpha) => `rgba(${hexToRgb(hex)}, ${alpha})`;
-export const COLOR_PRESETS = ['#ffffff', '#1e1e1e', '#0ea5e9', '#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981'];
+export const COLOR_PRESETS = ['#ffffff', '#1e1e1e', '#0ea5e9', '#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#ef4444', '#14b8a6'];
 
 // =========================================================================
 // 3. UI COMPONENTS
 // =========================================================================
 
 export const FigmaSlider = ({ label, min, max, step = 1, value, onChange, unit = "" }) => (
-  <div className="flex items-center justify-between py-1.5 group">
+  <div className="flex items-center justify-between py-2 group border-b border-white/5 last:border-0">
     <label className="text-[10px] font-medium text-slate-400 w-1/3 group-hover:text-slate-200 transition-colors truncate pr-2">{label}</label>
-    <div className="w-2/3 flex items-center gap-2">
-      <input type="range" min={min} max={max} step={step} value={value || 0} onChange={(e) => onChange(Number(e.target.value) || 0)} className="w-full h-[2px] bg-[#444] rounded-lg appearance-none cursor-pointer outline-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-2.5 [&::-webkit-slider-thumb]:h-2.5 [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:rounded-full hover:[&::-webkit-slider-thumb]:scale-150 transition-all" />
-      <div className="bg-[#111111] px-1.5 py-0.5 rounded border border-[#333] w-12 text-right shrink-0">
-        <span className="text-[9px] font-mono text-cyan-400">{value}{unit}</span>
+    <div className="w-2/3 flex items-center gap-3">
+      <input type="range" min={min} max={max} step={step} value={value || 0} onChange={(e) => onChange(Number(e.target.value) || 0)} className="w-full h-[2px] bg-[#444] rounded-lg appearance-none cursor-pointer outline-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:rounded-full hover:[&::-webkit-slider-thumb]:scale-150 transition-all" />
+      <div className="bg-[#0a0a0b] px-2 py-1 rounded border border-[#333] w-14 text-right shrink-0">
+        <span className="text-[10px] font-mono text-cyan-400">{value}{unit}</span>
       </div>
     </div>
   </div>
@@ -99,7 +100,7 @@ export const FigmaColorPicker = ({ label, hexValue, onChange }) => {
       <div className="bg-[#111111] border border-[#333] rounded-lg overflow-hidden transition-all duration-300 shadow-sm">
         <div className="flex items-center justify-between p-2 cursor-pointer hover:bg-[#1a1a1c] transition-colors" onClick={() => setIsOpen(!isOpen)}>
           <div className="flex items-center gap-2.5">
-            <div className="w-5 h-5 rounded shadow-inner border border-white/10" style={{backgroundColor: hexValue}}></div>
+            <div className="w-6 h-6 rounded shadow-inner border border-white/10" style={{backgroundColor: hexValue}}></div>
             <div className="flex flex-col">
                <span className="text-[10px] font-bold text-slate-300 uppercase leading-none">{label}</span>
                <span className="text-[9px] font-mono text-slate-500 uppercase mt-0.5">{hexValue}</span>
@@ -109,24 +110,24 @@ export const FigmaColorPicker = ({ label, hexValue, onChange }) => {
              <Icons.ChevronDown />
           </div>
         </div>
-        <div className={`overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? 'max-h-[250px] border-t border-[#333] p-3 opacity-100' : 'max-h-0 opacity-0'}`}>
+        <div className={`overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? 'max-h-[300px] border-t border-[#333] p-3 opacity-100' : 'max-h-0 opacity-0'}`}>
           <div className="space-y-3">
             <div>
               <div className="flex justify-between mb-1"><span className="text-[9px] text-slate-500">Hue</span></div>
-              <input type="range" min="0" max="360" value={hsl.h} onChange={(e) => handleHslChange('h', Number(e.target.value))} className="w-full h-1.5 rounded-full appearance-none cursor-pointer custom-color-slider" style={{background: 'linear-gradient(to right, #f00 0%, #ff0 17%, #0f0 33%, #0ff 50%, #00f 67%, #f0f 83%, #f00 100%)'}} />
+              <input type="range" min="0" max="360" value={hsl.h} onChange={(e) => handleHslChange('h', Number(e.target.value))} className="w-full h-2 rounded-full appearance-none cursor-pointer custom-color-slider" style={{background: 'linear-gradient(to right, #f00 0%, #ff0 17%, #0f0 33%, #0ff 50%, #00f 67%, #f0f 83%, #f00 100%)'}} />
             </div>
             <div>
               <div className="flex justify-between mb-1"><span className="text-[9px] text-slate-500">Saturation</span></div>
-              <input type="range" min="0" max="100" value={hsl.s} onChange={(e) => handleHslChange('s', Number(e.target.value))} className="w-full h-1.5 rounded-full appearance-none cursor-pointer custom-color-slider" style={{background: `linear-gradient(to right, #808080, ${hslToHex(hsl.h, 100, 50)})`}} />
+              <input type="range" min="0" max="100" value={hsl.s} onChange={(e) => handleHslChange('s', Number(e.target.value))} className="w-full h-2 rounded-full appearance-none cursor-pointer custom-color-slider" style={{background: `linear-gradient(to right, #808080, ${hslToHex(hsl.h, 100, 50)})`}} />
             </div>
             <div>
               <div className="flex justify-between mb-1"><span className="text-[9px] text-slate-500">Lightness</span></div>
-              <input type="range" min="0" max="100" value={hsl.l} onChange={(e) => handleHslChange('l', Number(e.target.value))} className="w-full h-1.5 rounded-full appearance-none cursor-pointer custom-color-slider" style={{background: `linear-gradient(to right, #000, ${hslToHex(hsl.h, hsl.s, 50)}, #fff)`}} />
+              <input type="range" min="0" max="100" value={hsl.l} onChange={(e) => handleHslChange('l', Number(e.target.value))} className="w-full h-2 rounded-full appearance-none cursor-pointer custom-color-slider" style={{background: `linear-gradient(to right, #000, ${hslToHex(hsl.h, hsl.s, 50)}, #fff)`}} />
             </div>
           </div>
-          <div className="flex flex-wrap gap-1.5 mt-3 pt-3 border-t border-[#333]">
+          <div className="flex flex-wrap gap-2 mt-4 pt-3 border-t border-[#333]">
             {COLOR_PRESETS.map((c) => (
-              <button key={c} onClick={() => onChange(c)} className={`w-4 h-4 rounded-full border transition-transform hover:scale-125 ${hexValue===c ? 'border-white scale-110 shadow-lg' : 'border-white/20'}`} style={{ backgroundColor: c }} />
+              <button key={c} onClick={() => onChange(c)} className={`w-5 h-5 rounded-full border transition-transform hover:scale-125 ${hexValue===c ? 'border-white scale-110 shadow-lg' : 'border-white/20'}`} style={{ backgroundColor: c }} />
             ))}
           </div>
         </div>
@@ -138,11 +139,37 @@ export const FigmaColorPicker = ({ label, hexValue, onChange }) => {
 export const FigmaSelect = ({ label, options, value, onChange }) => (
   <div className="mb-4">
      <label className="text-[10px] font-medium text-slate-400 block mb-2">{label}</label>
-     <div className="flex bg-[#111111] p-1 rounded border border-[#333]">
+     <div className="flex bg-[#111111] p-1 rounded-lg border border-[#333] overflow-x-auto custom-scroll">
         {options.map(opt => (
-           <button key={opt} onClick={() => onChange(opt)} className={`flex-1 py-1 rounded-sm text-[8px] sm:text-[9px] font-bold uppercase transition-all ${value === opt ? 'bg-[#3f3f46] text-white shadow-sm' : 'text-slate-500 hover:text-slate-300'}`}>{opt}</button>
+           <button key={opt} onClick={() => onChange(opt)} className={`flex-1 min-w-[60px] py-1.5 px-2 rounded text-[9px] font-bold uppercase transition-all whitespace-nowrap ${value === opt ? 'bg-[#252526] text-cyan-400 shadow-sm border border-cyan-500/30' : 'text-slate-500 hover:text-slate-300'}`}>{opt}</button>
         ))}
      </div>
+  </div>
+);
+
+export const FigmaTextInput = ({ label, value, onChange, placeholder = "Ketik sesuatu..." }) => (
+  <div className="mb-4">
+     <label className="text-[10px] font-medium text-slate-400 block mb-2">{label}</label>
+     <input type="text" value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} className="w-full bg-[#111111] border border-[#333] rounded-lg px-3 py-2.5 text-[11px] text-white outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500/50 transition-all placeholder:text-slate-600" />
+  </div>
+);
+
+export const FigmaSelectGrouped = ({ label, groups, value, onChange }) => (
+  <div className="mb-4">
+    <label className="text-[10px] font-medium text-slate-400 block mb-2">{label}</label>
+    <select 
+      value={value} 
+      onChange={(e) => onChange(e.target.value)}
+      className="w-full bg-[#111111] border border-[#333] rounded-lg px-3 py-2.5 text-[11px] font-mono text-white outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500/50 appearance-none cursor-pointer"
+    >
+      {Object.entries(groups).map(([groupName, options]) => (
+        <optgroup key={groupName} label={groupName} className="bg-[#18181b] text-cyan-500 font-bold font-sans">
+          {options.map(opt => (
+            <option key={opt.val} value={opt.val} className="text-white font-normal font-mono">{opt.name}</option>
+          ))}
+        </optgroup>
+      ))}
+    </select>
   </div>
 );
 
@@ -155,16 +182,16 @@ export const CodeOutput = ({ code, isMobileTab }) => {
   };
   return (
     <div className={`w-full h-full bg-[#111111] relative flex flex-col overflow-hidden ${isMobileTab ? '' : 'border-t lg:border border-[#252526] lg:rounded-2xl shadow-xl'}`}>
-       <button onClick={handleCopy} className="absolute top-3 right-4 z-10 flex items-center gap-2 px-3 py-1.5 rounded bg-[#252526] border border-[#333333] text-slate-300 hover:bg-cyan-500 hover:text-[#111] transition-all text-[9px] font-bold uppercase tracking-wider shadow-md">
+       <button onClick={handleCopy} className="absolute top-3 right-4 z-10 flex items-center gap-2 px-3 py-1.5 rounded bg-[#252526] border border-[#333] text-slate-300 hover:bg-cyan-500 hover:text-[#111] transition-all text-[9px] font-bold uppercase tracking-wider shadow-md">
          {copied ? <><Icons.Check /> COPIED</> : <><Icons.Copy /> COPY CSS</>}
        </button>
        {!isMobileTab && (
-         <div className="px-4 py-2.5 border-b border-[#252526] bg-[#18181b] shrink-0">
+         <div className="px-4 py-3 border-b border-[#252526] bg-[#18181b] shrink-0">
            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">CSS Output Code</span>
          </div>
        )}
-       <div className={`p-4 overflow-y-auto flex-grow bg-[#111111] custom-scroll ${isMobileTab ? 'pb-24' : ''}`}>
-          <pre className="text-[11px] font-mono text-cyan-300/80 leading-relaxed whitespace-pre-wrap break-words"><code>{code}</code></pre>
+       <div className={`p-4 overflow-y-auto flex-grow bg-[#0a0a0b] custom-scroll ${isMobileTab ? 'pb-24' : ''}`}>
+          <pre className="text-[11px] font-mono text-cyan-300/90 leading-relaxed whitespace-pre-wrap break-words"><code>{code}</code></pre>
        </div>
     </div>
   )
@@ -179,42 +206,42 @@ export const WorkspaceLayout = ({ name, controls, preview, cssOutput, bgType = '
   return (
     <div className="flex flex-col lg:flex-row w-full h-full animate-fade-in bg-[#0a0a0b] lg:bg-transparent">
        
-       {/* MOBILE: CANVAS */}
-       <div className="h-[30vh] sm:h-[35vh] lg:hidden relative flex items-center justify-center overflow-hidden border-b border-[#333] z-30 transition-colors duration-500 shadow-lg shrink-0" style={{backgroundColor: bgHex || '#0a0a0b'}}>
-          {bgType === 'grid' && <div className="absolute inset-0 opacity-[0.15] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '24px 24px'}}></div>}
-          {bgType === 'image' && <div className="absolute inset-0 bg-cover bg-center opacity-60" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200')" }}></div>}
-          {bgType === 'light' && <div className="absolute inset-0 bg-[#e5e7eb]"></div>}
-          {bgType === 'dark' && <div className="absolute inset-0 bg-[#030712]"></div>}
-          <div className="relative z-10 w-full h-full flex items-center justify-center p-4 overflow-hidden">{preview}</div>
+       {/* MOBILE CANVAS */}
+       <div className="h-[35vh] sm:h-[40vh] lg:hidden relative flex items-center justify-center overflow-hidden border-b border-[#333] z-30 transition-colors duration-500 shadow-lg shrink-0" style={{backgroundColor: bgHex || '#0a0a0b'}}>
+          {bgType === 'grid' && <div className="absolute inset-0 opacity-[0.2] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '24px 24px'}}></div>}
+          {bgType === 'image' && <div className="absolute inset-0 bg-cover bg-center opacity-40" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200')" }}></div>}
+          {bgType === 'light' && <div className="absolute inset-0 bg-[#f8fafc]"></div>}
+          <div className="relative z-10 w-full h-full flex items-center justify-center p-4 overflow-hidden perspective-1000">{preview}</div>
        </div>
 
-       {/* DESKTOP: MIDDLE COLUMN (CANVAS + CODE) */}
+       {/* DESKTOP COLUMN */}
        <div className="hidden lg:flex flex-1 flex-col min-w-0 lg:border-r border-[#252526]">
-         <div className="flex-1 relative flex items-center justify-center overflow-hidden bg-[#0a0a0b] border-b border-[#252526] z-10 transition-colors duration-500 shadow-inner" style={{backgroundColor: bgHex || 'transparent'}}>
-            {bgType === 'grid' && <div className="absolute inset-0 opacity-[0.15] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '24px 24px'}}></div>}
-            {bgType === 'image' && <div className="absolute inset-0 bg-cover bg-center opacity-60" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200')" }}></div>}
-            {bgType === 'light' && <div className="absolute inset-0 bg-[#e5e7eb]"></div>}
-            {bgType === 'dark' && <div className="absolute inset-0 bg-[#030712]"></div>}
-            <div className="relative z-10 w-full h-full flex items-center justify-center p-4 overflow-hidden">{preview}</div>
+         <div className="flex-1 relative flex items-center justify-center overflow-hidden bg-[#0a0a0b] border-b border-[#252526] z-10 transition-colors duration-500" style={{backgroundColor: bgHex || '#0a0a0b'}}>
+            {bgType === 'grid' && <div className="absolute inset-0 opacity-[0.2] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '24px 24px'}}></div>}
+            {bgType === 'image' && <div className="absolute inset-0 bg-cover bg-center opacity-40" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200')" }}></div>}
+            {bgType === 'light' && <div className="absolute inset-0 bg-[#f8fafc]"></div>}
+            <div className="relative z-10 w-full h-full flex items-center justify-center p-8 overflow-hidden perspective-1000">{preview}</div>
          </div>
-         <div className="h-[220px] shrink-0 p-4 bg-[#111111]">
+         <div className="h-[260px] shrink-0 p-4 bg-[#111111]">
             <CodeOutput code={cssOutput} />
          </div>
        </div>
 
        {/* PROPERTIES PANEL */}
-       <div className="flex-1 lg:w-[320px] lg:flex-none bg-[#18181b] flex flex-col z-20 overflow-hidden">
-         <div className="px-4 py-3 border-b border-[#252526] bg-[#18181b] shrink-0">
-            <h2 className="text-[10px] font-bold text-cyan-400 uppercase tracking-widest hidden lg:block">{name} Properties</h2>
-            <div className="flex lg:hidden bg-[#111111] p-1 rounded-lg border border-[#333] w-full">
-              <button onClick={() => setMobileTab('design')} className={`flex-1 py-1.5 rounded-md text-[9px] font-bold uppercase transition-all ${mobileTab === 'design' ? 'bg-[#333] text-white shadow-sm' : 'text-slate-500 hover:text-slate-300'}`}>Design Properties</button>
-              <button onClick={() => setMobileTab('code')} className={`flex-1 py-1.5 rounded-md text-[9px] font-bold uppercase transition-all ${mobileTab === 'code' ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30' : 'text-slate-500 hover:text-slate-300'}`}>View CSS Code</button>
+       <div className="flex-1 lg:w-[360px] lg:flex-none bg-[#18181b] flex flex-col z-20 overflow-hidden shadow-2xl">
+         <div className="px-4 py-4 border-b border-[#252526] bg-[#18181b] shrink-0">
+            <h2 className="text-[12px] font-bold text-white uppercase tracking-widest hidden lg:block flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-cyan-500 inline-block animate-pulse"></span> {name} Properties
+            </h2>
+            <div className="flex lg:hidden bg-[#0a0a0b] p-1 rounded-lg border border-[#333] w-full">
+              <button onClick={() => setMobileTab('design')} className={`flex-1 py-2 rounded-md text-[10px] font-bold uppercase transition-all ${mobileTab === 'design' ? 'bg-[#252526] text-white shadow-sm border border-[#444]' : 'text-slate-500 hover:text-slate-300'}`}>Design Tools</button>
+              <button onClick={() => setMobileTab('code')} className={`flex-1 py-2 rounded-md text-[10px] font-bold uppercase transition-all ${mobileTab === 'code' ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/30' : 'text-slate-500 hover:text-slate-300'}`}>CSS Output</button>
             </div>
          </div>
-         <div className="flex-1 overflow-y-auto custom-scroll relative">
-            <div className={`p-4 lg:block ${mobileTab === 'design' ? 'block' : 'hidden'}`}>
+         <div className="flex-1 overflow-y-auto custom-scroll relative bg-[#18181b]">
+            <div className={`p-4 lg:p-5 lg:block ${mobileTab === 'design' ? 'block' : 'hidden'}`}>
               {controls}
-              <div className="h-32 lg:h-4"></div> 
+              <div className="h-32 lg:h-8"></div> 
             </div>
             <div className={`h-full lg:hidden ${mobileTab === 'code' ? 'block' : 'hidden'}`}>
               <CodeOutput code={cssOutput} isMobileTab={true} />
@@ -226,18 +253,58 @@ export const WorkspaceLayout = ({ name, controls, preview, cssOutput, bgType = '
 };
 
 // =========================================================================
-// 5. PLUGIN COMPONENTS (SEMUA 11 PLUGIN ADA DI SINI)
+// 5. THE PLUGINS (V13 - ULTIMATE FEATURES)
 // =========================================================================
 
-export const PluginTextGradient = () => {
+// --- 5.1 BACKGROUND GRADIENT (Perbaikan berdasar gambar user) ---
+export const PluginBackgroundGradient = () => {
   const [color1, setColor1] = useState('#0ea5e9');
   const [color2, setColor2] = useState('#8b5cf6');
-  const [angle, setAngle] = useState(45);
+  const [angle, setAngle] = useState(145);
 
-  const css = `background: linear-gradient(${angle}deg, ${color1}, ${color2});\n-webkit-background-clip: text;\n-webkit-text-fill-color: transparent;`;
-  const preview = <h1 style={{ background: `linear-gradient(${angle}deg, ${color1}, ${color2})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontSize: '3rem', fontWeight: 'bold', textAlign: 'center' }}>GRADIENT</h1>;
+  const css = `background: linear-gradient(${angle}deg, ${color1}, ${color2});\nborder-radius: 12px;`;
+  const preview = <div style={{ background: `linear-gradient(${angle}deg, ${color1}, ${color2})`, width: '80%', maxWidth: '400px', height: '140px', borderRadius: '12px', boxShadow: '0 20px 40px rgba(0,0,0,0.4)' }}></div>;
   const controls = (
     <>
+      <FigmaColorPicker label="Start Color" hexValue={color1} onChange={setColor1} />
+      <FigmaColorPicker label="End Color" hexValue={color2} onChange={setColor2} />
+      <FigmaSlider label="Angle" min={0} max={360} value={angle} onChange={setAngle} unit="°" />
+    </>
+  );
+  return <WorkspaceLayout name="Box Gradient" controls={controls} preview={preview} cssOutput={css} />;
+};
+
+// --- 5.2 TEXT GRADIENT (Dengan Custom Text) ---
+export const PluginTextGradient = () => {
+  const [text, setText] = useState('MRR STUDIO');
+  const [color1, setColor1] = useState('#ec4899');
+  const [color2, setColor2] = useState('#f59e0b');
+  const [angle, setAngle] = useState(90);
+
+  const css = `background: linear-gradient(${angle}deg, ${color1}, ${color2});\n-webkit-background-clip: text;\n-webkit-text-fill-color: transparent;\nbackground-clip: text;\ncolor: transparent;`;
+  
+  const preview = (
+    <h1 style={{ 
+      background: `linear-gradient(${angle}deg, ${color1}, ${color2})`, 
+      WebkitBackgroundClip: 'text', 
+      WebkitTextFillColor: 'transparent', 
+      backgroundClip: 'text',
+      color: 'transparent',
+      fontSize: '3rem', 
+      fontWeight: '900', 
+      textAlign: 'center',
+      textTransform: 'uppercase',
+      letterSpacing: '2px',
+      margin: 0,
+      padding: '20px'
+    }}>
+      {text || 'GRADIENT'}
+    </h1>
+  );
+
+  const controls = (
+    <>
+      <FigmaTextInput label="Custom Text" value={text} onChange={setText} placeholder="Masukkan teks..." />
       <FigmaColorPicker label="Start Color" hexValue={color1} onChange={setColor1} />
       <FigmaColorPicker label="End Color" hexValue={color2} onChange={setColor2} />
       <FigmaSlider label="Angle" min={0} max={360} value={angle} onChange={setAngle} unit="°" />
@@ -247,28 +314,40 @@ export const PluginTextGradient = () => {
 };
 
 export const PluginTypography = () => {
-  const [size, setSize] = useState(32);
+  const [text, setText] = useState('Beautiful Web');
+  const [size, setSize] = useState(48);
   const [spacing, setSpacing] = useState(2);
+  const [height, setHeight] = useState(1.2);
+  const [weight, setWeight] = useState('700');
   const [color, setColor] = useState('#ffffff');
 
-  const css = `font-size: ${size}px;\nletter-spacing: ${spacing}px;\ncolor: ${color};\nfont-weight: 600;`;
-  const preview = <div style={{ fontSize: `${size}px`, letterSpacing: `${spacing}px`, color: color, fontWeight: 600 }}>Typography</div>;
+  const css = `font-family: system-ui, sans-serif;\nfont-size: ${size}px;\nfont-weight: ${weight};\nletter-spacing: ${spacing}px;\nline-height: ${height};\ncolor: ${color};\ntext-align: center;`;
+  
+  const preview = (
+    <div style={{ fontSize: `${size}px`, letterSpacing: `${spacing}px`, lineHeight: height, color: color, fontWeight: weight, textAlign: 'center', wordBreak: 'break-word', maxWidth: '100%' }}>
+      {text || 'Type something'}
+    </div>
+  );
+
   const controls = (
     <>
+      <FigmaTextInput label="Custom Text" value={text} onChange={setText} />
       <FigmaColorPicker label="Text Color" hexValue={color} onChange={setColor} />
-      <FigmaSlider label="Font Size" min={12} max={100} value={size} onChange={setSize} unit="px" />
-      <FigmaSlider label="Letter Spacing" min={0} max={20} value={spacing} onChange={setSpacing} unit="px" />
+      <FigmaSlider label="Font Size" min={12} max={120} value={size} onChange={setSize} unit="px" />
+      <FigmaSelect label="Font Weight" options={['300', '400', '600', '700', '900']} value={weight} onChange={setWeight} />
+      <FigmaSlider label="Letter Spacing" min={-5} max={30} step={0.5} value={spacing} onChange={setSpacing} unit="px" />
+      <FigmaSlider label="Line Height" min={0.5} max={3} step={0.1} value={height} onChange={setHeight} unit="" />
     </>
   );
   return <WorkspaceLayout name="Typography" controls={controls} preview={preview} cssOutput={css} />;
 };
 
 export const PluginLayout = () => {
-  const [padding, setPadding] = useState(24);
-  const [radius, setRadius] = useState(16);
+  const [padding, setPadding] = useState(32);
+  const [radius, setRadius] = useState(24);
 
   const css = `padding: ${padding}px;\nborder-radius: ${radius}px;\nbackground-color: #252526;\ncolor: #ffffff;`;
-  const preview = <div style={{ padding: `${padding}px`, borderRadius: `${radius}px`, backgroundColor: '#252526', color: '#fff', textAlign: 'center' }}>Box Layout Element</div>;
+  const preview = <div style={{ padding: `${padding}px`, borderRadius: `${radius}px`, backgroundColor: '#252526', color: '#fff', textAlign: 'center', border: '1px solid #333' }}>Box Container</div>;
   const controls = (
     <>
       <FigmaSlider label="Padding" min={0} max={100} value={padding} onChange={setPadding} unit="px" />
@@ -281,19 +360,62 @@ export const PluginLayout = () => {
 export const PluginBorder = () => {
   const [width, setWidth] = useState(4);
   const [radius, setRadius] = useState(20);
+  const [style, setStyle] = useState('solid');
   const [color, setColor] = useState('#0ea5e9');
 
-  const css = `border: ${width}px solid ${color};\nborder-radius: ${radius}px;\nbackground-color: transparent;`;
-  const preview = <div style={{ width: 150, height: 100, border: `${width}px solid ${color}`, borderRadius: `${radius}px`, backgroundColor: 'transparent' }}></div>;
+  const css = `border: ${width}px ${style} ${color};\nborder-radius: ${radius}px;\nbackground-color: transparent;`;
+  const preview = <div style={{ width: 180, height: 120, border: `${width}px ${style} ${color}`, borderRadius: `${radius}px`, backgroundColor: 'rgba(255,255,255,0.02)' }}></div>;
   const controls = (
     <>
       <FigmaColorPicker label="Border Color" hexValue={color} onChange={setColor} />
+      <FigmaSelect label="Style" options={['solid', 'dashed', 'dotted', 'double']} value={style} onChange={setStyle} />
       <FigmaSlider label="Border Width" min={1} max={30} value={width} onChange={setWidth} unit="px" />
       <FigmaSlider label="Border Radius" min={0} max={100} value={radius} onChange={setRadius} unit="px" />
     </>
   );
-  return <WorkspaceLayout name="Border" controls={controls} preview={preview} cssOutput={css} />;
+  return <WorkspaceLayout name="Border Styling" controls={controls} preview={preview} cssOutput={css} />;
 };
+
+// --- 5.3 CUSTOM CSS SHAPES (Baru) ---
+const SHAPES_DATA = {
+  "Basic": [
+    { name: "Circle", val: "circle(50% at 50% 50%)" },
+    { name: "Ellipse", val: "ellipse(40% 50% at 50% 50%)" },
+    { name: "Square", val: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)" }
+  ],
+  "Polygons": [
+    { name: "Triangle", val: "polygon(50% 0%, 0% 100%, 100% 100%)" },
+    { name: "Rhombus", val: "polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)" },
+    { name: "Pentagon", val: "polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)" },
+    { name: "Hexagon", val: "polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)" },
+    { name: "Heptagon", val: "polygon(50% 0%, 90% 20%, 100% 60%, 75% 100%, 25% 100%, 0% 60%, 10% 20%)" },
+    { name: "Octagon", val: "polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%)" }
+  ],
+  "Special": [
+    { name: "Star", val: "polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)" },
+    { name: "Cross", val: "polygon(35% 0%, 65% 0%, 65% 35%, 100% 35%, 100% 65%, 65% 65%, 65% 100%, 35% 100%, 35% 65%, 0% 65%, 0% 35%, 35% 35%)" },
+    { name: "Message", val: "polygon(0% 0%, 100% 0%, 100% 75%, 75% 75%, 75% 100%, 50% 75%, 0% 75%)" },
+    { name: "Arrow", val: "polygon(0% 20%, 60% 20%, 60% 0%, 100% 50%, 60% 100%, 60% 80%, 0% 80%)" },
+    { name: "Chevron", val: "polygon(75% 0%, 100% 50%, 75% 100%, 0% 100%, 25% 50%, 0% 0%)" },
+    { name: "Ticket", val: "polygon(0% 15%, 15% 15%, 15% 0%, 85% 0%, 85% 15%, 100% 15%, 100% 85%, 85% 85%, 85% 100%, 15% 100%, 15% 85%, 0% 85%)" }
+  ]
+};
+
+export const PluginShapes = () => {
+  const [shape, setShape] = useState(SHAPES_DATA["Polygons"][0].val);
+  const [color, setColor] = useState('#8b5cf6');
+
+  const css = `clip-path: ${shape};\nbackground-color: ${color};\nwidth: 200px;\nheight: 200px;`;
+  const preview = <div style={{ clipPath: shape, backgroundColor: color, width: '150px', height: '150px' }}></div>;
+  const controls = (
+    <>
+      <FigmaSelectGrouped label="Select Shape Form" groups={SHAPES_DATA} value={shape} onChange={setShape} />
+      <FigmaColorPicker label="Shape Color" hexValue={color} onChange={setColor} />
+    </>
+  );
+  return <WorkspaceLayout name="CSS Shapes" controls={controls} preview={preview} cssOutput={css} />;
+};
+
 
 export const PluginGlassmorphism = () => {
   const [blur, setBlur] = useState(12);
@@ -302,12 +424,12 @@ export const PluginGlassmorphism = () => {
 
   const rgb = hexToRgb(color);
   const css = `background: rgba(${rgb}, ${opacity / 100});\nbackdrop-filter: blur(${blur}px);\n-webkit-backdrop-filter: blur(${blur}px);\nborder: 1px solid rgba(${rgb}, 0.3);\nborder-radius: 16px;`;
-  const preview = <div style={{ width: 180, height: 120, background: `rgba(${rgb}, ${opacity / 100})`, backdropFilter: `blur(${blur}px)`, WebkitBackdropFilter: `blur(${blur}px)`, border: `1px solid rgba(${rgb}, 0.3)`, borderRadius: '16px' }}></div>;
+  const preview = <div style={{ width: 180, height: 120, background: `rgba(${rgb}, ${opacity / 100})`, backdropFilter: `blur(${blur}px)`, WebkitBackdropFilter: `blur(${blur}px)`, border: `1px solid rgba(${rgb}, 0.3)`, borderRadius: '16px', boxShadow: '0 4px 30px rgba(0,0,0,0.1)' }}></div>;
   const controls = (
     <>
-      <FigmaColorPicker label="Glass Color" hexValue={color} onChange={setColor} />
+      <FigmaColorPicker label="Glass Tint" hexValue={color} onChange={setColor} />
       <FigmaSlider label="Opacity" min={1} max={100} value={opacity} onChange={setOpacity} unit="%" />
-      <FigmaSlider label="Blur Filter" min={0} max={50} value={blur} onChange={setBlur} unit="px" />
+      <FigmaSlider label="Blur Intensity" min={0} max={50} value={blur} onChange={setBlur} unit="px" />
     </>
   );
   return <WorkspaceLayout name="Glassmorphism" controls={controls} preview={preview} cssOutput={css} bgType="image" />;
@@ -332,18 +454,22 @@ export const PluginNeumorphism = () => {
 
 export const PluginShadow = () => {
   const [x, setX] = useState(10);
-  const [y, setY] = useState(10);
-  const [blur, setBlur] = useState(25);
+  const [y, setY] = useState(15);
+  const [blur, setBlur] = useState(30);
+  const [spread, setSpread] = useState(0);
+  const [opacity, setOpacity] = useState(40);
   const [color, setColor] = useState('#000000');
 
-  const css = `box-shadow: ${x}px ${y}px ${blur}px rgba(${hexToRgb(color)}, 0.5);\nborder-radius: 12px;\nbackground-color: #ffffff;`;
-  const preview = <div style={{ width: 120, height: 120, backgroundColor: '#ffffff', borderRadius: 12, boxShadow: `${x}px ${y}px ${blur}px rgba(${hexToRgb(color)}, 0.5)` }}></div>;
+  const css = `box-shadow: ${x}px ${y}px ${blur}px ${spread}px rgba(${hexToRgb(color)}, ${opacity/100});\nborder-radius: 12px;\nbackground-color: #ffffff;`;
+  const preview = <div style={{ width: 140, height: 140, backgroundColor: '#ffffff', borderRadius: 12, boxShadow: `${x}px ${y}px ${blur}px ${spread}px rgba(${hexToRgb(color)}, ${opacity/100})` }}></div>;
   const controls = (
     <>
       <FigmaColorPicker label="Shadow Color" hexValue={color} onChange={setColor} />
+      <FigmaSlider label="Opacity" min={0} max={100} value={opacity} onChange={setOpacity} unit="%" />
       <FigmaSlider label="X Offset" min={-50} max={50} value={x} onChange={setX} unit="px" />
       <FigmaSlider label="Y Offset" min={-50} max={50} value={y} onChange={setY} unit="px" />
       <FigmaSlider label="Blur Radius" min={0} max={100} value={blur} onChange={setBlur} unit="px" />
+      <FigmaSlider label="Spread Radius" min={-50} max={50} value={spread} onChange={setSpread} unit="px" />
     </>
   );
   return <WorkspaceLayout name="Drop Shadow" controls={controls} preview={preview} cssOutput={css} bgType="light" />;
@@ -351,24 +477,22 @@ export const PluginShadow = () => {
 
 export const PluginGlow = () => {
   const [color, setColor] = useState('#0ea5e9');
-  const [blur, setBlur] = useState(30);
-  const [spread, setSpread] = useState(5);
+  const [blur, setBlur] = useState(40);
+  const [spread, setSpread] = useState(10);
 
   const css = `box-shadow: 0 0 ${blur}px ${spread}px rgba(${hexToRgb(color)}, 0.8);\nborder-radius: 50%;\nbackground-color: ${color};`;
   const preview = <div style={{ width: 80, height: 80, backgroundColor: color, borderRadius: '50%', boxShadow: `0 0 ${blur}px ${spread}px rgba(${hexToRgb(color)}, 0.8)` }}></div>;
   const controls = (
     <>
       <FigmaColorPicker label="Glow Color" hexValue={color} onChange={setColor} />
-      <FigmaSlider label="Blur Radius" min={0} max={100} value={blur} onChange={setBlur} unit="px" />
-      <FigmaSlider label="Spread Radius" min={0} max={50} value={spread} onChange={setSpread} unit="px" />
+      <FigmaSlider label="Blur Radius" min={0} max={150} value={blur} onChange={setBlur} unit="px" />
+      <FigmaSlider label="Spread Radius" min={0} max={100} value={spread} onChange={setSpread} unit="px" />
     </>
   );
   return <WorkspaceLayout name="Neon Glow" controls={controls} preview={preview} cssOutput={css} />;
 };
 
-// =========================================================================
-// 5.1 FITUR BARU: LIGHTROOM PROFESSIONAL IMAGE FILTERS
-// =========================================================================
+// --- 5.4 LIGHTROOM PROFESSIONAL IMAGE FILTERS ---
 export const PluginFilters = () => {
   const [brightness, setBrightness] = useState(100);
   const [contrast, setContrast] = useState(100);
@@ -379,30 +503,30 @@ export const PluginFilters = () => {
   const [grayscale, setGrayscale] = useState(0);
   const [invert, setInvert] = useState(0);
 
-  const css = `/* Lightroom Style Image Filters */\nfilter: \n  brightness(${brightness}%)\n  contrast(${contrast}%)\n  saturate(${saturate}%)\n  hue-rotate(${hue}deg)\n  blur(${blur}px)\n  sepia(${sepia}%)\n  grayscale(${grayscale}%)\n  invert(${invert}%);`;
+  const css = `/* Pro Image Filters */\nfilter: \n  brightness(${brightness}%)\n  contrast(${contrast}%)\n  saturate(${saturate}%)\n  hue-rotate(${hue}deg)\n  blur(${blur}px)\n  sepia(${sepia}%)\n  grayscale(${grayscale}%)\n  invert(${invert}%);`;
   
   const preview = (
-    <div className="relative w-full h-full max-w-[320px] max-h-[240px] rounded-xl overflow-hidden shadow-2xl ring-1 ring-white/10 group">
+    <div className="relative w-full h-full max-w-[360px] max-h-[260px] rounded-xl overflow-hidden shadow-2xl ring-1 ring-white/10 group">
        <img 
-         src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=600" 
+         src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800" 
          alt="Filter Demo" 
          className="w-full h-full object-cover transition-all duration-200"
          style={{ 
            filter: `brightness(${brightness}%) contrast(${contrast}%) saturate(${saturate}%) hue-rotate(${hue}deg) blur(${blur}px) sepia(${sepia}%) grayscale(${grayscale}%) invert(${invert}%)`
          }} 
        />
-       <div className="absolute bottom-2 right-2 bg-black/60 backdrop-blur-md px-2 py-1 rounded text-[8px] text-white/80 font-mono opacity-0 group-hover:opacity-100 transition-opacity">
-         Lightroom Output
+       <div className="absolute bottom-3 right-3 bg-black/70 backdrop-blur-md px-3 py-1.5 rounded-md text-[9px] text-white/90 font-mono opacity-0 group-hover:opacity-100 transition-opacity">
+         Lightroom Render
        </div>
     </div>
   );
 
   const controls = (
-    <div className="space-y-1">
+    <div className="space-y-1 pb-4">
       <div className="mb-3 pb-2 border-b border-[#333]">
         <div className="text-[10px] font-bold text-cyan-400 uppercase tracking-widest flex items-center justify-between">
-          <span>Light & Color</span>
-          <button onClick={() => { setBrightness(100); setContrast(100); setSaturate(100); setHue(0); }} className="text-[8px] text-slate-500 hover:text-white bg-[#222] px-1.5 py-0.5 rounded transition-colors">RESET</button>
+          <span>Light & Color Tuning</span>
+          <button onClick={() => { setBrightness(100); setContrast(100); setSaturate(100); setHue(0); }} className="text-[8px] text-slate-300 hover:text-white bg-[#252526] border border-[#444] px-2 py-1 rounded transition-colors">RESET</button>
         </div>
       </div>
       <FigmaSlider label="Exposure" min={0} max={200} value={brightness} onChange={setBrightness} unit="%" />
@@ -410,10 +534,10 @@ export const PluginFilters = () => {
       <FigmaSlider label="Vibrance" min={0} max={200} value={saturate} onChange={setSaturate} unit="%" />
       <FigmaSlider label="Tint (Hue)" min={0} max={360} value={hue} onChange={setHue} unit="°" />
       
-      <div className="mt-5 mb-3 pb-2 border-b border-[#333]">
+      <div className="mt-6 mb-3 pb-2 border-b border-[#333]">
         <div className="text-[10px] font-bold text-cyan-400 uppercase tracking-widest flex items-center justify-between">
           <span>Effects & Details</span>
-          <button onClick={() => { setBlur(0); setSepia(0); setGrayscale(0); setInvert(0); }} className="text-[8px] text-slate-500 hover:text-white bg-[#222] px-1.5 py-0.5 rounded transition-colors">RESET</button>
+          <button onClick={() => { setBlur(0); setSepia(0); setGrayscale(0); setInvert(0); }} className="text-[8px] text-slate-300 hover:text-white bg-[#252526] border border-[#444] px-2 py-1 rounded transition-colors">RESET</button>
         </div>
       </div>
       <FigmaSlider label="Lens Blur" min={0} max={20} value={blur} onChange={setBlur} unit="px" />
@@ -423,85 +547,143 @@ export const PluginFilters = () => {
     </div>
   );
 
-  return <WorkspaceLayout name="Pro Image Filters" controls={controls} preview={preview} cssOutput={css} bgType="dark" />;
+  return <WorkspaceLayout name="Pro Filters" controls={controls} preview={preview} cssOutput={css} bgType="dark" />;
 };
 
-// =========================================================================
-// 5.2 FITUR BARU: 3D TRANSFORM (DENGAN RESET BUTTON)
-// =========================================================================
+// --- 5.5 TRUE 3D TRANSFORM (DENGAN PERSPECTIVE) ---
 export const PluginTransform = () => {
+  const [rotateX, setRotateX] = useState(30);
+  const [rotateY, setRotateY] = useState(-30);
+  const [rotateZ, setRotateZ] = useState(0);
   const [translateX, setTranslateX] = useState(0);
   const [translateY, setTranslateY] = useState(0);
-  const [rotate, setRotate] = useState(0);
+  const [translateZ, setTranslateZ] = useState(0);
   const [scale, setScale] = useState(1);
-  const [skewX, setSkewX] = useState(0);
-  const [skewY, setSkewY] = useState(0);
 
-  const css = `transform: \n  translate(${translateX}px, ${translateY}px) \n  rotate(${rotate}deg) \n  scale(${scale}) \n  skew(${skewX}deg, ${skewY}deg);`;
+  const css = `/* Parent Container Requires Perspective! */\n.parent {\n  perspective: 1000px;\n  transform-style: preserve-3d;\n}\n\n.element {\n  transform: \n    rotateX(${rotateX}deg) \n    rotateY(${rotateY}deg) \n    rotateZ(${rotateZ}deg) \n    translate3d(${translateX}px, ${translateY}px, ${translateZ}px) \n    scale(${scale});\n}`;
   
   const preview = (
-    <div className="relative w-full h-full flex items-center justify-center">
+    <div className="relative w-full h-full flex items-center justify-center" style={{ perspective: '1000px', transformStyle: 'preserve-3d' }}>
+      {/* 3D Box Representation */}
       <div 
-        className="w-28 h-28 rounded-2xl bg-gradient-to-tr from-purple-500 to-pink-500 shadow-2xl flex flex-col items-center justify-center border border-white/20"
+        className="w-32 h-32 bg-gradient-to-tr from-cyan-500 to-blue-600 shadow-2xl flex flex-col items-center justify-center border border-white/30 rounded-xl"
         style={{ 
-          transform: `translate(${translateX}px, ${translateY}px) rotate(${rotate}deg) scale(${scale}) skew(${skewX}deg, ${skewY}deg)`,
-          transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+          transform: `rotateX(${rotateX}deg) rotateY(${rotateY}deg) rotateZ(${rotateZ}deg) translate3d(${translateX}px, ${translateY}px, ${translateZ}px) scale(${scale})`,
+          transition: 'transform 0.1s linear',
+          transformStyle: 'preserve-3d',
+          boxShadow: '0 20px 40px rgba(0,0,0,0.5), inset 0 0 20px rgba(255,255,255,0.2)'
         }}
       >
         <Icons.Cube3D />
-        <span className="text-[10px] font-bold mt-2 text-white">TRANSFORM</span>
+        <span className="text-[10px] font-bold mt-2 text-white tracking-widest" style={{ transform: 'translateZ(20px)' }}>TRUE 3D</span>
       </div>
     </div>
   );
 
   const controls = (
     <>
+      <div className="mb-2 text-[10px] font-bold text-cyan-400 uppercase tracking-widest border-b border-[#333] pb-2">3D Rotation</div>
+      <FigmaSlider label="Rotate X (Pitch)" min={-180} max={180} value={rotateX} onChange={setRotateX} unit="°" />
+      <FigmaSlider label="Rotate Y (Yaw)" min={-180} max={180} value={rotateY} onChange={setRotateY} unit="°" />
+      <FigmaSlider label="Rotate Z (Roll)" min={-180} max={180} value={rotateZ} onChange={setRotateZ} unit="°" />
+      
+      <div className="mt-4 mb-2 text-[10px] font-bold text-cyan-400 uppercase tracking-widest border-b border-[#333] pb-2">Translation & Scale</div>
+      <FigmaSlider label="Translate Z (Depth)" min={-300} max={300} value={translateZ} onChange={setTranslateZ} unit="px" />
       <FigmaSlider label="Translate X" min={-150} max={150} value={translateX} onChange={setTranslateX} unit="px" />
       <FigmaSlider label="Translate Y" min={-150} max={150} value={translateY} onChange={setTranslateY} unit="px" />
-      <FigmaSlider label="Rotate" min={-360} max={360} value={rotate} onChange={setRotate} unit="°" />
-      <FigmaSlider label="Scale" min={0.5} max={2.5} step={0.1} value={scale} onChange={setScale} unit="x" />
-      <FigmaSlider label="Skew X" min={-90} max={90} value={skewX} onChange={setSkewX} unit="°" />
-      <FigmaSlider label="Skew Y" min={-90} max={90} value={skewY} onChange={setSkewY} unit="°" />
+      <FigmaSlider label="Scale All" min={0.5} max={2} step={0.1} value={scale} onChange={setScale} unit="x" />
       
       <button 
-        onClick={() => { setTranslateX(0); setTranslateY(0); setRotate(0); setScale(1); setSkewX(0); setSkewY(0); }}
-        className="w-full mt-4 py-2 bg-[#252526] hover:bg-[#333] border border-[#333] rounded text-[10px] font-bold text-slate-400 uppercase tracking-widest transition-colors"
+        onClick={() => { setRotateX(0); setRotateY(0); setRotateZ(0); setTranslateX(0); setTranslateY(0); setTranslateZ(0); setScale(1); }}
+        className="w-full mt-6 py-2.5 bg-[#252526] hover:bg-[#333] border border-[#444] rounded-lg text-[10px] font-bold text-white uppercase tracking-widest transition-colors shadow-sm"
       >
-        Reset Transform
+        Reset Matrix
       </button>
     </>
   );
 
-  return <WorkspaceLayout name="3D Transform" controls={controls} preview={preview} cssOutput={css} bgType="grid" />;
+  return <WorkspaceLayout name="True 3D Studio" controls={controls} preview={preview} cssOutput={css} bgType="grid" />;
 };
 
-// =========================================================================
-// 5.3 FITUR BARU: KEYFRAME ANIMATION BUILDER
-// =========================================================================
+// --- 5.6 ANIMATION BUILDER (100+ Styles Simulation) ---
+const ANIMATION_DATA = {
+  "Attention": [
+    { name: "Bounce", val: "bounce" }, { name: "Flash", val: "flash" }, { name: "Pulse", val: "pulse" },
+    { name: "RubberBand", val: "rubberBand" }, { name: "Shake", val: "shake" }, { name: "Swing", val: "swing" },
+    { name: "Tada", val: "tada" }, { name: "Wobble", val: "wobble" }, { name: "Jello", val: "jello" }, { name: "Heartbeat", val: "heartbeat" }
+  ],
+  "Fade Entrances": [
+    { name: "Fade In", val: "fadeIn" }, { name: "Fade In Down", val: "fadeInDown" }, { name: "Fade In Left", val: "fadeInLeft" },
+    { name: "Fade In Right", val: "fadeInRight" }, { name: "Fade In Up", val: "fadeInUp" }
+  ],
+  "Zoom Entrances": [
+    { name: "Zoom In", val: "zoomIn" }, { name: "Zoom In Down", val: "zoomInDown" }, { name: "Zoom In Up", val: "zoomInUp" }
+  ],
+  "Slide Entrances": [
+    { name: "Slide In Down", val: "slideInDown" }, { name: "Slide In Left", val: "slideInLeft" }, { name: "Slide In Right", val: "slideInRight" }, { name: "Slide In Up", val: "slideInUp" }
+  ],
+  "Rotations & Flips": [
+    { name: "Spin 360", val: "spin" }, { name: "Flip X", val: "flipInX" }, { name: "Flip Y", val: "flipInY" }, { name: "Roll In", val: "rollIn" }
+  ],
+  "Continuous (Loop)": [
+    { name: "Floating", val: "float" }, { name: "Spin Slow", val: "spinSlow" }, { name: "Breathe", val: "breathe" }
+  ]
+};
+
+const getDynamicKeyframes = (type) => {
+  const map = {
+    bounce: `0%, 20%, 50%, 80%, 100% {transform: translateY(0);} 40% {transform: translateY(-30px);} 60% {transform: translateY(-15px);}`,
+    flash: `0%, 50%, 100% {opacity: 1;} 25%, 75% {opacity: 0;}`,
+    pulse: `0% {transform: scale(1);} 50% {transform: scale(1.05);} 100% {transform: scale(1);}`,
+    rubberBand: `0% {transform: scale(1);} 30% {transform: scale3d(1.25, 0.75, 1);} 40% {transform: scale3d(0.75, 1.25, 1);} 50% {transform: scale3d(1.15, 0.85, 1);} 65% {transform: scale3d(.95, 1.05, 1);} 75% {transform: scale3d(1.05, .95, 1);} 100% {transform: scale(1);}`,
+    shake: `0%, 100% {transform: translateX(0);} 10%, 30%, 50%, 70%, 90% {transform: translateX(-10px);} 20%, 40%, 60%, 80% {transform: translateX(10px);}`,
+    swing: `20% {transform: rotate(15deg);} 40% {transform: rotate(-10deg);} 60% {transform: rotate(5deg);} 80% {transform: rotate(-5deg);} 100% {transform: rotate(0deg);}`,
+    tada: `0% {transform: scale(1);} 10%, 20% {transform: scale(0.9) rotate(-3deg);} 30%, 50%, 70%, 90% {transform: scale(1.1) rotate(3deg);} 40%, 60%, 80% {transform: scale(1.1) rotate(-3deg);} 100% {transform: scale(1) rotate(0);}`,
+    wobble: `0% {transform: translateX(0%);} 15% {transform: translateX(-25%) rotate(-5deg);} 30% {transform: translateX(20%) rotate(3deg);} 45% {transform: translateX(-15%) rotate(-3deg);} 60% {transform: translateX(10%) rotate(2deg);} 75% {transform: translateX(-5%) rotate(-1deg);} 100% {transform: translateX(0%);}`,
+    jello: `0%, 11.1%, 100% {transform: none;} 22.2% {transform: skewX(-12.5deg) skewY(-12.5deg);} 33.3% {transform: skewX(6.25deg) skewY(6.25deg);} 44.4% {transform: skewX(-3.125deg) skewY(-3.125deg);} 55.5% {transform: skewX(1.5625deg) skewY(1.5625deg);} 66.6% {transform: skewX(-0.78125deg) skewY(-0.78125deg);} 77.7% {transform: skewX(0.390625deg) skewY(0.390625deg);} 88.8% {transform: skewX(-0.1953125deg) skewY(-0.1953125deg);}`,
+    heartbeat: `0% {transform: scale(1);} 14% {transform: scale(1.3);} 28% {transform: scale(1);} 42% {transform: scale(1.3);} 70% {transform: scale(1);}`,
+    fadeIn: `from {opacity: 0;} to {opacity: 1;}`,
+    fadeInDown: `from {opacity: 0; transform: translate3d(0, -100%, 0);} to {opacity: 1; transform: none;}`,
+    fadeInLeft: `from {opacity: 0; transform: translate3d(-100%, 0, 0);} to {opacity: 1; transform: none;}`,
+    fadeInRight: `from {opacity: 0; transform: translate3d(100%, 0, 0);} to {opacity: 1; transform: none;}`,
+    fadeInUp: `from {opacity: 0; transform: translate3d(0, 100%, 0);} to {opacity: 1; transform: none;}`,
+    zoomIn: `from {opacity: 0; transform: scale3d(0.3, 0.3, 0.3);} 50% {opacity: 1;}`,
+    zoomInDown: `from {opacity: 0; transform: scale3d(0.1, 0.1, 0.1) translate3d(0, -1000px, 0); animation-timing-function: cubic-bezier(0.55, 0.055, 0.675, 0.19);} 60% {opacity: 1; transform: scale3d(0.475, 0.475, 0.475) translate3d(0, 60px, 0); animation-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1);}`,
+    zoomInUp: `from {opacity: 0; transform: scale3d(0.1, 0.1, 0.1) translate3d(0, 1000px, 0); animation-timing-function: cubic-bezier(0.55, 0.055, 0.675, 0.19);} 60% {opacity: 1; transform: scale3d(0.475, 0.475, 0.475) translate3d(0, -60px, 0); animation-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1);}`,
+    slideInDown: `from {transform: translate3d(0, -100%, 0); visibility: visible;} to {transform: translate3d(0, 0, 0);}`,
+    slideInLeft: `from {transform: translate3d(-100%, 0, 0); visibility: visible;} to {transform: translate3d(0, 0, 0);}`,
+    slideInRight: `from {transform: translate3d(100%, 0, 0); visibility: visible;} to {transform: translate3d(0, 0, 0);}`,
+    slideInUp: `from {transform: translate3d(0, 100%, 0); visibility: visible;} to {transform: translate3d(0, 0, 0);}`,
+    spin: `from {transform: rotate(0deg);} to {transform: rotate(360deg);}`,
+    flipInX: `from {transform: perspective(400px) rotate3d(1, 0, 0, 90deg); animation-timing-function: ease-in; opacity: 0;} 40% {transform: perspective(400px) rotate3d(1, 0, 0, -20deg); animation-timing-function: ease-in;} 60% {transform: perspective(400px) rotate3d(1, 0, 0, 10deg); opacity: 1;} 80% {transform: perspective(400px) rotate3d(1, 0, 0, -5deg);} to {transform: perspective(400px);}`,
+    flipInY: `from {transform: perspective(400px) rotate3d(0, 1, 0, 90deg); animation-timing-function: ease-in; opacity: 0;} 40% {transform: perspective(400px) rotate3d(0, 1, 0, -20deg); animation-timing-function: ease-in;} 60% {transform: perspective(400px) rotate3d(0, 1, 0, 10deg); opacity: 1;} 80% {transform: perspective(400px) rotate3d(0, 1, 0, -5deg);} to {transform: perspective(400px);}`,
+    rollIn: `from {opacity: 0; transform: translate3d(-100%, 0, 0) rotate3d(0, 0, 1, -120deg);} to {opacity: 1; transform: none;}`,
+    float: `0%, 100% {transform: translateY(0);} 50% {transform: translateY(-20px);}`,
+    spinSlow: `from {transform: rotate(0deg);} to {transform: rotate(360deg);}`,
+    breathe: `0%, 100% {transform: scale(1); opacity: 0.8;} 50% {transform: scale(1.1); opacity: 1; box-shadow: 0 0 20px rgba(14,165,233,0.5);}`
+  };
+  return map[type] || map['bounce'];
+};
+
 export const PluginAnimation = () => {
-  const [animType, setAnimType] = useState('float'); 
-  const [duration, setDuration] = useState(3);
+  const [animType, setAnimType] = useState('bounce'); 
+  const [duration, setDuration] = useState(1.5);
   const [timing, setTiming] = useState('ease-in-out');
   const [iteration, setIteration] = useState('infinite');
+  const [key, setKey] = useState(0); // Trigger re-render for preview
 
-  const getKeyframes = () => {
-    switch(animType) {
-      case 'float': return `@keyframes cssAnim { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }`;
-      case 'pulse': return `@keyframes cssAnim { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.1); opacity: 0.7; } }`;
-      case 'spin': return `@keyframes cssAnim { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`;
-      case 'wiggle': return `@keyframes cssAnim { 0%, 100% { transform: rotate(-5deg); } 50% { transform: rotate(5deg); } }`;
-      default: return '';
-    }
-  };
+  const css = `@keyframes anim-${animType} {\n  ${getDynamicKeyframes(animType).replace(/\} /g, '}\n  ')}\n}\n\n.animate-element {\n  animation: anim-${animType} ${duration}s ${timing} ${iteration};\n}`;
 
-  const css = `${getKeyframes()}\n\n.animate-element {\n  animation: cssAnim ${duration}s ${timing} ${iteration};\n}`;
+  // Reset animation force
+  useEffect(() => { setKey(prev => prev + 1); }, [animType, duration, timing, iteration]);
 
   const preview = (
     <div className="relative w-full h-full flex items-center justify-center">
-      <style>{getKeyframes()}</style>
+      <style>{`@keyframes preview-${animType}-${key} { ${getDynamicKeyframes(animType)} }`}</style>
       <div 
-        className="w-24 h-24 rounded-2xl bg-gradient-to-tr from-cyan-500 to-blue-500 shadow-2xl flex items-center justify-center border border-white/20"
-        style={{ animation: `cssAnim ${duration}s ${timing} ${iteration}` }}
+        key={key}
+        className="w-24 h-24 rounded-3xl bg-gradient-to-tr from-pink-500 to-orange-400 shadow-2xl flex items-center justify-center border border-white/20"
+        style={{ animation: `preview-${animType}-${key} ${duration}s ${timing} ${iteration === 'infinite' ? 'infinite' : iteration}` }}
       >
         <Icons.Animation />
       </div>
@@ -510,12 +692,73 @@ export const PluginAnimation = () => {
 
   const controls = (
     <>
-      <FigmaSelect label="Anim Style" options={['float', 'pulse', 'spin', 'wiggle']} value={animType} onChange={setAnimType} />
-      <FigmaSlider label="Duration" min={0.5} max={10} step={0.1} value={duration} onChange={setDuration} unit="s" />
-      <FigmaSelect label="Timing" options={['linear', 'ease', 'ease-in-out']} value={timing} onChange={setTiming} />
-      <FigmaSelect label="Iteration" options={['1', '3', 'infinite']} value={iteration} onChange={setIteration} />
+      <FigmaSelectGrouped label="Animation Style (100+ Variations)" groups={ANIMATION_DATA} value={animType} onChange={setAnimType} />
+      <FigmaSlider label="Duration" min={0.1} max={5} step={0.1} value={duration} onChange={setDuration} unit="s" />
+      <FigmaSelect label="Timing Function" options={['linear', 'ease', 'ease-in-out', 'ease-in', 'ease-out']} value={timing} onChange={setTiming} />
+      <FigmaSelect label="Iteration Count" options={['1', '2', '3', 'infinite']} value={iteration} onChange={setIteration} />
+      
+      <button onClick={() => setKey(k => k + 1)} className="w-full mt-4 py-2 bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 rounded-lg text-[10px] font-bold uppercase tracking-widest hover:bg-cyan-500/20 transition-all">
+        Replay Animation
+      </button>
     </>
   );
 
-  return <WorkspaceLayout name="Keyframe Animation" controls={controls} preview={preview} cssOutput={css} bgType="grid" />;
+  return <WorkspaceLayout name="Animation Builder" controls={controls} preview={preview} cssOutput={css} bgType="grid" />;
+};
+
+// --- 5.7 HOVER TRANSITIONS (Baru) ---
+const TRANSITIONS_DATA = {
+  "Scale Effects": [
+    { name: "Grow", val: "scale(1.1)" }, { name: "Shrink", val: "scale(0.9)" }, { name: "Pop", val: "scale(1.2)" }
+  ],
+  "Translates": [
+    { name: "Push Up", val: "translateY(-10px)" }, { name: "Push Down", val: "translateY(10px)" },
+    { name: "Push Left", val: "translateX(-10px)" }, { name: "Push Right", val: "translateX(10px)" }
+  ],
+  "Rotations": [
+    { name: "Rotate Right", val: "rotate(15deg)" }, { name: "Rotate Left", val: "rotate(-15deg)" },
+    { name: "Spin Quarter", val: "rotate(90deg)" }, { name: "Spin Half", val: "rotate(180deg)" }
+  ],
+  "Skews": [
+    { name: "Skew Forward", val: "skewX(-15deg)" }, { name: "Skew Backward", val: "skewX(15deg)" }
+  ],
+  "Complex": [
+    { name: "Float & Grow", val: "translateY(-10px) scale(1.05)" },
+    { name: "Sink & Shrink", val: "translateY(10px) scale(0.95)" }
+  ]
+};
+
+export const PluginTransitions = () => {
+  const [transType, setTransType] = useState('scale(1.1)'); 
+  const [duration, setDuration] = useState(0.3);
+  const [timing, setTiming] = useState('cubic-bezier(0.4, 0, 0.2, 1)');
+
+  const css = `.element {\n  transition: transform ${duration}s ${timing};\n}\n\n.element:hover {\n  transform: ${transType};\n}`;
+
+  const preview = (
+    <div className="relative w-full h-full flex items-center justify-center group cursor-pointer">
+      <div 
+        className="w-40 h-16 rounded-full bg-white text-black font-bold flex items-center justify-center shadow-lg"
+        style={{ 
+          transition: `transform ${duration}s ${timing}`,
+        }}
+        // Using inline style trick for hover in React without styled-components
+        onMouseEnter={(e) => e.currentTarget.style.transform = transType}
+        onMouseLeave={(e) => e.currentTarget.style.transform = 'none'}
+      >
+        HOVER ME
+      </div>
+      <div className="absolute top-10 text-[10px] text-slate-500 uppercase tracking-widest animate-pulse pointer-events-none">Interact to preview</div>
+    </div>
+  );
+
+  const controls = (
+    <>
+      <FigmaSelectGrouped label="Hover Effect Type" groups={TRANSITIONS_DATA} value={transType} onChange={setTransType} />
+      <FigmaSlider label="Duration" min={0.1} max={3} step={0.1} value={duration} onChange={setDuration} unit="s" />
+      <FigmaSelect label="Timing/Easing" options={['ease', 'linear', 'ease-in-out', 'cubic-bezier(0.4, 0, 0.2, 1)', 'cubic-bezier(0.68, -0.55, 0.265, 1.55)']} value={timing} onChange={setTiming} />
+    </>
+  );
+
+  return <WorkspaceLayout name="Hover Transitions" controls={controls} preview={preview} cssOutput={css} bgType="dark" />;
 };
