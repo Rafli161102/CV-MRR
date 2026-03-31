@@ -154,7 +154,7 @@ export const FigmaTextInput = ({ label, value, onChange }) => (
   </div>
 );
 
-export const CodeOutput = ({ code }) => {
+export const CodeOutput = ({ code, isMobileTab }) => {
   const [copied, setCopied] = useState(false);
   const handleCopy = () => {
     navigator.clipboard.writeText(code);
@@ -162,14 +162,16 @@ export const CodeOutput = ({ code }) => {
     setTimeout(() => setCopied(false), 2000);
   };
   return (
-    <div className="w-full h-full bg-[#111111] relative flex flex-col overflow-hidden">
+    <div className={`w-full h-full bg-[#111111] relative flex flex-col overflow-hidden ${isMobileTab ? '' : 'border-t lg:border border-[#252526] lg:rounded-2xl shadow-xl'}`}>
        <button onClick={handleCopy} className="absolute top-3 right-4 z-10 flex items-center gap-2 px-3 py-1.5 rounded bg-[#252526] border border-[#333333] text-slate-300 hover:bg-cyan-500 hover:text-[#111] transition-all text-[9px] font-bold uppercase tracking-wider shadow-md">
          {copied ? <><Icons.Check /> COPIED</> : <><Icons.Copy /> COPY CSS</>}
        </button>
-       <div className="px-4 py-2 border-b border-[#252526] bg-[#18181b] shrink-0">
-         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">CSS Output Code</span>
-       </div>
-       <div className="p-4 pb-12 overflow-y-auto flex-grow bg-[#111111] custom-scroll">
+       {!isMobileTab && (
+         <div className="px-4 py-2.5 border-b border-[#252526] bg-[#18181b] shrink-0">
+           <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">CSS Output Code</span>
+         </div>
+       )}
+       <div className={`p-4 overflow-y-auto flex-grow bg-[#111111] custom-scroll ${isMobileTab ? 'pb-24' : ''}`}>
           <pre className="text-[11px] font-mono text-cyan-300/80 leading-relaxed whitespace-pre-wrap break-words"><code>{code}</code></pre>
        </div>
     </div>
@@ -183,12 +185,14 @@ export const WorkspaceLayout = ({ name, controls, preview, cssOutput, bgType = '
   const [mobileTab, setMobileTab] = useState('design'); // 'design' | 'code'
 
   return (
+    // FIX LOCK PREVIEW: Gunakan h-full flex overflow-hidden pada parent terluar di sini
+    // Memastikan tinggi tidak bablas ke bawah di HP
     <div className="flex flex-col lg:flex-row w-full h-full overflow-hidden bg-[#0a0a0b] lg:bg-transparent">
        
        {/* KIRI/ATAS: CANVAS (Terkunci & Tidak Ikut Terscroll) */}
-       <div className="flex flex-col lg:flex-1 min-w-0 lg:border-r border-[#252526]">
+       <div className="flex flex-col lg:flex-1 min-w-0 lg:border-r border-[#252526] shrink-0">
          
-         <div className="h-[35vh] lg:h-full relative flex items-center justify-center overflow-hidden bg-[#0a0a0b] border-b lg:border-b-0 border-[#252526] z-10 transition-colors duration-500 shrink-0 shadow-sm" style={{backgroundColor: bgHex || 'transparent'}}>
+         <div className="h-[35vh] lg:h-full relative flex items-center justify-center overflow-hidden bg-[#0a0a0b] border-b lg:border-b-0 border-[#252526] z-10 transition-colors duration-500 shadow-sm" style={{backgroundColor: bgHex || 'transparent'}}>
             {bgType === 'grid' && <div className="absolute inset-0 opacity-[0.15] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '24px 24px'}}></div>}
             {bgType === 'image' && <div className="absolute inset-0 bg-cover bg-center opacity-60" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200')" }}></div>}
             {bgType === 'light' && <div className="absolute inset-0 bg-[#e5e7eb]"></div>}
@@ -197,36 +201,34 @@ export const WorkspaceLayout = ({ name, controls, preview, cssOutput, bgType = '
          </div>
        </div>
 
-       {/* KANAN/BAWAH: PROPERTIES & CSS CODE (Area yang bisa di-scroll) */}
+       {/* KANAN/BAWAH: PROPERTIES & CSS CODE (Area yang bisa di-scroll secara independen) */}
        <div className="flex-1 lg:w-[340px] lg:flex-none bg-[#18181b] flex flex-col z-20 overflow-hidden">
          
          {/* Header Title / Mobile Tabs (Terkunci di atas properti) */}
-         <div className="px-4 py-3 border-b border-[#252526] bg-[#18181b] shrink-0 flex items-center justify-between">
+         <div className="px-4 py-3 border-b border-[#252526] bg-[#18181b] shrink-0 flex flex-col justify-center">
             <h2 className="text-[10px] font-bold text-cyan-400 uppercase tracking-widest hidden lg:block">{name} Properties</h2>
             
-            {/* Navigasi Tab HP: Pisahkan Design & Code agar rapi */}
+            {/* Penempatan Kode CSS Khusus HP (Tabs Mode) */}
             <div className="flex lg:hidden bg-[#111111] p-1 rounded-lg border border-[#333] w-full">
               <button onClick={() => setMobileTab('design')} className={`flex-1 py-1.5 rounded-md text-[9px] font-bold uppercase transition-all ${mobileTab === 'design' ? 'bg-[#333] text-white shadow-sm' : 'text-slate-500 hover:text-slate-300'}`}>Design</button>
               <button onClick={() => setMobileTab('code')} className={`flex-1 py-1.5 rounded-md text-[9px] font-bold uppercase transition-all ${mobileTab === 'code' ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30' : 'text-slate-500 hover:text-slate-300'}`}>CSS Code</button>
             </div>
          </div>
          
-         {/* AREA SCROLL: Bebas geser sampai mentok bawah */}
+         {/* AREA SCROLL: Bebas geser sampai mentok bawah tanpa mempengaruhi canvas */}
          <div className="flex-1 overflow-y-auto custom-scroll relative">
             {/* Tampilan Design Properties */}
-            <div className={`p-4 lg:block ${mobileTab === 'design' ? 'block' : 'hidden'}`}>
+            <div className={`p-4 pb-20 lg:block ${mobileTab === 'design' ? 'block' : 'hidden'}`}>
               {controls}
-              {/* Ekstra ruang bawah agar warna tidak terpotong (khusus mode HP) */}
-              <div className="h-40 lg:h-10"></div> 
             </div>
 
-            {/* Tampilan Output CSS Code */}
+            {/* Tampilan Output CSS Code (Hanya di HP) */}
             <div className={`h-full lg:hidden ${mobileTab === 'code' ? 'block' : 'hidden'}`}>
-              <CodeOutput code={cssOutput} />
+              <CodeOutput code={cssOutput} isMobileTab={true} />
             </div>
 
             {/* Tampilan CSS Khusus Desktop */}
-            <div className="hidden lg:block h-[280px] border-t border-[#252526] shrink-0 mt-auto">
+            <div className="hidden lg:block h-[280px] border-t border-[#252526] mt-auto">
               <CodeOutput code={cssOutput} />
             </div>
          </div>
