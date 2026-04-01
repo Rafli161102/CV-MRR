@@ -3,9 +3,6 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-// =========================================================================
-// IKON SVG KUSTOM
-// =========================================================================
 const DiamondSparkleIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 shrink-0 text-cyan-400 group-hover:scale-110 transition-transform duration-500">
     <path d="M11.644 1.59a.75.75 0 01.712 0l9.75 5.25c.343.186.343.682 0 .868l-9.75 5.25a.75.75 0 01-.712 0l-9.75-5.25a.75.75 0 010-.868l9.75-5.25z" />
@@ -36,8 +33,8 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
   const pathname = usePathname();
 
-  // FIX BUG: Sembunyikan Footer khusus di halaman CSS Studio agar mode Workspace/App Fullscreen tidak terpotong!
-  if (pathname === '/css-studio') return null;
+  // FIX BUG: Jangan return null, gunakan elemen kosong yang disembunyikan agar Layout Next.js tidak crash!
+  if (pathname === '/css-studio') return <footer className="hidden" aria-hidden="true"></footer>;
 
   return (
     <footer className="bg-[#030712] relative z-20 w-full overflow-x-hidden pt-16 border-t border-white/5">
@@ -45,14 +42,11 @@ export default function Footer() {
 
       <div className="w-full max-w-[1400px] mx-auto px-5 sm:px-8 lg:px-12 pb-8 relative z-10">
         
-        {/* BANNER APRESIASI */}
         <div className="mb-20 p-6 sm:p-8 md:p-12 rounded-[2.5rem] bg-gradient-to-br from-[#0A1329] to-[#030712] border border-cyan-500/20 shadow-2xl flex flex-col lg:flex-row items-center justify-between gap-8 group overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/10 rounded-full blur-[80px] -z-10 group-hover:bg-cyan-500/20 transition-all"></div>
 
           <div className="flex flex-col md:flex-row items-center md:items-start text-center md:text-left gap-5 lg:w-[61.8%]">
-            <div className="p-4 bg-cyan-950/40 rounded-2xl border border-cyan-500/30 shrink-0">
-              <DiamondSparkleIcon />
-            </div>
+            <div className="p-4 bg-cyan-950/40 rounded-2xl border border-cyan-500/30 shrink-0"><DiamondSparkleIcon /></div>
             <div>
               <h3 className="text-xl md:text-2xl font-black text-white mb-2 tracking-tight">Dukung Perjalanan Kreatif Ini</h3>
               <p className="text-slate-400 text-sm md:text-base leading-relaxed">
@@ -72,15 +66,10 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* FOOTER LINKS */}
         <div className="flex flex-col lg:flex-row gap-16 lg:gap-0 mb-16">
           <div className="w-full lg:w-[61.8%] pr-0 lg:pr-20">
-            <Link href="/" className="inline-block mb-6">
-              <span className="text-3xl font-black tracking-tighter text-white">MRR<span className="text-cyan-500">.</span></span>
-            </Link>
-            <p className="text-slate-400 text-sm leading-relaxed max-w-sm">
-              Menerjemahkan imajinasi menjadi realitas visual melalui desain identitas yang presisi dan strategis.
-            </p>
+            <Link href="/" className="inline-block mb-6"><span className="text-3xl font-black tracking-tighter text-white">MRR<span className="text-cyan-500">.</span></span></Link>
+            <p className="text-slate-400 text-sm leading-relaxed max-w-sm">Menerjemahkan imajinasi menjadi realitas visual melalui desain identitas yang presisi dan strategis.</p>
           </div>
 
           <div className="w-full lg:w-[38.2%] grid grid-cols-2 gap-8">
@@ -89,18 +78,9 @@ export default function Footer() {
               <ul className="space-y-4 text-sm text-slate-400 font-medium">
                 <li><Link href="/projects" className="hover:text-cyan-400 transition-colors">Portofolio</Link></li>
                 <li><Link href="/photography" className="hover:text-cyan-400 transition-colors">Fotografi</Link></li>
-                <li>
-                  <Link href="/toolkit" className="flex items-center gap-2 group w-fit">
-                    <div className="relative flex items-center justify-center w-5 h-5 rounded-full bg-cyan-500/20 border border-cyan-500/40 shrink-0">
-                      <div className="absolute inset-0 bg-cyan-400/20 animate-ping rounded-full"></div>
-                      <BoltIcon />
-                    </div>
-                    <span className="text-cyan-400 font-bold group-hover:text-cyan-300 transition-colors">Toolkit Ekosistem</span>
-                  </Link>
-                </li>
+                <li><Link href="/toolkit" className="flex items-center gap-2 group w-fit"><div className="relative flex items-center justify-center w-5 h-5 rounded-full bg-cyan-500/20 border border-cyan-500/40 shrink-0"><div className="absolute inset-0 bg-cyan-400/20 animate-ping rounded-full"></div><BoltIcon /></div><span className="text-cyan-400 font-bold group-hover:text-cyan-300 transition-colors">Toolkit Ekosistem</span></Link></li>
               </ul>
             </div>
-
             <div>
               <h4 className="text-white font-bold tracking-widest uppercase text-[10px] mb-6 opacity-60">Kontak</h4>
               <ul className="space-y-4 text-sm text-slate-400 font-medium">
