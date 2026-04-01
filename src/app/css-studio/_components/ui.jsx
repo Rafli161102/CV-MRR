@@ -52,17 +52,45 @@ export const PluginTip = ({ text, title = "PRO TIPS & PANDUAN" }) => {
   );
 };
 
-export const FigmaSlider = ({ label, min, max, step = 1, value, onChange, unit = "" }) => (
-  <div className="flex items-center justify-between py-2.5 group border-b border-[#1f1f1f] last:border-0">
-    <label className="text-[10px] font-medium text-slate-400 w-1/3 group-hover:text-slate-200 transition-colors truncate pr-2">{label}</label>
-    <div className="w-2/3 flex items-center gap-3">
-      <input type="range" min={min} max={max} step={step} value={value || 0} onChange={(e) => onChange(Number(e.target.value) || 0)} className="w-full h-[3px] bg-[#333] rounded-lg appearance-none cursor-pointer outline-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:h-3.5 [&::-webkit-slider-thumb]:bg-cyan-400 [&::-webkit-slider-thumb]:rounded-full hover:[&::-webkit-slider-thumb]:scale-125 transition-all" />
-      <div className="bg-[#0a0a0a] px-2 py-1 rounded border border-[#2a2a2a] min-w-[55px] text-right shrink-0">
-        <span className="text-[10px] font-mono text-cyan-400">{value || 0}{unit}</span>
+// FIX: Menambahkan input ketik manual pada Slider
+export const FigmaSlider = ({ label, min, max, step = 1, value, onChange, unit = "" }) => {
+  const [localVal, setLocalVal] = useState(value);
+  
+  useEffect(() => { setLocalVal(value); }, [value]);
+
+  const handleBlur = () => {
+    let parsed = parseFloat(localVal);
+    if (isNaN(parsed)) parsed = min;
+    if (parsed < min) parsed = min;
+    if (parsed > max) parsed = max;
+    setLocalVal(parsed);
+    onChange(parsed);
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') e.currentTarget.blur();
+  };
+
+  return (
+    <div className="flex items-center justify-between py-2.5 group border-b border-[#1f1f1f] last:border-0">
+      <label className="text-[10px] font-medium text-slate-400 w-1/3 group-hover:text-slate-200 transition-colors truncate pr-2">{label}</label>
+      <div className="w-2/3 flex items-center gap-3">
+        <input type="range" min={min} max={max} step={step} value={value || 0} onChange={(e) => onChange(Number(e.target.value) || 0)} className="w-full h-[3px] bg-[#333] rounded-lg appearance-none cursor-pointer outline-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:h-3.5 [&::-webkit-slider-thumb]:bg-cyan-400 [&::-webkit-slider-thumb]:rounded-full hover:[&::-webkit-slider-thumb]:scale-125 transition-all" />
+        <div className="bg-[#0a0a0a] px-1.5 py-1 rounded border border-[#2a2a2a] min-w-[65px] flex items-center justify-end shrink-0 focus-within:border-cyan-500 transition-colors">
+          <input 
+            type="number" 
+            value={localVal} 
+            onChange={(e) => setLocalVal(e.target.value)}
+            onBlur={handleBlur}
+            onKeyDown={handleKeyDown}
+            className="w-full bg-transparent text-right outline-none font-mono text-cyan-400 text-[10px]"
+          />
+          <span className="text-[9px] font-mono text-cyan-700 ml-0.5 select-none">{unit}</span>
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 export const FigmaColorPicker = ({ label, hexValue, onChange }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -196,6 +224,10 @@ export const CodeOutput = ({ cssCode, htmlCode, jsxCode, isMobileTab }) => {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  // FIX BUG CRASH ANDROID: Menggunakan dangerouslySetInnerHTML pada tag code 
+  // agar tidak crash saat user menggunakan fitur Copy / Select Text bawaan HP Android!
+  const formattedCode = getActiveCode().replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
   return (
     <div className={`w-full h-full bg-[#0a0a0a] relative flex flex-col overflow-hidden ${isMobileTab ? '' : 'border-t lg:border border-[#1f1f1f] lg:rounded-2xl shadow-xl'}`}>
        <div className="flex justify-between items-center px-2 py-2 border-b border-[#1f1f1f] bg-[#141414] shrink-0">
@@ -209,7 +241,9 @@ export const CodeOutput = ({ cssCode, htmlCode, jsxCode, isMobileTab }) => {
           </button>
        </div>
        <div className={`p-4 overflow-y-auto flex-grow bg-[#050505] custom-scroll ${isMobileTab ? 'pb-24' : ''}`}>
-          <pre className="text-[11px] font-mono text-slate-300 leading-relaxed whitespace-pre-wrap break-words"><code>{getActiveCode()}</code></pre>
+          <pre className="text-[11px] font-mono text-slate-300 leading-relaxed whitespace-pre-wrap break-words">
+            <code dangerouslySetInnerHTML={{ __html: formattedCode }} />
+          </pre>
        </div>
     </div>
   )
@@ -218,7 +252,6 @@ export const CodeOutput = ({ cssCode, htmlCode, jsxCode, isMobileTab }) => {
 export const WorkspaceLayout = ({ name, controls, preview, cssOutput, htmlOutput, jsxOutput, bgType = 'grid', bgHex }) => {
   const [mobileTab, setMobileTab] = useState('design'); 
 
-  // FIX BUG NEUMORPH & GLASS: Memberikan izin background-color kustom agar 3D Timbul menyatu dengan background!
   const renderBackground = () => {
     if (bgType === 'grid') return <div className="absolute inset-0 opacity-[0.15] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '24px 24px'}}></div>;
     if (bgType === 'light') return <div className="absolute inset-0 transition-colors duration-300" style={{ backgroundColor: bgHex || '#f8fafc' }}></div>;
