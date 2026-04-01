@@ -19,13 +19,13 @@ export const PluginGlassmorphism = () => {
   const preview = <div style={{ width: '80%', maxWidth: '240px', height: '140px', background: `rgba(${rgb}, ${opacity / 100})`, backdropFilter: `blur(${blur}px)`, WebkitBackdropFilter: `blur(${blur}px)`, border: `1px solid rgba(255, 255, 255, 0.3)`, borderRadius: '16px', boxShadow: '0 8px 32px rgba(0,0,0,0.15)' }}></div>;
   
   const controls = (
-    <>
-      <PluginTip text="PANDUAN: Gunakan opacity rendah (sekitar 10-20%) agar background tembus, namun berikan Blur Intensity yang tinggi agar teks mudah dibaca." />
+    <div className="space-y-1">
+      <PluginTip text="PANDUAN: Rahasia efek kaca yang mewah adalah Opacity rendah (10-20%) dikombinasikan dengan Blur yang tinggi (di atas 10px)." />
       <ControlHeader title="Glass Setup" onReset={handleReset} />
       <FigmaColorPicker label="Glass Tint" hexValue={color} onChange={setColor} />
       <FigmaSlider label="Opacity" min={1} max={100} value={opacity} onChange={setOpacity} unit="%" />
       <FigmaSlider label="Blur Intensity" min={0} max={50} step={0.5} value={blur} onChange={setBlur} unit="px" />
-    </>
+    </div>
   );
   return <WorkspaceLayout name="Glassmorphism" controls={controls} preview={preview} cssOutput={css} htmlOutput={html} jsxOutput={jsx} bgType="glass" />;
 };
@@ -46,19 +46,19 @@ export const PluginNeumorphism = () => {
   const preview = <div style={{ width: 160, height: 160, backgroundColor: bg, borderRadius: 24, boxShadow: shadowValue, transition: 'all 0.3s' }}></div>;
   
   const controls = (
-    <>
-      <PluginTip text="PANDUAN: Pilih warna Base Background lembut/pastel. Sistem kami secara pintar akan menghitung rumus bayangan terang dan gelap." />
+    <div className="space-y-1">
+      <PluginTip text="PANDUAN: Pilih warna Base Background lembut/pastel. Sistem kami secara pintar akan menghitung rumus bayangan terang dan gelap agar efek 3D terlihat natural." />
       <ControlHeader title="Neumorph Setup" onReset={handleReset} />
       <FigmaColorPicker label="Base Background" hexValue={bg} onChange={setBg} />
-      <div className="mb-5">
+      <div className="mb-5 mt-2">
          <div className="flex bg-[#0a0a0a] p-1.5 rounded-xl border border-[#2a2a2a]">
-            <button onClick={() => setInvert(false)} className={`flex-1 py-2 rounded-lg text-[10px] font-bold uppercase transition-all ${!invert ? 'bg-[#1f1f1f] text-white border border-[#333]' : 'text-slate-500 hover:text-slate-300'}`}>Extrude (Timbul)</button>
-            <button onClick={() => setInvert(true)} className={`flex-1 py-2 rounded-lg text-[10px] font-bold uppercase transition-all ${invert ? 'bg-[#1f1f1f] text-white border border-[#333]' : 'text-slate-500 hover:text-slate-300'}`}>Inset (Cekung)</button>
+            <button onClick={() => setInvert(false)} className={`flex-1 py-3 rounded-lg text-[10px] font-bold uppercase transition-all ${!invert ? 'bg-[#1f1f1f] text-white border border-[#333]' : 'text-slate-500 hover:text-slate-300'}`}>Extrude (Timbul)</button>
+            <button onClick={() => setInvert(true)} className={`flex-1 py-3 rounded-lg text-[10px] font-bold uppercase transition-all ${invert ? 'bg-[#1f1f1f] text-white border border-[#333]' : 'text-slate-500 hover:text-slate-300'}`}>Inset (Cekung)</button>
          </div>
       </div>
       <FigmaSlider label="Distance" min={1} max={30} value={dist} onChange={setDist} unit="px" />
       <FigmaSlider label="Blur Radius" min={1} max={60} value={blur} onChange={setBlur} unit="px" />
-    </>
+    </div>
   );
   return <WorkspaceLayout name="Neumorphism" controls={controls} preview={preview} cssOutput={css} htmlOutput={html} jsxOutput={jsx} bgType="light" bgHex={bg} />;
 };
@@ -76,8 +76,8 @@ export const PluginShadow = () => {
   const preview = <div style={{ width: 140, height: 140, backgroundColor: '#ffffff', borderRadius: 12, boxShadow: `${x}px ${y}px ${blur}px ${spread}px rgba(${hexToRgb(color)}, ${opacity/100})` }}></div>;
   
   const controls = (
-    <>
-      <PluginTip text="PANDUAN: Turunkan Opacity lalu naikkan Blur Radius dan Y Offset agar elemen seakan melayang elegan." />
+    <div className="space-y-1">
+      <PluginTip text="PANDUAN: 'Soft Shadow' sangat populer saat ini. Turunkan Opacity dan naikkan Blur Radius agar elemen terlihat melayang elegan." />
       <ControlHeader title="Shadow Setup" onReset={handleReset} />
       <FigmaColorPicker label="Shadow Color" hexValue={color} onChange={setColor} />
       <FigmaSlider label="Opacity" min={0} max={100} value={opacity} onChange={setOpacity} unit="%" />
@@ -85,7 +85,7 @@ export const PluginShadow = () => {
       <FigmaSlider label="Y Offset" min={-50} max={50} value={y} onChange={setY} unit="px" />
       <FigmaSlider label="Blur Radius" min={0} max={100} value={blur} onChange={setBlur} unit="px" />
       <FigmaSlider label="Spread Radius" min={-50} max={50} value={spread} onChange={setSpread} unit="px" />
-    </>
+    </div>
   );
   return <WorkspaceLayout name="Drop Shadow" controls={controls} preview={preview} cssOutput={css} htmlOutput={html} jsxOutput={jsx} bgType="light" />;
 };
@@ -103,13 +103,13 @@ export const PluginGlow = () => {
   const preview = <div style={{ width: 80, height: 80, backgroundColor: color, borderRadius: '50%', boxShadow: `0 0 ${blur}px ${spread}px rgba(${hexToRgb(color)}, 0.8)` }}></div>;
   
   const controls = (
-    <>
-      <PluginTip text="PANDUAN: Efek pendaran (Glow) sangat kuat di background hitam. Gunakan warna-warna vibran lalu tambah ukuran Blur agar cahaya menyebar." />
+    <div className="space-y-1">
+      <PluginTip text="PANDUAN: Efek pendaran (Glow) sangat kuat di background hitam. Gunakan warna-warna vibran (seperti Cyan atau Neon Green) lalu tambah ukuran Blur." />
       <ControlHeader title="Glow Setup" onReset={handleReset} />
       <FigmaColorPicker label="Glow Color" hexValue={color} onChange={setColor} />
       <FigmaSlider label="Blur Radius" min={0} max={150} value={blur} onChange={setBlur} unit="px" />
       <FigmaSlider label="Spread Radius" min={0} max={100} value={spread} onChange={setSpread} unit="px" />
-    </>
+    </div>
   );
   return <WorkspaceLayout name="Neon Glow" controls={controls} preview={preview} cssOutput={css} htmlOutput={html} jsxOutput={jsx} />;
 };
@@ -135,10 +135,10 @@ export const PluginFilters = () => {
     <div className="space-y-4">
       <PluginTip text="PANDUAN: Trik agar gambar memukau: Naikkan sedikit Contrast dan Vibrance (Saturasi), lalu berikan efek Drop Shadow untuk efek timbul (pop-out)." />
       <div className="mb-4">
-         <label className="text-[10px] font-medium text-slate-400 block mb-2">Pilih Foto Template</label>
-         <div className="flex gap-2">
+         <label className="text-[11px] font-medium text-slate-400 block mb-3">Pilih Foto Template</label>
+         <div className="flex gap-3">
             {IMAGE_TEMPLATES.map((img, idx) => (
-              <button key={idx} onClick={() => setBgImg(img)} className={`w-12 h-12 rounded-lg bg-cover bg-center border-2 transition-all ${bgImg === img ? 'border-cyan-400 scale-110 shadow-lg' : 'border-[#333] hover:border-[#555]'}`} style={{backgroundImage: `url(${img})`}}></button>
+              <button key={idx} onClick={() => setBgImg(img)} className={`w-14 h-14 rounded-xl bg-cover bg-center border-2 transition-all ${bgImg === img ? 'border-cyan-400 scale-110 shadow-[0_0_15px_rgba(6,182,212,0.4)]' : 'border-[#333] hover:border-[#555]'}`} style={{backgroundImage: `url(${img})`}}></button>
             ))}
          </div>
       </div>
@@ -202,7 +202,7 @@ export const PluginAnimation = () => {
   );
 
   const controls = (
-    <>
+    <div className="space-y-1">
       <PluginTip text="PANDUAN: Pilih jenis animasi dan ubah Iteration ke 'infinite' jika ingin pergerakan berulang." />
       <ControlHeader title="Animation Setup" onReset={handleReset} />
       <FigmaCustomDropdown label="Animation Style" groups={ANIMATION_DATA} value={animType} onChange={setAnimType} />
@@ -210,7 +210,7 @@ export const PluginAnimation = () => {
       <FigmaSelect label="Timing Function" options={['linear', 'ease', 'ease-in-out', 'ease-in']} value={timing} onChange={setTiming} />
       <FigmaSelect label="Iteration Count" options={['1', '2', '3', 'infinite']} value={iteration} onChange={setIteration} />
       <button onClick={() => setKey(k => k + 1)} className="w-full mt-4 py-3 bg-[#1a1a1a] hover:bg-cyan-500/20 border border-[#333] hover:border-cyan-500/50 text-cyan-400 rounded-xl text-[11px] font-bold uppercase tracking-widest transition-all shadow-sm">Replay Animation</button>
-    </>
+    </div>
   );
   return <WorkspaceLayout name="Animation Builder" controls={controls} preview={preview} cssOutput={css} htmlOutput={html} jsxOutput={jsx} bgType="grid" />;
 };
@@ -235,19 +235,19 @@ export const PluginTransitions = () => {
 
   const preview = (
     <div className="relative w-full h-full flex items-center justify-center group cursor-pointer">
-      <div className="w-40 h-16 rounded-full bg-white text-black font-bold flex items-center justify-center shadow-lg" style={{ transition: `transform ${duration}s ${timing}` }} onMouseEnter={(e) => e.currentTarget.style.transform = transType} onMouseLeave={(e) => e.currentTarget.style.transform = 'none'}>HOVER ME</div>
+      <div className="w-40 h-16 rounded-full bg-white text-black font-bold flex items-center justify-center shadow-lg transition-all" style={{ transition: `transform ${duration}s ${timing}` }} onMouseEnter={(e) => e.currentTarget.style.transform = transType} onMouseLeave={(e) => e.currentTarget.style.transform = 'none'}>HOVER ME</div>
       <div className="absolute top-10 text-[10px] text-slate-500 uppercase tracking-widest animate-pulse pointer-events-none">Interact to preview</div>
     </div>
   );
 
   const controls = (
-    <>
-      <PluginTip text="PANDUAN: Tempatkan output CSS '.element' di class default, dan pastikan menambahkan selector pseudo '.element:hover' untuk memicu efek transisi." />
+    <div className="space-y-1">
+      <PluginTip text="PANDUAN: Pastikan menambahkan selector pseudo ':hover' pada CSS untuk memicu efek transisi ini." />
       <ControlHeader title="Hover Setup" onReset={handleReset} />
       <FigmaCustomDropdown label="Hover Effect Type" groups={TRANSITIONS_DATA} value={transType} onChange={setTransType} />
       <FigmaSlider label="Duration" min={0.1} max={3} step={0.1} value={duration} onChange={setDuration} unit="s" />
       <FigmaSelect label="Timing/Easing" options={['ease', 'linear', 'ease-in-out', 'cubic']} value={timing} onChange={setTiming} />
-    </>
+    </div>
   );
   return <WorkspaceLayout name="Hover Transitions" controls={controls} preview={preview} cssOutput={css} htmlOutput={html} jsxOutput={jsx} bgType="dark" />;
 };
