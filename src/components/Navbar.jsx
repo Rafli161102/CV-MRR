@@ -15,8 +15,8 @@ export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
 
-  // FIX BUG: Jangan return null, gunakan elemen kosong yang disembunyikan agar Layout Next.js tidak crash!
-  if (pathname === '/css-studio') return <nav className="hidden" aria-hidden="true"></nav>;
+  // FIX BUG: Jangan return null. Gunakan display none agar DOM Tree tidak hancur saat pindah halaman.
+  const isStudio = pathname === '/css-studio';
 
   useEffect(() => {
     const handleScroll = () => { setIsScrolled(window.scrollY > 20); };
@@ -38,7 +38,7 @@ export default function Navbar() {
   ];
 
   return (
-    <>
+    <div style={{ display: isStudio ? 'none' : 'block' }}>
       <header className={`fixed top-0 w-full z-[100] transition-all duration-300 ${
         isScrolled ? 'bg-[#030712]/90 backdrop-blur-md border-b border-white/5 py-3' : 'bg-transparent py-5'
       }`}>
@@ -79,6 +79,6 @@ export default function Navbar() {
           <BoltIcon className="w-5 h-5" /> Toolkit Ekosistem
         </Link>
       </div>
-    </>
+    </div>
   );
 }
