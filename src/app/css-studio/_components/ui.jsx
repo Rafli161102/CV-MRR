@@ -29,9 +29,6 @@ export const adjustBrightness = (hex, percent) => {
 };
 export const COLOR_PRESETS = ['#ffffff', '#f1f5f9', '#1e1e1e', '#0ea5e9', '#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#ef4444'];
 
-// =========================================================================
-// HELPER SHARED: MULTI TOUCH ZOOM & PAN
-// =========================================================================
 export const useMultiTouch = () => {
   const [scale, setScale] = useState(1); const [pan, setPan] = useState({ x: 0, y: 0 }); const [rotation, setRotation] = useState(0);
   const touchRef = useRef({ dist: 0, cx: 0, cy: 0, panX: 0, panY: 0, scale: 1, angle: 0, rotation: 0 });
@@ -60,15 +57,10 @@ export const useMultiTouch = () => {
   return { scale, pan, rotation, setScale, setPan, setRotation, onTouchStart, onTouchMove, resetView };
 };
 
-// =========================================================================
-// UI COMPONENTS REFINED FOR MOBILE
-// =========================================================================
 export const ControlHeader = ({ title, onReset }) => (
   <div className="flex items-center justify-between pb-3 border-b border-[#1f1f1f] mb-5">
      <span className="text-[11px] font-black text-cyan-400 uppercase tracking-widest">{title}</span>
-     {onReset && (
-       <button onClick={onReset} className="text-[9px] text-slate-300 hover:text-white bg-[#1a1a1a] border border-[#333] hover:border-red-500/50 px-2.5 py-1.5 rounded transition-colors uppercase tracking-wider shadow-sm">Reset</button>
-     )}
+     {onReset && (<button onClick={onReset} className="text-[9px] text-slate-300 hover:text-white bg-[#1a1a1a] border border-[#333] hover:border-red-500/50 px-2.5 py-1.5 rounded transition-colors uppercase tracking-wider shadow-sm">Reset</button>)}
   </div>
 );
 
@@ -199,7 +191,7 @@ export const FigmaCustomDropdown = ({ label, groups = {}, value, onChange }) => 
 
 export const CodeOutput = ({ cssCode, htmlCode, jsxCode, isMobileTab }) => {
   const [copied, setCopied] = useState(false); const [lang, setLang] = useState('css');
-  const getActiveCode = () => { if (lang === 'css') return cssCode; if (lang === 'html') return htmlCode; return jsxCode; };
+  const getActiveCode = () => { if (lang === 'css') return cssCode || '/* CSS Output */'; if (lang === 'html') return htmlCode || ''; return jsxCode || '// JSX Output'; };
   const handleCopy = () => { navigator.clipboard.writeText(getActiveCode()); setCopied(true); setTimeout(() => setCopied(false), 2000); };
   const formattedCode = getActiveCode().replace(/</g, '&lt;').replace(/>/g, '&gt;');
   return (
@@ -231,13 +223,11 @@ export const WorkspaceLayout = ({ name, controls, preview, cssOutput, htmlOutput
   };
   return (
     <div className="flex flex-col lg:flex-row w-full h-full animate-fade-in bg-[#050505] lg:bg-transparent">
-       {/* MOBILE CANVAS */}
        <div className="h-[35vh] sm:h-[40vh] lg:hidden relative flex items-center justify-center overflow-hidden border-b border-[#1f1f1f] z-30 transition-colors duration-500 shadow-lg shrink-0" style={{backgroundColor: bgHex || '#050505'}}>
           {renderBackground()}
           <div className="relative z-10 w-full h-full flex items-center justify-center p-6 overflow-hidden perspective-1000">{preview}</div>
        </div>
 
-       {/* DESKTOP CANVAS */}
        <div className="hidden lg:flex flex-1 flex-col min-w-0 lg:border-r border-[#1f1f1f]">
          <div className="flex-1 relative flex items-center justify-center overflow-hidden bg-[#050505] border-b border-[#1f1f1f] z-10 transition-colors duration-500" style={{backgroundColor: bgHex || '#050505'}}>
             {renderBackground()}
@@ -246,7 +236,6 @@ export const WorkspaceLayout = ({ name, controls, preview, cssOutput, htmlOutput
          <div className="h-[300px] shrink-0 p-4 bg-[#0a0a0a]"><CodeOutput cssCode={cssOutput} htmlCode={htmlOutput} jsxCode={jsxOutput} /></div>
        </div>
 
-       {/* PROPERTIES PANEL */}
        <div className="flex-1 lg:w-[420px] lg:flex-none bg-[#0a0a0a] flex flex-col z-20 overflow-hidden shadow-2xl relative">
          <div className="px-5 py-4 border-b border-[#1f1f1f] bg-[#0a0a0a] shrink-0 z-10 relative">
             <h2 className="text-[13px] font-black text-white uppercase tracking-widest hidden lg:flex items-center gap-2">
