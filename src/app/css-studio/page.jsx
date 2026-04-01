@@ -1,12 +1,12 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Icons } from './_components/icons';
 import { 
   PluginLayout, PluginBorder, PluginShapes, PluginTypography, PluginTextGradient, 
   PluginBackgroundGradient, PluginGlassmorphism, PluginNeumorphism, PluginShadow, 
-  PluginGlow, PluginFilters, PluginTransform, PluginAnimation, PluginTransitions, PluginPixelArt
+  PluginGlow, PluginFilters, PluginTransform, PluginAnimation, PluginTransitions, PluginPixelDrawing
 } from './_components/plugins';
 
 const PLUGINS = [
@@ -24,11 +24,12 @@ const PLUGINS = [
   { id: 'transform', title: '3D Studio', Icon: Icons.Cube3D, Component: PluginTransform, cat: 'Advanced' },
   { id: 'animation', title: 'Keyframes', Icon: Icons.Animation, Component: PluginAnimation, cat: 'Advanced' },
   { id: 'transitions', title: 'Transitions', Icon: Icons.Transitions, Component: PluginTransitions, cat: 'Advanced' },
-  { id: 'pixelart', title: 'CSS Drawing', Icon: Icons.Brush, Component: PluginPixelArt, cat: 'Advanced' }
+  { id: 'pixelart', title: 'Pixel Drawing', Icon: Icons.Brush, Component: PluginPixelDrawing, cat: 'Advanced' }
 ];
 
 export default function CssStudioPage() {
   const [activeId, setActiveId] = useState('layout');
+  const router = useRouter();
 
   useEffect(() => {
     document.body.style.overflow = 'hidden';
@@ -41,9 +42,9 @@ export default function CssStudioPage() {
       {/* HEADER STUDIO */}
       <div className="h-14 px-4 sm:px-6 border-b border-[#1f1f1f] flex items-center justify-between bg-[#0a0a0a] z-50 shrink-0 shadow-sm relative">
         <div className="flex items-center gap-4">
-          <Link href="/toolkit" className="text-slate-400 hover:text-white transition-colors p-2 -ml-2 rounded-lg hover:bg-white/5">
+          <button onClick={() => router.push('/toolkit')} className="text-slate-400 hover:text-white transition-colors p-2 -ml-2 rounded-lg hover:bg-white/5">
             <Icons.ArrowLeft />
-          </Link>
+          </button>
           <div className="flex items-center gap-2">
             <span className="font-bold text-white tracking-tight text-sm sm:text-base">Dev Visual <span className="text-cyan-500">Studio</span></span>
           </div>
@@ -80,7 +81,6 @@ export default function CssStudioPage() {
         </div>
       </div>
 
-      {/* FIX: Penulisan style tag yang 100% aman untuk Next.js */}
       <style>{`
         .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
