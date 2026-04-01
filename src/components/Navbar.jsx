@@ -15,8 +15,8 @@ export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
 
-  // FIX: Sembunyikan Navbar global jika sedang di dalam CSS Studio
-  if (pathname === '/css-studio') return null;
+  // FIX BUG: Jangan return null, gunakan elemen kosong yang disembunyikan agar Layout Next.js tidak crash!
+  if (pathname === '/css-studio') return <nav className="hidden" aria-hidden="true"></nav>;
 
   useEffect(() => {
     const handleScroll = () => { setIsScrolled(window.scrollY > 20); };
