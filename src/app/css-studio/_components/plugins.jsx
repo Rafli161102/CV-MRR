@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { Icons } from './icons';
-// FIX BUG: COLOR_PRESETS ditambahkan di baris import ini agar fitur Pixel Drawing tidak crash!
 import { PluginTip, FigmaSlider, FigmaColorPicker, FigmaSelect, FigmaTextInput, FigmaCustomDropdown, WorkspaceLayout, hexToRgb, adjustBrightness, COLOR_PRESETS } from './ui';
 
 export const PluginBackgroundGradient = () => {
@@ -14,7 +13,7 @@ export const PluginBackgroundGradient = () => {
   
   const controls = (
     <>
-      <PluginTip text="Gunakan kombinasi warna yang memiliki kontras alami. Atur sudut (angle) untuk mengubah arah transisi warna sehingga gradasi terlihat lebih hidup dan modern." />
+      <PluginTip text="PANDUAN: Gunakan kombinasi warna yang memiliki kontras alami. Atur sudut (angle) untuk mengubah arah transisi warna sehingga gradasi terlihat lebih hidup dan modern." />
       <FigmaColorPicker label="Start Color" hexValue={color1} onChange={setColor1} />
       <FigmaColorPicker label="End Color" hexValue={color2} onChange={setColor2} />
       <FigmaSlider label="Angle" min={0} max={360} value={angle} onChange={setAngle} unit="°" />
@@ -37,7 +36,7 @@ export const PluginTextGradient = () => {
   );
   const controls = (
     <>
-      <PluginTip text="Pilih jenis font yang tebal (Bold/Black) dan gunakan huruf kapital agar efek gradasi warna bisa menyelimuti teks secara utuh." />
+      <PluginTip text="PANDUAN: Pilih jenis font yang tebal (Bold/Black) dan gunakan huruf kapital agar efek gradasi warna bisa menyelimuti teks secara utuh." />
       <FigmaTextInput label="Custom Text" value={text} onChange={setText} placeholder="Misal: MRR STUDIO" />
       <FigmaColorPicker label="Start Color" hexValue={color1} onChange={setColor1} />
       <FigmaColorPicker label="End Color" hexValue={color2} onChange={setColor2} />
@@ -135,7 +134,7 @@ export const PluginTypography = () => {
 
   const controls = (
     <>
-      <PluginTip text="Pembaruan Baru: Sentuh lalu geser (Drag & Drop) teks di layar atas untuk merubah tata letaknya secara bebas! Semua koordinat gesekanmu otomatis dicatat di CSS Output." />
+      <PluginTip text="PANDUAN: Sentuh lalu geser (Drag & Drop) teks di layar preview atas untuk merubah tata letaknya secara bebas! Semua koordinat gesekanmu otomatis dicatat di CSS Output." />
       <div className="flex bg-[#0a0a0a] p-1 rounded-lg border border-[#2a2a2a] w-full mb-4">
         {['Heading', 'Subheading', 'Paragraph'].map(t => (
           <button key={t} onClick={() => setTab(t)} className={`flex-1 py-2 rounded-md text-[9px] font-bold uppercase transition-all ${tab === t ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/30' : 'text-slate-500 hover:text-slate-300'}`}>{t}</button>
@@ -161,7 +160,7 @@ export const PluginLayout = () => {
   const preview = <div style={{ padding: `${padding}px`, borderRadius: `${radius}px`, backgroundColor: '#1a1a1a', color: '#fff', textAlign: 'center', border: '1px solid #333', transition: 'all 0.3s' }}>Box Container</div>;
   const controls = (
     <>
-      <PluginTip text="Gunakan Padding untuk mengatur ruang bernapas di dalam elemen, dan Border Radius untuk melembutkan sudut-sudut kotak agar tidak kaku." />
+      <PluginTip text="PANDUAN: Gunakan Padding untuk mengatur ruang bernapas di dalam elemen, dan Border Radius untuk melembutkan sudut-sudut kotak agar tidak kaku." />
       <FigmaSlider label="Padding" min={0} max={100} value={padding} onChange={setPadding} unit="px" />
       <FigmaSlider label="Border Radius" min={0} max={100} value={radius} onChange={setRadius} unit="px" />
     </>
@@ -177,7 +176,7 @@ export const PluginBorder = () => {
   const preview = <div style={{ width: 180, height: 120, border: `${width}px ${style} ${color}`, borderRadius: `${radius}px`, backgroundColor: 'rgba(255,255,255,0.02)', transition: 'all 0.2s' }}></div>;
   const controls = (
     <>
-      <PluginTip text="Pilih ketebalan (width) yang selaras dengan radius lengkungan. Gaya 'dashed' (putus-putus) sangat bagus dipakai untuk kotak desain struk atau kupon." />
+      <PluginTip text="PANDUAN: Pilih ketebalan (width) yang selaras dengan radius lengkungan. Gaya 'dashed' (putus-putus) sangat bagus dipakai untuk kotak desain struk atau kupon." />
       <FigmaColorPicker label="Border Color" hexValue={color} onChange={setColor} />
       <FigmaSelect label="Style" options={['solid', 'dashed', 'dotted', 'double']} value={style} onChange={setStyle} />
       <FigmaSlider label="Border Width" min={1} max={30} value={width} onChange={setWidth} unit="px" />
@@ -203,7 +202,7 @@ export const PluginShapes = () => {
   
   const controls = (
     <>
-      <PluginTip text="Pilih 'Organic Blobs' untuk bentuk melengkung alami yang sering dipakai desainer modern. Polygons cocok untuk bentuk bersudut (bisa dihaluskan dengan Border Radius)." />
+      <PluginTip text="PANDUAN: Pilih 'Organic Blobs' untuk bentuk melengkung alami yang sering dipakai desainer modern. Polygons cocok untuk bentuk bersudut (bisa dihaluskan dengan Border Radius)." />
       <FigmaCustomDropdown label="Select Shape Form" groups={SHAPES_DATA} value={shapeVal} onChange={setShapeVal} />
       <FigmaColorPicker label="Shape Color" hexValue={color} onChange={setColor} />
       {!isBlob && <FigmaSlider label="Base Rounded" min={0} max={100} value={rounded} onChange={setRounded} unit="px" />}
@@ -225,7 +224,7 @@ export const PluginGlassmorphism = () => {
   
   const controls = (
     <>
-      <PluginTip text="Rahasia efek kaca yang premium: Gunakan opacity rendah (sekitar 10-20%) agar background tembus, namun berikan Blur Intensity yang tinggi (di atas 10px) agar teks di atasnya tetap mudah dibaca." />
+      <PluginTip text="PANDUAN: Rahasia efek kaca yang premium: Gunakan opacity rendah (sekitar 10-20%) agar background tembus, namun berikan Blur Intensity yang tinggi (di atas 10px) agar teks di atasnya tetap mudah dibaca." />
       <FigmaColorPicker label="Glass Tint" hexValue={color} onChange={setColor} />
       <FigmaSlider label="Opacity" min={1} max={100} value={opacity} onChange={setOpacity} unit="%" />
       <FigmaSlider label="Blur Intensity" min={0} max={50} step={0.5} value={blur} onChange={setBlur} unit="px" />
@@ -246,7 +245,7 @@ export const PluginNeumorphism = () => {
   
   const controls = (
     <>
-      <PluginTip text="Pilih warna Base Background yang lembut/pastel. Sistem kami secara pintar akan menghitung rumus bayangan terang dan gelap agar efek 3D timbul/cekungnya terlihat natural." />
+      <PluginTip text="PANDUAN: Pilih warna Base Background yang lembut/pastel. Sistem kami secara pintar akan menghitung rumus bayangan terang dan gelap agar efek 3D timbul/cekungnya terlihat natural." />
       <FigmaColorPicker label="Base Background" hexValue={bg} onChange={setBg} />
       <div className="mb-4">
          <div className="flex bg-[#0a0a0a] p-1 rounded-lg border border-[#2a2a2a]">
@@ -270,7 +269,7 @@ export const PluginShadow = () => {
   
   const controls = (
     <>
-      <PluginTip text="Tren desain saat ini menyukai bayangan 'Soft Shadow'. Turunkan Opacity (sekitar 10-20%) lalu naikkan Blur Radius dan Y Offset agar elemen seakan-akan melayang elegan." />
+      <PluginTip text="PANDUAN: Tren desain saat ini menyukai bayangan 'Soft Shadow'. Turunkan Opacity (sekitar 10-20%) lalu naikkan Blur Radius dan Y Offset agar elemen seakan-akan melayang elegan." />
       <FigmaColorPicker label="Shadow Color" hexValue={color} onChange={setColor} />
       <FigmaSlider label="Opacity" min={0} max={100} value={opacity} onChange={setOpacity} unit="%" />
       <FigmaSlider label="X Offset" min={-50} max={50} value={x} onChange={setX} unit="px" />
@@ -291,7 +290,7 @@ export const PluginGlow = () => {
   
   const controls = (
     <>
-      <PluginTip text="Efek pendaran (Glow) sangat kuat di background hitam. Gunakan warna-warna vibran seperti Cyan, Magenta, atau Neon Green lalu tambah ukuran Blur agar cahaya menyebar alami." />
+      <PluginTip text="PANDUAN: Efek pendaran (Glow) sangat kuat di background hitam. Gunakan warna-warna vibran seperti Cyan, Magenta, atau Neon Green lalu tambah ukuran Blur agar cahaya menyebar alami." />
       <FigmaColorPicker label="Glow Color" hexValue={color} onChange={setColor} />
       <FigmaSlider label="Blur Radius" min={0} max={150} value={blur} onChange={setBlur} unit="px" />
       <FigmaSlider label="Spread Radius" min={0} max={100} value={spread} onChange={setSpread} unit="px" />
@@ -323,7 +322,7 @@ export const PluginFilters = () => {
 
   const controls = (
     <div className="space-y-1 pb-4">
-      <PluginTip text="Trik agar gambar memukau: Naikkan sedikit Contrast dan Vibrance (Saturasi), lalu berikan sedikit efek Drop Shadow untuk efek timbul (pop-out)." />
+      <PluginTip text="PANDUAN: Trik agar gambar memukau: Naikkan sedikit Contrast dan Vibrance (Saturasi), lalu berikan sedikit efek Drop Shadow untuk efek timbul (pop-out)." />
       <div className="mb-4">
          <label className="text-[10px] font-medium text-slate-400 block mb-2">Pilih Foto Template</label>
          <div className="flex gap-2">
@@ -364,7 +363,7 @@ export const PluginTransform = () => {
   
   const controls = (
     <>
-      <PluginTip text="Penting: Fitur rotasi X/Y/Z di bawah ini membutuhkan elemen 'parent' yang memiliki properti 'perspective: 1000px' agar elemen memiliki efek ruangan 3D." />
+      <PluginTip text="PANDUAN PENTING: Fitur rotasi X/Y/Z di bawah ini membutuhkan elemen 'parent' (pembungkus luar) yang memiliki properti 'perspective: 1000px' agar elemen di dalamnya terlihat memiliki ruang 3D." />
       <FigmaSlider label="Rotate X" min={-180} max={180} value={rx} onChange={setRx} unit="°" />
       <FigmaSlider label="Rotate Y" min={-180} max={180} value={ry} onChange={setRy} unit="°" />
       <FigmaSlider label="Rotate Z" min={-180} max={180} value={rz} onChange={setRz} unit="°" />
@@ -435,7 +434,7 @@ export const PluginAnimation = () => {
 
   const controls = (
     <>
-      <PluginTip text="Pilih jenis animasi dan ubah Iteration ke 'infinite' jika ingin pergerakan berulang seperti animasi terbang (Floating) atau detak (Pulse)." />
+      <PluginTip text="PANDUAN: Pilih jenis animasi dan ubah Iteration ke 'infinite' jika ingin pergerakan berulang seperti animasi terbang (Floating) atau detak (Pulse)." />
       <FigmaCustomDropdown label="Animation Style" groups={ANIMATION_DATA} value={animType} onChange={setAnimType} />
       <FigmaSlider label="Duration" min={0.1} max={5} step={0.1} value={duration} onChange={setDuration} unit="s" />
       <FigmaSelect label="Timing Function" options={['linear', 'ease', 'ease-in-out', 'ease-in']} value={timing} onChange={setTiming} />
@@ -479,7 +478,7 @@ export const PluginTransitions = () => {
 
   const controls = (
     <>
-      <PluginTip text="Gerakkan (Hover) kursor mouse/jarimu ke area preview untuk melihat transisi! Sangat efektif untuk desain tombol (button) atau kartu (card)." />
+      <PluginTip text="PANDUAN PENTING: Tempatkan output CSS '.element' di class default, dan pastikan menambahkan selector pseudo '.element:hover' untuk memicu efek transisinya." />
       <FigmaCustomDropdown label="Hover Effect Type" groups={TRANSITIONS_DATA} value={transType} onChange={setTransType} />
       <FigmaSlider label="Duration" min={0.1} max={3} step={0.1} value={duration} onChange={setDuration} unit="s" />
       <FigmaSelect label="Timing/Easing" options={['ease', 'linear', 'ease-in-out', 'cubic']} value={timing} onChange={setTiming} />
@@ -493,7 +492,6 @@ export const PluginPixelDrawing = () => {
   const [gridSize, setGridSize] = useState(16); 
   const [color, setColor] = useState('#0ea5e9');
   
-  // FIX BUG: Pemanggilan Palette Color sekarang aman karena sudah di-import di atas!
   const [palette, setPalette] = useState([...COLOR_PRESETS]);
   const [isTransparent, setIsTransparent] = useState(true);
   const [outputSize, setOutputSize] = useState(500);
@@ -504,12 +502,14 @@ export const PluginPixelDrawing = () => {
   // Zoom & Pan state
   const [scale, setScale] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
-  const [activeTool, setActiveTool] = useState('draw'); // draw, erase, pan
+  const [activeTool, setActiveTool] = useState('draw');
   const [isDraggingPan, setIsDraggingPan] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
-    const newEmpty = Array(gridSize * gridSize).fill('transparent');
+    // Keamanan: Maksimal grid di 64 agar tidak crash
+    const safeGrid = Math.min(gridSize, 64);
+    const newEmpty = Array(safeGrid * safeGrid).fill('transparent');
     setHistory([newEmpty]); setStep(0); setScale(1); setPan({x:0, y:0});
   }, [gridSize]);
 
@@ -576,7 +576,7 @@ export const PluginPixelDrawing = () => {
     link.href = canvas.toDataURL('image/png'); link.click();
   };
 
-  const pixelSizePx = gridSize <= 8 ? 20 : gridSize <= 16 ? 12 : 8;
+  const pixelSizePx = gridSize <= 8 ? 20 : gridSize <= 16 ? 12 : gridSize <= 32 ? 6 : 4;
   const generateBoxShadow = () => {
     let shadow = [];
     currentPixels.forEach((p, i) => {
@@ -598,13 +598,24 @@ export const PluginPixelDrawing = () => {
       className="relative w-full h-[300px] flex items-center justify-center overflow-hidden border border-white/5 bg-[#050505] rounded-xl touch-none"
       onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={handlePointerUp} onPointerCancel={handlePointerUp}
     >
+      {/* FIX Ikon Besar: Memberikan batasan ukuran pasti (w-8 h-8) pada pembungkus tombol agar SVG di dalamnya tidak melar */}
       <div className="absolute top-3 left-3 bg-[#141414] border border-[#2a2a2a] p-1.5 rounded-lg flex flex-col gap-1 z-20 shadow-lg">
-        <button onClick={() => setActiveTool('draw')} className={`p-1.5 rounded ${activeTool === 'draw' ? 'bg-cyan-500/20 text-cyan-400' : 'text-slate-400 hover:bg-[#1f1f1f]'}`}><Icons.Brush /></button>
-        <button onClick={() => setActiveTool('erase')} className={`p-1.5 rounded ${activeTool === 'erase' ? 'bg-cyan-500/20 text-cyan-400' : 'text-slate-400 hover:bg-[#1f1f1f]'}`}><Icons.Eraser /></button>
-        <button onClick={() => setActiveTool('pan')} className={`p-1.5 rounded ${activeTool === 'pan' ? 'bg-cyan-500/20 text-cyan-400' : 'text-slate-400 hover:bg-[#1f1f1f]'}`}><Icons.HandPan /></button>
+        <button onClick={() => setActiveTool('draw')} className={`w-8 h-8 flex items-center justify-center shrink-0 rounded transition-colors ${activeTool === 'draw' ? 'bg-cyan-500/20 text-cyan-400' : 'text-slate-400 hover:bg-[#1f1f1f]'}`}>
+           <div className="w-4 h-4"><Icons.Brush /></div>
+        </button>
+        <button onClick={() => setActiveTool('erase')} className={`w-8 h-8 flex items-center justify-center shrink-0 rounded transition-colors ${activeTool === 'erase' ? 'bg-cyan-500/20 text-cyan-400' : 'text-slate-400 hover:bg-[#1f1f1f]'}`}>
+           <div className="w-4 h-4"><Icons.Eraser /></div>
+        </button>
+        <button onClick={() => setActiveTool('pan')} className={`w-8 h-8 flex items-center justify-center shrink-0 rounded transition-colors ${activeTool === 'pan' ? 'bg-cyan-500/20 text-cyan-400' : 'text-slate-400 hover:bg-[#1f1f1f]'}`}>
+           <div className="w-4 h-4"><Icons.HandPan /></div>
+        </button>
         <div className="w-full h-px bg-[#2a2a2a] my-1"></div>
-        <button onClick={() => setScale(s => Math.min(3, s + 0.2))} className="p-1.5 rounded text-slate-400 hover:bg-[#1f1f1f] hover:text-white"><Icons.ZoomIn /></button>
-        <button onClick={() => setScale(s => Math.max(0.5, s - 0.2))} className="p-1.5 rounded text-slate-400 hover:bg-[#1f1f1f] hover:text-white"><Icons.ZoomOut /></button>
+        <button onClick={() => setScale(s => Math.min(3, s + 0.2))} className="w-8 h-8 flex items-center justify-center shrink-0 rounded text-slate-400 hover:bg-[#1f1f1f] hover:text-white transition-colors">
+           <div className="w-4 h-4"><Icons.ZoomIn /></div>
+        </button>
+        <button onClick={() => setScale(s => Math.max(0.5, s - 0.2))} className="w-8 h-8 flex items-center justify-center shrink-0 rounded text-slate-400 hover:bg-[#1f1f1f] hover:text-white transition-colors">
+           <div className="w-4 h-4"><Icons.ZoomOut /></div>
+        </button>
       </div>
 
       <div style={{ transform: `translate(${pan.x}px, ${pan.y}px) scale(${scale})`, transition: isDraggingPan ? 'none' : 'transform 0.1s ease-out' }} className="absolute">
@@ -631,16 +642,32 @@ export const PluginPixelDrawing = () => {
       </div>
 
       <div className="absolute bottom-3 right-3 flex gap-2 z-20">
-        <button onClick={handleUndo} disabled={step === 0} className={`p-2 rounded-full border bg-[#141414] ${step === 0 ? 'border-[#1f1f1f] text-slate-600' : 'border-[#333] text-slate-300 hover:text-white hover:bg-[#1f1f1f] shadow-md'}`}><Icons.Undo /></button>
-        <button onClick={handleRedo} disabled={step === history.length - 1} className={`p-2 rounded-full border bg-[#141414] ${step === history.length - 1 ? 'border-[#1f1f1f] text-slate-600' : 'border-[#333] text-slate-300 hover:text-white hover:bg-[#1f1f1f] shadow-md'}`}><Icons.Redo /></button>
+        <button onClick={handleUndo} disabled={step === 0} className={`w-10 h-10 flex items-center justify-center rounded-full border bg-[#141414] ${step === 0 ? 'border-[#1f1f1f] text-slate-600' : 'border-[#333] text-slate-300 hover:text-white hover:bg-[#1f1f1f] shadow-md'}`}><div className="w-4 h-4"><Icons.Undo /></div></button>
+        <button onClick={handleRedo} disabled={step === history.length - 1} className={`w-10 h-10 flex items-center justify-center rounded-full border bg-[#141414] ${step === history.length - 1 ? 'border-[#1f1f1f] text-slate-600' : 'border-[#333] text-slate-300 hover:text-white hover:bg-[#1f1f1f] shadow-md'}`}><div className="w-4 h-4"><Icons.Redo /></div></button>
       </div>
     </div>
   );
 
   const controls = (
     <>
-      <PluginTip text="Pembaruan Canvas Studio: Gunakan Ikon Tangan (Pan) untuk menggeser, dan alat Zoom untuk detail. Kamu bisa menambah warna custom, lalu klik Download untuk mengekspor gambar hingga HD 1000px!" />
-      <FigmaSelect label="Canvas Grid Resolution" options={['8', '16', '24', '32']} value={gridSize.toString()} onChange={(val) => setGridSize(Number(val))} />
+      <PluginTip text="PANDUAN CANVAS: Gunakan Ikon Tangan (Pan) untuk menggeser, dan alat Zoom untuk detail area kecil. Kamu bisa menambah warna custom, lalu klik Download untuk mengekspor gambar hingga HD 1000px!" />
+      
+      {/* INPUT CUSTOM GRID MAXIMUM 64x64 */}
+      <div className="mb-4 mt-2">
+         <label className="text-[10px] font-medium text-slate-400 block mb-2">Custom Grid Size (Max 64)</label>
+         <input
+           type="number"
+           min={4}
+           max={64}
+           value={gridSize}
+           onChange={(e) => {
+             const val = Number(e.target.value);
+             if (val >= 4 && val <= 64) setGridSize(val);
+           }}
+           className="w-full bg-[#0a0a0a] border border-[#2a2a2a] rounded-lg px-3 py-2.5 text-[11px] text-white outline-none focus:border-cyan-500 transition-all"
+         />
+         <p className="text-[9px] text-slate-500 mt-2 italic leading-relaxed">*Batas maksimal grid disarankan di angka 64x64. Karena sistem ini merender UI murni berbasis kode (CSS Box Shadow), membuat jutaan pixel (misal 1000x1000) akan membuat device Lag & Crash!</p>
+      </div>
       
       <div className="flex justify-between items-center mb-4 mt-6 border-t border-[#1f1f1f] pt-4">
         <label className="text-[10px] font-medium text-slate-400 block">Custom Palette</label>
@@ -649,7 +676,7 @@ export const PluginPixelDrawing = () => {
       
       <div className="flex items-center gap-3 mb-3">
         <div className="flex-1"><FigmaColorPicker label="Pilih Warna" hexValue={color} onChange={setColor} /></div>
-        <button onClick={addToPalette} className="mt-2 w-10 h-10 rounded-lg bg-[#141414] border border-[#2a2a2a] text-cyan-400 hover:bg-cyan-500/20 hover:border-cyan-500 flex items-center justify-center transition-all"><Icons.Plus /></button>
+        <button onClick={addToPalette} className="mt-2 w-10 h-10 rounded-lg bg-[#141414] border border-[#2a2a2a] text-cyan-400 hover:bg-cyan-500/20 hover:border-cyan-500 flex items-center justify-center transition-all"><div className="w-4 h-4"><Icons.Plus /></div></button>
       </div>
       
       <div className="flex flex-wrap gap-2 mb-6">
@@ -670,7 +697,7 @@ export const PluginPixelDrawing = () => {
          </div>
          <FigmaSlider label="Output Size" min={100} max={1000} step={50} value={outputSize} onChange={setOutputSize} unit="px" />
          <button onClick={downloadImage} className="mt-4 w-full flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all shadow-lg hover:shadow-cyan-500/25">
-           <Icons.Download /> Download Image PNG
+           <div className="w-4 h-4"><Icons.Download /></div> Download Image PNG
          </button>
       </div>
     </>
