@@ -32,12 +32,17 @@ export default function CssStudioPage() {
   const router = useRouter();
 
   useEffect(() => {
+    // Kunci scroll body
     document.body.style.overflow = 'hidden';
+    // Force scroll ke paling atas (berjaga-jaga jika browser menyimpan history scroll)
+    window.scrollTo(0, 0);
     return () => { document.body.style.overflow = 'auto'; };
   }, []);
 
   return (
-    <div className="w-full h-[100dvh] pt-0 flex flex-col font-sans bg-[#050505] text-[#d4d4d4] overflow-hidden box-border">
+    // FIX BUG PENTING: Tambahkan `fixed inset-0 z-[90]` di sini.
+    // Ini akan memaksa aplikasi membentang penuh di layar dan mengabaikan padding dari layout.jsx!
+    <div className="fixed inset-0 w-full h-[100dvh] flex flex-col font-sans bg-[#050505] text-[#d4d4d4] overflow-hidden box-border z-[90]">
       
       {/* HEADER STUDIO */}
       <div className="h-14 px-4 sm:px-6 border-b border-[#1f1f1f] flex items-center justify-between bg-[#0a0a0a] z-50 shrink-0 shadow-sm relative">
@@ -54,6 +59,7 @@ export default function CssStudioPage() {
       {/* MAIN WORKSPACE */}
       <div className="flex-1 flex flex-col lg:flex-row overflow-hidden relative z-40 bg-[#050505]">
         
+        {/* NAVIGASI KIRI */}
         <div className="w-full lg:w-[100px] xl:w-[220px] bg-[#0a0a0a] border-b lg:border-b-0 lg:border-r border-[#1f1f1f] shrink-0 flex flex-row lg:flex-col overflow-x-auto lg:overflow-y-auto [&::-webkit-scrollbar]:hidden custom-scroll z-30 shadow-md">
            {['Structure', 'Typography', 'Colors', 'Effects', 'Advanced'].map(cat => (
               <div key={cat} className="flex flex-row lg:flex-col shrink-0 lg:w-full border-r lg:border-r-0 lg:border-b border-[#1f1f1f] lg:pb-2 lg:mb-2 last:border-0">
@@ -72,6 +78,7 @@ export default function CssStudioPage() {
            ))}
         </div>
         
+        {/* KONTEN PLUGIN */}
         <div className="flex-1 overflow-hidden bg-[#050505] flex flex-col relative z-10">
            {PLUGINS.map(plugin => {
               if (plugin.id !== activeId) return null;
