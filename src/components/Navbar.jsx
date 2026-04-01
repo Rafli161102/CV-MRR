@@ -17,6 +17,8 @@ export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
+  if (pathname === '/css-studio') return null; // Menyembunyikan Navbar di CSS Studio
+
 
   // Efek transparan saat halaman di-scroll
   useEffect(() => {
