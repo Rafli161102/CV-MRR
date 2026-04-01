@@ -21,13 +21,15 @@ export const PluginBackgroundGradient = () => {
   const preview = <div style={{ background: `linear-gradient(${angle}deg, ${color1}, ${color2})`, borderRadius: '16px', boxShadow: '0 20px 40px rgba(0,0,0,0.3)' }} className="w-full max-w-[320px] aspect-[2/1] transition-all"></div>;
   
   const controls = (
-    <>
+    <div className="space-y-1">
       <PluginTip text="PANDUAN: Gunakan kombinasi warna yang memiliki kontras alami. Atur sudut (angle) untuk mengubah arah transisi warna agar lebih dinamis." />
       <ControlHeader title="Gradient Setup" onReset={handleReset} />
-      <FigmaColorPicker label="Start Color" hexValue={color1} onChange={setColor1} />
-      <FigmaColorPicker label="End Color" hexValue={color2} onChange={setColor2} />
+      <div className="flex flex-col sm:flex-row gap-0 sm:gap-4">
+        <div className="flex-1"><FigmaColorPicker label="Start Color" hexValue={color1} onChange={setColor1} /></div>
+        <div className="flex-1"><FigmaColorPicker label="End Color" hexValue={color2} onChange={setColor2} /></div>
+      </div>
       <FigmaSlider label="Angle" min={0} max={360} value={angle} onChange={setAngle} unit="°" />
-    </>
+    </div>
   );
   
   return <WorkspaceLayout name="Box Gradient" controls={controls} preview={preview} cssOutput={css} htmlOutput={html} jsxOutput={jsx} />;
@@ -51,14 +53,16 @@ export const PluginTextGradient = () => {
   const preview = <div className="w-full h-full flex items-center justify-center text-center"><span style={{ backgroundImage: `linear-gradient(${angle}deg, ${color1}, ${color2})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontSize: 'clamp(2rem, 8vw, 5rem)', fontWeight: '900', textTransform: 'uppercase' }}>{text || 'GRADIENT'}</span></div>;
   
   const controls = (
-    <>
+    <div className="space-y-1">
       <PluginTip text="PANDUAN: Pilih jenis font yang tebal (Bold/Black) agar efek gradasi warna terlihat menyelimuti teks secara utuh." />
       <ControlHeader title="Text Setup" onReset={handleReset} />
       <FigmaTextInput label="Custom Text" value={text} onChange={setText} placeholder="Misal: MRR STUDIO" />
-      <FigmaColorPicker label="Start Color" hexValue={color1} onChange={setColor1} />
-      <FigmaColorPicker label="End Color" hexValue={color2} onChange={setColor2} />
+      <div className="flex flex-col sm:flex-row gap-0 sm:gap-4">
+        <div className="flex-1"><FigmaColorPicker label="Start Color" hexValue={color1} onChange={setColor1} /></div>
+        <div className="flex-1"><FigmaColorPicker label="End Color" hexValue={color2} onChange={setColor2} /></div>
+      </div>
       <FigmaSlider label="Angle" min={0} max={360} value={angle} onChange={setAngle} unit="°" />
-    </>
+    </div>
   );
   
   return <WorkspaceLayout name="Text Gradient" controls={controls} preview={preview} cssOutput={css} htmlOutput={html} jsxOutput={jsx} />;
@@ -82,16 +86,16 @@ export const PluginLayout = () => {
   const preview = <div style={{ padding: `${padding}px`, borderRadius: `${radius}px`, backgroundColor: bgColor, color: textColor, textAlign: 'center', border: '1px solid #333', transition: 'all 0.3s' }}>Box Container</div>;
   
   const controls = (
-    <>
+    <div className="space-y-1">
       <PluginTip text="PANDUAN: Gunakan Padding untuk mengatur ruang bernapas di dalam elemen. Kamu sekarang bisa menyesuaikan warna background dan teks!" />
       <ControlHeader title="Configuration" onReset={handleReset} />
-      <div className="flex flex-col gap-4 mb-4">
-        <FigmaColorPicker label="Background Color" hexValue={bgColor} onChange={setBgColor} />
-        <FigmaColorPicker label="Text Color" hexValue={textColor} onChange={setTextColor} />
+      <div className="flex flex-col sm:flex-row gap-0 sm:gap-4">
+        <div className="flex-1"><FigmaColorPicker label="Background Color" hexValue={bgColor} onChange={setBgColor} /></div>
+        <div className="flex-1"><FigmaColorPicker label="Text Color" hexValue={textColor} onChange={setTextColor} /></div>
       </div>
       <FigmaSlider label="Padding" min={0} max={100} value={padding} onChange={setPadding} unit="px" />
       <FigmaSlider label="Border Radius" min={0} max={100} value={radius} onChange={setRadius} unit="px" />
-    </>
+    </div>
   );
   
   return <WorkspaceLayout name="Box Layout" controls={controls} preview={preview} cssOutput={css} htmlOutput={html} jsxOutput={jsx} />;
@@ -115,14 +119,14 @@ export const PluginBorder = () => {
   const preview = <div style={{ width: 180, height: 120, border: `${width}px ${style} ${color}`, borderRadius: `${radius}px`, backgroundColor: 'rgba(255,255,255,0.02)', transition: 'all 0.2s' }}></div>;
   
   const controls = (
-    <>
+    <div className="space-y-1">
       <PluginTip text="PANDUAN: Pilih ketebalan (width) yang selaras dengan radius lengkungan. Gaya 'dashed' (putus-putus) sangat bagus untuk desain kupon." />
       <ControlHeader title="Border Setup" onReset={handleReset} />
       <FigmaColorPicker label="Border Color" hexValue={color} onChange={setColor} />
       <FigmaSelect label="Border Style" options={['solid', 'dashed', 'dotted', 'double']} value={style} onChange={setStyle} />
       <FigmaSlider label="Border Width" min={1} max={30} value={width} onChange={setWidth} unit="px" />
       <FigmaSlider label="Border Radius" min={0} max={100} value={radius} onChange={setRadius} unit="px" />
-    </>
+    </div>
   );
   
   return <WorkspaceLayout name="Border Styling" controls={controls} preview={preview} cssOutput={css} htmlOutput={html} jsxOutput={jsx} />;
@@ -200,16 +204,16 @@ export const PluginTypography = () => {
   const renderTextControls = (state, setState, isPara = false) => {
     const update = (key, val) => setState(prev => ({ ...prev, [key]: val }));
     return (
-      <div className="animate-fade-in space-y-4">
+      <div className="animate-fade-in space-y-2 mt-2">
         <FigmaTextInput label="Edit Text" value={state.text} onChange={(v) => update('text', v)} placeholder="Ketik disini..." isTextArea={isPara} />
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-0 sm:gap-4">
            <FigmaCustomDropdown label="Font Family" groups={FONTS_DATA} value={state.font} onChange={(v) => update('font', v)} />
            <FigmaColorPicker label="Text Color" hexValue={state.color} onChange={(v) => update('color', v)} />
         </div>
         <FigmaSlider label="Font Size" min={10} max={100} value={state.size} onChange={(v) => update('size', v)} unit="px" />
         <FigmaSlider label="Letter Spacing" min={-5} max={20} step={0.5} value={state.space} onChange={(v) => update('space', v)} unit="px" />
         <FigmaSlider label="Rotate" min={-180} max={180} value={state.rot} onChange={(v) => update('rot', v)} unit="°" />
-        <div className="grid grid-cols-2 gap-4 pt-2 border-t border-[#1f1f1f]">
+        <div className="grid grid-cols-2 gap-4 pt-4 border-t border-[#1f1f1f]">
           <FigmaSelect label="Alignment" options={['left', 'center', 'right', 'justify']} value={state.align} onChange={(v) => update('align', v)} />
           <FigmaSelect label="Transform" options={['none', 'uppercase', 'lowercase', 'capitalize']} value={state.trans} onChange={(v) => update('trans', v)} />
         </div>
@@ -218,7 +222,7 @@ export const PluginTypography = () => {
   };
 
   const controls = (
-    <>
+    <div className="space-y-1">
       <PluginTip text="PANDUAN: Sentuh lalu geser (Drag & Drop) teks di layar preview atas untuk merubah tata letaknya secara bebas!" />
       <div className="flex bg-[#0a0a0a] p-1.5 rounded-xl border border-[#2a2a2a] w-full mb-6">
         {['Heading', 'Subheading', 'Paragraph'].map(t => (
@@ -229,7 +233,8 @@ export const PluginTypography = () => {
       {tab === 'Heading' && renderTextControls(h1, setH1)}
       {tab === 'Subheading' && renderTextControls(h2, setH2)}
       {tab === 'Paragraph' && renderTextControls(p, setP, true)}
-    </>
+    </div>
   );
+  
   return <WorkspaceLayout name="Interactive Typo" controls={controls} preview={preview} cssOutput={css} htmlOutput={html} jsxOutput={jsx} bgType="dark" />;
 };
