@@ -35,27 +35,14 @@ export const adjustBrightness = (hex, percent) => {
 
 export const COLOR_PRESETS = ['#ffffff', '#f1f5f9', '#1e1e1e', '#0ea5e9', '#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#ef4444'];
 
-// =========================================================================
-// FIX UX: Komponen Panduan (Hint) yang bisa di-close/silang
-// =========================================================================
 export const PluginTip = ({ text, title = "PRO TIPS & PANDUAN" }) => {
   const [isVisible, setIsVisible] = useState(true);
-  
   if (!isVisible) return null;
-
   return (
     <div className="bg-cyan-500/10 border border-cyan-500/20 rounded-lg p-3 sm:p-4 flex gap-3 items-start mb-5 relative shadow-sm animate-fade-in group">
-      {/* Tombol Silang (Close) */}
-      <button 
-        onClick={() => setIsVisible(false)} 
-        className="absolute top-2.5 right-2.5 text-cyan-500/50 hover:text-cyan-400 hover:bg-cyan-500/10 p-1 rounded-md transition-all"
-        title="Tutup Panduan"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-3.5 h-3.5">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-        </svg>
+      <button onClick={() => setIsVisible(false)} className="absolute top-2.5 right-2.5 text-cyan-500/50 hover:text-cyan-400 hover:bg-cyan-500/10 p-1 rounded-md transition-all" title="Tutup Panduan">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-3.5 h-3.5"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
       </button>
-
       <div className="text-cyan-400 mt-0.5 shrink-0"><Icons.Info /></div>
       <div className="pr-6">
          <h4 className="text-[9px] font-black text-cyan-400 mb-1.5 uppercase tracking-widest">{title}</h4>
@@ -231,18 +218,16 @@ export const CodeOutput = ({ cssCode, htmlCode, jsxCode, isMobileTab }) => {
 export const WorkspaceLayout = ({ name, controls, preview, cssOutput, htmlOutput, jsxOutput, bgType = 'grid', bgHex }) => {
   const [mobileTab, setMobileTab] = useState('design'); 
 
-  // KUMPULAN BACKGROUND (Ditambah bgType="glass" yang cerah)
+  // FIX BUG NEUMORPH & GLASS: Memberikan izin background-color kustom agar 3D Timbul menyatu dengan background!
   const renderBackground = () => {
     if (bgType === 'grid') return <div className="absolute inset-0 opacity-[0.15] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '24px 24px'}}></div>;
-    if (bgType === 'light') return <div className="absolute inset-0 bg-[#f8fafc]"></div>;
-    // FIX BUG: Gambar untuk glass tidak boleh digelapkan, opacity dibuat 100%
+    if (bgType === 'light') return <div className="absolute inset-0 transition-colors duration-300" style={{ backgroundColor: bgHex || '#f8fafc' }}></div>;
     if (bgType === 'glass') return <div className="absolute inset-0 bg-cover bg-center opacity-100" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200')" }}></div>;
     return null;
   };
 
   return (
     <div className="flex flex-col lg:flex-row w-full h-full animate-fade-in bg-[#050505] lg:bg-transparent">
-       
        <div className="h-[35vh] sm:h-[40vh] lg:hidden relative flex items-center justify-center overflow-hidden border-b border-[#1f1f1f] z-30 transition-colors duration-500 shadow-lg shrink-0" style={{backgroundColor: bgHex || '#050505'}}>
           {renderBackground()}
           <div className="relative z-10 w-full h-full flex items-center justify-center p-6 overflow-hidden perspective-1000">{preview}</div>
