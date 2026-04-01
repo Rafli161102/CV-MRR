@@ -3,6 +3,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Icons } from './icons';
 
+// =========================================================================
+// COLOR HELPERS
+// =========================================================================
 export const safeHex = (hex) => (typeof hex === 'string' && hex.startsWith('#') && (hex.length === 4 || hex.length === 7)) ? hex : '#000000';
 export const hexToRgb = (hex) => {
   const h = safeHex(hex); let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(h);
@@ -29,39 +32,60 @@ export const adjustBrightness = (hex, percent) => {
 };
 export const COLOR_PRESETS = ['#ffffff', '#f1f5f9', '#1e1e1e', '#0ea5e9', '#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#ef4444'];
 
+// =========================================================================
+// MULTI-TOUCH HOOK (ZOOM, PAN, ROTATE 2 JARI)
+// =========================================================================
 export const useMultiTouch = () => {
-  const [scale, setScale] = useState(1); const [pan, setPan] = useState({ x: 0, y: 0 }); const [rotation, setRotation] = useState(0);
+  const [scale, setScale] = useState(1);
+  const [pan, setPan] = useState({ x: 0, y: 0 });
+  const [rotation, setRotation] = useState(0);
   const touchRef = useRef({ dist: 0, cx: 0, cy: 0, panX: 0, panY: 0, scale: 1, angle: 0, rotation: 0 });
 
   const getAngle = (touches) => Math.atan2(touches[0].clientY - touches[1].clientY, touches[0].clientX - touches[1].clientX) * (180 / Math.PI);
+  
   const onTouchStart = (e) => {
     if (e.touches.length === 2) {
       touchRef.current.dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
-      touchRef.current.cx = (e.touches[0].clientX + e.touches[1].clientX) / 2; touchRef.current.cy = (e.touches[0].clientY + e.touches[1].clientY) / 2;
-      touchRef.current.panX = pan.x; touchRef.current.panY = pan.y; touchRef.current.scale = scale;
-      touchRef.current.angle = getAngle(e.touches); touchRef.current.rotation = rotation;
+      touchRef.current.cx = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+      touchRef.current.cy = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+      touchRef.current.panX = pan.x;
+      touchRef.current.panY = pan.y;
+      touchRef.current.scale = scale;
+      touchRef.current.angle = getAngle(e.touches);
+      touchRef.current.rotation = rotation;
     }
   };
+
   const onTouchMove = (e) => {
     if (e.touches.length === 2) {
       const dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
-      const cx = (e.touches[0].clientX + e.touches[1].clientX) / 2; const cy = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+      const cx = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+      const cy = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+      
       setScale(Math.max(0.3, Math.min(touchRef.current.scale * (dist / touchRef.current.dist), 6)));
       setPan({ x: touchRef.current.panX + (cx - touchRef.current.cx), y: touchRef.current.panY + (cy - touchRef.current.cy) });
+      
       let angleDiff = getAngle(e.touches) - touchRef.current.angle;
-      if (angleDiff > 180) angleDiff -= 360; if (angleDiff < -180) angleDiff += 360;
+      if (angleDiff > 180) angleDiff -= 360; 
+      if (angleDiff < -180) angleDiff += 360;
       setRotation(touchRef.current.rotation + angleDiff);
     }
   };
+
   const resetView = () => { setScale(1); setPan({ x: 0, y: 0 }); setRotation(0); };
   return { scale, pan, rotation, setScale, setPan, setRotation, onTouchStart, onTouchMove, resetView };
 };
 
+// =========================================================================
+// UI COMPONENTS REFINED FOR MOBILE
+// =========================================================================
 export const ControlHeader = ({ title, onReset }) => (
   <div className="flex items-center justify-between pb-3 border-b border-[#1f1f1f] mb-5">
      <span className="text-[11px] font-black text-cyan-400 uppercase tracking-widest">{title}</span>
      {onReset && (
-       <button onClick={onReset} className="text-[9px] text-slate-300 hover:text-white bg-[#1a1a1a] border border-[#333] hover:border-red-500/50 px-2.5 py-1.5 rounded transition-colors uppercase tracking-wider shadow-sm">Reset</button>
+       <button onClick={onReset} className="text-[9px] text-slate-300 hover:text-white bg-[#1a1a1a] border border-[#333] hover:border-red-500/50 px-2.5 py-1.5 rounded transition-colors uppercase tracking-wider shadow-sm">
+         Reset
+       </button>
      )}
   </div>
 );
@@ -90,11 +114,13 @@ export const FigmaSlider = ({ label, min, max, step = 1, value, onChange, unit =
   const handleBlur = () => {
     let parsed = parseFloat(localVal);
     if (isNaN(parsed)) parsed = min;
-    if (parsed < min) parsed = min; if (parsed > max) parsed = max;
+    if (parsed < min) parsed = min; 
+    if (parsed > max) parsed = max;
     setLocalVal(parsed); onChange(parsed);
   };
+
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center justify-between py-3 border-b border-[#1f1f1f] last:border-0 gap-3 sm:gap-0">
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between py-3 border-b border-[#1f1f1f] last:border-0 gap-2 sm:gap-0">
       <label className="text-[11px] font-medium text-slate-400 w-full sm:w-1/3">{label}</label>
       <div className="w-full sm:w-2/3 flex items-center gap-3">
         <input type="range" min={min} max={max} step={step} value={value || 0} onChange={(e) => onChange(Number(e.target.value) || 0)} className="w-full h-[4px] bg-[#333] rounded-lg appearance-none cursor-pointer outline-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:bg-cyan-400 [&::-webkit-slider-thumb]:rounded-full hover:[&::-webkit-slider-thumb]:scale-110" />
@@ -117,6 +143,7 @@ export const FigmaColorPicker = ({ label, hexValue, onChange }) => {
     const newHsl = { ...hsl, [part]: val };
     setHsl(newHsl); onChange(hslToHex(newHsl.h, newHsl.s, newHsl.l));
   };
+
   return (
     <div className="mb-5">
       <div className="flex justify-between items-center mb-2"><label className="text-[11px] font-medium text-slate-400">{label}</label></div>
@@ -169,7 +196,13 @@ export const FigmaCustomDropdown = ({ label, groups = {}, value, onChange }) => 
   const [isOpen, setIsOpen] = useState(false); const dropdownRef = useRef(null);
   let currentName = value || 'Select...';
   for (const group in groups) { const found = groups[group].find(opt => opt.val === value); if (found) { currentName = found.name; break; } }
-  useEffect(() => { const handleClickOutside = (e) => { if (dropdownRef.current && !dropdownRef.current.contains(e.target)) setIsOpen(false); }; document.addEventListener("mousedown", handleClickOutside); return () => document.removeEventListener("mousedown", handleClickOutside); }, []);
+  
+  useEffect(() => { 
+    const handleClickOutside = (e) => { if (dropdownRef.current && !dropdownRef.current.contains(e.target)) setIsOpen(false); }; 
+    document.addEventListener("mousedown", handleClickOutside); 
+    return () => document.removeEventListener("mousedown", handleClickOutside); 
+  }, []);
+
   return (
     <div className="mb-5 relative" ref={dropdownRef}>
       <label className="text-[11px] font-medium text-slate-400 block mb-2">{label}</label>
@@ -198,6 +231,7 @@ export const CodeOutput = ({ cssCode, htmlCode, jsxCode, isMobileTab }) => {
   const getActiveCode = () => { if (lang === 'css') return cssCode || '/* CSS Output */'; if (lang === 'html') return htmlCode || ''; return jsxCode || '// JSX Output'; };
   const handleCopy = () => { navigator.clipboard.writeText(getActiveCode()); setCopied(true); setTimeout(() => setCopied(false), 2000); };
   const formattedCode = getActiveCode().replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  
   return (
     <div className={`w-full h-full bg-[#0a0a0a] relative flex flex-col overflow-hidden ${isMobileTab ? '' : 'border-t lg:border border-[#1f1f1f] lg:rounded-2xl shadow-xl'}`}>
        <div className="flex justify-between items-center px-3 py-2.5 border-b border-[#1f1f1f] bg-[#141414] shrink-0 overflow-x-auto custom-scroll">
@@ -219,12 +253,14 @@ export const CodeOutput = ({ cssCode, htmlCode, jsxCode, isMobileTab }) => {
 
 export const WorkspaceLayout = ({ name, controls, preview, cssOutput, htmlOutput, jsxOutput, bgType = 'grid', bgHex }) => {
   const [mobileTab, setMobileTab] = useState('design'); 
+  
   const renderBackground = () => {
     if (bgType === 'grid') return <div className="absolute inset-0 opacity-[0.15] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '24px 24px'}}></div>;
     if (bgType === 'light') return <div className="absolute inset-0 transition-colors duration-300" style={{ backgroundColor: bgHex || '#f8fafc' }}></div>;
     if (bgType === 'glass') return <div className="absolute inset-0 bg-cover bg-center opacity-100" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200')" }}></div>;
     return null;
   };
+
   return (
     <div className="flex flex-col lg:flex-row w-full h-full animate-fade-in bg-[#050505] lg:bg-transparent">
        <div className="h-[35vh] sm:h-[40vh] lg:hidden relative flex items-center justify-center overflow-hidden border-b border-[#1f1f1f] z-30 transition-colors duration-500 shadow-lg shrink-0" style={{backgroundColor: bgHex || '#050505'}}>
