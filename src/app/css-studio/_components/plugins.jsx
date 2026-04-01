@@ -134,7 +134,7 @@ export const PluginTypography = () => {
 
   const controls = (
     <>
-      <PluginTip text="Sentuh lalu geser (Drag & Drop) teks di layar atas untuk merubah tata letaknya secara bebas! Semua koordinat gesekanmu otomatis dicatat di CSS Output." />
+      <PluginTip text="Pembaruan Baru: Sentuh lalu geser (Drag & Drop) teks di layar atas untuk merubah tata letaknya secara bebas! Semua koordinat gesekanmu otomatis dicatat di CSS Output." />
       <div className="flex bg-[#0a0a0a] p-1 rounded-lg border border-[#2a2a2a] w-full mb-4">
         {['Heading', 'Subheading', 'Paragraph'].map(t => (
           <button key={t} onClick={() => setTab(t)} className={`flex-1 py-2 rounded-md text-[9px] font-bold uppercase transition-all ${tab === t ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/30' : 'text-slate-500 hover:text-slate-300'}`}>{t}</button>
@@ -218,7 +218,6 @@ export const PluginGlassmorphism = () => {
   const html = `<div style="background: rgba(${rgb}, ${opacity/100}); backdrop-filter: blur(${blur}px); border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 16px; width: 240px; height: 140px;"></div>`;
   const jsx = `<div style={{ background: 'rgba(${rgb}, ${opacity/100})', backdropFilter: 'blur(${blur}px)', border: '1px solid rgba(255,255,255, 0.3)' }} className="w-60 h-36 rounded-2xl shadow-xl"></div>`;
   
-  // FIX BUG BACKGROUND GELAP: Tidak pakai absolute image di dalam preview jika sudah ada bgType="glass" di WorkspaceLayout
   const preview = (
     <div style={{ width: '80%', maxWidth: '240px', height: '140px', background: `rgba(${rgb}, ${opacity / 100})`, backdropFilter: `blur(${blur}px)`, WebkitBackdropFilter: `blur(${blur}px)`, border: `1px solid rgba(255, 255, 255, 0.3)`, borderRadius: '16px', boxShadow: '0 8px 32px rgba(0,0,0,0.15)' }}></div>
   );
@@ -232,7 +231,6 @@ export const PluginGlassmorphism = () => {
     </>
   );
   
-  // Memanggil bgType="glass" yang akan menampilkan background vibrant cerah (tidak tertutup hitam)
   return <WorkspaceLayout name="Glassmorphism" controls={controls} preview={preview} cssOutput={css} htmlOutput={html} jsxOutput={jsx} bgType="glass" />;
 };
 
@@ -324,8 +322,9 @@ export const PluginFilters = () => {
 
   const controls = (
     <div className="space-y-1 pb-4">
-      <PluginTip text="Pilih foto uji coba terlebih dahulu. Trik agar gambar memukau: Naikkan sedikit Contrast dan Vibrance (Saturasi), lalu berikan sedikit efek Drop Shadow untuk efek timbul (pop-out)." />
+      <PluginTip text="Trik agar gambar memukau: Naikkan sedikit Contrast dan Vibrance (Saturasi), lalu berikan sedikit efek Drop Shadow untuk efek timbul (pop-out)." />
       <div className="mb-4">
+         <label className="text-[10px] font-medium text-slate-400 block mb-2">Pilih Foto Template</label>
          <div className="flex gap-2">
             {IMAGE_TEMPLATES.map((img, idx) => (
               <button key={idx} onClick={() => setBgImg(img)} className={`w-12 h-12 rounded-lg bg-cover bg-center border-2 transition-all ${bgImg === img ? 'border-cyan-400 scale-110 shadow-lg' : 'border-[#333] hover:border-[#555]'}`} style={{backgroundImage: `url(${img})`}}></button>
@@ -489,27 +488,46 @@ export const PluginTransitions = () => {
   return <WorkspaceLayout name="Hover Transitions" controls={controls} preview={preview} cssOutput={css} htmlOutput={html} jsxOutput={jsx} bgType="dark" />;
 };
 
-export const PluginPixelArt = () => {
-  const [gridSize, setGridSize] = useState(8); 
+// =========================================================================
+// PIXEL DRAWING (FULL OVERHAUL: Zoom, Pan, Custom Palette, Download)
+// =========================================================================
+export const PluginPixelDrawing = () => {
+  const [gridSize, setGridSize] = useState(16); 
   const [color, setColor] = useState('#0ea5e9');
-  const [history, setHistory] = useState([Array(64).fill('transparent')]);
+  const [palette, setPalette] = useState([...COLOR_PRESETS]);
+  const [isTransparent, setIsTransparent] = useState(true);
+  const [outputSize, setOutputSize] = useState(500);
+  
+  const [history, setHistory] = useState([Array(256).fill('transparent')]);
   const [step, setStep] = useState(0);
+
+  // Zoom & Pan state
+  const [scale, setScale] = useState(1);
+  const [pan, setPan] = useState({ x: 0, y: 0 });
+  const [activeTool, setActiveTool] = useState('draw'); // draw, erase, pan
+  const [isDraggingPan, setIsDraggingPan] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     const newEmpty = Array(gridSize * gridSize).fill('transparent');
-    setHistory([newEmpty]); setStep(0);
+    setHistory([newEmpty]); setStep(0); setScale(1); setPan({x:0, y:0});
   }, [gridSize]);
 
   const currentPixels = history[step] || Array(gridSize * gridSize).fill('transparent');
 
   const paintPixel = (index) => {
+    if (activeTool === 'pan') return;
+    const newColor = activeTool === 'erase' ? 'transparent' : color;
+    if (currentPixels[index] === newColor) return; // Mencegah history penuh hal yg sama
     const newPixels = [...currentPixels];
-    newPixels[index] = newPixels[index] === color ? 'transparent' : color;
+    newPixels[index] = newColor;
     const newHistory = history.slice(0, step + 1);
     newHistory.push(newPixels);
     setHistory(newHistory); setStep(newHistory.length - 1);
   };
 
+  const handleUndo = () => setStep(Math.max(0, step - 1));
+  const handleRedo = () => setStep(Math.min(history.length - 1, step + 1));
   const clearCanvas = () => {
     const newEmpty = Array(gridSize * gridSize).fill('transparent');
     const newHistory = history.slice(0, step + 1);
@@ -517,10 +535,49 @@ export const PluginPixelArt = () => {
     setHistory(newHistory); setStep(newHistory.length - 1);
   };
 
-  const handleUndo = () => setStep(Math.max(0, step - 1));
-  const handleRedo = () => setStep(Math.min(history.length - 1, step + 1));
+  const addToPalette = () => {
+    if (!palette.includes(color)) setPalette([color, ...palette].slice(0, 15)); // Maksimal simpan 15 warna
+  };
 
-  const pixelSizePx = gridSize === 8 ? 10 : gridSize === 12 ? 8 : 6;
+  // Logika Panning (Geser Ibis Paint)
+  const handlePointerDown = (e) => {
+    if (activeTool === 'pan') {
+      setIsDraggingPan(true);
+      setDragStart({ x: e.clientX - pan.x, y: e.clientY - pan.y });
+      e.currentTarget.setPointerCapture(e.pointerId);
+    }
+  };
+  const handlePointerMove = (e) => {
+    if (isDraggingPan && activeTool === 'pan') {
+      setPan({ x: e.clientX - dragStart.x, y: e.clientY - dragStart.y });
+    }
+  };
+  const handlePointerUp = (e) => {
+    if (isDraggingPan) { setIsDraggingPan(false); e.currentTarget.releasePointerCapture(e.pointerId); }
+  };
+
+  const downloadImage = () => {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = outputSize; canvas.height = outputSize;
+    const pSize = outputSize / gridSize;
+
+    if (!isTransparent) { ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, outputSize, outputSize); }
+    currentPixels.forEach((p, i) => {
+      if (p !== 'transparent') {
+        ctx.fillStyle = p;
+        const x = (i % gridSize) * pSize;
+        const y = Math.floor(i / gridSize) * pSize;
+        ctx.fillRect(x, y, pSize, pSize);
+      }
+    });
+
+    const link = document.createElement('a');
+    link.download = `pixel-art-${outputSize}px.png`;
+    link.href = canvas.toDataURL('image/png'); link.click();
+  };
+
+  const pixelSizePx = gridSize <= 8 ? 20 : gridSize <= 16 ? 12 : 8;
   const generateBoxShadow = () => {
     let shadow = [];
     currentPixels.forEach((p, i) => {
@@ -533,41 +590,94 @@ export const PluginPixelArt = () => {
     return shadow.length > 0 ? shadow.join(',\n    ') : 'none';
   };
 
-  const css = `/* Pure CSS Pixel Art (${gridSize}x${gridSize}) */\n.pixel-art {\n  width: ${pixelSizePx}px;\n  height: ${pixelSizePx}px;\n  background: transparent;\n  box-shadow: \n    ${generateBoxShadow()};\n}`;
-  const html = `<div style="width: ${pixelSizePx}px; height: ${pixelSizePx}px; box-shadow: ${generateBoxShadow().replace(/\n\s+/g, ' ')};"></div>`;
-  const jsx = `<div style={{ width: '${pixelSizePx}px', height: '${pixelSizePx}px', boxShadow: '${generateBoxShadow().replace(/\n\s+/g, ' ')}' }} />`;
+  const css = `/* Pure CSS Pixel Art (${gridSize}x${gridSize}) */\n.pixel-art {\n  width: ${pixelSizePx}px;\n  height: ${pixelSizePx}px;\n  background: ${isTransparent ? 'transparent' : '#ffffff'};\n  box-shadow: \n    ${generateBoxShadow()};\n}`;
+  const html = `<div style="width: ${pixelSizePx}px; height: ${pixelSizePx}px; background: ${isTransparent ? 'transparent' : '#ffffff'}; box-shadow: ${generateBoxShadow().replace(/\n\s+/g, ' ')};"></div>`;
+  const jsx = `<div style={{ width: '${pixelSizePx}px', height: '${pixelSizePx}px', background: '${isTransparent ? 'transparent' : '#ffffff'}', boxShadow: '${generateBoxShadow().replace(/\n\s+/g, ' ')}' }} />`;
 
   const preview = (
-    <div className="flex flex-col items-center">
-      <div className="w-[200px] h-[200px] sm:w-[240px] sm:h-[240px] grid border border-[#1f1f1f] bg-[#0a0a0a]" style={{ gridTemplateColumns: `repeat(${gridSize}, minmax(0, 1fr))` }}>
-        {currentPixels.map((bg, i) => (
-          <div key={i} onClick={() => paintPixel(i)} className="border border-white/5 cursor-crosshair hover:bg-white/10 transition-colors w-full h-full" style={{ backgroundColor: bg !== 'transparent' ? bg : undefined }} />
-        ))}
+    <div 
+      className="relative w-full h-[300px] flex items-center justify-center overflow-hidden border border-white/5 bg-[#050505] rounded-xl touch-none"
+      onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={handlePointerUp} onPointerCancel={handlePointerUp}
+    >
+      {/* Floating Toolbar inside Preview */}
+      <div className="absolute top-3 left-3 bg-[#141414] border border-[#2a2a2a] p-1.5 rounded-lg flex flex-col gap-1 z-20 shadow-lg">
+        <button onClick={() => setActiveTool('draw')} className={`p-1.5 rounded ${activeTool === 'draw' ? 'bg-cyan-500/20 text-cyan-400' : 'text-slate-400 hover:bg-[#1f1f1f]'}`}><Icons.Brush /></button>
+        <button onClick={() => setActiveTool('erase')} className={`p-1.5 rounded ${activeTool === 'erase' ? 'bg-cyan-500/20 text-cyan-400' : 'text-slate-400 hover:bg-[#1f1f1f]'}`}><Icons.Eraser /></button>
+        <button onClick={() => setActiveTool('pan')} className={`p-1.5 rounded ${activeTool === 'pan' ? 'bg-cyan-500/20 text-cyan-400' : 'text-slate-400 hover:bg-[#1f1f1f]'}`}><Icons.HandPan /></button>
+        <div className="w-full h-px bg-[#2a2a2a] my-1"></div>
+        <button onClick={() => setScale(s => Math.min(3, s + 0.2))} className="p-1.5 rounded text-slate-400 hover:bg-[#1f1f1f] hover:text-white"><Icons.ZoomIn /></button>
+        <button onClick={() => setScale(s => Math.max(0.5, s - 0.2))} className="p-1.5 rounded text-slate-400 hover:bg-[#1f1f1f] hover:text-white"><Icons.ZoomOut /></button>
       </div>
-      <div className="flex gap-4 mt-6">
-        <button onClick={handleUndo} disabled={step === 0} className={`p-2 rounded-full border ${step === 0 ? 'border-[#1f1f1f] text-slate-600' : 'border-[#333] text-slate-300 hover:text-white hover:bg-[#1a1a1a]'}`}><Icons.Undo /></button>
-        <button onClick={handleRedo} disabled={step === history.length - 1} className={`p-2 rounded-full border ${step === history.length - 1 ? 'border-[#1f1f1f] text-slate-600' : 'border-[#333] text-slate-300 hover:text-white hover:bg-[#1a1a1a]'}`}><Icons.Redo /></button>
+
+      <div style={{ transform: `translate(${pan.x}px, ${pan.y}px) scale(${scale})`, transition: isDraggingPan ? 'none' : 'transform 0.1s ease-out' }} className="absolute">
+        <div 
+           className="grid shadow-2xl" 
+           style={{ 
+             gridTemplateColumns: `repeat(${gridSize}, ${pixelSizePx}px)`, 
+             gridTemplateRows: `repeat(${gridSize}, ${pixelSizePx}px)`,
+             backgroundColor: isTransparent ? 'transparent' : '#ffffff',
+             // Checkerboard background to show transparency clearly
+             backgroundImage: isTransparent ? 'linear-gradient(45deg, #111 25%, transparent 25%), linear-gradient(-45deg, #111 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #111 75%), linear-gradient(-45deg, transparent 75%, #111 75%)' : 'none',
+             backgroundSize: '10px 10px', backgroundPosition: '0 0, 0 5px, 5px -5px, -5px 0px'
+           }}
+        >
+          {currentPixels.map((bg, i) => (
+            <div 
+              key={i} 
+              onPointerDown={(e) => { e.currentTarget.releasePointerCapture(e.pointerId); paintPixel(i); }}
+              onPointerEnter={(e) => { if (e.buttons === 1 && activeTool !== 'pan') paintPixel(i); }}
+              className={`w-full h-full border-[0.5px] ${activeTool === 'pan' ? 'pointer-events-none' : 'cursor-crosshair'} ${isTransparent ? 'border-white/10' : 'border-black/5'} hover:bg-white/30`}
+              style={{ backgroundColor: bg !== 'transparent' ? bg : undefined }}
+            />
+          ))}
+        </div>
+      </div>
+
+      <div className="absolute bottom-3 right-3 flex gap-2 z-20">
+        <button onClick={handleUndo} disabled={step === 0} className={`p-2 rounded-full border bg-[#141414] ${step === 0 ? 'border-[#1f1f1f] text-slate-600' : 'border-[#333] text-slate-300 hover:text-white hover:bg-[#1f1f1f] shadow-md'}`}><Icons.Undo /></button>
+        <button onClick={handleRedo} disabled={step === history.length - 1} className={`p-2 rounded-full border bg-[#141414] ${step === history.length - 1 ? 'border-[#1f1f1f] text-slate-600' : 'border-[#333] text-slate-300 hover:text-white hover:bg-[#1f1f1f] shadow-md'}`}><Icons.Redo /></button>
       </div>
     </div>
   );
 
   const controls = (
     <>
-      <PluginTip text="Sentuh (Tap) pada grid canvas di atas untuk mulai mewarnai layaknya melukis pixel 8-bit klasik. Jika salah, tombol Undo ada di bawah canvas!" />
-      <FigmaSelect label="Canvas Size (Resolution)" options={['8', '12', '16']} value={gridSize.toString()} onChange={(val) => setGridSize(Number(val))} />
+      <PluginTip text="Pembaruan Canvas Studio: Gunakan Ikon Tangan (Pan) untuk menggeser, dan alat Zoom untuk detail. Kamu bisa menambah warna custom, lalu klik Download untuk mengekspor gambar hingga HD 1000px!" />
+      <FigmaSelect label="Canvas Grid Resolution" options={['8', '16', '24', '32']} value={gridSize.toString()} onChange={(val) => setGridSize(Number(val))} />
       
       <div className="flex justify-between items-center mb-4 mt-6 border-t border-[#1f1f1f] pt-4">
-        <label className="text-[10px] font-medium text-slate-400 block">Brush Color</label>
+        <label className="text-[10px] font-medium text-slate-400 block">Custom Palette</label>
         <button onClick={clearCanvas} className="text-[8px] text-red-400 hover:text-white bg-red-500/10 border border-red-500/30 px-2 py-1 rounded transition-colors uppercase font-bold tracking-widest">Clear Canvas</button>
       </div>
-      <FigmaColorPicker label="Custom Hex" hexValue={color} onChange={setColor} />
-      <div className="flex flex-wrap gap-2 mt-2">
-        {['#0ea5e9', '#ec4899', '#f59e0b', '#10b981', '#ffffff', '#000000'].map(c => (
-           <button key={c} onClick={() => setColor(c)} className={`w-6 h-6 rounded-md border ${color === c ? 'border-cyan-400 scale-110 shadow-lg' : 'border-[#333]'}`} style={{backgroundColor: c}}></button>
+      
+      <div className="flex items-center gap-3 mb-3">
+        <div className="flex-1"><FigmaColorPicker label="Pilih Warna" hexValue={color} onChange={setColor} /></div>
+        <button onClick={addToPalette} className="mt-2 w-10 h-10 rounded-lg bg-[#141414] border border-[#2a2a2a] text-cyan-400 hover:bg-cyan-500/20 hover:border-cyan-500 flex items-center justify-center transition-all"><Icons.Plus /></button>
+      </div>
+      
+      <div className="flex flex-wrap gap-2 mb-6">
+        {palette.map((c, i) => (
+           <button key={i} onClick={() => {setColor(c); setActiveTool('draw');}} className={`w-6 h-6 rounded-md border ${color === c && activeTool === 'draw' ? 'border-cyan-400 scale-110 shadow-[0_0_10px_rgba(34,211,238,0.4)]' : 'border-[#333]'}`} style={{backgroundColor: c}}></button>
         ))}
+      </div>
+
+      <div className="border-t border-[#1f1f1f] pt-4 pb-2">
+         <div className="flex items-center justify-between mb-4">
+            <span className="text-[10px] font-bold text-cyan-400 uppercase tracking-widest">Export Settings</span>
+            <div className="flex items-center gap-2">
+               <span className="text-[9px] text-slate-400 uppercase">Transparan BG</span>
+               <button onClick={() => setIsTransparent(!isTransparent)} className={`w-8 h-4 rounded-full transition-colors relative ${isTransparent ? 'bg-cyan-500' : 'bg-[#333]'}`}>
+                  <div className={`w-3 h-3 rounded-full bg-white absolute top-0.5 transition-all ${isTransparent ? 'left-4.5' : 'left-0.5'}`}></div>
+               </button>
+            </div>
+         </div>
+         <FigmaSlider label="Output Size" min={100} max={1000} step={50} value={outputSize} onChange={setOutputSize} unit="px" />
+         <button onClick={downloadImage} className="mt-4 w-full flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all shadow-lg hover:shadow-cyan-500/25">
+           <Icons.Download /> Download Image PNG
+         </button>
       </div>
     </>
   );
 
-  return <WorkspaceLayout name="CSS Pixel Drawing" controls={controls} preview={preview} cssOutput={css} htmlOutput={html} jsxOutput={jsx} />;
+  return <WorkspaceLayout name="Pixel Drawing Pro" controls={controls} preview={preview} cssOutput={css} htmlOutput={html} jsxOutput={jsx} />;
 };
