@@ -52,7 +52,7 @@ export const PluginTip = ({ text, title = "PRO TIPS & PANDUAN" }) => {
   );
 };
 
-// FIX: Menambahkan input ketik manual pada Slider
+// FIX BUG: Memperjelas dan mempermudah tap pada input angka manual (px/%)
 export const FigmaSlider = ({ label, min, max, step = 1, value, onChange, unit = "" }) => {
   const [localVal, setLocalVal] = useState(value);
   
@@ -76,16 +76,19 @@ export const FigmaSlider = ({ label, min, max, step = 1, value, onChange, unit =
       <label className="text-[10px] font-medium text-slate-400 w-1/3 group-hover:text-slate-200 transition-colors truncate pr-2">{label}</label>
       <div className="w-2/3 flex items-center gap-3">
         <input type="range" min={min} max={max} step={step} value={value || 0} onChange={(e) => onChange(Number(e.target.value) || 0)} className="w-full h-[3px] bg-[#333] rounded-lg appearance-none cursor-pointer outline-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:h-3.5 [&::-webkit-slider-thumb]:bg-cyan-400 [&::-webkit-slider-thumb]:rounded-full hover:[&::-webkit-slider-thumb]:scale-125 transition-all" />
-        <div className="bg-[#0a0a0a] px-1.5 py-1 rounded border border-[#2a2a2a] min-w-[65px] flex items-center justify-end shrink-0 focus-within:border-cyan-500 transition-colors">
+        
+        {/* Kotak Input Manual */}
+        <div className="bg-[#141414] hover:bg-[#1a1a1a] px-2 py-1.5 rounded-md border border-[#333] focus-within:border-cyan-500 min-w-[65px] flex items-center justify-end shrink-0 transition-colors cursor-text">
           <input 
             type="number" 
             value={localVal} 
             onChange={(e) => setLocalVal(e.target.value)}
             onBlur={handleBlur}
             onKeyDown={handleKeyDown}
-            className="w-full bg-transparent text-right outline-none font-mono text-cyan-400 text-[10px]"
+            className="w-full bg-transparent text-right outline-none font-mono text-cyan-400 text-[10px] p-0 m-0"
+            style={{ appearance: 'textfield', MozAppearance: 'textfield' }}
           />
-          <span className="text-[9px] font-mono text-cyan-700 ml-0.5 select-none">{unit}</span>
+          <span className="text-[9px] font-mono text-slate-500 ml-0.5 select-none">{unit}</span>
         </div>
       </div>
     </div>
@@ -224,8 +227,6 @@ export const CodeOutput = ({ cssCode, htmlCode, jsxCode, isMobileTab }) => {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  // FIX BUG CRASH ANDROID: Menggunakan dangerouslySetInnerHTML pada tag code 
-  // agar tidak crash saat user menggunakan fitur Copy / Select Text bawaan HP Android!
   const formattedCode = getActiveCode().replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
   return (
