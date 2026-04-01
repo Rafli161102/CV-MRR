@@ -60,7 +60,9 @@ export const useMultiTouch = () => {
 export const ControlHeader = ({ title, onReset }) => (
   <div className="flex items-center justify-between pb-3 border-b border-[#1f1f1f] mb-5">
      <span className="text-[11px] font-black text-cyan-400 uppercase tracking-widest">{title}</span>
-     {onReset && (<button onClick={onReset} className="text-[9px] text-slate-300 hover:text-white bg-[#1a1a1a] border border-[#333] hover:border-red-500/50 px-2.5 py-1.5 rounded transition-colors uppercase tracking-wider shadow-sm">Reset</button>)}
+     {onReset && (
+       <button onClick={onReset} className="text-[9px] text-slate-300 hover:text-white bg-[#1a1a1a] border border-[#333] hover:border-red-500/50 px-2.5 py-1.5 rounded transition-colors uppercase tracking-wider shadow-sm">Reset</button>
+     )}
   </div>
 );
 
@@ -69,7 +71,9 @@ export const PluginTip = ({ text, title = "PANDUAN" }) => {
   if (!isVisible) return null;
   return (
     <div className="bg-cyan-500/10 border border-cyan-500/20 rounded-xl p-4 flex gap-3 items-start mb-6 relative shadow-sm">
-      <button onClick={() => setIsVisible(false)} className="absolute top-2.5 right-2.5 text-cyan-500/50 hover:text-cyan-400 hover:bg-cyan-500/10 p-1 rounded-md transition-all"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-3.5 h-3.5"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></button>
+      <button onClick={() => setIsVisible(false)} className="absolute top-2.5 right-2.5 text-cyan-500/50 hover:text-cyan-400 hover:bg-cyan-500/10 p-1 rounded-md transition-all">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-3.5 h-3.5"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+      </button>
       <div className="text-cyan-400 mt-0.5 shrink-0"><Icons.Info /></div>
       <div className="pr-5">
          <h4 className="text-[10px] font-black text-cyan-400 mb-1.5 uppercase tracking-widest">{title}</h4>
@@ -90,12 +94,12 @@ export const FigmaSlider = ({ label, min, max, step = 1, value, onChange, unit =
     setLocalVal(parsed); onChange(parsed);
   };
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center justify-between py-3 border-b border-[#1f1f1f] last:border-0 gap-2 sm:gap-0">
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between py-3 border-b border-[#1f1f1f] last:border-0 gap-3 sm:gap-0">
       <label className="text-[11px] font-medium text-slate-400 w-full sm:w-1/3">{label}</label>
       <div className="w-full sm:w-2/3 flex items-center gap-3">
         <input type="range" min={min} max={max} step={step} value={value || 0} onChange={(e) => onChange(Number(e.target.value) || 0)} className="w-full h-[4px] bg-[#333] rounded-lg appearance-none cursor-pointer outline-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:bg-cyan-400 [&::-webkit-slider-thumb]:rounded-full hover:[&::-webkit-slider-thumb]:scale-110" />
-        <div className="bg-[#141414] px-2 py-1.5 rounded-md border border-[#333] min-w-[70px] flex items-center justify-end shrink-0 cursor-text">
-          <input type="number" value={localVal} onChange={(e) => setLocalVal(e.target.value)} onBlur={handleBlur} onKeyDown={(e) => {if(e.key==='Enter') e.currentTarget.blur()}} className="w-full bg-transparent text-right outline-none font-mono text-cyan-400 text-[11px] p-0 m-0" />
+        <div className="bg-[#141414] px-2 py-1.5 rounded-md border border-[#333] min-w-[70px] flex items-center justify-end shrink-0 cursor-text focus-within:border-cyan-500 transition-colors">
+          <input type="number" value={localVal} onChange={(e) => setLocalVal(e.target.value)} onBlur={handleBlur} onKeyDown={(e) => {if(e.key==='Enter') e.currentTarget.blur()}} className="w-full bg-transparent text-right outline-none font-mono text-cyan-400 text-[11px] p-0 m-0" style={{ appearance: 'textfield', MozAppearance: 'textfield' }} />
           <span className="text-[10px] font-mono text-slate-500 ml-1">{unit}</span>
         </div>
       </div>
@@ -116,7 +120,7 @@ export const FigmaColorPicker = ({ label, hexValue, onChange }) => {
   return (
     <div className="mb-5">
       <div className="flex justify-between items-center mb-2"><label className="text-[11px] font-medium text-slate-400">{label}</label></div>
-      <div className="bg-[#0a0a0a] border border-[#2a2a2a] rounded-xl overflow-hidden transition-all duration-300">
+      <div className="bg-[#0a0a0a] border border-[#2a2a2a] rounded-xl overflow-hidden transition-all duration-300 shadow-sm">
         <div className="flex items-center justify-between p-3 cursor-pointer hover:bg-[#141414]" onClick={() => setIsOpen(!isOpen)}>
           <div className="flex items-center gap-3">
             <div className="w-6 h-6 rounded-md border border-white/20" style={{backgroundColor: safeHexVal}}></div>
@@ -202,7 +206,7 @@ export const CodeOutput = ({ cssCode, htmlCode, jsxCode, isMobileTab }) => {
                <button key={l} onClick={() => setLang(l)} className={`px-4 py-2 rounded-lg text-[10px] font-bold uppercase transition-all ${lang === l ? 'bg-[#2a2a2a] text-cyan-400' : 'text-slate-500 hover:text-slate-300 hover:bg-[#1f1f1f]'}`}>{l === 'jsx' ? 'React' : l}</button>
              ))}
           </div>
-          <button onClick={handleCopy} className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500 hover:text-black transition-all text-[10px] font-bold uppercase">
+          <button onClick={handleCopy} className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500 hover:text-black transition-all text-[10px] font-bold uppercase shrink-0">
             {copied ? <><Icons.Check /> Copied</> : <><Icons.Copy /> Copy</>}
           </button>
        </div>
@@ -241,7 +245,7 @@ export const WorkspaceLayout = ({ name, controls, preview, cssOutput, htmlOutput
             <h2 className="text-[13px] font-black text-white uppercase tracking-widest hidden lg:flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-cyan-500 inline-block animate-pulse shadow-[0_0_8px_rgba(6,182,212,0.8)]"></span> {name} Setup
             </h2>
-            <div className="flex lg:hidden bg-[#050505] p-1.5 rounded-xl border border-[#1f1f1f] w-full">
+            <div className="flex lg:hidden bg-[#050505] p-1.5 rounded-xl border border-[#1f1f1f] w-full gap-2">
               <button onClick={() => setMobileTab('design')} className={`flex-1 py-3 rounded-lg text-[11px] font-bold uppercase transition-all ${mobileTab === 'design' ? 'bg-[#1f1f1f] text-white shadow-sm border border-[#333]' : 'text-slate-500 hover:text-slate-300'}`}>Desain Tools</button>
               <button onClick={() => setMobileTab('code')} className={`flex-1 py-3 rounded-lg text-[11px] font-bold uppercase transition-all ${mobileTab === 'code' ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/30' : 'text-slate-500 hover:text-slate-300'}`}>Kode Output</button>
             </div>
