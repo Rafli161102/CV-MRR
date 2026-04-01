@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { Icons } from './icons';
-import { PluginTip, FigmaSlider, FigmaColorPicker, FigmaSelect, FigmaTextInput, FigmaCustomDropdown, WorkspaceLayout, hexToRgb, adjustBrightness } from './ui';
+// FIX BUG: COLOR_PRESETS ditambahkan di baris import ini agar fitur Pixel Drawing tidak crash!
+import { PluginTip, FigmaSlider, FigmaColorPicker, FigmaSelect, FigmaTextInput, FigmaCustomDropdown, WorkspaceLayout, hexToRgb, adjustBrightness, COLOR_PRESETS } from './ui';
 
 export const PluginBackgroundGradient = () => {
   const [color1, setColor1] = useState('#0ea5e9'); const [color2, setColor2] = useState('#8b5cf6'); const [angle, setAngle] = useState(145);
@@ -488,12 +489,11 @@ export const PluginTransitions = () => {
   return <WorkspaceLayout name="Hover Transitions" controls={controls} preview={preview} cssOutput={css} htmlOutput={html} jsxOutput={jsx} bgType="dark" />;
 };
 
-// =========================================================================
-// PIXEL DRAWING (FULL OVERHAUL: Zoom, Pan, Custom Palette, Download)
-// =========================================================================
 export const PluginPixelDrawing = () => {
   const [gridSize, setGridSize] = useState(16); 
   const [color, setColor] = useState('#0ea5e9');
+  
+  // FIX BUG: Pemanggilan Palette Color sekarang aman karena sudah di-import di atas!
   const [palette, setPalette] = useState([...COLOR_PRESETS]);
   const [isTransparent, setIsTransparent] = useState(true);
   const [outputSize, setOutputSize] = useState(500);
@@ -518,7 +518,7 @@ export const PluginPixelDrawing = () => {
   const paintPixel = (index) => {
     if (activeTool === 'pan') return;
     const newColor = activeTool === 'erase' ? 'transparent' : color;
-    if (currentPixels[index] === newColor) return; // Mencegah history penuh hal yg sama
+    if (currentPixels[index] === newColor) return; 
     const newPixels = [...currentPixels];
     newPixels[index] = newColor;
     const newHistory = history.slice(0, step + 1);
@@ -536,10 +536,9 @@ export const PluginPixelDrawing = () => {
   };
 
   const addToPalette = () => {
-    if (!palette.includes(color)) setPalette([color, ...palette].slice(0, 15)); // Maksimal simpan 15 warna
+    if (!palette.includes(color)) setPalette([color, ...palette].slice(0, 15)); 
   };
 
-  // Logika Panning (Geser Ibis Paint)
   const handlePointerDown = (e) => {
     if (activeTool === 'pan') {
       setIsDraggingPan(true);
@@ -599,7 +598,6 @@ export const PluginPixelDrawing = () => {
       className="relative w-full h-[300px] flex items-center justify-center overflow-hidden border border-white/5 bg-[#050505] rounded-xl touch-none"
       onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={handlePointerUp} onPointerCancel={handlePointerUp}
     >
-      {/* Floating Toolbar inside Preview */}
       <div className="absolute top-3 left-3 bg-[#141414] border border-[#2a2a2a] p-1.5 rounded-lg flex flex-col gap-1 z-20 shadow-lg">
         <button onClick={() => setActiveTool('draw')} className={`p-1.5 rounded ${activeTool === 'draw' ? 'bg-cyan-500/20 text-cyan-400' : 'text-slate-400 hover:bg-[#1f1f1f]'}`}><Icons.Brush /></button>
         <button onClick={() => setActiveTool('erase')} className={`p-1.5 rounded ${activeTool === 'erase' ? 'bg-cyan-500/20 text-cyan-400' : 'text-slate-400 hover:bg-[#1f1f1f]'}`}><Icons.Eraser /></button>
@@ -616,7 +614,6 @@ export const PluginPixelDrawing = () => {
              gridTemplateColumns: `repeat(${gridSize}, ${pixelSizePx}px)`, 
              gridTemplateRows: `repeat(${gridSize}, ${pixelSizePx}px)`,
              backgroundColor: isTransparent ? 'transparent' : '#ffffff',
-             // Checkerboard background to show transparency clearly
              backgroundImage: isTransparent ? 'linear-gradient(45deg, #111 25%, transparent 25%), linear-gradient(-45deg, #111 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #111 75%), linear-gradient(-45deg, transparent 75%, #111 75%)' : 'none',
              backgroundSize: '10px 10px', backgroundPosition: '0 0, 0 5px, 5px -5px, -5px 0px'
            }}
