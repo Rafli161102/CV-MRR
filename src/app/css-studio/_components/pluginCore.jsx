@@ -22,7 +22,7 @@ export const PluginBackgroundGradient = () => {
   
   const controls = (
     <>
-      <PluginTip text="PANDUAN: Gunakan kombinasi warna yang memiliki kontras alami. Atur sudut (angle) untuk mengubah arah transisi warna." />
+      <PluginTip text="PANDUAN: Gunakan kombinasi warna yang memiliki kontras alami. Atur sudut (angle) untuk mengubah arah transisi warna agar lebih dinamis." />
       <ControlHeader title="Gradient Setup" onReset={handleReset} />
       <FigmaColorPicker label="Start Color" hexValue={color1} onChange={setColor1} />
       <FigmaColorPicker label="End Color" hexValue={color2} onChange={setColor2} />
@@ -52,7 +52,7 @@ export const PluginTextGradient = () => {
   
   const controls = (
     <>
-      <PluginTip text="PANDUAN: Pilih jenis font tebal dan gunakan huruf kapital agar efek gradasi menyelimuti teks secara utuh." />
+      <PluginTip text="PANDUAN: Pilih jenis font yang tebal (Bold/Black) agar efek gradasi warna terlihat menyelimuti teks secara utuh." />
       <ControlHeader title="Text Setup" onReset={handleReset} />
       <FigmaTextInput label="Custom Text" value={text} onChange={setText} placeholder="Misal: MRR STUDIO" />
       <FigmaColorPicker label="Start Color" hexValue={color1} onChange={setColor1} />
@@ -85,9 +85,9 @@ export const PluginLayout = () => {
     <>
       <PluginTip text="PANDUAN: Gunakan Padding untuk mengatur ruang bernapas di dalam elemen. Kamu sekarang bisa menyesuaikan warna background dan teks!" />
       <ControlHeader title="Configuration" onReset={handleReset} />
-      <div className="flex flex-col sm:flex-row gap-4 mb-4">
-        <div className="flex-1"><FigmaColorPicker label="Background Color" hexValue={bgColor} onChange={setBgColor} /></div>
-        <div className="flex-1"><FigmaColorPicker label="Text Color" hexValue={textColor} onChange={setTextColor} /></div>
+      <div className="flex flex-col gap-4 mb-4">
+        <FigmaColorPicker label="Background Color" hexValue={bgColor} onChange={setBgColor} />
+        <FigmaColorPicker label="Text Color" hexValue={textColor} onChange={setTextColor} />
       </div>
       <FigmaSlider label="Padding" min={0} max={100} value={padding} onChange={setPadding} unit="px" />
       <FigmaSlider label="Border Radius" min={0} max={100} value={radius} onChange={setRadius} unit="px" />
@@ -116,10 +116,10 @@ export const PluginBorder = () => {
   
   const controls = (
     <>
-      <PluginTip text="PANDUAN: Pilih ketebalan (width) yang selaras dengan radius lengkungan. Gaya 'dashed' sangat bagus dipakai untuk desain kupon." />
+      <PluginTip text="PANDUAN: Pilih ketebalan (width) yang selaras dengan radius lengkungan. Gaya 'dashed' (putus-putus) sangat bagus untuk desain kupon." />
       <ControlHeader title="Border Setup" onReset={handleReset} />
       <FigmaColorPicker label="Border Color" hexValue={color} onChange={setColor} />
-      <FigmaSelect label="Style" options={['solid', 'dashed', 'dotted', 'double']} value={style} onChange={setStyle} />
+      <FigmaSelect label="Border Style" options={['solid', 'dashed', 'dotted', 'double']} value={style} onChange={setStyle} />
       <FigmaSlider label="Border Width" min={1} max={30} value={width} onChange={setWidth} unit="px" />
       <FigmaSlider label="Border Radius" min={0} max={100} value={radius} onChange={setRadius} unit="px" />
     </>
@@ -129,7 +129,7 @@ export const PluginBorder = () => {
 };
 
 // =========================================================================
-// 5. MULTI TYPOGRAPHY (INTERACTIVE DRAG & DROP)
+// 5. MULTI TYPOGRAPHY (DRAG & DROP FIX)
 // =========================================================================
 const FONTS_DATA = { 
   "Sans Serif": [{ name: "Inter", val: "Inter" }, { name: "Roboto", val: "Roboto" }, { name: "Montserrat", val: "Montserrat" }, { name: "Poppins", val: "Poppins" }], 
@@ -148,7 +148,7 @@ export const PluginTypography = () => {
 
   useEffect(() => {
     const allFonts = []; 
-    Object.values(FONTS_DATA).forEach(g => g.forEach(f => allFonts.push(f.val.replace(/\\s+/g, '+'))));
+    Object.values(FONTS_DATA).forEach(g => g.forEach(f => allFonts.push(f.val.replace(/\s+/g, '+'))));
     const fontUrl = `https://fonts.googleapis.com/css2?family=${[...new Set(allFonts)].join('&family=')}:wght@400;600;800&display=swap`;
     if (!document.getElementById('mrr-fonts')) { 
       const link = document.createElement('link'); link.id = 'mrr-fonts'; link.href = fontUrl; link.rel = 'stylesheet'; document.head.appendChild(link); 
@@ -176,15 +176,8 @@ export const PluginTypography = () => {
     if (dragging === 'p') setP(prev => ({ ...prev, x: elemStart.x + dx, y: elemStart.y + dy }));
   };
   
-  const handlePointerUp = (e) => { 
-    if (dragging) { e.currentTarget.releasePointerCapture(e.pointerId); setDragging(null); } 
-  };
-  
-  const handleReset = () => { 
-    if(tab==='Heading') setH1(defaultH1); 
-    if(tab==='Subheading') setH2(defaultH2); 
-    if(tab==='Paragraph') setP(defaultP); 
-  };
+  const handlePointerUp = (e) => { if (dragging) { e.currentTarget.releasePointerCapture(e.pointerId); setDragging(null); } };
+  const handleReset = () => { if(tab==='Heading') setH1(defaultH1); if(tab==='Subheading') setH2(defaultH2); if(tab==='Paragraph') setP(defaultP); };
 
   const getCssClass = (state, tag) => `.${tag} {\n  position: absolute;\n  left: 50%; top: 50%;\n  width: 100%; max-width: 400px;\n  transform: translate(calc(-50% + ${Math.round(state.x)}px), calc(-50% + ${Math.round(state.y)}px)) rotate(${state.rot}deg);\n  font-family: '${state.font}', sans-serif;\n  font-size: ${state.size}px;\n  color: ${state.color};\n  text-align: ${state.align};\n}`;
   const css = `.canvas-container {\n  position: relative; width: 100%; height: 300px; overflow: hidden;\n}\n\n${getCssClass(h1, 'heading')}\n\n${getCssClass(h2, 'subheading')}\n\n${getCssClass(p, 'paragraph')}`;
@@ -238,6 +231,5 @@ export const PluginTypography = () => {
       {tab === 'Paragraph' && renderTextControls(p, setP, true)}
     </>
   );
-  
   return <WorkspaceLayout name="Interactive Typo" controls={controls} preview={preview} cssOutput={css} htmlOutput={html} jsxOutput={jsx} bgType="dark" />;
 };
