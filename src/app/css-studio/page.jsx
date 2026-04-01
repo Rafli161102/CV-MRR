@@ -38,10 +38,9 @@ export default function CssStudioPage() {
   }, []);
 
   return (
-    // Karena Navbar sudah di-hide, kita ubah pt-[76px] menjadi pt-0 agar Header menempel sempurna di atas
     <div className="w-full h-[100dvh] pt-0 flex flex-col font-sans bg-[#050505] text-[#d4d4d4] overflow-hidden box-border">
       
-      {/* HEADER STUDIO INTERNAL (Ada Tombol Kembali) */}
+      {/* HEADER STUDIO */}
       <div className="h-14 px-4 sm:px-6 border-b border-[#1f1f1f] flex items-center justify-between bg-[#0a0a0a] z-50 shrink-0 shadow-sm relative">
         <div className="flex items-center gap-4">
           <Link href="/toolkit" className="text-slate-400 hover:text-white transition-colors p-2 -ml-2 rounded-lg hover:bg-white/5"><Icons.ArrowLeft /></Link>
