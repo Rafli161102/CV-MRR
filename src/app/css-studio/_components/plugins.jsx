@@ -1,14 +1,23 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Icons } from './icons';
 import { PluginTip, FigmaSlider, FigmaColorPicker, FigmaSelect, FigmaTextInput, FigmaCustomDropdown, WorkspaceLayout, hexToRgb, adjustBrightness, COLOR_PRESETS } from './ui';
 
-// HELPER: Multi-Touch Zoom & Pan untuk Preview Mobile
+// =========================================================================
+// HELPER: Multi-Touch Zoom, Pan, & ROTATE untuk Preview Mobile
+// =========================================================================
 const useMultiTouch = () => {
   const [scale, setScale] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
-  const touchRef = useRef({ dist: 0, cx: 0, cy: 0, panX: 0, panY: 0, scale: 1 });
+  const [rotation, setRotation] = useState(0);
+  const touchRef = useRef({ dist: 0, cx: 0, cy: 0, panX: 0, panY: 0, scale: 1, angle: 0, rotation: 0 });
+
+  const getAngle = (touches) => {
+    const dx = touches[0].clientX - touches[1].clientX;
+    const dy = touches[0].clientY - touches[1].clientY;
+    return Math.atan2(dy, dx) * (180 / Math.PI);
+  };
 
   const onTouchStart = (e) => {
     if (e.touches.length === 2) {
@@ -20,6 +29,8 @@ const useMultiTouch = () => {
       touchRef.current.panX = pan.x;
       touchRef.current.panY = pan.y;
       touchRef.current.scale = scale;
+      touchRef.current.angle = getAngle(e.touches);
+      touchRef.current.rotation = rotation;
     }
   };
 
@@ -31,18 +42,29 @@ const useMultiTouch = () => {
       const cx = (e.touches[0].clientX + e.touches[1].clientX) / 2;
       const cy = (e.touches[0].clientY + e.touches[1].clientY) / 2;
 
+      // Calculate Scale (Zoom)
       const scaleDiff = dist / touchRef.current.dist;
       let newScale = touchRef.current.scale * scaleDiff;
-      newScale = Math.max(0.3, Math.min(newScale, 5));
+      newScale = Math.max(0.3, Math.min(newScale, 6));
 
+      // Calculate Pan (Geser)
       const panX = touchRef.current.panX + (cx - touchRef.current.cx);
       const panY = touchRef.current.panY + (cy - touchRef.current.cy);
 
-      setScale(newScale); setPan({ x: panX, y: panY });
+      // Calculate Rotation (Putar)
+      const currentAngle = getAngle(e.touches);
+      let angleDiff = currentAngle - touchRef.current.angle;
+      if (angleDiff > 180) angleDiff -= 360;
+      if (angleDiff < -180) angleDiff += 360;
+      const newRotation = touchRef.current.rotation + angleDiff;
+
+      setScale(newScale); setPan({ x: panX, y: panY }); setRotation(newRotation);
     }
   };
 
-  return { scale, pan, setScale, setPan, onTouchStart, onTouchMove };
+  const resetView = () => { setScale(1); setPan({ x: 0, y: 0 }); setRotation(0); };
+
+  return { scale, pan, rotation, setScale, setPan, setRotation, onTouchStart, onTouchMove, resetView };
 };
 
 export const PluginBackgroundGradient = () => {
@@ -53,7 +75,7 @@ export const PluginBackgroundGradient = () => {
   const preview = <div style={{ background: `linear-gradient(${angle}deg, ${color1}, ${color2})`, borderRadius: '16px', boxShadow: '0 20px 40px rgba(0,0,0,0.3)' }} className="w-full max-w-[320px] aspect-[2/1] transition-all"></div>;
   const controls = (
     <>
-      <PluginTip text="PANDUAN: Gunakan kombinasi warna yang memiliki kontras alami. Atur sudut (angle) untuk mengubah arah transisi warna sehingga gradasi terlihat lebih hidup dan modern." />
+      <PluginTip text="PANDUAN: Gunakan kombinasi warna yang memiliki kontras alami. Atur sudut (angle) untuk mengubah arah transisi warna." />
       <FigmaColorPicker label="Start Color" hexValue={color1} onChange={setColor1} />
       <FigmaColorPicker label="End Color" hexValue={color2} onChange={setColor2} />
       <FigmaSlider label="Angle" min={0} max={360} value={angle} onChange={setAngle} unit="°" />
@@ -75,7 +97,7 @@ export const PluginTextGradient = () => {
   );
   const controls = (
     <>
-      <PluginTip text="PANDUAN: Pilih jenis font yang tebal (Bold/Black) dan gunakan huruf kapital agar efek gradasi warna bisa menyelimuti teks secara utuh." />
+      <PluginTip text="PANDUAN: Pilih jenis font tebal dan gunakan huruf kapital agar efek gradasi warna menyelimuti teks secara utuh." />
       <FigmaTextInput label="Custom Text" value={text} onChange={setText} placeholder="Misal: MRR STUDIO" />
       <FigmaColorPicker label="Start Color" hexValue={color1} onChange={setColor1} />
       <FigmaColorPicker label="End Color" hexValue={color2} onChange={setColor2} />
@@ -90,9 +112,6 @@ const FONTS_DATA = {
   "Serif": [{ name: "Playfair Display", val: "Playfair Display" }, { name: "Merriweather", val: "Merriweather" }, { name: "Lora", val: "Lora" }]
 };
 
-// =========================================================================
-// 1. MULTI TYPO (FIX: HAPUS ZOOM AGAR PREVIEW TIDAK RUSAK/LOMPAT)
-// =========================================================================
 export const PluginTypography = () => {
   const [tab, setTab] = useState('Heading');
   
@@ -149,7 +168,6 @@ export const PluginTypography = () => {
     >{state.text || 'Text'}</div>
   );
 
-  // Murni drag and drop biasa, tanpa dibungkus pan/zoom agar kordinat X dan Y sempurna!
   const preview = (
     <div className="relative w-full h-[300px] flex items-center justify-center overflow-hidden border border-white/5 bg-[#0a0a0a] rounded-xl touch-none">
       <div className="absolute top-2 left-2 px-2 py-1 bg-cyan-500/10 text-cyan-400 text-[8px] font-bold rounded uppercase tracking-widest pointer-events-none z-10">Interactive Canvas</div>
@@ -177,7 +195,7 @@ export const PluginTypography = () => {
 
   const controls = (
     <>
-      <PluginTip text="PANDUAN: Sentuh lalu geser (Drag & Drop) teks di layar preview atas untuk merubah tata letaknya secara bebas! Semua koordinat gesekanmu otomatis dicatat di CSS Output." />
+      <PluginTip text="PANDUAN: Sentuh lalu geser (Drag & Drop) teks di layar preview untuk merubah posisinya. Semua koordinat otomatis dicatat di Output CSS!" />
       <div className="flex bg-[#0a0a0a] p-1 rounded-lg border border-[#2a2a2a] w-full mb-4">
         {['Heading', 'Subheading', 'Paragraph'].map(t => (
           <button key={t} onClick={() => setTab(t)} className={`flex-1 py-2 rounded-md text-[9px] font-bold uppercase transition-all ${tab === t ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/30' : 'text-slate-500 hover:text-slate-300'}`}>{t}</button>
@@ -203,7 +221,7 @@ export const PluginLayout = () => {
   const preview = <div style={{ padding: `${padding}px`, borderRadius: `${radius}px`, backgroundColor: '#1a1a1a', color: '#fff', textAlign: 'center', border: '1px solid #333', transition: 'all 0.3s' }}>Box Container</div>;
   const controls = (
     <>
-      <PluginTip text="PANDUAN: Gunakan Padding untuk mengatur ruang bernapas di dalam elemen, dan Border Radius untuk melembutkan sudut-sudut kotak agar tidak kaku." />
+      <PluginTip text="PANDUAN: Gunakan Padding untuk mengatur ruang bernapas di dalam elemen, dan Border Radius untuk melembutkan sudut kotak." />
       <FigmaSlider label="Padding" min={0} max={100} value={padding} onChange={setPadding} unit="px" />
       <FigmaSlider label="Border Radius" min={0} max={100} value={radius} onChange={setRadius} unit="px" />
     </>
@@ -219,7 +237,7 @@ export const PluginBorder = () => {
   const preview = <div style={{ width: 180, height: 120, border: `${width}px ${style} ${color}`, borderRadius: `${radius}px`, backgroundColor: 'rgba(255,255,255,0.02)', transition: 'all 0.2s' }}></div>;
   const controls = (
     <>
-      <PluginTip text="PANDUAN: Pilih ketebalan (width) yang selaras dengan radius lengkungan. Gaya 'dashed' (putus-putus) sangat bagus dipakai untuk kotak desain struk atau kupon." />
+      <PluginTip text="PANDUAN: Pilih ketebalan (width) yang selaras dengan radius lengkungan. Gaya 'dashed' (putus-putus) sangat bagus dipakai untuk desain kupon." />
       <FigmaColorPicker label="Border Color" hexValue={color} onChange={setColor} />
       <FigmaSelect label="Style" options={['solid', 'dashed', 'dotted', 'double']} value={style} onChange={setStyle} />
       <FigmaSlider label="Border Width" min={1} max={30} value={width} onChange={setWidth} unit="px" />
@@ -230,12 +248,11 @@ export const PluginBorder = () => {
 };
 
 // =========================================================================
-// 2. VECTOR NODE EDITOR (PEN TOOL LAYAKNYA FIGMA/ILLUSTRATOR)
+// 2. VECTOR NODE EDITOR (PEN TOOL + SNAP TO GRID)
 // =========================================================================
 const SHAPES_DATA = {
   "Polygon Base": [{ name: "Triangle", val: "triangle" }, { name: "Square", val: "square" }, { name: "Hexagon", val: "hexagon" }]
 };
-
 const PRESET_NODES = {
   "triangle": [{id:1, x:50, y:0}, {id:2, x:0, y:100}, {id:3, x:100, y:100}],
   "square": [{id:1, x:0, y:0}, {id:2, x:100, y:0}, {id:3, x:100, y:100}, {id:4, x:0, y:100}],
@@ -245,33 +262,33 @@ const PRESET_NODES = {
 export const PluginShapes = () => {
   const [shapeVal, setShapeVal] = useState("square"); 
   const [color, setColor] = useState('#8b5cf6'); 
-  
   const [nodes, setNodes] = useState(PRESET_NODES["square"]);
+  const [snapToGrid, setSnapToGrid] = useState(true); // FIX Tumpang Tindih Vector: Fitur Magnet/Snap
   const { scale, pan, onTouchStart, onTouchMove } = useMultiTouch();
 
-  const [activeTool, setActiveTool] = useState('pan'); // 'pan' atau 'pen'
+  const [activeTool, setActiveTool] = useState('pan');
   const [draggingNode, setDraggingNode] = useState(null);
   const [isDraggingPan, setIsDraggingPan] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
 
   useEffect(() => { setNodes(PRESET_NODES[shapeVal] || []); }, [shapeVal]);
 
+  const snapCoordinate = (val) => snapToGrid ? Math.round(val / 5) * 5 : Math.round(val);
+
   const handlePointerDownCanvas = (e) => {
     if (activeTool === 'pan') {
       setIsDraggingPan(true); setDragStart({ x: e.clientX - pan.x, y: e.clientY - pan.y }); e.currentTarget.setPointerCapture(e.pointerId);
     } else if (activeTool === 'pen') {
       const rect = e.currentTarget.getBoundingClientRect();
-      const xPercent = Math.round((((e.clientX - rect.left) / scale) / 200) * 100);
-      const yPercent = Math.round((((e.clientY - rect.top) / scale) / 200) * 100);
-      const newNode = { id: Date.now(), x: Math.max(0, Math.min(100, xPercent)), y: Math.max(0, Math.min(100, yPercent)) };
+      const xPercent = (((e.clientX - rect.left) / scale) / 200) * 100;
+      const yPercent = (((e.clientY - rect.top) / scale) / 200) * 100;
+      const newNode = { id: Date.now(), x: Math.max(0, Math.min(100, snapCoordinate(xPercent))), y: Math.max(0, Math.min(100, snapCoordinate(yPercent))) };
       setNodes([...nodes, newNode]);
     }
   };
 
   const handlePointerDownNode = (e, id) => {
-    if (activeTool === 'pen') {
-      e.stopPropagation(); setDraggingNode(id); e.currentTarget.setPointerCapture(e.pointerId);
-    }
+    if (activeTool === 'pen') { e.stopPropagation(); setDraggingNode(id); e.currentTarget.setPointerCapture(e.pointerId); }
   };
 
   const handlePointerMove = (e) => {
@@ -279,9 +296,9 @@ export const PluginShapes = () => {
       setPan({ x: e.clientX - dragStart.x, y: e.clientY - dragStart.y });
     } else if (draggingNode) {
       const rect = e.currentTarget.getBoundingClientRect();
-      const xPercent = Math.round((((e.clientX - rect.left) / scale) / 200) * 100);
-      const yPercent = Math.round((((e.clientY - rect.top) / scale) / 200) * 100);
-      setNodes(nodes.map(n => n.id === draggingNode ? { ...n, x: Math.max(0, Math.min(100, xPercent)), y: Math.max(0, Math.min(100, yPercent)) } : n));
+      const xPercent = (((e.clientX - rect.left) / scale) / 200) * 100;
+      const yPercent = (((e.clientY - rect.top) / scale) / 200) * 100;
+      setNodes(nodes.map(n => n.id === draggingNode ? { ...n, x: Math.max(0, Math.min(100, snapCoordinate(xPercent))), y: Math.max(0, Math.min(100, snapCoordinate(yPercent))) } : n));
     }
   };
 
@@ -308,25 +325,15 @@ export const PluginShapes = () => {
           style={{ width: '200px', height: '200px', backgroundColor: 'rgba(255,255,255,0.05)', border: '1px dashed #333' }}
           onPointerDown={handlePointerDownCanvas} onPointerMove={handlePointerMove} onPointerUp={handlePointerUp} onPointerCancel={handlePointerUp}
         >
-          {/* Main Shape */}
+          {snapToGrid && activeTool === 'pen' && <div className="absolute inset-0 pointer-events-none opacity-20" style={{ backgroundImage: 'linear-gradient(#ffffff 1px, transparent 1px), linear-gradient(90deg, #ffffff 1px, transparent 1px)', backgroundSize: '10px 10px' }}></div>}
           <div style={{ backgroundColor: color, width: '100%', height: '100%', clipPath: `polygon(${polyString})`, pointerEvents: 'none' }} />
-          
-          {/* Vector Pen Overlay (Garis Biru & Titik) */}
           <svg className="absolute inset-0 w-full h-full pointer-events-none overflow-visible">
             <polygon points={nodes.map(n => `${n.x * 2},${n.y * 2}`).join(' ')} fill="none" stroke="#0ea5e9" strokeWidth="2" strokeDasharray="4 4" />
           </svg>
-
-          {/* Vector Nodes */}
           {activeTool === 'pen' && nodes.map((node, i) => (
-             <div 
-                key={node.id} 
-                onPointerDown={(e) => handlePointerDownNode(e, node.id)}
-                className="absolute w-3 h-3 bg-white border border-cyan-500 rounded-full shadow-[0_0_5px_rgba(0,0,0,0.5)] cursor-grab active:cursor-grabbing hover:scale-150 transition-transform"
-                style={{ left: `calc(${node.x}% - 6px)`, top: `calc(${node.y}% - 6px)`, zIndex: 50 }}
-                title={`Node ${i+1}`}
-             />
+             <div key={node.id} onPointerDown={(e) => handlePointerDownNode(e, node.id)} className="absolute w-3 h-3 bg-white border border-cyan-500 rounded-full shadow-[0_0_5px_rgba(0,0,0,0.5)] cursor-grab active:cursor-grabbing hover:scale-150 transition-transform" style={{ left: `calc(${node.x}% - 6px)`, top: `calc(${node.y}% - 6px)`, zIndex: 50 }} />
           ))}
-          {nodes.length < 3 && <div className="absolute inset-0 flex items-center justify-center pointer-events-none"><span className="text-[9px] text-slate-500 font-bold tracking-widest uppercase animate-pulse text-center">Klik 3 Titik<br/>Untuk Membuat Polygon</span></div>}
+          {nodes.length < 3 && <div className="absolute inset-0 flex items-center justify-center pointer-events-none"><span className="text-[9px] text-slate-500 font-bold tracking-widest uppercase animate-pulse text-center">Klik 3 Titik<br/>Untuk Polygon</span></div>}
         </div>
       </div>
     </div>
@@ -334,9 +341,15 @@ export const PluginShapes = () => {
   
   const controls = (
     <>
-      <PluginTip text="PANDUAN VECTOR: Pilih alat PEN. Klik dan tarik (drag) titik putih di kanvas untuk membengkokkan poligon secara bebas, atau klik ruang kosong untuk menambah sudut baru layaknya Figma!" />
+      <PluginTip text="PANDUAN VECTOR: Pilih PEN. Klik & tarik titik putih untuk merubah bentuk. Ingat, murni CSS polygon() hanya mendukung garis lurus bersudut. Gunakan 'Snap to Grid' untuk hasil rapi & presisi!" />
       <FigmaCustomDropdown label="Mulai Dari Preset" groups={SHAPES_DATA} value={shapeVal} onChange={setShapeVal} />
       <FigmaColorPicker label="Shape Color" hexValue={color} onChange={setColor} />
+      <div className="flex items-center justify-between py-3 border-t border-b border-[#1f1f1f] mt-4 mb-2">
+         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Magnet / Snap To Grid</span>
+         <button onClick={() => setSnapToGrid(!snapToGrid)} className={`w-8 h-4 rounded-full transition-colors relative ${snapToGrid ? 'bg-cyan-500' : 'bg-[#333]'}`}>
+            <div className={`w-3 h-3 rounded-full bg-white absolute top-0.5 transition-all ${snapToGrid ? 'left-4.5' : 'left-0.5'}`}></div>
+         </button>
+      </div>
       <button onClick={() => setNodes([])} className="w-full mt-4 py-2.5 bg-[#1a1a1a] hover:bg-red-500/20 border border-[#333] hover:border-red-500/50 text-slate-300 hover:text-white rounded-lg text-[10px] font-bold uppercase tracking-widest transition-colors shadow-sm">Kosongkan Bentuk</button>
     </>
   );
@@ -356,7 +369,7 @@ export const PluginGlassmorphism = () => {
   
   const controls = (
     <>
-      <PluginTip text="PANDUAN: Rahasia efek kaca yang premium: Gunakan opacity rendah (sekitar 10-20%) agar background tembus, namun berikan Blur Intensity yang tinggi (di atas 10px) agar teks di atasnya tetap mudah dibaca." />
+      <PluginTip text="PANDUAN: Rahasia efek kaca yang premium: Gunakan opacity rendah (10-20%) agar tembus pandang, tapi berikan Blur Intensity tinggi agar teks mudah dibaca." />
       <FigmaColorPicker label="Glass Tint" hexValue={color} onChange={setColor} />
       <FigmaSlider label="Opacity" min={1} max={100} value={opacity} onChange={setOpacity} unit="%" />
       <FigmaSlider label="Blur Intensity" min={0} max={50} step={0.5} value={blur} onChange={setBlur} unit="px" />
@@ -377,7 +390,7 @@ export const PluginNeumorphism = () => {
   
   const controls = (
     <>
-      <PluginTip text="PANDUAN: Pilih warna Base Background yang lembut/pastel. Sistem kami secara pintar akan menghitung rumus bayangan terang dan gelap agar efek 3D timbul/cekungnya terlihat natural." />
+      <PluginTip text="PANDUAN: Pilih warna Base Background lembut/pastel. Sistem kami otomatis menghitung rumus bayangan terang dan gelap agar efek 3D terlihat natural." />
       <FigmaColorPicker label="Base Background" hexValue={bg} onChange={setBg} />
       <div className="mb-4">
          <div className="flex bg-[#0a0a0a] p-1 rounded-lg border border-[#2a2a2a]">
@@ -401,7 +414,7 @@ export const PluginShadow = () => {
   
   const controls = (
     <>
-      <PluginTip text="PANDUAN: Tren desain saat ini menyukai bayangan 'Soft Shadow'. Turunkan Opacity (sekitar 10-20%) lalu naikkan Blur Radius dan Y Offset agar elemen seakan-akan melayang elegan." />
+      <PluginTip text="PANDUAN: Tren desain modern menyukai 'Soft Shadow'. Turunkan Opacity lalu naikkan Blur Radius dan Y Offset agar elemen seakan melayang elegan." />
       <FigmaColorPicker label="Shadow Color" hexValue={color} onChange={setColor} />
       <FigmaSlider label="Opacity" min={0} max={100} value={opacity} onChange={setOpacity} unit="%" />
       <FigmaSlider label="X Offset" min={-50} max={50} value={x} onChange={setX} unit="px" />
@@ -422,7 +435,7 @@ export const PluginGlow = () => {
   
   const controls = (
     <>
-      <PluginTip text="PANDUAN: Efek pendaran (Glow) sangat kuat di background hitam. Gunakan warna-warna vibran seperti Cyan, Magenta, atau Neon Green lalu tambah ukuran Blur agar cahaya menyebar alami." />
+      <PluginTip text="PANDUAN: Efek Glow sangat kuat di background hitam. Gunakan warna-warna vibran (Neon Green, dll) lalu tambah ukuran Blur agar cahaya menyebar." />
       <FigmaColorPicker label="Glow Color" hexValue={color} onChange={setColor} />
       <FigmaSlider label="Blur Radius" min={0} max={150} value={blur} onChange={setBlur} unit="px" />
       <FigmaSlider label="Spread Radius" min={0} max={100} value={spread} onChange={setSpread} unit="px" />
@@ -568,7 +581,7 @@ export const PluginAnimation = () => {
 
   const controls = (
     <>
-      <PluginTip text="PANDUAN: Pilih jenis animasi dan ubah Iteration ke 'infinite' jika ingin pergerakan berulang seperti animasi terbang (Floating) atau detak (Pulse)." />
+      <PluginTip text="PANDUAN: Pilih jenis animasi dan ubah Iteration ke 'infinite' jika ingin pergerakan berulang." />
       <FigmaCustomDropdown label="Animation Style" groups={ANIMATION_DATA} value={animType} onChange={setAnimType} />
       <FigmaSlider label="Duration" min={0.1} max={5} step={0.1} value={duration} onChange={setDuration} unit="s" />
       <FigmaSelect label="Timing Function" options={['linear', 'ease', 'ease-in-out', 'ease-in']} value={timing} onChange={setTiming} />
@@ -623,7 +636,7 @@ export const PluginTransitions = () => {
 };
 
 // =========================================================================
-// 3. PIXEL DRAWING (FULL FIX: ROTASI CANVAS, ELEMENT-FROM-POINT DRAWING)
+// 3. PIXEL DRAWING (FULL FIX: ROTASI 2 JARI, ANTI-SALAH CORET, DLL)
 // =========================================================================
 export const PluginPixelDrawing = () => {
   const [gridSize, setGridSize] = useState(16); 
@@ -639,9 +652,8 @@ export const PluginPixelDrawing = () => {
   const [history, setHistory] = useState([Array(256).fill('transparent')]);
   const [step, setStep] = useState(0);
 
-  // Canvas View State
-  const { scale, pan, onTouchStart, onTouchMove } = useMultiTouch();
-  const [rotation, setRotation] = useState(0); // FIX: Canvas Rotation!
+  // FIX ZOOM & PUTAR CANVAS: Menggunakan Hook 2 Jari
+  const { scale, pan, rotation, setScale, setPan, onTouchStart, onTouchMove, resetView } = useMultiTouch();
   
   const [activeTool, setActiveTool] = useState('draw');
   const [isDraggingPan, setIsDraggingPan] = useState(false);
@@ -651,7 +663,7 @@ export const PluginPixelDrawing = () => {
   useEffect(() => {
     const safeGrid = Math.min(Math.max(gridSize, 8), 64);
     const newEmpty = Array(safeGrid * safeGrid).fill('transparent');
-    setHistory([newEmpty]); setStep(0); setLocalGridInput(safeGrid.toString());
+    setHistory([newEmpty]); setStep(0); setLocalGridInput(safeGrid.toString()); resetView();
     setOutputSize(Math.max(outputSize, safeGrid));
   }, [gridSize]);
 
@@ -665,6 +677,8 @@ export const PluginPixelDrawing = () => {
   const currentPixels = history[step] || Array(gridSize * gridSize).fill('transparent');
 
   const paintPixel = (index) => {
+    // FIX ANTI-COREt: Kalau tools PAN aktif, tidak boleh gambar!
+    if (activeTool === 'pan') return;
     const newColor = activeTool === 'erase' ? 'transparent' : color;
     if (currentPixels[index] === newColor) return; 
     const newPixels = [...currentPixels];
@@ -684,12 +698,13 @@ export const PluginPixelDrawing = () => {
   };
   const addToPalette = () => { if (!palette.includes(color)) setPalette([color, ...palette].slice(0, 15)); };
 
-  // FIX BUG MENGGAMBAR: Menggunakan ElementFromPoint agar tidak meleset saat kanvas diputar/zoom!
+  // FIX DRAWING SAAT ZOOM/PUTAR: Harus mencari elemen apa yang disentuh jari secara eksak!
   const paintByEvent = (e) => {
     if (activeTool === 'pan' || e.touches?.length > 1) return;
+    
     let clientX = e.clientX; let clientY = e.clientY;
     if (e.touches && e.touches.length > 0) { clientX = e.touches[0].clientX; clientY = e.touches[0].clientY; }
-    if (!clientX || !clientY) return;
+    if (clientX === undefined || clientY === undefined) return;
 
     const el = document.elementFromPoint(clientX, clientY);
     const idx = el?.getAttribute('data-pixel-index');
@@ -736,7 +751,7 @@ export const PluginPixelDrawing = () => {
     let shadow = [];
     currentPixels.forEach((p, i) => {
       if (p !== 'transparent') {
-        const x = (i % gridSize) * pixelSizePx; const y = Math.floor(i / gridSize) * pSize;
+        const x = (i % gridSize) * pixelSizePx; const y = Math.floor(i / gridSize) * pixelSizePx;
         shadow.push(`${x}px ${y}px ${p}`);
       }
     });
@@ -760,7 +775,6 @@ export const PluginPixelDrawing = () => {
         <button onClick={() => setActiveTool('pan')} className={`w-8 h-8 flex items-center justify-center shrink-0 rounded transition-colors ${activeTool === 'pan' ? 'bg-cyan-500/20 text-cyan-400' : 'text-slate-400 hover:bg-[#1f1f1f]'}`}><div className="w-4 h-4"><Icons.HandPan /></div></button>
       </div>
 
-      {/* CANVAS DENGAN ROTASI */}
       <div style={{ transform: `translate(${pan.x}px, ${pan.y}px) scale(${scale}) rotate(${rotation}deg)`, transition: isDraggingPan ? 'none' : 'transform 0.1s ease-out' }} className="absolute">
         <div className="grid shadow-2xl" 
            style={{ 
@@ -773,8 +787,8 @@ export const PluginPixelDrawing = () => {
           {currentPixels.map((bg, i) => (
             <div 
               key={i} 
-              data-pixel-index={i} // Ini kunci ElementFromPoint
-              className={`w-full h-full border-[0.5px] pointer-events-none ${isTransparent ? 'border-white/10' : (canvasBgColor==='#ffffff'?'border-black/10':'border-white/20')} hover:bg-black/30`}
+              data-pixel-index={i} 
+              className={`w-full h-full border-[0.5px] ${isTransparent ? 'border-white/10' : (canvasBgColor==='#ffffff'?'border-black/10':'border-white/20')} hover:bg-black/30`}
               style={{ backgroundColor: bg !== 'transparent' ? bg : undefined }}
             />
           ))}
@@ -790,11 +804,8 @@ export const PluginPixelDrawing = () => {
 
   const controls = (
     <>
-      <PluginTip text="PANDUAN: Pilih alat PAN (Tangan) agar tidak tercoret saat Zoom 2 Jari! Gunakan slider Rotate untuk memutar kanvas layaknya di Photopea/Ibis Paint." />
+      <PluginTip text="PANDUAN: Pilih alat TANGAN agar bebas mencubit & memutar kanvas! Pilih KUAS untuk menggambar. Jika sudah, klik Download untuk hasil akhir HD." />
       
-      {/* KONTROL PUTAR KANVAS */}
-      <FigmaSlider label="Rotate Canvas" min={-180} max={180} value={rotation} onChange={setRotation} unit="°" />
-
       <div className="mb-4 mt-2">
          <label className="text-[10px] font-medium text-slate-400 block mb-2">Grid Resolusi (Min: 8, Max: 64)</label>
          <div className="flex gap-2">
