@@ -266,8 +266,249 @@ export const PluginTransform = () => {
   return <WorkspaceLayout name="True 3D Studio" controls={controls} preview={preview} cssOutput={css} htmlOutput={html} jsxOutput={jsx} bgType="grid" />;
 };
 
-// ... Untuk menghemat ruang agar file kamu tidak lag, fitur Animation, Transitions, dan PixelArt sama dengan sebelumnya,
-// Kamu hanya perlu memastikan mereka ter-export dengan benar di sini jika kamu membutuhkannya, tapi untuk basic fix, komponen ini sudah lengkap!
-export const PluginAnimation = () => { return <WorkspaceLayout name="Animation" controls={<p className="text-sm text-slate-500">Coming Soon or Add your existing code here.</p>} preview={<div>Anim</div>} cssOutput={``} htmlOutput={``} jsxOutput={``} bgType="grid" /> };
-export const PluginTransitions = () => { return <WorkspaceLayout name="Transitions" controls={<p className="text-sm text-slate-500">Coming Soon or Add your existing code here.</p>} preview={<div>Trans</div>} cssOutput={``} htmlOutput={``} jsxOutput={``} bgType="grid" /> };
-export const PluginPixelArt = () => { return <WorkspaceLayout name="Pixel Art" controls={<p className="text-sm text-slate-500">Coming Soon or Add your existing code here.</p>} preview={<div>Pixel</div>} cssOutput={``} htmlOutput={``} jsxOutput={``} bgType="grid" /> };
+// =========================================================================
+// FITUR ANIMATION
+// =========================================================================
+const ANIMATION_DATA = {
+  "Attention": [
+    { name: "Bounce", val: "bounce" }, { name: "Flash", val: "flash" }, { name: "Pulse", val: "pulse" },
+    { name: "RubberBand", val: "rubberBand" }, { name: "Shake", val: "shake" }, { name: "Swing", val: "swing" }
+  ],
+  "Fade Entrances": [
+    { name: "Fade In", val: "fadeIn" }, { name: "Fade In Down", val: "fadeInDown" }, { name: "Fade In Left", val: "fadeInLeft" }
+  ],
+  "Zoom Entrances": [
+    { name: "Zoom In", val: "zoomIn" }, { name: "Zoom In Down", val: "zoomInDown" }, { name: "Zoom In Up", val: "zoomInUp" }
+  ],
+  "Rotations": [
+    { name: "Spin 360", val: "spin" }, { name: "Flip X", val: "flipInX" }, { name: "Flip Y", val: "flipInY" }
+  ],
+  "Looping": [
+    { name: "Floating", val: "float" }, { name: "Breathe", val: "breathe" }
+  ]
+};
+
+const getDynamicKeyframes = (type) => {
+  const map = {
+    bounce: `0%, 20%, 50%, 80%, 100% {transform: translateY(0);} 40% {transform: translateY(-30px);} 60% {transform: translateY(-15px);}`,
+    flash: `0%, 50%, 100% {opacity: 1;} 25%, 75% {opacity: 0;}`,
+    pulse: `0% {transform: scale(1);} 50% {transform: scale(1.05);} 100% {transform: scale(1);}`,
+    rubberBand: `0% {transform: scale(1);} 30% {transform: scale3d(1.25, 0.75, 1);} 40% {transform: scale3d(0.75, 1.25, 1);} 50% {transform: scale3d(1.15, 0.85, 1);} 65% {transform: scale3d(.95, 1.05, 1);} 75% {transform: scale3d(1.05, .95, 1);} 100% {transform: scale(1);}`,
+    shake: `0%, 100% {transform: translateX(0);} 10%, 30%, 50%, 70%, 90% {transform: translateX(-10px);} 20%, 40%, 60%, 80% {transform: translateX(10px);}`,
+    swing: `20% {transform: rotate(15deg);} 40% {transform: rotate(-10deg);} 60% {transform: rotate(5deg);} 80% {transform: rotate(-5deg);} 100% {transform: rotate(0deg);}`,
+    fadeIn: `from {opacity: 0;} to {opacity: 1;}`,
+    fadeInDown: `from {opacity: 0; transform: translate3d(0, -100%, 0);} to {opacity: 1; transform: none;}`,
+    fadeInLeft: `from {opacity: 0; transform: translate3d(-100%, 0, 0);} to {opacity: 1; transform: none;}`,
+    zoomIn: `from {opacity: 0; transform: scale3d(0.3, 0.3, 0.3);} 50% {opacity: 1;}`,
+    zoomInDown: `from {opacity: 0; transform: scale3d(0.1, 0.1, 0.1) translate3d(0, -1000px, 0);} 60% {opacity: 1; transform: scale3d(0.475, 0.475, 0.475) translate3d(0, 60px, 0);}`,
+    zoomInUp: `from {opacity: 0; transform: scale3d(0.1, 0.1, 0.1) translate3d(0, 1000px, 0);} 60% {opacity: 1; transform: scale3d(0.475, 0.475, 0.475) translate3d(0, -60px, 0);}`,
+    spin: `from {transform: rotate(0deg);} to {transform: rotate(360deg);}`,
+    flipInX: `from {transform: perspective(400px) rotate3d(1, 0, 0, 90deg); opacity: 0;} 40% {transform: perspective(400px) rotate3d(1, 0, 0, -20deg);} 60% {transform: perspective(400px) rotate3d(1, 0, 0, 10deg); opacity: 1;} 80% {transform: perspective(400px) rotate3d(1, 0, 0, -5deg);} to {transform: perspective(400px);}`,
+    flipInY: `from {transform: perspective(400px) rotate3d(0, 1, 0, 90deg); opacity: 0;} 40% {transform: perspective(400px) rotate3d(0, 1, 0, -20deg);} 60% {transform: perspective(400px) rotate3d(0, 1, 0, 10deg); opacity: 1;} 80% {transform: perspective(400px) rotate3d(0, 1, 0, -5deg);} to {transform: perspective(400px);}`,
+    float: `0%, 100% {transform: translateY(0);} 50% {transform: translateY(-20px);}`,
+    breathe: `0%, 100% {transform: scale(1); opacity: 0.8;} 50% {transform: scale(1.1); opacity: 1; box-shadow: 0 0 20px rgba(14,165,233,0.5);}`
+  };
+  return map[type] || map['bounce'];
+};
+
+export const PluginAnimation = () => {
+  const [animType, setAnimType] = useState('bounce'); 
+  const [duration, setDuration] = useState(1.5);
+  const [timing, setTiming] = useState('ease-in-out');
+  const [iteration, setIteration] = useState('infinite');
+  const [key, setKey] = useState(0); 
+
+  const css = `@keyframes anim-${animType} {\n  ${getDynamicKeyframes(animType).replace(/\} /g, '}\n  ')}\n}\n\n.animate-element {\n  animation: anim-${animType} ${duration}s ${timing} ${iteration};\n}`;
+  const html = `<style>\n  @keyframes anim-${animType} { ${getDynamicKeyframes(animType)} }\n  .animate-element { animation: anim-${animType} ${duration}s ${timing} ${iteration}; }\n</style>\n<div class="animate-element">Animate Me</div>`;
+  const jsx = `// Tambahkan @keyframes ke global.css terlebih dahulu\n<div style={{ animation: 'anim-${animType} ${duration}s ${timing} ${iteration}' }}>\n  Animate Me\n</div>`;
+
+  useEffect(() => { setKey(prev => prev + 1); }, [animType, duration, timing, iteration]);
+
+  const preview = (
+    <div className="relative w-full h-full flex items-center justify-center">
+      <style>{`@keyframes preview-${animType}-${key} { ${getDynamicKeyframes(animType)} }`}</style>
+      <div 
+        key={key}
+        className="w-24 h-24 rounded-3xl bg-gradient-to-tr from-pink-500 to-orange-400 shadow-2xl flex items-center justify-center border border-white/20"
+        style={{ animation: `preview-${animType}-${key} ${duration}s ${timing} ${iteration === 'infinite' ? 'infinite' : iteration}` }}
+      >
+        <Icons.Animation />
+      </div>
+    </div>
+  );
+
+  const controls = (
+    <>
+      <FigmaCustomDropdown label="Animation Style" groups={ANIMATION_DATA} value={animType} onChange={setAnimType} />
+      <FigmaSlider label="Duration" min={0.1} max={5} step={0.1} value={duration} onChange={setDuration} unit="s" />
+      <FigmaSelect label="Timing Function" options={['linear', 'ease', 'ease-in-out', 'ease-in']} value={timing} onChange={setTiming} />
+      <FigmaSelect label="Iteration Count" options={['1', '2', '3', 'infinite']} value={iteration} onChange={setIteration} />
+      <button onClick={() => setKey(k => k + 1)} className="w-full mt-4 py-2.5 bg-[#1a1a1a] hover:bg-[#333] border border-[#2a2a2a] text-cyan-400 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all">
+        Replay Animation
+      </button>
+    </>
+  );
+
+  return <WorkspaceLayout name="Animation Builder" controls={controls} preview={preview} cssOutput={css} htmlOutput={html} jsxOutput={jsx} bgType="grid" />;
+};
+
+
+// =========================================================================
+// FITUR TRANSITIONS
+// =========================================================================
+const TRANSITIONS_DATA = {
+  "Scale Effects": [
+    { name: "Grow", val: "scale(1.1)" }, { name: "Shrink", val: "scale(0.9)" }, { name: "Pop", val: "scale(1.2)" }
+  ],
+  "Translates": [
+    { name: "Push Up", val: "translateY(-10px)" }, { name: "Push Down", val: "translateY(10px)" },
+    { name: "Push Left", val: "translateX(-10px)" }, { name: "Push Right", val: "translateX(10px)" }
+  ],
+  "Rotations": [
+    { name: "Rotate Right", val: "rotate(15deg)" }, { name: "Rotate Left", val: "rotate(-15deg)" },
+    { name: "Spin Quarter", val: "rotate(90deg)" }, { name: "Spin Half", val: "rotate(180deg)" }
+  ],
+  "Skews": [
+    { name: "Skew Forward", val: "skewX(-15deg)" }, { name: "Skew Backward", val: "skewX(15deg)" }
+  ]
+};
+
+export const PluginTransitions = () => {
+  const [transType, setTransType] = useState('scale(1.1)'); 
+  const [duration, setDuration] = useState(0.3);
+  const [timing, setTiming] = useState('ease-in-out');
+
+  const css = `.element {\n  transition: transform ${duration}s ${timing};\n}\n\n.element:hover {\n  transform: ${transType};\n}`;
+  const html = `<style>\n  .element { transition: transform ${duration}s ${timing}; }\n  .element:hover { transform: ${transType}; }\n</style>\n<div class="element">HOVER ME</div>`;
+  const jsx = `<div \n  style={{ transition: 'transform ${duration}s ${timing}' }}\n  onMouseEnter={(e) => e.currentTarget.style.transform = '${transType}'}\n  onMouseLeave={(e) => e.currentTarget.style.transform = 'none'}\n>\n  HOVER ME\n</div>`;
+
+  const preview = (
+    <div className="relative w-full h-full flex items-center justify-center group cursor-pointer">
+      <div 
+        className="w-40 h-16 rounded-full bg-white text-black font-bold flex items-center justify-center shadow-lg"
+        style={{ transition: `transform ${duration}s ${timing}` }}
+        onMouseEnter={(e) => e.currentTarget.style.transform = transType}
+        onMouseLeave={(e) => e.currentTarget.style.transform = 'none'}
+      >
+        HOVER ME
+      </div>
+      <div className="absolute top-10 text-[10px] text-slate-500 uppercase tracking-widest animate-pulse pointer-events-none">Interact to preview</div>
+    </div>
+  );
+
+  const controls = (
+    <>
+      <PluginTip text="Penting: Tempatkan output CSS '.element' di class default, dan '.element:hover' untuk memicu efeknya." />
+      <FigmaCustomDropdown label="Hover Effect Type" groups={TRANSITIONS_DATA} value={transType} onChange={setTransType} />
+      <FigmaSlider label="Duration" min={0.1} max={3} step={0.1} value={duration} onChange={setDuration} unit="s" />
+      <FigmaSelect label="Timing/Easing" options={['ease', 'linear', 'ease-in-out', 'cubic']} value={timing} onChange={setTiming} />
+    </>
+  );
+
+  return <WorkspaceLayout name="Hover Transitions" controls={controls} preview={preview} cssOutput={css} htmlOutput={html} jsxOutput={jsx} bgType="dark" />;
+};
+
+
+// =========================================================================
+// FITUR PIXEL ART (Dengan Undo/Redo Baru)
+// =========================================================================
+export const PluginPixelArt = () => {
+  const [gridSize, setGridSize] = useState(8); 
+  const [color, setColor] = useState('#0ea5e9');
+  
+  // History State untuk Undo & Redo
+  const [history, setHistory] = useState([Array(64).fill('transparent')]);
+  const [step, setStep] = useState(0);
+
+  useEffect(() => {
+    const newEmpty = Array(gridSize * gridSize).fill('transparent');
+    setHistory([newEmpty]);
+    setStep(0);
+  }, [gridSize]);
+
+  const currentPixels = history[step] || Array(gridSize * gridSize).fill('transparent');
+
+  const paintPixel = (index) => {
+    const newPixels = [...currentPixels];
+    newPixels[index] = newPixels[index] === color ? 'transparent' : color;
+    
+    // Menyimpan state ke history untuk fitur undo/redo
+    const newHistory = history.slice(0, step + 1);
+    newHistory.push(newPixels);
+    setHistory(newHistory);
+    setStep(newHistory.length - 1);
+  };
+
+  const clearCanvas = () => {
+    const newEmpty = Array(gridSize * gridSize).fill('transparent');
+    const newHistory = history.slice(0, step + 1);
+    newHistory.push(newEmpty);
+    setHistory(newHistory);
+    setStep(newHistory.length - 1);
+  };
+
+  const handleUndo = () => setStep(Math.max(0, step - 1));
+  const handleRedo = () => setStep(Math.min(history.length - 1, step + 1));
+
+  const pixelSizePx = gridSize === 8 ? 10 : gridSize === 12 ? 8 : 6;
+
+  const generateBoxShadow = () => {
+    let shadow = [];
+    currentPixels.forEach((p, i) => {
+      if (p !== 'transparent') {
+        const x = (i % gridSize) * pixelSizePx;
+        const y = Math.floor(i / gridSize) * pixelSizePx;
+        shadow.push(`${x}px ${y}px ${p}`);
+      }
+    });
+    return shadow.length > 0 ? shadow.join(',\n    ') : 'none';
+  };
+
+  const css = `/* Pure CSS Pixel Art (${gridSize}x${gridSize}) */\n.pixel-art {\n  width: ${pixelSizePx}px;\n  height: ${pixelSizePx}px;\n  background: transparent;\n  box-shadow: \n    ${generateBoxShadow()};\n}`;
+  const html = `<div style="width: ${pixelSizePx}px; height: ${pixelSizePx}px; box-shadow: ${generateBoxShadow().replace(/\n\s+/g, ' ')};"></div>`;
+  const jsx = `<div style={{ width: '${pixelSizePx}px', height: '${pixelSizePx}px', boxShadow: '${generateBoxShadow().replace(/\n\s+/g, ' ')}' }} />`;
+
+  const preview = (
+    <div className="flex flex-col items-center">
+      <div 
+        className="w-[200px] h-[200px] sm:w-[240px] sm:h-[240px] grid border border-[#1f1f1f] bg-[#0a0a0a]"
+        style={{ gridTemplateColumns: `repeat(${gridSize}, minmax(0, 1fr))` }}
+      >
+        {currentPixels.map((bg, i) => (
+          <div 
+            key={i} 
+            onClick={() => paintPixel(i)}
+            className="border border-white/5 cursor-crosshair hover:bg-white/10 transition-colors w-full h-full"
+            style={{ backgroundColor: bg !== 'transparent' ? bg : undefined }}
+          />
+        ))}
+      </div>
+      
+      {/* Tombol Undo & Redo */}
+      <div className="flex gap-4 mt-6">
+        <button onClick={handleUndo} disabled={step === 0} className={`p-2 rounded-full border ${step === 0 ? 'border-[#1f1f1f] text-slate-600' : 'border-[#333] text-slate-300 hover:text-white hover:bg-[#1a1a1a]'}`}><Icons.Undo /></button>
+        <button onClick={handleRedo} disabled={step === history.length - 1} className={`p-2 rounded-full border ${step === history.length - 1 ? 'border-[#1f1f1f] text-slate-600' : 'border-[#333] text-slate-300 hover:text-white hover:bg-[#1a1a1a]'}`}><Icons.Redo /></button>
+      </div>
+    </div>
+  );
+
+  const controls = (
+    <>
+      <PluginTip text="Kini kamu bisa leluasa menggambar! Jika salah, tekan tombol Undo (Kiri) atau Redo (Kanan) di bawah kanvas." />
+      <FigmaSelect label="Canvas Size (Resolution)" options={['8', '12', '16']} value={gridSize.toString()} onChange={(val) => setGridSize(Number(val))} />
+      
+      <div className="flex justify-between items-center mb-4 mt-6 border-t border-[#1f1f1f] pt-4">
+        <label className="text-[10px] font-medium text-slate-400 block">Brush Color</label>
+        <button onClick={clearCanvas} className="text-[8px] text-red-400 hover:text-white bg-red-500/10 border border-red-500/30 px-2 py-1 rounded transition-colors uppercase font-bold tracking-widest">Clear Canvas</button>
+      </div>
+      <FigmaColorPicker label="Custom Hex" hexValue={color} onChange={setColor} />
+      <div className="flex flex-wrap gap-2 mt-2">
+        {['#0ea5e9', '#ec4899', '#f59e0b', '#10b981', '#ffffff', '#000000'].map(c => (
+           <button key={c} onClick={() => setColor(c)} className={`w-6 h-6 rounded-md border ${color === c ? 'border-cyan-400 scale-110 shadow-lg' : 'border-[#333]'}`} style={{backgroundColor: c}}></button>
+        ))}
+      </div>
+    </>
+  );
+
+  return <WorkspaceLayout name="CSS Pixel Drawing" controls={controls} preview={preview} cssOutput={css} htmlOutput={html} jsxOutput={jsx} />;
+};
