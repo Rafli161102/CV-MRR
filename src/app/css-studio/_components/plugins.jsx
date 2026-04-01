@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Icons } from './icons';
 import { PluginTip, FigmaSlider, FigmaColorPicker, FigmaSelect, FigmaTextInput, FigmaCustomDropdown, WorkspaceLayout, hexToRgb, adjustBrightness } from './ui';
 
@@ -44,53 +44,121 @@ export const PluginTextGradient = () => {
 };
 
 const FONTS_DATA = {
-  "Sans Serif": [{ name: "Inter", val: "Inter" }, { name: "Roboto", val: "Roboto" }, { name: "Montserrat", val: "Montserrat" }],
-  "Serif": [{ name: "Playfair Display", val: "Playfair Display" }, { name: "Merriweather", val: "Merriweather" }]
+  "Sans Serif": [{ name: "Inter", val: "Inter" }, { name: "Roboto", val: "Roboto" }, { name: "Montserrat", val: "Montserrat" }, { name: "Poppins", val: "Poppins" }],
+  "Serif": [{ name: "Playfair Display", val: "Playfair Display" }, { name: "Merriweather", val: "Merriweather" }, { name: "Lora", val: "Lora" }]
 };
 
+// =========================================================================
+// FITUR BARU: MULTI TYPO DENGAN DRAG & DROP INTERAKTIF & LOAD FONT SMOOTH
+// =========================================================================
 export const PluginTypography = () => {
   const [tab, setTab] = useState('Heading');
   
-  // INITIAL STATE SUDAH DILENGKAPI 'text' dan 'trans' KEMBALI AGAR TIDAK ERROR
-  const [h1, setH1] = useState({ text: 'Hero Title', font: 'Montserrat', size: 48, color: '#ffffff', align: 'center', trans: 'none', space: 0, rot: 0 });
-  const [h2, setH2] = useState({ text: 'Beautiful Typography', font: 'Inter', size: 20, color: '#0ea5e9', align: 'center', trans: 'none', space: 0, rot: 0 });
-  const [p, setP] = useState({ text: 'Ini adalah contoh paragraf yang aman saat dirotasi.', font: 'Inter', size: 14, color: '#94a3b8', align: 'center', trans: 'none', space: 0, rot: 0 });
+  // State sekarang menyimpan nilai posisi X dan Y untuk Drag & Drop
+  const defaultH1 = { text: 'Hero Title', font: 'Montserrat', size: 54, color: '#ffffff', align: 'center', trans: 'none', space: 0, rot: 0, x: 0, y: -70 };
+  const defaultH2 = { text: 'Beautiful Typography', font: 'Inter', size: 22, color: '#0ea5e9', align: 'center', trans: 'none', space: 0, rot: 0, x: 0, y: 0 };
+  const defaultP = { text: 'Teks ini bisa kamu geser (Drag & Drop)!\nKlik dan tahan untuk mengatur posisinya sesuka hati.', font: 'Inter', size: 14, color: '#94a3b8', align: 'center', trans: 'none', space: 0, rot: 0, x: 0, y: 70 };
 
+  const [h1, setH1] = useState(defaultH1);
+  const [h2, setH2] = useState(defaultH2);
+  const [p, setP] = useState(defaultP);
+
+  // FIX LAG FONT: Load semua font sekaligus di awal, tidak satu-satu saat digeser
   useEffect(() => {
-    [h1.font, h2.font, p.font].forEach(f => {
-      if (!f) return;
-      const linkId = `gfont-${f.replace(/\s+/g, '-')}`;
-      if (!document.getElementById(linkId)) {
-        const link = document.createElement('link'); link.id = linkId;
-        link.href = `https://fonts.googleapis.com/css2?family=${f.replace(/\s+/g, '+')}:wght@400;600;800&display=swap`;
-        link.rel = 'stylesheet'; document.head.appendChild(link);
-      }
-    });
-  }, [h1.font, h2.font, p.font]);
+    const allFonts = [];
+    Object.values(FONTS_DATA).forEach(group => group.forEach(f => allFonts.push(f.val.replace(/\s+/g, '+'))));
+    const uniqueFonts = [...new Set(allFonts)];
+    const fontUrl = `https://fonts.googleapis.com/css2?family=${uniqueFonts.join('&family=')}:wght@400;600;800&display=swap`;
+    
+    if (!document.getElementById('mrr-fonts-batch')) {
+      const link = document.createElement('link');
+      link.id = 'mrr-fonts-batch'; link.href = fontUrl; link.rel = 'stylesheet';
+      document.head.appendChild(link);
+    }
+  }, []);
 
-  const css = `h1 {\n  font-family: '${h1.font}', sans-serif;\n  font-size: ${h1.size}px;\n  color: ${h1.color};\n  text-align: ${h1.align};\n  text-transform: ${h1.trans};\n  letter-spacing: ${h1.space}px;\n  transform: rotate(${h1.rot}deg);\n  transform-origin: center center;\n}\n/* Lakukan hal yang sama untuk h2 dan p */`;
-  const html = `<div style="display: flex; flex-direction: column; gap: 32px;">\n  <h1 style="transform: rotate(${h1.rot}deg);">${h1.text}</h1>\n</div>`;
-  const jsx = `// Gunakan flex gap untuk mencegah elemen menabrak saat di-rotate\n<div className="flex flex-col gap-8">\n  <h1 style={{ transform: 'rotate(${h1.rot}deg)' }}>{h1.text}</h1>\n</div>`;
+  // LOGIKA DRAG AND DROP
+  const [dragging, setDragging] = useState(null); // 'h1', 'h2', 'p'
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [elemStart, setElemStart] = useState({ x: 0, y: 0 });
+
+  const handlePointerDown = (e, elemType, state) => {
+    setDragging(elemType);
+    setTab(elemType === 'h1' ? 'Heading' : elemType === 'h2' ? 'Subheading' : 'Paragraph');
+    setDragStart({ x: e.clientX, y: e.clientY });
+    setElemStart({ x: state.x, y: state.y });
+    e.currentTarget.setPointerCapture(e.pointerId);
+  };
+
+  const handlePointerMove = (e) => {
+    if (!dragging) return;
+    const dx = e.clientX - dragStart.x;
+    const dy = e.clientY - dragStart.y;
+    if (dragging === 'h1') setH1(prev => ({ ...prev, x: elemStart.x + dx, y: elemStart.y + dy }));
+    if (dragging === 'h2') setH2(prev => ({ ...prev, x: elemStart.x + dx, y: elemStart.y + dy }));
+    if (dragging === 'p') setP(prev => ({ ...prev, x: elemStart.x + dx, y: elemStart.y + dy }));
+  };
+
+  const handlePointerUp = (e) => {
+    if (dragging) { e.currentTarget.releasePointerCapture(e.pointerId); setDragging(null); }
+  };
+
+  const handleReset = () => {
+    if (tab === 'Heading') setH1(defaultH1);
+    if (tab === 'Subheading') setH2(defaultH2);
+    if (tab === 'Paragraph') setP(defaultP);
+  };
+
+  // CODE OUTPUT GENERATOR (Dengan kordinat X, Y)
+  const getCssClass = (state, tag) => `.${tag} {\n  position: absolute;\n  left: 50%; top: 50%;\n  width: 100%; max-width: 400px;\n  transform: translate(calc(-50% + ${state.x}px), calc(-50% + ${state.y}px)) rotate(${state.rot}deg);\n  font-family: '${state.font}', sans-serif;\n  font-size: ${state.size}px;\n  color: ${state.color};\n  text-align: ${state.align};\n  text-transform: ${state.trans};\n  letter-spacing: ${state.space}px;\n}`;
+  const css = `.canvas-container {\n  position: relative;\n  width: 100%;\n  height: 300px;\n  overflow: hidden;\n}\n\n${getCssClass(h1, 'heading')}\n\n${getCssClass(h2, 'subheading')}\n\n${getCssClass(p, 'paragraph')}`;
+  const html = `<div class="canvas-container">\n  <h1 class="heading">${h1.text}</h1>\n  <h2 class="subheading">${h2.text}</h2>\n  <p class="paragraph">${p.text}</p>\n</div>`;
+  const jsx = `<div className="relative w-full h-[300px] overflow-hidden">\n  <h1 style={{ position: 'absolute', left: '50%', top: '50%', width: '100%', maxWidth: '400px', transform: 'translate(calc(-50% + ${h1.x}px), calc(-50% + ${h1.y}px)) rotate(${h1.rot}deg)', fontFamily: '"${h1.font}", sans-serif', fontSize: '${h1.size}px', color: '${h1.color}', textAlign: '${h1.align}', textTransform: '${h1.trans}', letterSpacing: '${h1.space}px', fontWeight: 800, margin: 0 }}>\n    ${h1.text}\n  </h1>\n  {/* Tambahkan h2 dan p dengan cara yang sama */}\n</div>`;
+
+  // RENDERING PREVIEW CANVAS
+  const renderInteractiveText = (state, type, isPara = false) => (
+    <div
+      onPointerDown={(e) => handlePointerDown(e, type, state)}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
+      onPointerCancel={handlePointerUp}
+      style={{
+        position: 'absolute', left: '50%', top: '50%', width: '100%', maxWidth: '440px',
+        transform: `translate(calc(-50% + ${state.x}px), calc(-50% + ${state.y}px)) rotate(${state.rot}deg)`,
+        fontFamily: `"${state.font}", sans-serif`, fontSize: `${state.size}px`, color: state.color,
+        textAlign: state.align, textTransform: state.trans, letterSpacing: `${state.space}px`,
+        fontWeight: isPara ? 400 : (state.size > 30 ? 800 : 600),
+        cursor: dragging === type ? 'grabbing' : 'grab',
+        touchAction: 'none', userSelect: 'none', margin: 0,
+        zIndex: dragging === type ? 50 : 10,
+        textShadow: dragging === type ? '0 10px 30px rgba(0,0,0,0.5)' : 'none',
+        transition: dragging === type ? 'none' : 'transform 0.1s ease-out'
+      }}
+    >
+      {state.text || 'Text'}
+    </div>
+  );
 
   const preview = (
-    <div className="w-full flex flex-col justify-center max-w-[440px] gap-8">
-      <div className="flex justify-center w-full"><h1 style={{ fontFamily: `"${h1.font}", sans-serif`, fontSize: `${h1.size}px`, color: h1.color, fontWeight: 800, textAlign: h1.align, textTransform: h1.trans, letterSpacing: `${h1.space}px`, transform: `rotate(${h1.rot}deg)`, transformOrigin: 'center center', transition: 'all 0.2s', margin:0 }}>{h1.text || 'Hero Title'}</h1></div>
-      <div className="flex justify-center w-full"><h2 style={{ fontFamily: `"${h2.font}", sans-serif`, fontSize: `${h2.size}px`, color: h2.color, fontWeight: 600, textAlign: h2.align, textTransform: h2.trans, letterSpacing: `${h2.space}px`, transform: `rotate(${h2.rot}deg)`, transformOrigin: 'center center', transition: 'all 0.2s', margin:0 }}>{h2.text || 'Beautiful Typography'}</h2></div>
-      <div className="flex justify-center w-full"><p style={{ fontFamily: `"${p.font}", sans-serif`, fontSize: `${p.size}px`, color: p.color, lineHeight: 1.6, textAlign: p.align, textTransform: p.trans, letterSpacing: `${p.space}px`, transform: `rotate(${p.rot}deg)`, transformOrigin: 'center center', transition: 'all 0.2s', margin:0 }}>{p.text || 'Paragraf.'}</p></div>
+    <div className="relative w-full h-[300px] flex items-center justify-center overflow-hidden border border-white/5 bg-[#0a0a0a] rounded-xl group">
+      <div className="absolute top-2 left-2 px-2 py-1 bg-cyan-500/10 text-cyan-400 text-[8px] font-bold rounded uppercase tracking-widest pointer-events-none z-0">Interactive Canvas</div>
+      {renderInteractiveText(h1, 'h1')}
+      {renderInteractiveText(h2, 'h2')}
+      {renderInteractiveText(p, 'p', true)}
     </div>
   );
 
   const TextControls = ({ state, setState, isPara = false }) => {
     const update = (key, val) => setState(prev => ({ ...prev, [key]: val }));
     return (
-      <div className="animate-fade-in space-y-2">
-        <FigmaTextInput label="Edit Text" value={state.text} onChange={(v) => update('text', v)} placeholder={isPara ? "Ketik paragraf..." : "Ketik judul..."} isTextArea={isPara} />
+      <div className="animate-fade-in space-y-2 mt-2">
+        <FigmaTextInput label="Edit Text" value={state.text} onChange={(v) => update('text', v)} placeholder="Ketik disini..." isTextArea={isPara} />
         <FigmaCustomDropdown label="Font Family" groups={FONTS_DATA} value={state.font} onChange={(v) => update('font', v)} />
         <FigmaColorPicker label="Text Color" hexValue={state.color} onChange={(v) => update('color', v)} />
         <FigmaSlider label="Font Size" min={10} max={100} value={state.size} onChange={(v) => update('size', v)} unit="px" />
         <FigmaSlider label="Letter Spacing" min={-5} max={20} step={0.5} value={state.space} onChange={(v) => update('space', v)} unit="px" />
         <FigmaSlider label="Rotate" min={-180} max={180} value={state.rot} onChange={(v) => update('rot', v)} unit="°" />
-        <div className="grid grid-cols-2 gap-4 mt-2">
+        <div className="grid grid-cols-2 gap-4 mt-3">
           <FigmaSelect label="Alignment" options={['left', 'center', 'right', 'justify']} value={state.align} onChange={(v) => update('align', v)} />
           <FigmaSelect label="Transform" options={['none', 'uppercase', 'lowercase', 'capitalize']} value={state.trans} onChange={(v) => update('trans', v)} />
         </div>
@@ -100,18 +168,27 @@ export const PluginTypography = () => {
 
   const controls = (
     <>
-      <PluginTip text="Bug rotasi nabrak sudah diperbaiki. Kini preview memiliki ruang aman untuk berputar." />
-      <div className="flex bg-[#0a0a0a] p-1 rounded-lg border border-[#2a2a2a] w-full mb-5">
+      <PluginTip text="Pembaruan Baru: Sentuh & Geser (Drag & Drop) teks di layar atas untuk merubah posisi! Bug Alignment juga sudah diselesaikan." />
+      <div className="flex bg-[#0a0a0a] p-1 rounded-lg border border-[#2a2a2a] w-full mb-4">
         {['Heading', 'Subheading', 'Paragraph'].map(t => (
           <button key={t} onClick={() => setTab(t)} className={`flex-1 py-2 rounded-md text-[9px] font-bold uppercase transition-all ${tab === t ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/30' : 'text-slate-500 hover:text-slate-300'}`}>{t}</button>
         ))}
       </div>
+      
+      {/* UI Baru: Tombol Reset Posisi */}
+      <div className="flex items-center justify-between pb-2 border-b border-[#1f1f1f]">
+         <span className="text-[10px] font-bold text-cyan-400 uppercase tracking-widest">{tab} Setup</span>
+         <button onClick={handleReset} className="text-[8px] text-slate-300 hover:text-white bg-[#1a1a1a] hover:bg-red-500/20 hover:border-red-500/50 border border-[#333] px-2 py-1 rounded transition-colors uppercase tracking-wider">
+           Reset State
+         </button>
+      </div>
+
       {tab === 'Heading' && <TextControls state={h1} setState={setH1} />}
       {tab === 'Subheading' && <TextControls state={h2} setState={setH2} />}
       {tab === 'Paragraph' && <TextControls state={p} setState={setP} isPara={true} />}
     </>
   );
-  return <WorkspaceLayout name="Advanced Typography" controls={controls} preview={preview} cssOutput={css} htmlOutput={html} jsxOutput={jsx} />;
+  return <WorkspaceLayout name="Interactive Typography" controls={controls} preview={preview} cssOutput={css} htmlOutput={html} jsxOutput={jsx} bgType="dark" />;
 };
 
 export const PluginLayout = () => {
