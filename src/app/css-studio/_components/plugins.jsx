@@ -51,6 +51,9 @@ const FONTS_DATA = {
   "Serif": [{ name: "Playfair Display", val: "Playfair Display" }, { name: "Merriweather", val: "Merriweather" }, { name: "Lora", val: "Lora" }]
 };
 
+// =========================================================================
+// 1. MULTI TYPO (BUG RENDER DIPERBAIKI)
+// =========================================================================
 export const PluginTypography = () => {
   const [tab, setTab] = useState('Heading');
   
@@ -114,7 +117,8 @@ export const PluginTypography = () => {
     </div>
   );
 
-  const TextControls = ({ state, setState, isPara = false }) => {
+  // FIX BUG: Fungsi ini dikeluarkan dari komponen React agar tidak memicu re-render saat color picker di klik.
+  const renderTextControls = (state, setState, isPara = false) => {
     const update = (key, val) => setState(prev => ({ ...prev, [key]: val }));
     return (
       <div className="animate-fade-in space-y-2 mt-2">
@@ -144,9 +148,9 @@ export const PluginTypography = () => {
          <span className="text-[10px] font-bold text-cyan-400 uppercase tracking-widest">{tab} Setup</span>
          <button onClick={() => { if(tab==='Heading') setH1(defaultH1); if(tab==='Subheading') setH2(defaultH2); if(tab==='Paragraph') setP(defaultP); }} className="text-[8px] text-slate-300 hover:text-white bg-[#1a1a1a] hover:bg-red-500/20 border border-[#333] hover:border-red-500/50 px-2 py-1 rounded transition-colors uppercase tracking-wider">Reset Posisi</button>
       </div>
-      {tab === 'Heading' && <TextControls state={h1} setState={setH1} />}
-      {tab === 'Subheading' && <TextControls state={h2} setState={setH2} />}
-      {tab === 'Paragraph' && <TextControls state={p} setState={setP} isPara={true} />}
+      {tab === 'Heading' && renderTextControls(h1, setH1)}
+      {tab === 'Subheading' && renderTextControls(h2, setH2)}
+      {tab === 'Paragraph' && renderTextControls(p, setP, true)}
     </>
   );
   return <WorkspaceLayout name="Interactive Typo" controls={controls} preview={preview} cssOutput={css} htmlOutput={html} jsxOutput={jsx} bgType="dark" />;
@@ -186,29 +190,125 @@ export const PluginBorder = () => {
   return <WorkspaceLayout name="Border Styling" controls={controls} preview={preview} cssOutput={css} htmlOutput={html} jsxOutput={jsx} />;
 };
 
+// =========================================================================
+// 2. CSS SHAPES (SEKARANG DENGAN PEN TOOL & ZOOM/PAN CANVAS)
+// =========================================================================
 const SHAPES_DATA = {
-  "Organic Blobs": [{ name: "Blob 1", val: "blob1", css: "border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;" }, { name: "Blob 2", val: "blob2", css: "border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;" }],
-  "Polygons": [{ name: "Triangle", val: "polygon(50% 0%, 0% 100%, 100% 100%)", css: "clip-path: polygon(50% 0%, 0% 100%, 100% 100%);" }, { name: "Hexagon", val: "polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)", css: "clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);" }]
+  "Organic Blobs": [{ name: "Blob 1", val: "blob1" }, { name: "Blob 2", val: "blob2" }],
+  "Polygons": [{ name: "Triangle", val: "polygon(50% 0%, 0% 100%, 100% 100%)" }, { name: "Hexagon", val: "polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)" }]
 };
 
 export const PluginShapes = () => {
-  const [shapeVal, setShapeVal] = useState("blob1"); const [color, setColor] = useState('#8b5cf6'); const [rounded, setRounded] = useState(0);
-  let shapeCss = ""; let isBlob = shapeVal.includes('blob');
-  for (const group in SHAPES_DATA) { const found = SHAPES_DATA[group].find(opt => opt.val === shapeVal); if (found) shapeCss = found.css; }
-  const css = isBlob ? `.shape {\n  ${shapeCss}\n  background-color: ${color};\n  width: 200px;\n  height: 200px;\n}` : `.shape {\n  border-radius: ${rounded}px;\n  ${shapeCss}\n  background-color: ${color};\n  width: 200px;\n  height: 200px;\n}`;
-  const html = `<div style="${isBlob ? shapeCss : `border-radius: ${rounded}px; ${shapeCss}`} background-color: ${color}; width: 200px; height: 200px;"></div>`;
-  const jsx = `<div style={{ ${isBlob ? (shapeVal==='blob1' ? "borderRadius: '30% 70% 70% 30% / 30% 30% 70% 70%'" : "borderRadius: '60% 40% 30% 70% / 60% 30% 70% 40%'") : `borderRadius: '${rounded}px', clipPath: '${shapeVal}'`}, backgroundColor: '${color}' }} className="w-48 h-48"></div>`;
-  const previewStyle = isBlob ? { backgroundColor: color, width: '150px', height: '150px', borderRadius: shapeVal === 'blob1' ? '30% 70% 70% 30% / 30% 30% 70% 70%' : '60% 40% 30% 70% / 60% 30% 70% 40%', transition: 'all 0.5s' } : { clipPath: shapeVal, backgroundColor: color, width: '150px', height: '150px', borderRadius: `${rounded}px`, transition: 'all 0.5s' };
+  const [shapeVal, setShapeVal] = useState("blob1"); 
+  const [color, setColor] = useState('#8b5cf6'); 
+  const [rounded, setRounded] = useState(0);
+  
+  // Custom Pen Tool State
+  const [mode, setMode] = useState('preset'); // 'preset' or 'custom'
+  const [customPoints, setCustomPoints] = useState([]);
+  
+  // Canvas State
+  const [scale, setScale] = useState(1);
+  const [pan, setPan] = useState({ x: 0, y: 0 });
+  const [activeTool, setActiveTool] = useState('pan'); // 'pan' | 'pen'
+  const [isDraggingPan, setIsDraggingPan] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+
+  const isBlob = shapeVal.includes('blob') && mode === 'preset';
+  let activeCss = "";
+  if (mode === 'preset') {
+    if (shapeVal === 'blob1') activeCss = "border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;";
+    else if (shapeVal === 'blob2') activeCss = "border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;";
+    else activeCss = `clip-path: ${shapeVal}; border-radius: ${rounded}px;`;
+  } else {
+    activeCss = `clip-path: polygon(${customPoints.length > 2 ? customPoints.join(', ') : '0 0, 0 0, 0 0'});`;
+  }
+
+  const css = `.shape {\n  ${activeCss}\n  background-color: ${color};\n  width: 200px;\n  height: 200px;\n}`;
+  const html = `<div style="${activeCss} background-color: ${color}; width: 200px; height: 200px;"></div>`;
+  const jsx = `<div style={{ ${mode === 'custom' ? `clipPath: 'polygon(${customPoints.join(', ')})'` : (isBlob ? (shapeVal==='blob1' ? "borderRadius: '30% 70% 70% 30% / 30% 30% 70% 70%'" : "borderRadius: '60% 40% 30% 70% / 60% 30% 70% 40%'") : `borderRadius: '${rounded}px', clipPath: '${shapeVal}'`)}, backgroundColor: '${color}' }} className="w-48 h-48"></div>`;
+
+  const handlePointerDown = (e) => {
+    if (activeTool === 'pan') {
+      setIsDraggingPan(true); setDragStart({ x: e.clientX - pan.x, y: e.clientY - pan.y }); e.currentTarget.setPointerCapture(e.pointerId);
+    }
+  };
+  const handlePointerMove = (e) => {
+    if (isDraggingPan && activeTool === 'pan') setPan({ x: e.clientX - dragStart.x, y: e.clientY - dragStart.y });
+  };
+  const handlePointerUp = (e) => {
+    if (isDraggingPan) { setIsDraggingPan(false); e.currentTarget.releasePointerCapture(e.pointerId); }
+  };
+
+  const handleShapeClick = (e) => {
+    if (activeTool === 'pen' && mode === 'custom') {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const xPercent = Math.round(((e.clientX - rect.left) / rect.width) * 100);
+      const yPercent = Math.round(((e.clientY - rect.top) / rect.height) * 100);
+      setCustomPoints([...customPoints, `${xPercent}% ${yPercent}%`]);
+    }
+  };
+
+  const preview = (
+    <div 
+      className="relative w-full h-[300px] flex items-center justify-center overflow-hidden border border-white/5 bg-[#050505] rounded-xl touch-none"
+      onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={handlePointerUp} onPointerCancel={handlePointerUp}
+    >
+      <div className="absolute top-3 left-3 bg-[#141414] border border-[#2a2a2a] p-1.5 rounded-lg flex flex-col gap-1 z-20 shadow-lg">
+        <button onClick={() => {setActiveTool('pen'); setMode('custom');}} className={`w-8 h-8 flex items-center justify-center shrink-0 rounded transition-colors ${activeTool === 'pen' ? 'bg-cyan-500/20 text-cyan-400' : 'text-slate-400 hover:bg-[#1f1f1f]'}`}><div className="w-4 h-4"><Icons.Pen /></div></button>
+        <button onClick={() => setActiveTool('pan')} className={`w-8 h-8 flex items-center justify-center shrink-0 rounded transition-colors ${activeTool === 'pan' ? 'bg-cyan-500/20 text-cyan-400' : 'text-slate-400 hover:bg-[#1f1f1f]'}`}><div className="w-4 h-4"><Icons.HandPan /></div></button>
+        <div className="w-full h-px bg-[#2a2a2a] my-1"></div>
+        <button onClick={() => setScale(s => Math.min(3, s + 0.2))} className="w-8 h-8 flex items-center justify-center shrink-0 rounded text-slate-400 hover:bg-[#1f1f1f] hover:text-white transition-colors"><div className="w-4 h-4"><Icons.ZoomIn /></div></button>
+        <button onClick={() => setScale(s => Math.max(0.5, s - 0.2))} className="w-8 h-8 flex items-center justify-center shrink-0 rounded text-slate-400 hover:bg-[#1f1f1f] hover:text-white transition-colors"><div className="w-4 h-4"><Icons.ZoomOut /></div></button>
+      </div>
+
+      <div style={{ transform: `translate(${pan.x}px, ${pan.y}px) scale(${scale})`, transition: isDraggingPan ? 'none' : 'transform 0.1s ease-out' }} className="absolute">
+        <div 
+          onClick={handleShapeClick}
+          className={`relative flex items-center justify-center ${activeTool === 'pen' ? 'cursor-crosshair' : ''}`}
+          style={{ width: '200px', height: '200px', backgroundColor: mode === 'custom' ? 'rgba(255,255,255,0.05)' : 'transparent', border: mode === 'custom' ? '1px dashed #333' : 'none' }}
+        >
+          {/* Kotak Hitbox Aktual */}
+          <div 
+            style={{ 
+               backgroundColor: color, width: '100%', height: '100%', 
+               borderRadius: mode === 'preset' && isBlob ? (shapeVal === 'blob1' ? '30% 70% 70% 30% / 30% 30% 70% 70%' : '60% 40% 30% 70% / 60% 30% 70% 40%') : (mode === 'preset' ? `${rounded}px` : '0px'),
+               clipPath: mode === 'preset' && !isBlob ? shapeVal : (mode === 'custom' && customPoints.length > 2 ? `polygon(${customPoints.join(', ')})` : 'none'),
+               transition: mode === 'custom' ? 'none' : 'all 0.5s'
+            }}
+          />
+          {mode === 'custom' && customPoints.length < 3 && <span className="absolute text-[9px] text-slate-500 font-bold tracking-widest uppercase animate-pulse pointer-events-none text-center">Klik minimal 3 kali<br/>untuk membuat Polygon</span>}
+        </div>
+      </div>
+    </div>
+  );
   
   const controls = (
     <>
-      <PluginTip text="PANDUAN: Pilih 'Organic Blobs' untuk bentuk melengkung alami yang sering dipakai desainer modern. Polygons cocok untuk bentuk bersudut (bisa dihaluskan dengan Border Radius)." />
-      <FigmaCustomDropdown label="Select Shape Form" groups={SHAPES_DATA} value={shapeVal} onChange={setShapeVal} />
+      <PluginTip text="PANDUAN: Klik ikon PEN (Pena) di layar kanvas, lalu klik di mana saja pada kotak untuk membuat bentuk polygon buatanmu sendiri! Gunakan Hand Tool untuk menggeser." />
+      
+      <div className="flex bg-[#0a0a0a] p-1 rounded-lg border border-[#2a2a2a] w-full mb-4">
+        <button onClick={() => {setMode('preset'); setActiveTool('pan');}} className={`flex-1 py-2 rounded-md text-[9px] font-bold uppercase transition-all ${mode === 'preset' ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/30' : 'text-slate-500 hover:text-slate-300'}`}>Preset Library</button>
+        <button onClick={() => {setMode('custom'); setActiveTool('pen');}} className={`flex-1 py-2 rounded-md text-[9px] font-bold uppercase transition-all ${mode === 'custom' ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/30' : 'text-slate-500 hover:text-slate-300'}`}>Custom Pen Tool</button>
+      </div>
+
       <FigmaColorPicker label="Shape Color" hexValue={color} onChange={setColor} />
-      {!isBlob && <FigmaSlider label="Base Rounded" min={0} max={100} value={rounded} onChange={setRounded} unit="px" />}
+
+      {mode === 'preset' && (
+        <>
+          <FigmaCustomDropdown label="Select Shape Form" groups={SHAPES_DATA} value={shapeVal} onChange={setShapeVal} />
+          {!isBlob && <FigmaSlider label="Base Rounded" min={0} max={100} value={rounded} onChange={setRounded} unit="px" />}
+        </>
+      )}
+
+      {mode === 'custom' && (
+         <button onClick={() => setCustomPoints([])} className="w-full mt-2 py-3 bg-[#1a1a1a] hover:bg-red-500/20 border border-[#333] hover:border-red-500/50 text-slate-300 hover:text-white rounded-lg text-[10px] font-bold uppercase tracking-widest transition-colors shadow-sm">
+           Clear Custom Shape
+         </button>
+      )}
     </>
   );
-  return <WorkspaceLayout name="CSS Shapes" controls={controls} preview={<div style={previewStyle}></div>} cssOutput={css} htmlOutput={html} jsxOutput={jsx} />;
+  return <WorkspaceLayout name="Interactive Shapes" controls={controls} preview={preview} cssOutput={css} htmlOutput={html} jsxOutput={jsx} />;
 };
 
 export const PluginGlassmorphism = () => {
@@ -488,18 +588,23 @@ export const PluginTransitions = () => {
   return <WorkspaceLayout name="Hover Transitions" controls={controls} preview={preview} cssOutput={css} htmlOutput={html} jsxOutput={jsx} bgType="dark" />;
 };
 
+// =========================================================================
+// 3. PIXEL DRAWING (FULL FIX: BG, ZOOM, DOWNLOAD HD)
+// =========================================================================
 export const PluginPixelDrawing = () => {
   const [gridSize, setGridSize] = useState(16); 
-  const [color, setColor] = useState('#0ea5e9');
   
+  // FIX BG: State untuk warna Canvas Default Putih
+  const [canvasBgColor, setCanvasBgColor] = useState('#ffffff');
+  const [isTransparent, setIsTransparent] = useState(false); // Default Tidak Transparan (Solid White)
+  
+  const [color, setColor] = useState('#0ea5e9');
   const [palette, setPalette] = useState([...COLOR_PRESETS]);
-  const [isTransparent, setIsTransparent] = useState(true);
-  const [outputSize, setOutputSize] = useState(500);
+  const [outputSize, setOutputSize] = useState(1080); // Default HD Output
   
   const [history, setHistory] = useState([Array(256).fill('transparent')]);
   const [step, setStep] = useState(0);
 
-  // Zoom & Pan state
   const [scale, setScale] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const [activeTool, setActiveTool] = useState('draw');
@@ -507,10 +612,12 @@ export const PluginPixelDrawing = () => {
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
-    // Keamanan: Maksimal grid di 64 agar tidak crash
-    const safeGrid = Math.min(gridSize, 64);
+    // FIX GRID: Dibatasi maksimal 64 untuk menghindari Browser CRASH!
+    const safeGrid = Math.min(Math.max(gridSize, 8), 64);
     const newEmpty = Array(safeGrid * safeGrid).fill('transparent');
     setHistory([newEmpty]); setStep(0); setScale(1); setPan({x:0, y:0});
+    // Agar slider download mengikuti
+    setOutputSize(Math.max(outputSize, safeGrid));
   }, [gridSize]);
 
   const currentPixels = history[step] || Array(gridSize * gridSize).fill('transparent');
@@ -561,7 +668,10 @@ export const PluginPixelDrawing = () => {
     canvas.width = outputSize; canvas.height = outputSize;
     const pSize = outputSize / gridSize;
 
-    if (!isTransparent) { ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, outputSize, outputSize); }
+    if (!isTransparent) { 
+       ctx.fillStyle = canvasBgColor; 
+       ctx.fillRect(0, 0, outputSize, outputSize); 
+    }
     currentPixels.forEach((p, i) => {
       if (p !== 'transparent') {
         ctx.fillStyle = p;
@@ -589,33 +699,23 @@ export const PluginPixelDrawing = () => {
     return shadow.length > 0 ? shadow.join(',\n    ') : 'none';
   };
 
-  const css = `/* Pure CSS Pixel Art (${gridSize}x${gridSize}) */\n.pixel-art {\n  width: ${pixelSizePx}px;\n  height: ${pixelSizePx}px;\n  background: ${isTransparent ? 'transparent' : '#ffffff'};\n  box-shadow: \n    ${generateBoxShadow()};\n}`;
-  const html = `<div style="width: ${pixelSizePx}px; height: ${pixelSizePx}px; background: ${isTransparent ? 'transparent' : '#ffffff'}; box-shadow: ${generateBoxShadow().replace(/\n\s+/g, ' ')};"></div>`;
-  const jsx = `<div style={{ width: '${pixelSizePx}px', height: '${pixelSizePx}px', background: '${isTransparent ? 'transparent' : '#ffffff'}', boxShadow: '${generateBoxShadow().replace(/\n\s+/g, ' ')}' }} />`;
+  const actualBg = isTransparent ? 'transparent' : canvasBgColor;
+  const css = `/* Pure CSS Pixel Art (${gridSize}x${gridSize}) */\n.pixel-art {\n  width: ${pixelSizePx}px;\n  height: ${pixelSizePx}px;\n  background: ${actualBg};\n  box-shadow: \n    ${generateBoxShadow()};\n}`;
+  const html = `<div style="width: ${pixelSizePx}px; height: ${pixelSizePx}px; background: ${actualBg}; box-shadow: ${generateBoxShadow().replace(/\n\s+/g, ' ')};"></div>`;
+  const jsx = `<div style={{ width: '${pixelSizePx}px', height: '${pixelSizePx}px', background: '${actualBg}', boxShadow: '${generateBoxShadow().replace(/\n\s+/g, ' ')}' }} />`;
 
   const preview = (
     <div 
       className="relative w-full h-[300px] flex items-center justify-center overflow-hidden border border-white/5 bg-[#050505] rounded-xl touch-none"
       onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={handlePointerUp} onPointerCancel={handlePointerUp}
     >
-      {/* FIX Ikon Besar: Memberikan batasan ukuran pasti (w-8 h-8) pada pembungkus tombol agar SVG di dalamnya tidak melar */}
       <div className="absolute top-3 left-3 bg-[#141414] border border-[#2a2a2a] p-1.5 rounded-lg flex flex-col gap-1 z-20 shadow-lg">
-        <button onClick={() => setActiveTool('draw')} className={`w-8 h-8 flex items-center justify-center shrink-0 rounded transition-colors ${activeTool === 'draw' ? 'bg-cyan-500/20 text-cyan-400' : 'text-slate-400 hover:bg-[#1f1f1f]'}`}>
-           <div className="w-4 h-4"><Icons.Brush /></div>
-        </button>
-        <button onClick={() => setActiveTool('erase')} className={`w-8 h-8 flex items-center justify-center shrink-0 rounded transition-colors ${activeTool === 'erase' ? 'bg-cyan-500/20 text-cyan-400' : 'text-slate-400 hover:bg-[#1f1f1f]'}`}>
-           <div className="w-4 h-4"><Icons.Eraser /></div>
-        </button>
-        <button onClick={() => setActiveTool('pan')} className={`w-8 h-8 flex items-center justify-center shrink-0 rounded transition-colors ${activeTool === 'pan' ? 'bg-cyan-500/20 text-cyan-400' : 'text-slate-400 hover:bg-[#1f1f1f]'}`}>
-           <div className="w-4 h-4"><Icons.HandPan /></div>
-        </button>
+        <button onClick={() => setActiveTool('draw')} className={`w-8 h-8 flex items-center justify-center shrink-0 rounded transition-colors ${activeTool === 'draw' ? 'bg-cyan-500/20 text-cyan-400' : 'text-slate-400 hover:bg-[#1f1f1f]'}`}><div className="w-4 h-4"><Icons.Brush /></div></button>
+        <button onClick={() => setActiveTool('erase')} className={`w-8 h-8 flex items-center justify-center shrink-0 rounded transition-colors ${activeTool === 'erase' ? 'bg-cyan-500/20 text-cyan-400' : 'text-slate-400 hover:bg-[#1f1f1f]'}`}><div className="w-4 h-4"><Icons.Eraser /></div></button>
+        <button onClick={() => setActiveTool('pan')} className={`w-8 h-8 flex items-center justify-center shrink-0 rounded transition-colors ${activeTool === 'pan' ? 'bg-cyan-500/20 text-cyan-400' : 'text-slate-400 hover:bg-[#1f1f1f]'}`}><div className="w-4 h-4"><Icons.HandPan /></div></button>
         <div className="w-full h-px bg-[#2a2a2a] my-1"></div>
-        <button onClick={() => setScale(s => Math.min(3, s + 0.2))} className="w-8 h-8 flex items-center justify-center shrink-0 rounded text-slate-400 hover:bg-[#1f1f1f] hover:text-white transition-colors">
-           <div className="w-4 h-4"><Icons.ZoomIn /></div>
-        </button>
-        <button onClick={() => setScale(s => Math.max(0.5, s - 0.2))} className="w-8 h-8 flex items-center justify-center shrink-0 rounded text-slate-400 hover:bg-[#1f1f1f] hover:text-white transition-colors">
-           <div className="w-4 h-4"><Icons.ZoomOut /></div>
-        </button>
+        <button onClick={() => setScale(s => Math.min(3, s + 0.2))} className="w-8 h-8 flex items-center justify-center shrink-0 rounded text-slate-400 hover:bg-[#1f1f1f] hover:text-white transition-colors"><div className="w-4 h-4"><Icons.ZoomIn /></div></button>
+        <button onClick={() => setScale(s => Math.max(0.5, s - 0.2))} className="w-8 h-8 flex items-center justify-center shrink-0 rounded text-slate-400 hover:bg-[#1f1f1f] hover:text-white transition-colors"><div className="w-4 h-4"><Icons.ZoomOut /></div></button>
       </div>
 
       <div style={{ transform: `translate(${pan.x}px, ${pan.y}px) scale(${scale})`, transition: isDraggingPan ? 'none' : 'transform 0.1s ease-out' }} className="absolute">
@@ -624,7 +724,7 @@ export const PluginPixelDrawing = () => {
            style={{ 
              gridTemplateColumns: `repeat(${gridSize}, ${pixelSizePx}px)`, 
              gridTemplateRows: `repeat(${gridSize}, ${pixelSizePx}px)`,
-             backgroundColor: isTransparent ? 'transparent' : '#ffffff',
+             backgroundColor: isTransparent ? 'transparent' : canvasBgColor,
              backgroundImage: isTransparent ? 'linear-gradient(45deg, #111 25%, transparent 25%), linear-gradient(-45deg, #111 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #111 75%), linear-gradient(-45deg, transparent 75%, #111 75%)' : 'none',
              backgroundSize: '10px 10px', backgroundPosition: '0 0, 0 5px, 5px -5px, -5px 0px'
            }}
@@ -634,7 +734,7 @@ export const PluginPixelDrawing = () => {
               key={i} 
               onPointerDown={(e) => { e.currentTarget.releasePointerCapture(e.pointerId); paintPixel(i); }}
               onPointerEnter={(e) => { if (e.buttons === 1 && activeTool !== 'pan') paintPixel(i); }}
-              className={`w-full h-full border-[0.5px] ${activeTool === 'pan' ? 'pointer-events-none' : 'cursor-crosshair'} ${isTransparent ? 'border-white/10' : 'border-black/5'} hover:bg-white/30`}
+              className={`w-full h-full border-[0.5px] ${activeTool === 'pan' ? 'pointer-events-none' : 'cursor-crosshair'} ${isTransparent ? 'border-white/10' : (canvasBgColor==='#ffffff'?'border-black/10':'border-white/20')} hover:bg-black/30`}
               style={{ backgroundColor: bg !== 'transparent' ? bg : undefined }}
             />
           ))}
@@ -650,32 +750,29 @@ export const PluginPixelDrawing = () => {
 
   const controls = (
     <>
-      <PluginTip text="PANDUAN CANVAS: Gunakan Ikon Tangan (Pan) untuk menggeser, dan alat Zoom untuk detail area kecil. Kamu bisa menambah warna custom, lalu klik Download untuk mengekspor gambar hingga HD 1000px!" />
+      <PluginTip text="PANDUAN CANVAS: Gunakan Ikon Tangan (Pan) untuk menggeser, dan alat Zoom untuk detail area kecil. Kamu bisa menambah warna custom, lalu klik Download untuk mengekspor gambar hingga HD 1920px!" />
       
-      {/* INPUT CUSTOM GRID MAXIMUM 64x64 */}
       <div className="mb-4 mt-2">
-         <label className="text-[10px] font-medium text-slate-400 block mb-2">Custom Grid Size (Max 64)</label>
+         <label className="text-[10px] font-medium text-slate-400 block mb-2">Grid Resolusi (Min: 8, Max: 64)</label>
          <input
            type="number"
-           min={4}
-           max={64}
+           min={8} max={64}
            value={gridSize}
-           onChange={(e) => {
-             const val = Number(e.target.value);
-             if (val >= 4 && val <= 64) setGridSize(val);
-           }}
+           onChange={(e) => { const val = Number(e.target.value); if (val >= 8 && val <= 64) setGridSize(val); }}
            className="w-full bg-[#0a0a0a] border border-[#2a2a2a] rounded-lg px-3 py-2.5 text-[11px] text-white outline-none focus:border-cyan-500 transition-all"
          />
-         <p className="text-[9px] text-slate-500 mt-2 italic leading-relaxed">*Batas maksimal grid disarankan di angka 64x64. Karena sistem ini merender UI murni berbasis kode (CSS Box Shadow), membuat jutaan pixel (misal 1000x1000) akan membuat device Lag & Crash!</p>
+         <p className="text-[9px] text-slate-500 mt-2 italic leading-relaxed">*Karena sistem ini merender UI murni berbasis CSS Box Shadow tanpa gambar (img src), merender ukuran jutaan pixel akan membuat HP/Laptop hang dan crash! Batas maksimal adalah 64x64 pixel.</p>
       </div>
-      
+
       <div className="flex justify-between items-center mb-4 mt-6 border-t border-[#1f1f1f] pt-4">
-        <label className="text-[10px] font-medium text-slate-400 block">Custom Palette</label>
+        <label className="text-[10px] font-medium text-slate-400 block">Warna Kanvas & Kuas</label>
         <button onClick={clearCanvas} className="text-[8px] text-red-400 hover:text-white bg-red-500/10 border border-red-500/30 px-2 py-1 rounded transition-colors uppercase font-bold tracking-widest">Clear Canvas</button>
       </div>
       
+      <FigmaColorPicker label="Warna Background Kanvas" hexValue={canvasBgColor} onChange={setCanvasBgColor} />
+      
       <div className="flex items-center gap-3 mb-3">
-        <div className="flex-1"><FigmaColorPicker label="Pilih Warna" hexValue={color} onChange={setColor} /></div>
+        <div className="flex-1"><FigmaColorPicker label="Warna Kuas (Brush)" hexValue={color} onChange={setColor} /></div>
         <button onClick={addToPalette} className="mt-2 w-10 h-10 rounded-lg bg-[#141414] border border-[#2a2a2a] text-cyan-400 hover:bg-cyan-500/20 hover:border-cyan-500 flex items-center justify-center transition-all"><div className="w-4 h-4"><Icons.Plus /></div></button>
       </div>
       
@@ -695,9 +792,10 @@ export const PluginPixelDrawing = () => {
                </button>
             </div>
          </div>
-         <FigmaSlider label="Output Size" min={100} max={1000} step={50} value={outputSize} onChange={setOutputSize} unit="px" />
+         {/* FIX SLIDER: Min value mengikuti Grid Size, Max dinaikkan jadi 1920 HD */}
+         <FigmaSlider label="Output Size" min={gridSize} max={1920} step={gridSize} value={outputSize} onChange={setOutputSize} unit="px" />
          <button onClick={downloadImage} className="mt-4 w-full flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all shadow-lg hover:shadow-cyan-500/25">
-           <div className="w-4 h-4"><Icons.Download /></div> Download Image PNG
+           <div className="w-4 h-4"><Icons.Download /></div> Download HD PNG
          </button>
       </div>
     </>
