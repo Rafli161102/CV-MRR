@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Icons } from './icons';
 import { PluginTip, FigmaSlider, FigmaColorPicker, FigmaSelect, FigmaTextInput, FigmaCustomDropdown, WorkspaceLayout, hexToRgb, adjustBrightness } from './ui';
 
@@ -10,9 +10,10 @@ export const PluginBackgroundGradient = () => {
   const html = `<div class="box-gradient"\n     style="background: linear-gradient(${angle}deg, ${color1}, ${color2}); border-radius: 16px; width: 100%; max-width: 320px; aspect-ratio: 2/1;">\n</div>`;
   const jsx = `<div \n  className="w-full max-w-xs aspect-[2/1] rounded-2xl shadow-xl"\n  style={{ background: 'linear-gradient(${angle}deg, ${color1}, ${color2})' }}\n></div>`;
   const preview = <div style={{ background: `linear-gradient(${angle}deg, ${color1}, ${color2})`, borderRadius: '16px', boxShadow: '0 20px 40px rgba(0,0,0,0.3)' }} className="w-full max-w-[320px] aspect-[2/1] transition-all"></div>;
+  
   const controls = (
     <>
-      <PluginTip text="Pilih warna awal dan akhir, lalu putar angle untuk mendapatkan arah gradasi yang kamu inginkan." />
+      <PluginTip text="Gunakan kombinasi warna yang memiliki kontras alami. Atur sudut (angle) untuk mengubah arah transisi warna sehingga gradasi terlihat lebih hidup dan modern." />
       <FigmaColorPicker label="Start Color" hexValue={color1} onChange={setColor1} />
       <FigmaColorPicker label="End Color" hexValue={color2} onChange={setColor2} />
       <FigmaSlider label="Angle" min={0} max={360} value={angle} onChange={setAngle} unit="°" />
@@ -27,6 +28,7 @@ export const PluginTextGradient = () => {
   const css = `.text-gradient {\n  background-image: linear-gradient(${angle}deg, ${color1}, ${color2});\n  -webkit-background-clip: text;\n  -webkit-text-fill-color: transparent;\n}`;
   const html = `<h1 style="background-image: linear-gradient(${angle}deg, ${color1}, ${color2}); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">${text}</h1>`;
   const jsx = `<h1 className="text-5xl font-black bg-clip-text text-transparent" style={{ backgroundImage: 'linear-gradient(${angle}deg, ${color1}, ${color2})' }}>${text}</h1>`;
+  
   const preview = (
     <div className="w-full h-full flex items-center justify-center text-center">
       <span style={{ backgroundImage: `linear-gradient(${angle}deg, ${color1}, ${color2})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontSize: 'clamp(2rem, 8vw, 5rem)', fontWeight: '900', textTransform: 'uppercase' }}>{text || 'GRADIENT'}</span>
@@ -34,6 +36,7 @@ export const PluginTextGradient = () => {
   );
   const controls = (
     <>
+      <PluginTip text="Pilih jenis font yang tebal (Bold/Black) dan gunakan huruf kapital agar efek gradasi warna bisa menyelimuti teks secara utuh." />
       <FigmaTextInput label="Custom Text" value={text} onChange={setText} placeholder="Misal: MRR STUDIO" />
       <FigmaColorPicker label="Start Color" hexValue={color1} onChange={setColor1} />
       <FigmaColorPicker label="End Color" hexValue={color2} onChange={setColor2} />
@@ -48,103 +51,66 @@ const FONTS_DATA = {
   "Serif": [{ name: "Playfair Display", val: "Playfair Display" }, { name: "Merriweather", val: "Merriweather" }, { name: "Lora", val: "Lora" }]
 };
 
-// =========================================================================
-// FITUR BARU: MULTI TYPO DENGAN DRAG & DROP INTERAKTIF & LOAD FONT SMOOTH
-// =========================================================================
 export const PluginTypography = () => {
   const [tab, setTab] = useState('Heading');
   
-  // State sekarang menyimpan nilai posisi X dan Y untuk Drag & Drop
-  const defaultH1 = { text: 'Hero Title', font: 'Montserrat', size: 54, color: '#ffffff', align: 'center', trans: 'none', space: 0, rot: 0, x: 0, y: -70 };
-  const defaultH2 = { text: 'Beautiful Typography', font: 'Inter', size: 22, color: '#0ea5e9', align: 'center', trans: 'none', space: 0, rot: 0, x: 0, y: 0 };
-  const defaultP = { text: 'Teks ini bisa kamu geser (Drag & Drop)!\nKlik dan tahan untuk mengatur posisinya sesuka hati.', font: 'Inter', size: 14, color: '#94a3b8', align: 'center', trans: 'none', space: 0, rot: 0, x: 0, y: 70 };
+  const defaultH1 = { text: 'Hero Title', font: 'Montserrat', size: 48, color: '#ffffff', align: 'center', trans: 'none', space: 0, rot: 0, x: 0, y: -70 };
+  const defaultH2 = { text: 'Beautiful Typography', font: 'Inter', size: 20, color: '#0ea5e9', align: 'center', trans: 'none', space: 0, rot: 0, x: 0, y: 0 };
+  const defaultP = { text: 'Teks ini bisa digeser (Drag & Drop) di layar preview!', font: 'Inter', size: 14, color: '#94a3b8', align: 'center', trans: 'none', space: 0, rot: 0, x: 0, y: 70 };
 
   const [h1, setH1] = useState(defaultH1);
   const [h2, setH2] = useState(defaultH2);
   const [p, setP] = useState(defaultP);
 
-  // FIX LAG FONT: Load semua font sekaligus di awal, tidak satu-satu saat digeser
   useEffect(() => {
     const allFonts = [];
     Object.values(FONTS_DATA).forEach(group => group.forEach(f => allFonts.push(f.val.replace(/\s+/g, '+'))));
-    const uniqueFonts = [...new Set(allFonts)];
-    const fontUrl = `https://fonts.googleapis.com/css2?family=${uniqueFonts.join('&family=')}:wght@400;600;800&display=swap`;
-    
+    const fontUrl = `https://fonts.googleapis.com/css2?family=${[...new Set(allFonts)].join('&family=')}:wght@400;600;800&display=swap`;
     if (!document.getElementById('mrr-fonts-batch')) {
-      const link = document.createElement('link');
-      link.id = 'mrr-fonts-batch'; link.href = fontUrl; link.rel = 'stylesheet';
-      document.head.appendChild(link);
+      const link = document.createElement('link'); link.id = 'mrr-fonts-batch'; link.href = fontUrl; link.rel = 'stylesheet'; document.head.appendChild(link);
     }
   }, []);
 
-  // LOGIKA DRAG AND DROP
-  const [dragging, setDragging] = useState(null); // 'h1', 'h2', 'p'
+  const [dragging, setDragging] = useState(null);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [elemStart, setElemStart] = useState({ x: 0, y: 0 });
 
-  const handlePointerDown = (e, elemType, state) => {
-    setDragging(elemType);
-    setTab(elemType === 'h1' ? 'Heading' : elemType === 'h2' ? 'Subheading' : 'Paragraph');
-    setDragStart({ x: e.clientX, y: e.clientY });
-    setElemStart({ x: state.x, y: state.y });
-    e.currentTarget.setPointerCapture(e.pointerId);
+  const handlePointerDown = (e, type, state) => {
+    setDragging(type); setTab(type === 'h1' ? 'Heading' : type === 'h2' ? 'Subheading' : 'Paragraph');
+    setDragStart({ x: e.clientX, y: e.clientY }); setElemStart({ x: state.x, y: state.y }); e.currentTarget.setPointerCapture(e.pointerId);
   };
-
   const handlePointerMove = (e) => {
     if (!dragging) return;
-    const dx = e.clientX - dragStart.x;
-    const dy = e.clientY - dragStart.y;
+    const dx = e.clientX - dragStart.x; const dy = e.clientY - dragStart.y;
     if (dragging === 'h1') setH1(prev => ({ ...prev, x: elemStart.x + dx, y: elemStart.y + dy }));
     if (dragging === 'h2') setH2(prev => ({ ...prev, x: elemStart.x + dx, y: elemStart.y + dy }));
     if (dragging === 'p') setP(prev => ({ ...prev, x: elemStart.x + dx, y: elemStart.y + dy }));
   };
+  const handlePointerUp = (e) => { if (dragging) { e.currentTarget.releasePointerCapture(e.pointerId); setDragging(null); } };
 
-  const handlePointerUp = (e) => {
-    if (dragging) { e.currentTarget.releasePointerCapture(e.pointerId); setDragging(null); }
-  };
-
-  const handleReset = () => {
-    if (tab === 'Heading') setH1(defaultH1);
-    if (tab === 'Subheading') setH2(defaultH2);
-    if (tab === 'Paragraph') setP(defaultP);
-  };
-
-  // CODE OUTPUT GENERATOR (Dengan kordinat X, Y)
-  const getCssClass = (state, tag) => `.${tag} {\n  position: absolute;\n  left: 50%; top: 50%;\n  width: 100%; max-width: 400px;\n  transform: translate(calc(-50% + ${state.x}px), calc(-50% + ${state.y}px)) rotate(${state.rot}deg);\n  font-family: '${state.font}', sans-serif;\n  font-size: ${state.size}px;\n  color: ${state.color};\n  text-align: ${state.align};\n  text-transform: ${state.trans};\n  letter-spacing: ${state.space}px;\n}`;
-  const css = `.canvas-container {\n  position: relative;\n  width: 100%;\n  height: 300px;\n  overflow: hidden;\n}\n\n${getCssClass(h1, 'heading')}\n\n${getCssClass(h2, 'subheading')}\n\n${getCssClass(p, 'paragraph')}`;
+  const getCssClass = (state, tag) => `.${tag} {\n  position: absolute;\n  left: 50%; top: 50%;\n  width: 100%; max-width: 400px;\n  transform: translate(calc(-50% + ${state.x}px), calc(-50% + ${state.y}px)) rotate(${state.rot}deg);\n  font-family: '${state.font}', sans-serif;\n  font-size: ${state.size}px;\n  color: ${state.color};\n  text-align: ${state.align};\n}`;
+  const css = `.canvas-container {\n  position: relative; width: 100%; height: 300px; overflow: hidden;\n}\n\n${getCssClass(h1, 'heading')}\n\n${getCssClass(h2, 'subheading')}\n\n${getCssClass(p, 'paragraph')}`;
   const html = `<div class="canvas-container">\n  <h1 class="heading">${h1.text}</h1>\n  <h2 class="subheading">${h2.text}</h2>\n  <p class="paragraph">${p.text}</p>\n</div>`;
-  const jsx = `<div className="relative w-full h-[300px] overflow-hidden">\n  <h1 style={{ position: 'absolute', left: '50%', top: '50%', width: '100%', maxWidth: '400px', transform: 'translate(calc(-50% + ${h1.x}px), calc(-50% + ${h1.y}px)) rotate(${h1.rot}deg)', fontFamily: '"${h1.font}", sans-serif', fontSize: '${h1.size}px', color: '${h1.color}', textAlign: '${h1.align}', textTransform: '${h1.trans}', letterSpacing: '${h1.space}px', fontWeight: 800, margin: 0 }}>\n    ${h1.text}\n  </h1>\n  {/* Tambahkan h2 dan p dengan cara yang sama */}\n</div>`;
+  const jsx = `<div className="relative w-full h-[300px] overflow-hidden">\n  <h1 style={{ position: 'absolute', left: '50%', top: '50%', width: '100%', maxWidth: '400px', transform: 'translate(calc(-50% + ${h1.x}px), calc(-50% + ${h1.y}px)) rotate(${h1.rot}deg)', fontFamily: '"${h1.font}", sans-serif', fontSize: '${h1.size}px', color: '${h1.color}', textAlign: '${h1.align}', letterSpacing: '${h1.space}px', margin: 0 }}>\n    ${h1.text}\n  </h1>\n  {/* Tambahkan komponen lain serupa */}\n</div>`;
 
-  // RENDERING PREVIEW CANVAS
   const renderInteractiveText = (state, type, isPara = false) => (
-    <div
-      onPointerDown={(e) => handlePointerDown(e, type, state)}
-      onPointerMove={handlePointerMove}
-      onPointerUp={handlePointerUp}
-      onPointerCancel={handlePointerUp}
+    <div onPointerDown={(e) => handlePointerDown(e, type, state)} onPointerMove={handlePointerMove} onPointerUp={handlePointerUp} onPointerCancel={handlePointerUp}
       style={{
         position: 'absolute', left: '50%', top: '50%', width: '100%', maxWidth: '440px',
         transform: `translate(calc(-50% + ${state.x}px), calc(-50% + ${state.y}px)) rotate(${state.rot}deg)`,
         fontFamily: `"${state.font}", sans-serif`, fontSize: `${state.size}px`, color: state.color,
         textAlign: state.align, textTransform: state.trans, letterSpacing: `${state.space}px`,
-        fontWeight: isPara ? 400 : (state.size > 30 ? 800 : 600),
-        cursor: dragging === type ? 'grabbing' : 'grab',
-        touchAction: 'none', userSelect: 'none', margin: 0,
-        zIndex: dragging === type ? 50 : 10,
-        textShadow: dragging === type ? '0 10px 30px rgba(0,0,0,0.5)' : 'none',
-        transition: dragging === type ? 'none' : 'transform 0.1s ease-out'
+        fontWeight: isPara ? 400 : (state.size > 30 ? 800 : 600), cursor: dragging === type ? 'grabbing' : 'grab',
+        touchAction: 'none', userSelect: 'none', margin: 0, zIndex: dragging === type ? 50 : 10,
+        textShadow: dragging === type ? '0 10px 30px rgba(0,0,0,0.5)' : 'none', transition: dragging === type ? 'none' : 'transform 0.1s ease-out'
       }}
-    >
-      {state.text || 'Text'}
-    </div>
+    >{state.text || 'Text'}</div>
   );
 
   const preview = (
-    <div className="relative w-full h-[300px] flex items-center justify-center overflow-hidden border border-white/5 bg-[#0a0a0a] rounded-xl group">
+    <div className="relative w-full h-[300px] flex items-center justify-center overflow-hidden border border-white/5 bg-[#0a0a0a] rounded-xl">
       <div className="absolute top-2 left-2 px-2 py-1 bg-cyan-500/10 text-cyan-400 text-[8px] font-bold rounded uppercase tracking-widest pointer-events-none z-0">Interactive Canvas</div>
-      {renderInteractiveText(h1, 'h1')}
-      {renderInteractiveText(h2, 'h2')}
-      {renderInteractiveText(p, 'p', true)}
+      {renderInteractiveText(h1, 'h1')}{renderInteractiveText(h2, 'h2')}{renderInteractiveText(p, 'p', true)}
     </div>
   );
 
@@ -168,27 +134,22 @@ export const PluginTypography = () => {
 
   const controls = (
     <>
-      <PluginTip text="Pembaruan Baru: Sentuh & Geser (Drag & Drop) teks di layar atas untuk merubah posisi! Bug Alignment juga sudah diselesaikan." />
+      <PluginTip text="Sentuh lalu geser (Drag & Drop) teks di layar atas untuk merubah tata letaknya secara bebas! Semua koordinat gesekanmu otomatis dicatat di CSS Output." />
       <div className="flex bg-[#0a0a0a] p-1 rounded-lg border border-[#2a2a2a] w-full mb-4">
         {['Heading', 'Subheading', 'Paragraph'].map(t => (
           <button key={t} onClick={() => setTab(t)} className={`flex-1 py-2 rounded-md text-[9px] font-bold uppercase transition-all ${tab === t ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/30' : 'text-slate-500 hover:text-slate-300'}`}>{t}</button>
         ))}
       </div>
-      
-      {/* UI Baru: Tombol Reset Posisi */}
       <div className="flex items-center justify-between pb-2 border-b border-[#1f1f1f]">
          <span className="text-[10px] font-bold text-cyan-400 uppercase tracking-widest">{tab} Setup</span>
-         <button onClick={handleReset} className="text-[8px] text-slate-300 hover:text-white bg-[#1a1a1a] hover:bg-red-500/20 hover:border-red-500/50 border border-[#333] px-2 py-1 rounded transition-colors uppercase tracking-wider">
-           Reset State
-         </button>
+         <button onClick={() => { if(tab==='Heading') setH1(defaultH1); if(tab==='Subheading') setH2(defaultH2); if(tab==='Paragraph') setP(defaultP); }} className="text-[8px] text-slate-300 hover:text-white bg-[#1a1a1a] hover:bg-red-500/20 border border-[#333] hover:border-red-500/50 px-2 py-1 rounded transition-colors uppercase tracking-wider">Reset Posisi</button>
       </div>
-
       {tab === 'Heading' && <TextControls state={h1} setState={setH1} />}
       {tab === 'Subheading' && <TextControls state={h2} setState={setH2} />}
       {tab === 'Paragraph' && <TextControls state={p} setState={setP} isPara={true} />}
     </>
   );
-  return <WorkspaceLayout name="Interactive Typography" controls={controls} preview={preview} cssOutput={css} htmlOutput={html} jsxOutput={jsx} bgType="dark" />;
+  return <WorkspaceLayout name="Interactive Typo" controls={controls} preview={preview} cssOutput={css} htmlOutput={html} jsxOutput={jsx} bgType="dark" />;
 };
 
 export const PluginLayout = () => {
@@ -197,7 +158,13 @@ export const PluginLayout = () => {
   const html = `<div style="padding: ${padding}px; border-radius: ${radius}px; background-color: #1a1a1a;">Box Content</div>`;
   const jsx = `<div style={{ padding: '${padding}px', borderRadius: '${radius}px' }} className="bg-neutral-900 text-white">Box</div>`;
   const preview = <div style={{ padding: `${padding}px`, borderRadius: `${radius}px`, backgroundColor: '#1a1a1a', color: '#fff', textAlign: 'center', border: '1px solid #333', transition: 'all 0.3s' }}>Box Container</div>;
-  const controls = (<><FigmaSlider label="Padding" min={0} max={100} value={padding} onChange={setPadding} unit="px" /><FigmaSlider label="Border Radius" min={0} max={100} value={radius} onChange={setRadius} unit="px" /></>);
+  const controls = (
+    <>
+      <PluginTip text="Gunakan Padding untuk mengatur ruang bernapas di dalam elemen, dan Border Radius untuk melembutkan sudut-sudut kotak agar tidak kaku." />
+      <FigmaSlider label="Padding" min={0} max={100} value={padding} onChange={setPadding} unit="px" />
+      <FigmaSlider label="Border Radius" min={0} max={100} value={radius} onChange={setRadius} unit="px" />
+    </>
+  );
   return <WorkspaceLayout name="Box Layout" controls={controls} preview={preview} cssOutput={css} htmlOutput={html} jsxOutput={jsx} />;
 };
 
@@ -207,7 +174,15 @@ export const PluginBorder = () => {
   const html = `<div style="border: ${width}px ${style} ${color}; border-radius: ${radius}px; width: 180px; height: 120px;"></div>`;
   const jsx = `<div style={{ border: '${width}px ${style} ${color}', borderRadius: '${radius}px' }} className="w-48 h-32 bg-transparent"></div>`;
   const preview = <div style={{ width: 180, height: 120, border: `${width}px ${style} ${color}`, borderRadius: `${radius}px`, backgroundColor: 'rgba(255,255,255,0.02)', transition: 'all 0.2s' }}></div>;
-  const controls = (<><FigmaColorPicker label="Border Color" hexValue={color} onChange={setColor} /><FigmaSelect label="Style" options={['solid', 'dashed', 'dotted', 'double']} value={style} onChange={setStyle} /><FigmaSlider label="Border Width" min={1} max={30} value={width} onChange={setWidth} unit="px" /><FigmaSlider label="Border Radius" min={0} max={100} value={radius} onChange={setRadius} unit="px" /></>);
+  const controls = (
+    <>
+      <PluginTip text="Pilih ketebalan (width) yang selaras dengan radius lengkungan. Gaya 'dashed' (putus-putus) sangat bagus dipakai untuk kotak desain struk atau kupon." />
+      <FigmaColorPicker label="Border Color" hexValue={color} onChange={setColor} />
+      <FigmaSelect label="Style" options={['solid', 'dashed', 'dotted', 'double']} value={style} onChange={setStyle} />
+      <FigmaSlider label="Border Width" min={1} max={30} value={width} onChange={setWidth} unit="px" />
+      <FigmaSlider label="Border Radius" min={0} max={100} value={radius} onChange={setRadius} unit="px" />
+    </>
+  );
   return <WorkspaceLayout name="Border Styling" controls={controls} preview={preview} cssOutput={css} htmlOutput={html} jsxOutput={jsx} />;
 };
 
@@ -224,23 +199,41 @@ export const PluginShapes = () => {
   const html = `<div style="${isBlob ? shapeCss : `border-radius: ${rounded}px; ${shapeCss}`} background-color: ${color}; width: 200px; height: 200px;"></div>`;
   const jsx = `<div style={{ ${isBlob ? (shapeVal==='blob1' ? "borderRadius: '30% 70% 70% 30% / 30% 30% 70% 70%'" : "borderRadius: '60% 40% 30% 70% / 60% 30% 70% 40%'") : `borderRadius: '${rounded}px', clipPath: '${shapeVal}'`}, backgroundColor: '${color}' }} className="w-48 h-48"></div>`;
   const previewStyle = isBlob ? { backgroundColor: color, width: '150px', height: '150px', borderRadius: shapeVal === 'blob1' ? '30% 70% 70% 30% / 30% 30% 70% 70%' : '60% 40% 30% 70% / 60% 30% 70% 40%', transition: 'all 0.5s' } : { clipPath: shapeVal, backgroundColor: color, width: '150px', height: '150px', borderRadius: `${rounded}px`, transition: 'all 0.5s' };
-  const controls = (<><FigmaCustomDropdown label="Select Shape Form" groups={SHAPES_DATA} value={shapeVal} onChange={setShapeVal} /><FigmaColorPicker label="Shape Color" hexValue={color} onChange={setColor} />{!isBlob && <FigmaSlider label="Base Rounded" min={0} max={100} value={rounded} onChange={setRounded} unit="px" />}</>);
+  
+  const controls = (
+    <>
+      <PluginTip text="Pilih 'Organic Blobs' untuk bentuk melengkung alami yang sering dipakai desainer modern. Polygons cocok untuk bentuk bersudut (bisa dihaluskan dengan Border Radius)." />
+      <FigmaCustomDropdown label="Select Shape Form" groups={SHAPES_DATA} value={shapeVal} onChange={setShapeVal} />
+      <FigmaColorPicker label="Shape Color" hexValue={color} onChange={setColor} />
+      {!isBlob && <FigmaSlider label="Base Rounded" min={0} max={100} value={rounded} onChange={setRounded} unit="px" />}
+    </>
+  );
   return <WorkspaceLayout name="CSS Shapes" controls={controls} preview={<div style={previewStyle}></div>} cssOutput={css} htmlOutput={html} jsxOutput={jsx} />;
 };
 
 export const PluginGlassmorphism = () => {
   const [blur, setBlur] = useState(12); const [opacity, setOpacity] = useState(15); const [color, setColor] = useState('#ffffff');
   const rgb = hexToRgb(color);
-  const css = `.glass {\n  background: rgba(${rgb}, ${opacity / 100});\n  backdrop-filter: blur(${blur}px);\n  -webkit-backdrop-filter: blur(${blur}px);\n  border: 1px solid rgba(${rgb}, 0.3);\n  border-radius: 16px;\n}`;
-  const html = `<div style="background: rgba(${rgb}, ${opacity/100}); backdrop-filter: blur(${blur}px); border: 1px solid rgba(${rgb}, 0.3); border-radius: 16px; width: 240px; height: 140px;"></div>`;
-  const jsx = `<div \n  style={{ background: 'rgba(${rgb}, ${opacity/100})', backdropFilter: 'blur(${blur}px)', border: '1px solid rgba(${rgb}, 0.3)' }}\n  className="w-60 h-36 rounded-2xl shadow-xl"\n></div>`;
-  const preview = <div className="bg-cover bg-center absolute inset-0 opacity-40" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200')" }}>
-    <div className="absolute inset-0 flex items-center justify-center">
-      <div style={{ width: '80%', maxWidth: '240px', height: '140px', background: `rgba(${rgb}, ${opacity / 100})`, backdropFilter: `blur(${blur}px)`, WebkitBackdropFilter: `blur(${blur}px)`, border: `1px solid rgba(${rgb}, 0.3)`, borderRadius: '16px', boxShadow: '0 4px 30px rgba(0,0,0,0.1)' }}></div>
-    </div>
-  </div>;
-  const controls = (<><FigmaColorPicker label="Glass Tint" hexValue={color} onChange={setColor} /><FigmaSlider label="Opacity" min={1} max={100} value={opacity} onChange={setOpacity} unit="%" /><FigmaSlider label="Blur Intensity" min={0} max={50} step={0.5} value={blur} onChange={setBlur} unit="px" /></>);
-  return <WorkspaceLayout name="Glassmorphism" controls={controls} preview={preview} cssOutput={css} htmlOutput={html} jsxOutput={jsx} />;
+  const css = `.glass {\n  background: rgba(${rgb}, ${opacity / 100});\n  backdrop-filter: blur(${blur}px);\n  -webkit-backdrop-filter: blur(${blur}px);\n  border: 1px solid rgba(255, 255, 255, 0.3);\n  border-radius: 16px;\n}`;
+  const html = `<div style="background: rgba(${rgb}, ${opacity/100}); backdrop-filter: blur(${blur}px); border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 16px; width: 240px; height: 140px;"></div>`;
+  const jsx = `<div style={{ background: 'rgba(${rgb}, ${opacity/100})', backdropFilter: 'blur(${blur}px)', border: '1px solid rgba(255,255,255, 0.3)' }} className="w-60 h-36 rounded-2xl shadow-xl"></div>`;
+  
+  // FIX BUG BACKGROUND GELAP: Tidak pakai absolute image di dalam preview jika sudah ada bgType="glass" di WorkspaceLayout
+  const preview = (
+    <div style={{ width: '80%', maxWidth: '240px', height: '140px', background: `rgba(${rgb}, ${opacity / 100})`, backdropFilter: `blur(${blur}px)`, WebkitBackdropFilter: `blur(${blur}px)`, border: `1px solid rgba(255, 255, 255, 0.3)`, borderRadius: '16px', boxShadow: '0 8px 32px rgba(0,0,0,0.15)' }}></div>
+  );
+  
+  const controls = (
+    <>
+      <PluginTip text="Rahasia efek kaca yang premium: Gunakan opacity rendah (sekitar 10-20%) agar background tembus, namun berikan Blur Intensity yang tinggi (di atas 10px) agar teks di atasnya tetap mudah dibaca." />
+      <FigmaColorPicker label="Glass Tint" hexValue={color} onChange={setColor} />
+      <FigmaSlider label="Opacity" min={1} max={100} value={opacity} onChange={setOpacity} unit="%" />
+      <FigmaSlider label="Blur Intensity" min={0} max={50} step={0.5} value={blur} onChange={setBlur} unit="px" />
+    </>
+  );
+  
+  // Memanggil bgType="glass" yang akan menampilkan background vibrant cerah (tidak tertutup hitam)
+  return <WorkspaceLayout name="Glassmorphism" controls={controls} preview={preview} cssOutput={css} htmlOutput={html} jsxOutput={jsx} bgType="glass" />;
 };
 
 export const PluginNeumorphism = () => {
@@ -251,8 +244,10 @@ export const PluginNeumorphism = () => {
   const html = `<div style="background-color: ${bg}; border-radius: 20px; box-shadow: ${shadowValue}; width: 140px; height: 140px;"></div>`;
   const jsx = `<div style={{ backgroundColor: '${bg}', boxShadow: '${shadowValue}' }} className="w-36 h-36 rounded-[20px]"></div>`;
   const preview = <div style={{ width: 160, height: 160, backgroundColor: bg, borderRadius: 24, boxShadow: shadowValue, transition: 'all 0.3s' }}></div>;
+  
   const controls = (
     <>
+      <PluginTip text="Pilih warna Base Background yang lembut/pastel. Sistem kami secara pintar akan menghitung rumus bayangan terang dan gelap agar efek 3D timbul/cekungnya terlihat natural." />
       <FigmaColorPicker label="Base Background" hexValue={bg} onChange={setBg} />
       <div className="mb-4">
          <div className="flex bg-[#0a0a0a] p-1 rounded-lg border border-[#2a2a2a]">
@@ -273,7 +268,18 @@ export const PluginShadow = () => {
   const html = `<div style="box-shadow: ${x}px ${y}px ${blur}px ${spread}px rgba(${hexToRgb(color)}, ${opacity/100}); border-radius: 12px; background-color: #ffffff; width: 140px; height: 140px;"></div>`;
   const jsx = `<div style={{ boxShadow: '${x}px ${y}px ${blur}px ${spread}px rgba(${hexToRgb(color)}, ${opacity/100})' }} className="w-36 h-36 rounded-xl bg-white"></div>`;
   const preview = <div style={{ width: 140, height: 140, backgroundColor: '#ffffff', borderRadius: 12, boxShadow: `${x}px ${y}px ${blur}px ${spread}px rgba(${hexToRgb(color)}, ${opacity/100})` }}></div>;
-  const controls = (<><FigmaColorPicker label="Shadow Color" hexValue={color} onChange={setColor} /><FigmaSlider label="Opacity" min={0} max={100} value={opacity} onChange={setOpacity} unit="%" /><FigmaSlider label="X Offset" min={-50} max={50} value={x} onChange={setX} unit="px" /><FigmaSlider label="Y Offset" min={-50} max={50} value={y} onChange={setY} unit="px" /><FigmaSlider label="Blur Radius" min={0} max={100} value={blur} onChange={setBlur} unit="px" /><FigmaSlider label="Spread Radius" min={-50} max={50} value={spread} onChange={setSpread} unit="px" /></>);
+  
+  const controls = (
+    <>
+      <PluginTip text="Tren desain saat ini menyukai bayangan 'Soft Shadow'. Turunkan Opacity (sekitar 10-20%) lalu naikkan Blur Radius dan Y Offset agar elemen seakan-akan melayang elegan." />
+      <FigmaColorPicker label="Shadow Color" hexValue={color} onChange={setColor} />
+      <FigmaSlider label="Opacity" min={0} max={100} value={opacity} onChange={setOpacity} unit="%" />
+      <FigmaSlider label="X Offset" min={-50} max={50} value={x} onChange={setX} unit="px" />
+      <FigmaSlider label="Y Offset" min={-50} max={50} value={y} onChange={setY} unit="px" />
+      <FigmaSlider label="Blur Radius" min={0} max={100} value={blur} onChange={setBlur} unit="px" />
+      <FigmaSlider label="Spread Radius" min={-50} max={50} value={spread} onChange={setSpread} unit="px" />
+    </>
+  );
   return <WorkspaceLayout name="Drop Shadow" controls={controls} preview={preview} cssOutput={css} htmlOutput={html} jsxOutput={jsx} bgType="light" />;
 };
 
@@ -283,7 +289,15 @@ export const PluginGlow = () => {
   const html = `<div style="box-shadow: 0 0 ${blur}px ${spread}px rgba(${hexToRgb(color)}, 0.8); border-radius: 50%; background-color: ${color}; width: 80px; height: 80px;"></div>`;
   const jsx = `<div style={{ boxShadow: '0 0 ${blur}px ${spread}px rgba(${hexToRgb(color)}, 0.8)', backgroundColor: '${color}' }} className="w-20 h-20 rounded-full"></div>`;
   const preview = <div style={{ width: 80, height: 80, backgroundColor: color, borderRadius: '50%', boxShadow: `0 0 ${blur}px ${spread}px rgba(${hexToRgb(color)}, 0.8)` }}></div>;
-  const controls = (<><FigmaColorPicker label="Glow Color" hexValue={color} onChange={setColor} /><FigmaSlider label="Blur Radius" min={0} max={150} value={blur} onChange={setBlur} unit="px" /><FigmaSlider label="Spread Radius" min={0} max={100} value={spread} onChange={setSpread} unit="px" /></>);
+  
+  const controls = (
+    <>
+      <PluginTip text="Efek pendaran (Glow) sangat kuat di background hitam. Gunakan warna-warna vibran seperti Cyan, Magenta, atau Neon Green lalu tambah ukuran Blur agar cahaya menyebar alami." />
+      <FigmaColorPicker label="Glow Color" hexValue={color} onChange={setColor} />
+      <FigmaSlider label="Blur Radius" min={0} max={150} value={blur} onChange={setBlur} unit="px" />
+      <FigmaSlider label="Spread Radius" min={0} max={100} value={spread} onChange={setSpread} unit="px" />
+    </>
+  );
   return <WorkspaceLayout name="Neon Glow" controls={controls} preview={preview} cssOutput={css} htmlOutput={html} jsxOutput={jsx} />;
 };
 
@@ -310,8 +324,8 @@ export const PluginFilters = () => {
 
   const controls = (
     <div className="space-y-1 pb-4">
+      <PluginTip text="Pilih foto uji coba terlebih dahulu. Trik agar gambar memukau: Naikkan sedikit Contrast dan Vibrance (Saturasi), lalu berikan sedikit efek Drop Shadow untuk efek timbul (pop-out)." />
       <div className="mb-4">
-         <label className="text-[10px] font-medium text-slate-400 block mb-2">Pilih Foto Template</label>
          <div className="flex gap-2">
             {IMAGE_TEMPLATES.map((img, idx) => (
               <button key={idx} onClick={() => setBgImg(img)} className={`w-12 h-12 rounded-lg bg-cover bg-center border-2 transition-all ${bgImg === img ? 'border-cyan-400 scale-110 shadow-lg' : 'border-[#333] hover:border-[#555]'}`} style={{backgroundImage: `url(${img})`}}></button>
@@ -338,6 +352,7 @@ export const PluginTransform = () => {
   const css = `.parent { perspective: 1000px; transform-style: preserve-3d; }\n.element {\n  transform: ${transStr};\n}`;
   const html = `<div style="perspective: 1000px; transform-style: preserve-3d;">\n  <div style="transform: ${transStr};">3D Object</div>\n</div>`;
   const jsx = `<div style={{ perspective: '1000px', transformStyle: 'preserve-3d' }}>\n  <div style={{ transform: '${transStr}' }}>3D Object</div>\n</div>`;
+  
   const preview = (
     <div className="relative w-full h-full flex items-center justify-center" style={{ perspective: '1000px', transformStyle: 'preserve-3d' }}>
       <div className="w-32 h-32 bg-gradient-to-tr from-cyan-500 to-blue-600 shadow-2xl flex flex-col items-center justify-center border border-white/30 rounded-xl" style={{ transform: transStr, transition: 'transform 0.1s linear', transformStyle: 'preserve-3d', boxShadow: '0 20px 40px rgba(0,0,0,0.5), inset 0 0 20px rgba(255,255,255,0.2)' }}>
@@ -346,7 +361,18 @@ export const PluginTransform = () => {
       </div>
     </div>
   );
-  const controls = (<><FigmaSlider label="Rotate X" min={-180} max={180} value={rx} onChange={setRx} unit="°" /><FigmaSlider label="Rotate Y" min={-180} max={180} value={ry} onChange={setRy} unit="°" /><FigmaSlider label="Rotate Z" min={-180} max={180} value={rz} onChange={setRz} unit="°" /><FigmaSlider label="Translate Z" min={-300} max={300} value={tz} onChange={setTz} unit="px" /><FigmaSlider label="Scale" min={0.5} max={2} step={0.1} value={scale} onChange={setScale} unit="x" /><button onClick={() => { setRx(0); setRy(0); setRz(0); setTx(0); setTy(0); setTz(0); setScale(1); }} className="w-full mt-6 py-2.5 bg-[#1a1a1a] hover:bg-[#333] border border-[#2a2a2a] rounded-lg text-[10px] font-bold text-white uppercase tracking-widest transition-colors shadow-sm">Reset Matrix</button></>);
+  
+  const controls = (
+    <>
+      <PluginTip text="Penting: Fitur rotasi X/Y/Z di bawah ini membutuhkan elemen 'parent' yang memiliki properti 'perspective: 1000px' agar elemen memiliki efek ruangan 3D." />
+      <FigmaSlider label="Rotate X" min={-180} max={180} value={rx} onChange={setRx} unit="°" />
+      <FigmaSlider label="Rotate Y" min={-180} max={180} value={ry} onChange={setRy} unit="°" />
+      <FigmaSlider label="Rotate Z" min={-180} max={180} value={rz} onChange={setRz} unit="°" />
+      <FigmaSlider label="Translate Z" min={-300} max={300} value={tz} onChange={setTz} unit="px" />
+      <FigmaSlider label="Scale" min={0.5} max={2} step={0.1} value={scale} onChange={setScale} unit="x" />
+      <button onClick={() => { setRx(0); setRy(0); setRz(0); setTx(0); setTy(0); setTz(0); setScale(1); }} className="w-full mt-6 py-2.5 bg-[#1a1a1a] hover:bg-[#333] border border-[#2a2a2a] rounded-lg text-[10px] font-bold text-white uppercase tracking-widest transition-colors shadow-sm">Reset Matrix</button>
+    </>
+  );
   return <WorkspaceLayout name="True 3D Studio" controls={controls} preview={preview} cssOutput={css} htmlOutput={html} jsxOutput={jsx} bgType="grid" />;
 };
 
@@ -409,6 +435,7 @@ export const PluginAnimation = () => {
 
   const controls = (
     <>
+      <PluginTip text="Pilih jenis animasi dan ubah Iteration ke 'infinite' jika ingin pergerakan berulang seperti animasi terbang (Floating) atau detak (Pulse)." />
       <FigmaCustomDropdown label="Animation Style" groups={ANIMATION_DATA} value={animType} onChange={setAnimType} />
       <FigmaSlider label="Duration" min={0.1} max={5} step={0.1} value={duration} onChange={setDuration} unit="s" />
       <FigmaSelect label="Timing Function" options={['linear', 'ease', 'ease-in-out', 'ease-in']} value={timing} onChange={setTiming} />
@@ -452,7 +479,7 @@ export const PluginTransitions = () => {
 
   const controls = (
     <>
-      <PluginTip text="Penting: Tempatkan output CSS '.element' di class default, dan '.element:hover' untuk memicu efeknya." />
+      <PluginTip text="Gerakkan (Hover) kursor mouse/jarimu ke area preview untuk melihat transisi! Sangat efektif untuk desain tombol (button) atau kartu (card)." />
       <FigmaCustomDropdown label="Hover Effect Type" groups={TRANSITIONS_DATA} value={transType} onChange={setTransType} />
       <FigmaSlider label="Duration" min={0.1} max={3} step={0.1} value={duration} onChange={setDuration} unit="s" />
       <FigmaSelect label="Timing/Easing" options={['ease', 'linear', 'ease-in-out', 'cubic']} value={timing} onChange={setTiming} />
@@ -465,14 +492,12 @@ export const PluginTransitions = () => {
 export const PluginPixelArt = () => {
   const [gridSize, setGridSize] = useState(8); 
   const [color, setColor] = useState('#0ea5e9');
-  
   const [history, setHistory] = useState([Array(64).fill('transparent')]);
   const [step, setStep] = useState(0);
 
   useEffect(() => {
     const newEmpty = Array(gridSize * gridSize).fill('transparent');
-    setHistory([newEmpty]);
-    setStep(0);
+    setHistory([newEmpty]); setStep(0);
   }, [gridSize]);
 
   const currentPixels = history[step] || Array(gridSize * gridSize).fill('transparent');
@@ -482,23 +507,20 @@ export const PluginPixelArt = () => {
     newPixels[index] = newPixels[index] === color ? 'transparent' : color;
     const newHistory = history.slice(0, step + 1);
     newHistory.push(newPixels);
-    setHistory(newHistory);
-    setStep(newHistory.length - 1);
+    setHistory(newHistory); setStep(newHistory.length - 1);
   };
 
   const clearCanvas = () => {
     const newEmpty = Array(gridSize * gridSize).fill('transparent');
     const newHistory = history.slice(0, step + 1);
     newHistory.push(newEmpty);
-    setHistory(newHistory);
-    setStep(newHistory.length - 1);
+    setHistory(newHistory); setStep(newHistory.length - 1);
   };
 
   const handleUndo = () => setStep(Math.max(0, step - 1));
   const handleRedo = () => setStep(Math.min(history.length - 1, step + 1));
 
   const pixelSizePx = gridSize === 8 ? 10 : gridSize === 12 ? 8 : 6;
-
   const generateBoxShadow = () => {
     let shadow = [];
     currentPixels.forEach((p, i) => {
@@ -517,17 +539,9 @@ export const PluginPixelArt = () => {
 
   const preview = (
     <div className="flex flex-col items-center">
-      <div 
-        className="w-[200px] h-[200px] sm:w-[240px] sm:h-[240px] grid border border-[#1f1f1f] bg-[#0a0a0a]"
-        style={{ gridTemplateColumns: `repeat(${gridSize}, minmax(0, 1fr))` }}
-      >
+      <div className="w-[200px] h-[200px] sm:w-[240px] sm:h-[240px] grid border border-[#1f1f1f] bg-[#0a0a0a]" style={{ gridTemplateColumns: `repeat(${gridSize}, minmax(0, 1fr))` }}>
         {currentPixels.map((bg, i) => (
-          <div 
-            key={i} 
-            onClick={() => paintPixel(i)}
-            className="border border-white/5 cursor-crosshair hover:bg-white/10 transition-colors w-full h-full"
-            style={{ backgroundColor: bg !== 'transparent' ? bg : undefined }}
-          />
+          <div key={i} onClick={() => paintPixel(i)} className="border border-white/5 cursor-crosshair hover:bg-white/10 transition-colors w-full h-full" style={{ backgroundColor: bg !== 'transparent' ? bg : undefined }} />
         ))}
       </div>
       <div className="flex gap-4 mt-6">
@@ -539,7 +553,7 @@ export const PluginPixelArt = () => {
 
   const controls = (
     <>
-      <PluginTip text="Kini kamu bisa leluasa menggambar! Jika salah, tekan tombol Undo (Kiri) atau Redo (Kanan) di bawah kanvas." />
+      <PluginTip text="Sentuh (Tap) pada grid canvas di atas untuk mulai mewarnai layaknya melukis pixel 8-bit klasik. Jika salah, tombol Undo ada di bawah canvas!" />
       <FigmaSelect label="Canvas Size (Resolution)" options={['8', '12', '16']} value={gridSize.toString()} onChange={(val) => setGridSize(Number(val))} />
       
       <div className="flex justify-between items-center mb-4 mt-6 border-t border-[#1f1f1f] pt-4">
