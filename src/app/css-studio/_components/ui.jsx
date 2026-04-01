@@ -79,7 +79,6 @@ export const PluginTip = ({ text, title = "PANDUAN" }) => {
   );
 };
 
-// FIX MOBILE UI: Slider sekarang menjadi kolom (flex-col) di layar HP agar tidak tergencet
 export const FigmaSlider = ({ label, min, max, step = 1, value, onChange, unit = "" }) => {
   const [localVal, setLocalVal] = useState(value);
   useEffect(() => { setLocalVal(value); }, [value]);
@@ -115,26 +114,28 @@ export const FigmaColorPicker = ({ label, hexValue, onChange }) => {
     setHsl(newHsl); onChange(hslToHex(newHsl.h, newHsl.s, newHsl.l));
   };
   return (
-    <div className="mb-5">
+    <div className="mb-5 relative z-40">
       <div className="flex justify-between items-center mb-2"><label className="text-[11px] font-medium text-slate-400">{label}</label></div>
-      <div className="bg-[#0a0a0a] border border-[#2a2a2a] rounded-xl overflow-hidden transition-all duration-300 shadow-sm">
-        <div className="flex items-center justify-between p-3.5 cursor-pointer hover:bg-[#141414]" onClick={() => setIsOpen(!isOpen)}>
+      <div className="bg-[#0a0a0a] border border-[#2a2a2a] rounded-xl transition-all duration-300 shadow-sm relative">
+        <div className="flex items-center justify-between p-3.5 cursor-pointer hover:bg-[#141414] rounded-xl" onClick={() => setIsOpen(!isOpen)}>
           <div className="flex items-center gap-3">
             <div className="w-6 h-6 rounded-md border border-white/20 shadow-sm" style={{backgroundColor: safeHexVal}}></div>
             <div className="flex flex-col"><span className="text-[11px] font-bold text-slate-200">{label}</span><span className="text-[10px] font-mono text-slate-500 uppercase mt-0.5">{safeHexVal}</span></div>
           </div>
           <div className={`text-slate-400 transition-transform ${isOpen ? 'rotate-180' : ''}`}><Icons.ChevronDown /></div>
         </div>
-        <div className={`overflow-hidden transition-all duration-300 bg-[#141414] ${isOpen ? 'max-h-[300px] border-t border-[#2a2a2a] p-4 opacity-100' : 'max-h-0 opacity-0'}`}>
-          <div className="space-y-4">
-            <div><div className="flex justify-between mb-2"><span className="text-[10px] text-slate-400">Hue</span></div><input type="range" min="0" max="360" value={hsl.h || 0} onChange={(e) => handleHslChange('h', Number(e.target.value))} className="w-full h-3 rounded-full appearance-none cursor-pointer custom-color-slider" style={{background: 'linear-gradient(to right, #f00 0%, #ff0 17%, #0f0 33%, #0ff 50%, #00f 67%, #f0f 83%, #f00 100%)'}} /></div>
-            <div><div className="flex justify-between mb-2"><span className="text-[10px] text-slate-400">Saturation</span></div><input type="range" min="0" max="100" value={hsl.s || 0} onChange={(e) => handleHslChange('s', Number(e.target.value))} className="w-full h-3 rounded-full appearance-none cursor-pointer custom-color-slider" style={{background: `linear-gradient(to right, #808080, ${hslToHex(hsl.h || 0, 100, 50)})`}} /></div>
-            <div><div className="flex justify-between mb-2"><span className="text-[10px] text-slate-400">Lightness</span></div><input type="range" min="0" max="100" value={hsl.l || 0} onChange={(e) => handleHslChange('l', Number(e.target.value))} className="w-full h-3 rounded-full appearance-none cursor-pointer custom-color-slider" style={{background: `linear-gradient(to right, #000, ${hslToHex(hsl.h || 0, hsl.s || 0, 50)}, #fff)`}} /></div>
+        {isOpen && (
+          <div className="absolute top-full left-0 right-0 mt-2 bg-[#141414] border border-[#2a2a2a] rounded-xl p-4 shadow-2xl z-50">
+            <div className="space-y-4">
+              <div><div className="flex justify-between mb-2"><span className="text-[10px] text-slate-400">Hue</span></div><input type="range" min="0" max="360" value={hsl.h || 0} onChange={(e) => handleHslChange('h', Number(e.target.value))} className="w-full h-3 rounded-full appearance-none cursor-pointer custom-color-slider" style={{background: 'linear-gradient(to right, #f00 0%, #ff0 17%, #0f0 33%, #0ff 50%, #00f 67%, #f0f 83%, #f00 100%)'}} /></div>
+              <div><div className="flex justify-between mb-2"><span className="text-[10px] text-slate-400">Saturation</span></div><input type="range" min="0" max="100" value={hsl.s || 0} onChange={(e) => handleHslChange('s', Number(e.target.value))} className="w-full h-3 rounded-full appearance-none cursor-pointer custom-color-slider" style={{background: `linear-gradient(to right, #808080, ${hslToHex(hsl.h || 0, 100, 50)})`}} /></div>
+              <div><div className="flex justify-between mb-2"><span className="text-[10px] text-slate-400">Lightness</span></div><input type="range" min="0" max="100" value={hsl.l || 0} onChange={(e) => handleHslChange('l', Number(e.target.value))} className="w-full h-3 rounded-full appearance-none cursor-pointer custom-color-slider" style={{background: `linear-gradient(to right, #000, ${hslToHex(hsl.h || 0, hsl.s || 0, 50)}, #fff)`}} /></div>
+            </div>
+            <div className="flex flex-wrap gap-2 mt-5 pt-4 border-t border-[#2a2a2a]">
+              {COLOR_PRESETS.map((c) => (<button key={c} onClick={() => {onChange(c); setIsOpen(false);}} className={`w-7 h-7 rounded-md border hover:scale-110 transition-transform ${safeHexVal===c ? 'border-cyan-400 scale-110 shadow-[0_0_8px_rgba(6,182,212,0.4)]' : 'border-[#333]'}`} style={{ backgroundColor: c }} />))}
+            </div>
           </div>
-          <div className="flex flex-wrap gap-2 mt-5 pt-4 border-t border-[#2a2a2a]">
-            {COLOR_PRESETS.map((c) => (<button key={c} onClick={() => onChange(c)} className={`w-7 h-7 rounded-md border hover:scale-110 transition-transform ${safeHexVal===c ? 'border-cyan-400 scale-110 shadow-[0_0_8px_rgba(6,182,212,0.4)]' : 'border-[#333]'}`} style={{ backgroundColor: c }} />))}
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );
@@ -168,7 +169,7 @@ export const FigmaCustomDropdown = ({ label, groups = {}, value, onChange }) => 
   for (const group in groups) { const found = groups[group].find(opt => opt.val === value); if (found) { currentName = found.name; break; } }
   useEffect(() => { const handleClickOutside = (e) => { if (dropdownRef.current && !dropdownRef.current.contains(e.target)) setIsOpen(false); }; document.addEventListener("mousedown", handleClickOutside); return () => document.removeEventListener("mousedown", handleClickOutside); }, []);
   return (
-    <div className="mb-5 relative" ref={dropdownRef}>
+    <div className="mb-5 relative z-40" ref={dropdownRef}>
       <label className="text-[11px] font-medium text-slate-400 block mb-2">{label}</label>
       <div onClick={() => setIsOpen(!isOpen)} className="w-full bg-[#0a0a0a] border border-[#2a2a2a] rounded-xl px-4 py-3.5 flex justify-between items-center cursor-pointer hover:border-[#444] transition-colors">
         <span className="text-[11px] text-white font-mono">{currentName}</span>
