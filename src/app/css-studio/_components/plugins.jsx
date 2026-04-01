@@ -1,12 +1,10 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Icons } from './icons';
 import { PluginTip, FigmaSlider, FigmaColorPicker, FigmaSelect, FigmaTextInput, FigmaCustomDropdown, WorkspaceLayout, hexToRgb, adjustBrightness, COLOR_PRESETS } from './ui';
 
-// =========================================================================
 // HELPER: Multi-Touch Zoom & Pan untuk Preview Mobile
-// =========================================================================
 const useMultiTouch = () => {
   const [scale, setScale] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
@@ -92,16 +90,19 @@ const FONTS_DATA = {
   "Serif": [{ name: "Playfair Display", val: "Playfair Display" }, { name: "Merriweather", val: "Merriweather" }, { name: "Lora", val: "Lora" }]
 };
 
+// =========================================================================
+// 1. MULTI TYPO (FIX: HAPUS ZOOM AGAR PREVIEW TIDAK RUSAK/LOMPAT)
+// =========================================================================
 export const PluginTypography = () => {
   const [tab, setTab] = useState('Heading');
+  
   const defaultH1 = { text: 'Hero Title', font: 'Montserrat', size: 48, color: '#ffffff', align: 'center', trans: 'none', space: 0, rot: 0, x: 0, y: -70 };
   const defaultH2 = { text: 'Beautiful Typography', font: 'Inter', size: 20, color: '#0ea5e9', align: 'center', trans: 'none', space: 0, rot: 0, x: 0, y: 0 };
-  const defaultP = { text: 'Gunakan 2 jari untuk Zoom & Pan di layar preview!', font: 'Inter', size: 14, color: '#94a3b8', align: 'center', trans: 'none', space: 0, rot: 0, x: 0, y: 70 };
+  const defaultP = { text: 'Teks ini bisa digeser (Drag & Drop) di layar preview!', font: 'Inter', size: 14, color: '#94a3b8', align: 'center', trans: 'none', space: 0, rot: 0, x: 0, y: 70 };
 
   const [h1, setH1] = useState(defaultH1);
   const [h2, setH2] = useState(defaultH2);
   const [p, setP] = useState(defaultP);
-  const { scale, pan, onTouchStart, onTouchMove } = useMultiTouch();
 
   useEffect(() => {
     const allFonts = [];
@@ -118,12 +119,11 @@ export const PluginTypography = () => {
 
   const handlePointerDown = (e, type, state) => {
     setDragging(type); setTab(type === 'h1' ? 'Heading' : type === 'h2' ? 'Subheading' : 'Paragraph');
-    // Membagi skala agar geseran sesuai dengan ukuran zoom
-    setDragStart({ x: e.clientX / scale, y: e.clientY / scale }); setElemStart({ x: state.x, y: state.y }); e.currentTarget.setPointerCapture(e.pointerId);
+    setDragStart({ x: e.clientX, y: e.clientY }); setElemStart({ x: state.x, y: state.y }); e.currentTarget.setPointerCapture(e.pointerId);
   };
   const handlePointerMove = (e) => {
     if (!dragging) return;
-    const dx = (e.clientX / scale) - dragStart.x; const dy = (e.clientY / scale) - dragStart.y;
+    const dx = e.clientX - dragStart.x; const dy = e.clientY - dragStart.y;
     if (dragging === 'h1') setH1(prev => ({ ...prev, x: elemStart.x + dx, y: elemStart.y + dy }));
     if (dragging === 'h2') setH2(prev => ({ ...prev, x: elemStart.x + dx, y: elemStart.y + dy }));
     if (dragging === 'p') setP(prev => ({ ...prev, x: elemStart.x + dx, y: elemStart.y + dy }));
@@ -149,16 +149,14 @@ export const PluginTypography = () => {
     >{state.text || 'Text'}</div>
   );
 
+  // Murni drag and drop biasa, tanpa dibungkus pan/zoom agar kordinat X dan Y sempurna!
   const preview = (
-    <div className="relative w-full h-[300px] flex items-center justify-center overflow-hidden border border-white/5 bg-[#0a0a0a] rounded-xl touch-none" onTouchStart={onTouchStart} onTouchMove={onTouchMove}>
+    <div className="relative w-full h-[300px] flex items-center justify-center overflow-hidden border border-white/5 bg-[#0a0a0a] rounded-xl touch-none">
       <div className="absolute top-2 left-2 px-2 py-1 bg-cyan-500/10 text-cyan-400 text-[8px] font-bold rounded uppercase tracking-widest pointer-events-none z-10">Interactive Canvas</div>
-      <div style={{ transform: `translate(${pan.x}px, ${pan.y}px) scale(${scale})`, width: '100%', height: '100%', position: 'absolute' }}>
-         {renderInteractiveText(h1, 'h1')}{renderInteractiveText(h2, 'h2')}{renderInteractiveText(p, 'p', true)}
-      </div>
+      {renderInteractiveText(h1, 'h1')}{renderInteractiveText(h2, 'h2')}{renderInteractiveText(p, 'p', true)}
     </div>
   );
 
-  // FIX BUG: Extract controls agar React tidak mereset menu (Dropdown tertutup)
   const renderTextControls = (state, setState, isPara = false) => {
     const update = (key, val) => setState(prev => ({ ...prev, [key]: val }));
     return (
@@ -179,7 +177,7 @@ export const PluginTypography = () => {
 
   const controls = (
     <>
-      <PluginTip text="PANDUAN: Sentuh lalu geser teks untuk memindahkannya. Gunakan 2 JARI (Pinch) untuk men-zoom area kerja." />
+      <PluginTip text="PANDUAN: Sentuh lalu geser (Drag & Drop) teks di layar preview atas untuk merubah tata letaknya secara bebas! Semua koordinat gesekanmu otomatis dicatat di CSS Output." />
       <div className="flex bg-[#0a0a0a] p-1 rounded-lg border border-[#2a2a2a] w-full mb-4">
         {['Heading', 'Subheading', 'Paragraph'].map(t => (
           <button key={t} onClick={() => setTab(t)} className={`flex-1 py-2 rounded-md text-[9px] font-bold uppercase transition-all ${tab === t ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/30' : 'text-slate-500 hover:text-slate-300'}`}>{t}</button>
@@ -232,7 +230,7 @@ export const PluginBorder = () => {
 };
 
 // =========================================================================
-// 2. VECTOR NODE EDITOR (FIGMA-LIKE PEN TOOL)
+// 2. VECTOR NODE EDITOR (PEN TOOL LAYAKNYA FIGMA/ILLUSTRATOR)
 // =========================================================================
 const SHAPES_DATA = {
   "Polygon Base": [{ name: "Triangle", val: "triangle" }, { name: "Square", val: "square" }, { name: "Hexagon", val: "hexagon" }]
@@ -256,14 +254,12 @@ export const PluginShapes = () => {
   const [isDraggingPan, setIsDraggingPan] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
 
-  // Load Preset
   useEffect(() => { setNodes(PRESET_NODES[shapeVal] || []); }, [shapeVal]);
 
   const handlePointerDownCanvas = (e) => {
     if (activeTool === 'pan') {
       setIsDraggingPan(true); setDragStart({ x: e.clientX - pan.x, y: e.clientY - pan.y }); e.currentTarget.setPointerCapture(e.pointerId);
     } else if (activeTool === 'pen') {
-      // Add Node if clicking on canvas
       const rect = e.currentTarget.getBoundingClientRect();
       const xPercent = Math.round((((e.clientX - rect.left) / scale) / 200) * 100);
       const yPercent = Math.round((((e.clientY - rect.top) / scale) / 200) * 100);
@@ -308,12 +304,18 @@ export const PluginShapes = () => {
 
       <div style={{ transform: `translate(${pan.x}px, ${pan.y}px) scale(${scale})` }} className="absolute">
         <div 
-          className="relative" style={{ width: '200px', height: '200px', backgroundColor: 'rgba(255,255,255,0.05)', border: '1px dashed #333' }}
+          className={`relative ${activeTool === 'pen' ? 'cursor-crosshair' : ''}`} 
+          style={{ width: '200px', height: '200px', backgroundColor: 'rgba(255,255,255,0.05)', border: '1px dashed #333' }}
           onPointerDown={handlePointerDownCanvas} onPointerMove={handlePointerMove} onPointerUp={handlePointerUp} onPointerCancel={handlePointerUp}
         >
           {/* Main Shape */}
           <div style={{ backgroundColor: color, width: '100%', height: '100%', clipPath: `polygon(${polyString})`, pointerEvents: 'none' }} />
           
+          {/* Vector Pen Overlay (Garis Biru & Titik) */}
+          <svg className="absolute inset-0 w-full h-full pointer-events-none overflow-visible">
+            <polygon points={nodes.map(n => `${n.x * 2},${n.y * 2}`).join(' ')} fill="none" stroke="#0ea5e9" strokeWidth="2" strokeDasharray="4 4" />
+          </svg>
+
           {/* Vector Nodes */}
           {activeTool === 'pen' && nodes.map((node, i) => (
              <div 
@@ -324,6 +326,7 @@ export const PluginShapes = () => {
                 title={`Node ${i+1}`}
              />
           ))}
+          {nodes.length < 3 && <div className="absolute inset-0 flex items-center justify-center pointer-events-none"><span className="text-[9px] text-slate-500 font-bold tracking-widest uppercase animate-pulse text-center">Klik 3 Titik<br/>Untuk Membuat Polygon</span></div>}
         </div>
       </div>
     </div>
@@ -620,11 +623,11 @@ export const PluginTransitions = () => {
 };
 
 // =========================================================================
-// 3. PIXEL DRAWING (MANUAL INPUT & ZOOM FIX)
+// 3. PIXEL DRAWING (FULL FIX: ROTASI CANVAS, ELEMENT-FROM-POINT DRAWING)
 // =========================================================================
 export const PluginPixelDrawing = () => {
   const [gridSize, setGridSize] = useState(16); 
-  const [localGridInput, setLocalGridInput] = useState('16'); // Menyimpan teks input manual sementara
+  const [localGridInput, setLocalGridInput] = useState('16'); 
   
   const [canvasBgColor, setCanvasBgColor] = useState('#ffffff');
   const [isTransparent, setIsTransparent] = useState(false); 
@@ -636,10 +639,14 @@ export const PluginPixelDrawing = () => {
   const [history, setHistory] = useState([Array(256).fill('transparent')]);
   const [step, setStep] = useState(0);
 
+  // Canvas View State
   const { scale, pan, onTouchStart, onTouchMove } = useMultiTouch();
+  const [rotation, setRotation] = useState(0); // FIX: Canvas Rotation!
+  
   const [activeTool, setActiveTool] = useState('draw');
   const [isDraggingPan, setIsDraggingPan] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [isDrawing, setIsDrawing] = useState(false);
 
   useEffect(() => {
     const safeGrid = Math.min(Math.max(gridSize, 8), 64);
@@ -648,19 +655,16 @@ export const PluginPixelDrawing = () => {
     setOutputSize(Math.max(outputSize, safeGrid));
   }, [gridSize]);
 
-  // Eksekusi perubahan ukuran grid hanya ketika user menekan enter atau blur
   const handleGridSubmit = () => {
     let val = parseInt(localGridInput, 10);
     if (isNaN(val) || val < 8) val = 8;
     if (val > 64) val = 64;
-    setGridSize(val);
-    setLocalGridInput(val.toString());
+    setGridSize(val); setLocalGridInput(val.toString());
   };
 
   const currentPixels = history[step] || Array(gridSize * gridSize).fill('transparent');
 
   const paintPixel = (index) => {
-    if (activeTool === 'pan') return;
     const newColor = activeTool === 'erase' ? 'transparent' : color;
     if (currentPixels[index] === newColor) return; 
     const newPixels = [...currentPixels];
@@ -678,47 +682,52 @@ export const PluginPixelDrawing = () => {
     newHistory.push(newEmpty);
     setHistory(newHistory); setStep(newHistory.length - 1);
   };
+  const addToPalette = () => { if (!palette.includes(color)) setPalette([color, ...palette].slice(0, 15)); };
 
-  const addToPalette = () => {
-    if (!palette.includes(color)) setPalette([color, ...palette].slice(0, 15)); 
+  // FIX BUG MENGGAMBAR: Menggunakan ElementFromPoint agar tidak meleset saat kanvas diputar/zoom!
+  const paintByEvent = (e) => {
+    if (activeTool === 'pan' || e.touches?.length > 1) return;
+    let clientX = e.clientX; let clientY = e.clientY;
+    if (e.touches && e.touches.length > 0) { clientX = e.touches[0].clientX; clientY = e.touches[0].clientY; }
+    if (!clientX || !clientY) return;
+
+    const el = document.elementFromPoint(clientX, clientY);
+    const idx = el?.getAttribute('data-pixel-index');
+    if (idx !== null && idx !== undefined) paintPixel(Number(idx));
   };
 
   const handlePointerDown = (e) => {
     if (activeTool === 'pan') {
       setIsDraggingPan(true); setDragStart({ x: e.clientX - pan.x, y: e.clientY - pan.y }); e.currentTarget.setPointerCapture(e.pointerId);
+    } else {
+      setIsDrawing(true); paintByEvent(e); e.currentTarget.setPointerCapture(e.pointerId);
     }
   };
   const handlePointerMove = (e) => {
-    if (isDraggingPan && activeTool === 'pan') {
-      // Manual pan on desktop, mobile can use multi-touch hook
-      // setPan({ x: e.clientX - dragStart.x, y: e.clientY - dragStart.y });
-    }
+    if (isDraggingPan && activeTool === 'pan') setPan({ x: e.clientX - dragStart.x, y: e.clientY - dragStart.y });
+    else if (isDrawing) paintByEvent(e);
   };
   const handlePointerUp = (e) => {
-    if (isDraggingPan) { setIsDraggingPan(false); e.currentTarget.releasePointerCapture(e.pointerId); }
+    if (isDraggingPan) setIsDraggingPan(false);
+    if (isDrawing) setIsDrawing(false);
+    e.currentTarget.releasePointerCapture(e.pointerId);
   };
 
   const downloadImage = () => {
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
+    const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
     canvas.width = outputSize; canvas.height = outputSize;
     const pSize = outputSize / gridSize;
 
-    if (!isTransparent) { 
-       ctx.fillStyle = canvasBgColor; 
-       ctx.fillRect(0, 0, outputSize, outputSize); 
-    }
+    if (!isTransparent) { ctx.fillStyle = canvasBgColor; ctx.fillRect(0, 0, outputSize, outputSize); }
     currentPixels.forEach((p, i) => {
       if (p !== 'transparent') {
         ctx.fillStyle = p;
-        const x = (i % gridSize) * pSize;
-        const y = Math.floor(i / gridSize) * pSize;
+        const x = (i % gridSize) * pSize; const y = Math.floor(i / gridSize) * pSize;
         ctx.fillRect(x, y, pSize, pSize);
       }
     });
 
-    const link = document.createElement('a');
-    link.download = `pixel-art-${outputSize}px.png`;
+    const link = document.createElement('a'); link.download = `pixel-art-${outputSize}px.png`;
     link.href = canvas.toDataURL('image/png'); link.click();
   };
 
@@ -727,8 +736,7 @@ export const PluginPixelDrawing = () => {
     let shadow = [];
     currentPixels.forEach((p, i) => {
       if (p !== 'transparent') {
-        const x = (i % gridSize) * pixelSizePx;
-        const y = Math.floor(i / gridSize) * pixelSizePx;
+        const x = (i % gridSize) * pixelSizePx; const y = Math.floor(i / gridSize) * pSize;
         shadow.push(`${x}px ${y}px ${p}`);
       }
     });
@@ -741,30 +749,22 @@ export const PluginPixelDrawing = () => {
   const jsx = `<div style={{ width: '${pixelSizePx}px', height: '${pixelSizePx}px', background: '${actualBg}', boxShadow: '${generateBoxShadow().replace(/\n\s+/g, ' ')}' }} />`;
 
   const preview = (
-    <div 
-      className="relative w-full h-[300px] flex items-center justify-center overflow-hidden border border-white/5 bg-[#050505] rounded-xl touch-none"
+    <div className="relative w-full h-[300px] flex items-center justify-center overflow-hidden border border-white/5 bg-[#050505] rounded-xl touch-none"
       onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={handlePointerUp} onPointerCancel={handlePointerUp}
-      onTouchStart={onTouchStart} onTouchMove={onTouchMove}
+      onTouchStart={(e) => { if (activeTool === 'pan' || e.touches.length > 1) onTouchStart(e); }} 
+      onTouchMove={(e) => { if (activeTool === 'pan' || e.touches.length > 1) onTouchMove(e); }}
     >
       <div className="absolute top-3 left-3 bg-[#141414] border border-[#2a2a2a] p-1.5 rounded-lg flex flex-col gap-1 z-20 shadow-lg">
-        <button onClick={() => setActiveTool('draw')} className={`w-8 h-8 flex items-center justify-center shrink-0 rounded transition-colors ${activeTool === 'draw' ? 'bg-cyan-500/20 text-cyan-400' : 'text-slate-400 hover:bg-[#1f1f1f]'}`}>
-           <div className="w-4 h-4"><Icons.Brush /></div>
-        </button>
-        <button onClick={() => setActiveTool('erase')} className={`w-8 h-8 flex items-center justify-center shrink-0 rounded transition-colors ${activeTool === 'erase' ? 'bg-cyan-500/20 text-cyan-400' : 'text-slate-400 hover:bg-[#1f1f1f]'}`}>
-           <div className="w-4 h-4"><Icons.Eraser /></div>
-        </button>
-        <div className="w-full h-px bg-[#2a2a2a] my-1"></div>
-        <button className="w-8 h-8 flex items-center justify-center shrink-0 rounded text-cyan-400 bg-cyan-500/10 pointer-events-none">
-           <div className="w-4 h-4"><Icons.HandPan /></div>
-        </button>
+        <button onClick={() => setActiveTool('draw')} className={`w-8 h-8 flex items-center justify-center shrink-0 rounded transition-colors ${activeTool === 'draw' ? 'bg-cyan-500/20 text-cyan-400' : 'text-slate-400 hover:bg-[#1f1f1f]'}`}><div className="w-4 h-4"><Icons.Brush /></div></button>
+        <button onClick={() => setActiveTool('erase')} className={`w-8 h-8 flex items-center justify-center shrink-0 rounded transition-colors ${activeTool === 'erase' ? 'bg-cyan-500/20 text-cyan-400' : 'text-slate-400 hover:bg-[#1f1f1f]'}`}><div className="w-4 h-4"><Icons.Eraser /></div></button>
+        <button onClick={() => setActiveTool('pan')} className={`w-8 h-8 flex items-center justify-center shrink-0 rounded transition-colors ${activeTool === 'pan' ? 'bg-cyan-500/20 text-cyan-400' : 'text-slate-400 hover:bg-[#1f1f1f]'}`}><div className="w-4 h-4"><Icons.HandPan /></div></button>
       </div>
 
-      <div style={{ transform: `translate(${pan.x}px, ${pan.y}px) scale(${scale})`, transition: isDraggingPan ? 'none' : 'transform 0.1s ease-out' }} className="absolute">
-        <div 
-           className="grid shadow-2xl" 
+      {/* CANVAS DENGAN ROTASI */}
+      <div style={{ transform: `translate(${pan.x}px, ${pan.y}px) scale(${scale}) rotate(${rotation}deg)`, transition: isDraggingPan ? 'none' : 'transform 0.1s ease-out' }} className="absolute">
+        <div className="grid shadow-2xl" 
            style={{ 
-             gridTemplateColumns: `repeat(${gridSize}, ${pixelSizePx}px)`, 
-             gridTemplateRows: `repeat(${gridSize}, ${pixelSizePx}px)`,
+             gridTemplateColumns: `repeat(${gridSize}, ${pixelSizePx}px)`, gridTemplateRows: `repeat(${gridSize}, ${pixelSizePx}px)`,
              backgroundColor: isTransparent ? 'transparent' : canvasBgColor,
              backgroundImage: isTransparent ? 'linear-gradient(45deg, #111 25%, transparent 25%), linear-gradient(-45deg, #111 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #111 75%), linear-gradient(-45deg, transparent 75%, #111 75%)' : 'none',
              backgroundSize: '10px 10px', backgroundPosition: '0 0, 0 5px, 5px -5px, -5px 0px'
@@ -773,9 +773,8 @@ export const PluginPixelDrawing = () => {
           {currentPixels.map((bg, i) => (
             <div 
               key={i} 
-              onPointerDown={(e) => { e.currentTarget.releasePointerCapture(e.pointerId); paintPixel(i); }}
-              onPointerEnter={(e) => { if (e.buttons === 1 && activeTool !== 'pan') paintPixel(i); }}
-              className={`w-full h-full border-[0.5px] ${activeTool === 'pan' ? 'pointer-events-none' : 'cursor-crosshair'} ${isTransparent ? 'border-white/10' : (canvasBgColor==='#ffffff'?'border-black/10':'border-white/20')} hover:bg-black/30`}
+              data-pixel-index={i} // Ini kunci ElementFromPoint
+              className={`w-full h-full border-[0.5px] pointer-events-none ${isTransparent ? 'border-white/10' : (canvasBgColor==='#ffffff'?'border-black/10':'border-white/20')} hover:bg-black/30`}
               style={{ backgroundColor: bg !== 'transparent' ? bg : undefined }}
             />
           ))}
@@ -791,37 +790,28 @@ export const PluginPixelDrawing = () => {
 
   const controls = (
     <>
-      <PluginTip text="PANDUAN CANVAS: Gunakan 2 Jari untuk mengatur Zoom & Geser layar. Kamu bisa menambah warna custom, atur transparan, lalu klik Download untuk mengekspor gambar hingga resolusi HD." />
+      <PluginTip text="PANDUAN: Pilih alat PAN (Tangan) agar tidak tercoret saat Zoom 2 Jari! Gunakan slider Rotate untuk memutar kanvas layaknya di Photopea/Ibis Paint." />
       
-      {/* PERBAIKAN INPUT MANUAL GRID */}
+      {/* KONTROL PUTAR KANVAS */}
+      <FigmaSlider label="Rotate Canvas" min={-180} max={180} value={rotation} onChange={setRotation} unit="°" />
+
       <div className="mb-4 mt-2">
          <label className="text-[10px] font-medium text-slate-400 block mb-2">Grid Resolusi (Min: 8, Max: 64)</label>
          <div className="flex gap-2">
-            <input
-              type="text"
-              value={localGridInput}
-              onChange={(e) => setLocalGridInput(e.target.value)}
-              onBlur={handleGridSubmit}
-              onKeyDown={(e) => { if (e.key === 'Enter') handleGridSubmit(); }}
-              className="w-full bg-[#0a0a0a] border border-[#2a2a2a] rounded-lg px-3 py-2.5 text-[11px] text-white outline-none focus:border-cyan-500 transition-all font-mono"
-            />
+            <input type="text" value={localGridInput} onChange={(e) => setLocalGridInput(e.target.value)} onBlur={handleGridSubmit} onKeyDown={(e) => { if (e.key === 'Enter') handleGridSubmit(); }} className="w-full bg-[#0a0a0a] border border-[#2a2a2a] rounded-lg px-3 py-2.5 text-[11px] text-white outline-none focus:border-cyan-500 transition-all font-mono" />
             <button onClick={handleGridSubmit} className="px-4 py-2 bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 rounded-lg text-[9px] font-bold uppercase transition-all hover:bg-cyan-500/20">Terapkan</button>
          </div>
-         <p className="text-[9px] text-slate-500 mt-2 italic leading-relaxed">*Grid dibatasi di 64x64. Karena sistem ini merender UI murni dari ratusan baris kode CSS (bukan gambar bitmap), angka jutaan pixel akan membuat HP/Laptop hang total!</p>
       </div>
 
       <div className="flex justify-between items-center mb-4 mt-6 border-t border-[#1f1f1f] pt-4">
         <label className="text-[10px] font-medium text-slate-400 block">Warna Kanvas & Kuas</label>
         <button onClick={clearCanvas} className="text-[8px] text-red-400 hover:text-white bg-red-500/10 border border-red-500/30 px-2 py-1 rounded transition-colors uppercase font-bold tracking-widest">Clear Canvas</button>
       </div>
-      
       <FigmaColorPicker label="Warna Background Kanvas" hexValue={canvasBgColor} onChange={setCanvasBgColor} />
-      
       <div className="flex items-center gap-3 mb-3">
         <div className="flex-1"><FigmaColorPicker label="Warna Kuas (Brush)" hexValue={color} onChange={setColor} /></div>
         <button onClick={addToPalette} className="mt-2 w-10 h-10 rounded-lg bg-[#141414] border border-[#2a2a2a] text-cyan-400 hover:bg-cyan-500/20 hover:border-cyan-500 flex items-center justify-center transition-all"><div className="w-4 h-4"><Icons.Plus /></div></button>
       </div>
-      
       <div className="flex flex-wrap gap-2 mb-6">
         {palette.map((c, i) => (
            <button key={i} onClick={() => {setColor(c); setActiveTool('draw');}} className={`w-6 h-6 rounded-md border ${color === c && activeTool === 'draw' ? 'border-cyan-400 scale-110 shadow-[0_0_10px_rgba(34,211,238,0.4)]' : 'border-[#333]'}`} style={{backgroundColor: c}}></button>
