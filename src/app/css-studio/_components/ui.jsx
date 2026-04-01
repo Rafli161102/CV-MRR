@@ -48,7 +48,7 @@ export const FigmaSlider = ({ label, min, max, step = 1, value, onChange, unit =
     <div className="w-2/3 flex items-center gap-3">
       <input type="range" min={min} max={max} step={step} value={value || 0} onChange={(e) => onChange(Number(e.target.value) || 0)} className="w-full h-[3px] bg-[#333] rounded-lg appearance-none cursor-pointer outline-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:h-3.5 [&::-webkit-slider-thumb]:bg-cyan-400 [&::-webkit-slider-thumb]:rounded-full hover:[&::-webkit-slider-thumb]:scale-125 transition-all" />
       <div className="bg-[#0a0a0a] px-2 py-1 rounded border border-[#2a2a2a] min-w-[55px] text-right shrink-0">
-        <span className="text-[10px] font-mono text-cyan-400">{value}{unit}</span>
+        <span className="text-[10px] font-mono text-cyan-400">{value || 0}{unit}</span>
       </div>
     </div>
   </div>
@@ -56,8 +56,10 @@ export const FigmaSlider = ({ label, min, max, step = 1, value, onChange, unit =
 
 export const FigmaColorPicker = ({ label, hexValue, onChange }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [hsl, setHsl] = useState(hexToHsl(hexValue));
-  useEffect(() => { setHsl(hexToHsl(hexValue)); }, [hexValue]);
+  const safeHexVal = hexValue || '#ffffff';
+  const [hsl, setHsl] = useState(hexToHsl(safeHexVal));
+  
+  useEffect(() => { setHsl(hexToHsl(safeHexVal)); }, [safeHexVal]);
 
   const handleHslChange = (part, val) => {
     const newHsl = { ...hsl, [part]: val };
@@ -73,10 +75,10 @@ export const FigmaColorPicker = ({ label, hexValue, onChange }) => {
       <div className="bg-[#0a0a0a] border border-[#2a2a2a] rounded-lg overflow-hidden transition-all duration-300 shadow-sm hover:border-[#444]">
         <div className="flex items-center justify-between p-2.5 cursor-pointer hover:bg-[#141414] transition-colors" onClick={() => setIsOpen(!isOpen)}>
           <div className="flex items-center gap-3">
-            <div className="w-5 h-5 rounded-md shadow-inner border border-white/10 ring-1 ring-black/50" style={{backgroundColor: hexValue}}></div>
+            <div className="w-5 h-5 rounded-md shadow-inner border border-white/10 ring-1 ring-black/50" style={{backgroundColor: safeHexVal}}></div>
             <div className="flex flex-col">
                <span className="text-[10px] font-medium text-slate-200 leading-none">{label}</span>
-               <span className="text-[9px] font-mono text-slate-500 uppercase mt-0.5">{hexValue}</span>
+               <span className="text-[9px] font-mono text-slate-500 uppercase mt-0.5">{safeHexVal}</span>
             </div>
           </div>
           <div className={`text-slate-400 transform transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}><Icons.ChevronDown /></div>
@@ -85,20 +87,20 @@ export const FigmaColorPicker = ({ label, hexValue, onChange }) => {
           <div className="space-y-3">
             <div>
               <div className="flex justify-between mb-1.5"><span className="text-[9px] text-slate-400">Hue</span></div>
-              <input type="range" min="0" max="360" value={hsl.h} onChange={(e) => handleHslChange('h', Number(e.target.value))} className="w-full h-2 rounded-full appearance-none cursor-pointer custom-color-slider" style={{background: 'linear-gradient(to right, #f00 0%, #ff0 17%, #0f0 33%, #0ff 50%, #00f 67%, #f0f 83%, #f00 100%)'}} />
+              <input type="range" min="0" max="360" value={hsl.h || 0} onChange={(e) => handleHslChange('h', Number(e.target.value))} className="w-full h-2 rounded-full appearance-none cursor-pointer custom-color-slider" style={{background: 'linear-gradient(to right, #f00 0%, #ff0 17%, #0f0 33%, #0ff 50%, #00f 67%, #f0f 83%, #f00 100%)'}} />
             </div>
             <div>
               <div className="flex justify-between mb-1.5"><span className="text-[9px] text-slate-400">Saturation</span></div>
-              <input type="range" min="0" max="100" value={hsl.s} onChange={(e) => handleHslChange('s', Number(e.target.value))} className="w-full h-2 rounded-full appearance-none cursor-pointer custom-color-slider" style={{background: `linear-gradient(to right, #808080, ${hslToHex(hsl.h, 100, 50)})`}} />
+              <input type="range" min="0" max="100" value={hsl.s || 0} onChange={(e) => handleHslChange('s', Number(e.target.value))} className="w-full h-2 rounded-full appearance-none cursor-pointer custom-color-slider" style={{background: `linear-gradient(to right, #808080, ${hslToHex(hsl.h || 0, 100, 50)})`}} />
             </div>
             <div>
               <div className="flex justify-between mb-1.5"><span className="text-[9px] text-slate-400">Lightness</span></div>
-              <input type="range" min="0" max="100" value={hsl.l} onChange={(e) => handleHslChange('l', Number(e.target.value))} className="w-full h-2 rounded-full appearance-none cursor-pointer custom-color-slider" style={{background: `linear-gradient(to right, #000, ${hslToHex(hsl.h, hsl.s, 50)}, #fff)`}} />
+              <input type="range" min="0" max="100" value={hsl.l || 0} onChange={(e) => handleHslChange('l', Number(e.target.value))} className="w-full h-2 rounded-full appearance-none cursor-pointer custom-color-slider" style={{background: `linear-gradient(to right, #000, ${hslToHex(hsl.h || 0, hsl.s || 0, 50)}, #fff)`}} />
             </div>
           </div>
           <div className="flex flex-wrap gap-2 mt-4 pt-3 border-t border-[#2a2a2a]">
             {COLOR_PRESETS.map((c) => (
-              <button key={c} onClick={() => onChange(c)} className={`w-5 h-5 rounded-md border transition-transform hover:scale-110 ${hexValue===c ? 'border-cyan-400 scale-110 shadow-lg' : 'border-[#333]'}`} style={{ backgroundColor: c }} />
+              <button key={c} onClick={() => onChange(c)} className={`w-5 h-5 rounded-md border transition-transform hover:scale-110 ${safeHexVal===c ? 'border-cyan-400 scale-110 shadow-lg' : 'border-[#333]'}`} style={{ backgroundColor: c }} />
             ))}
           </div>
         </div>
@@ -107,7 +109,7 @@ export const FigmaColorPicker = ({ label, hexValue, onChange }) => {
   );
 };
 
-export const FigmaSelect = ({ label, options, value, onChange }) => (
+export const FigmaSelect = ({ label, options = [], value, onChange }) => (
   <div className="mb-4">
      <label className="text-[10px] font-medium text-slate-400 block mb-2">{label}</label>
      <div className="flex bg-[#0a0a0a] p-1 rounded-lg border border-[#2a2a2a] overflow-x-auto custom-scroll">
@@ -122,18 +124,18 @@ export const FigmaTextInput = ({ label, value, onChange, placeholder = "Ketik se
   <div className="mb-4">
      <label className="text-[10px] font-medium text-slate-400 block mb-2">{label}</label>
      {isTextArea ? (
-       <textarea value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} className="w-full h-20 bg-[#0a0a0a] border border-[#2a2a2a] rounded-lg px-3 py-2.5 text-[11px] text-white outline-none focus:border-cyan-500 transition-all placeholder:text-slate-600 resize-none" />
+       <textarea value={value || ''} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} className="w-full h-20 bg-[#0a0a0a] border border-[#2a2a2a] rounded-lg px-3 py-2.5 text-[11px] text-white outline-none focus:border-cyan-500 transition-all placeholder:text-slate-600 resize-none" />
      ) : (
-       <input type="text" value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} className="w-full bg-[#0a0a0a] border border-[#2a2a2a] rounded-lg px-3 py-2.5 text-[11px] text-white outline-none focus:border-cyan-500 transition-all placeholder:text-slate-600" />
+       <input type="text" value={value || ''} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} className="w-full bg-[#0a0a0a] border border-[#2a2a2a] rounded-lg px-3 py-2.5 text-[11px] text-white outline-none focus:border-cyan-500 transition-all placeholder:text-slate-600" />
      )}
   </div>
 );
 
-export const FigmaCustomDropdown = ({ label, groups, value, onChange }) => {
+export const FigmaCustomDropdown = ({ label, groups = {}, value, onChange }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  let currentName = value;
+  let currentName = value || 'Select...';
   for (const group in groups) {
     const found = groups[group].find(opt => opt.val === value);
     if (found) { currentName = found.name; break; }
@@ -173,9 +175,9 @@ export const CodeOutput = ({ cssCode, htmlCode, jsxCode, isMobileTab }) => {
   const [lang, setLang] = useState('css');
 
   const getActiveCode = () => {
-    if (lang === 'css') return cssCode;
-    if (lang === 'html') return htmlCode;
-    return jsxCode;
+    if (lang === 'css') return cssCode || '/* CSS Output */';
+    if (lang === 'html') return htmlCode || '';
+    return jsxCode || '// JSX Output';
   };
 
   const handleCopy = () => {
