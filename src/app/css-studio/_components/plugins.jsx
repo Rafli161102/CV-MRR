@@ -64,6 +64,20 @@ const useMultiTouch = () => {
 };
 
 // =========================================================================
+// HEADER KONTROL RESET
+// =========================================================================
+const ControlHeader = ({ title, onReset }) => (
+  <div className="flex items-center justify-between pb-2 border-b border-[#1f1f1f] mb-4">
+     <span className="text-[10px] font-bold text-cyan-400 uppercase tracking-widest">{title}</span>
+     {onReset && (
+       <button onClick={onReset} className="text-[8px] text-slate-400 hover:text-white bg-[#1a1a1a] border border-[#333] hover:border-cyan-500 px-2 py-1 rounded transition-colors uppercase tracking-wider">
+         Reset Settings
+       </button>
+     )}
+  </div>
+);
+
+// =========================================================================
 // 1. BOX LAYOUT (FIX: BISA UBAH WARNA BG & TEXT)
 // =========================================================================
 export const PluginLayout = () => {
@@ -72,6 +86,8 @@ export const PluginLayout = () => {
   const [bgColor, setBgColor] = useState('#1a1a1a');
   const [textColor, setTextColor] = useState('#ffffff');
 
+  const handleReset = () => { setPadding(32); setRadius(24); setBgColor('#1a1a1a'); setTextColor('#ffffff'); };
+
   const css = `.box {\n  padding: ${padding}px;\n  border-radius: ${radius}px;\n  background-color: ${bgColor};\n  color: ${textColor};\n}`;
   const html = `<div style="padding: ${padding}px; border-radius: ${radius}px; background-color: ${bgColor}; color: ${textColor};">\n  Box Content\n</div>`;
   const jsx = `<div style={{ padding: '${padding}px', borderRadius: '${radius}px', backgroundColor: '${bgColor}', color: '${textColor}' }}>Box Content</div>`;
@@ -79,6 +95,7 @@ export const PluginLayout = () => {
   const controls = (
     <>
       <PluginTip text="PANDUAN: Gunakan Padding untuk mengatur ruang bernapas di dalam elemen. Kamu sekarang bisa menyesuaikan warna background dan teks!" />
+      <ControlHeader title="Configuration" onReset={handleReset} />
       <div className="flex gap-4 mb-4">
         <div className="flex-1"><FigmaColorPicker label="Background" hexValue={bgColor} onChange={setBgColor} /></div>
         <div className="flex-1"><FigmaColorPicker label="Text Color" hexValue={textColor} onChange={setTextColor} /></div>
@@ -105,7 +122,7 @@ const PRESET_NODES = {
 export const PluginShapes = () => {
   const createShape = (id, name) => ({ 
     id, name, mode: 'preset', shapeVal: 'square', color: '#8b5cf6', 
-    nodes: PRESET_NODES['square'], rounded: 0, x: 0, y: 0, w: 200, h: 200, visible: true, locked: false 
+    nodes: PRESET_NODES['square'], rounded: 0, x: 100, y: 100, w: 200, h: 200, visible: true, locked: false 
   });
 
   const [shapes, setShapes] = useState([createShape(1, "Shape 1")]);
@@ -153,7 +170,7 @@ export const PluginShapes = () => {
   const handlePointerDownCanvas = (e) => {
     if (activeTool === 'pan') {
       setIsDraggingPan(true); setDragStart({ x: e.clientX - pan.x, y: e.clientY - pan.y }); e.currentTarget.setPointerCapture(e.pointerId);
-    } else if (activeTool === 'pen') {
+    } else if (activeTool === 'pen' && activeShape) {
       const rect = e.currentTarget.getBoundingClientRect();
       const xPercent = (((e.clientX - rect.left) / scale) / activeShape.w) * 100;
       const yPercent = (((e.clientY - rect.top) / scale) / activeShape.h) * 100;
@@ -181,11 +198,12 @@ export const PluginShapes = () => {
   const handlePointerMove = (e) => {
     if (isDraggingPan) {
       setPan({ x: e.clientX - dragStart.x, y: e.clientY - dragStart.y });
-    } else if (draggingNode && activeTool === 'pen') {
+    } else if (draggingNode && activeTool === 'pen' && activeShape) {
       const rect = e.currentTarget.getBoundingClientRect();
       const xPercent = (((e.clientX - rect.left) / scale) / activeShape.w) * 100;
       const yPercent = (((e.clientY - rect.top) / scale) / activeShape.h) * 100;
-      updateActive('nodes', activeShape.nodes.map(n => n.id === draggingNode ? { ...n, x: Math.max(0, Math.min(100, snapCoordinate(xPercent))), y: Math.max(0, Math.min(100, snapCoordinate(yPercent))) } : n));
+      const updatedNodes = activeShape.nodes.map(n => n.id === draggingNode ? { ...n, x: Math.max(0, Math.min(100, snapCoordinate(xPercent))), y: Math.max(0, Math.min(100, snapCoordinate(yPercent))) } : n);
+      updateActive('nodes', updatedNodes);
       updateActive('mode', 'custom');
     } else if (draggingShape && activeTool === 'pan') {
       const dx = (e.clientX - dragStart.x) / scale; const dy = (e.clientY - dragStart.y) / scale;
@@ -202,14 +220,16 @@ export const PluginShapes = () => {
 
   const getShapeCss = (s) => {
     const isSquare = s.mode === 'preset' && s.shapeVal === 'square';
-    if (isSquare) return `border-radius: ${s.rounded}%; background-color: ${s.color}; width: ${s.w}px; height: ${s.h}px; transform: translate(${s.x}px, ${s.y}px);`;
+    if (isSquare) {
+      return `border-radius: ${s.rounded}%; background-color: ${s.color}; width: ${s.w}px; height: ${s.h}px; transform: translate(${s.x}px, ${s.y}px);`;
+    }
     const polyString = s.nodes.length >= 3 ? s.nodes.map(n => `${n.x}% ${n.y}%`).join(', ') : '0 0, 0 0, 0 0';
     return `clip-path: polygon(${polyString}); background-color: ${s.color}; width: ${s.w}px; height: ${s.h}px; transform: translate(${s.x}px, ${s.y}px);`;
   };
 
   const css = `.canvas-wrapper { position: relative; width: 400px; height: 400px; }\n${shapes.map((s, i) => `.shape-${i+1} {\n  position: absolute;\n  ${getShapeCss(s)}\n}`).join('\n\n')}`;
   const html = `<div class="canvas-wrapper">\n${shapes.map((s,i) => `  <div class="shape-${i+1}"></div>`).join('\n')}\n</div>`;
-  const jsx = `<div className="relative w-[400px] h-[400px]">\n${shapes.map(s => `  <div style={{ position: 'absolute', transform: 'translate(${s.x}px, ${s.y}px)', width: '${s.w}px', height: '${s.h}px', ${s.mode === 'preset' && s.shapeVal === 'square' ? `borderRadius: '${s.rounded}%'` : `clipPath: 'polygon(${s.nodes.length >= 3 ? s.nodes.map(n => `${n.x}% ${n.y}%`).join(', ') : '0 0'})'`}, backgroundColor: '${s.color}' }} />`).join('\n')}\n</div>`;
+  const jsx = `<div className="relative w-[400px] h-[400px]">\n${shapes.map((s,i) => `  <div style={{ position: 'absolute', transform: 'translate(${s.x}px, ${s.y}px)', width: '${s.w}px', height: '${s.h}px', ${s.mode === 'preset' && s.shapeVal === 'square' ? `borderRadius: '${s.rounded}%'` : `clipPath: 'polygon(${s.nodes.length >= 3 ? s.nodes.map(n => `${n.x}% ${n.y}%`).join(', ') : '0 0'})'`}, backgroundColor: '${s.color}' }} />`).join('\n')}\n</div>`;
 
   const preview = (
     <div className="relative w-full h-[300px] flex items-center justify-center overflow-hidden border border-white/5 bg-[#050505] rounded-xl touch-none" onTouchStart={onTouchStart} onTouchMove={onTouchMove}>
@@ -252,7 +272,7 @@ export const PluginShapes = () => {
   
   const controls = (
     <>
-      <PluginTip text="PANDUAN VECTOR: Batas kanvas terlihat dengan garis putus-putus. Gunakan Panel Layer untuk mengunci, menyembunyikan, atau menumpuk shape! Atur Width & Height untuk resize." />
+      <PluginTip text="PANDUAN VECTOR: Klik 'Tambah Shape Baru' untuk menumpuk bentuk! Khusus Preset 'Square', kamu bisa membuatnya melengkung sempurna jadi bulat. Atur Width & Height untuk resize." />
       
       {/* SHAPE LAYERS PANEL */}
       <div className="border-t border-[#1f1f1f] pt-4 pb-2 mb-4">
@@ -298,6 +318,12 @@ export const PluginShapes = () => {
         </>
       )}
 
+      {activeShape?.mode === 'custom' && (
+         <button onClick={() => updateActive('nodes', [])} className="w-full mt-2 py-3 bg-[#1a1a1a] hover:bg-red-500/20 border border-[#333] hover:border-red-500/50 text-slate-300 hover:text-white rounded-lg text-[10px] font-bold uppercase tracking-widest transition-colors shadow-sm">
+           Clear Custom Shape
+         </button>
+      )}
+
       <div className="flex items-center justify-between py-3 border-t border-[#1f1f1f] mt-4">
          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Magnet / Snap To Grid</span>
          <button onClick={() => setSnapToGrid(!snapToGrid)} className={`w-8 h-4 rounded-full transition-colors relative ${snapToGrid ? 'bg-cyan-500' : 'bg-[#333]'}`}>
@@ -311,7 +337,7 @@ export const PluginShapes = () => {
 
 
 // =========================================================================
-// 3. PIXEL DRAWING (FIX: RUMUS CORETAN MATRIX & UI REVAMP)
+// 3. PIXEL DRAWING (FIX 100%: DRAWING BUG ON ZOOM & ROTATE, LAYER SYSTEM)
 // =========================================================================
 const floodFill = (pixels, startIndex, targetColor, replacementColor, gridSize) => {
   if (targetColor === replacementColor) return pixels;
@@ -350,7 +376,6 @@ export const PluginPixelDrawing = () => {
   const [isDraggingPan, setIsDraggingPan] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [isDrawing, setIsDrawing] = useState(false);
-  const gridRef = useRef(null); // KUNCI UTAMA FIX BUG CORETAN!
 
   useEffect(() => {
     const safeGrid = Math.min(Math.max(gridSize, 8), 64);
@@ -392,33 +417,30 @@ export const PluginPixelDrawing = () => {
     setLayers(newLayers);
   };
 
-  // FIX MATH: Kalkulasi Matriks presisi, bebas dari bug elementFromPoint!
+  // FIX MATH UTAMA: Solusi untuk mendeteksi kordinat saat kanvas diputar dan dizoom
   const paintByEvent = (e) => {
-    if (activeTool === 'pan' || e.touches?.length > 1 || !gridRef.current) return;
+    if (activeTool === 'pan' || e.touches?.length > 1) return;
     
     let clientX = e.clientX; let clientY = e.clientY;
     if (e.touches && e.touches.length > 0) { clientX = e.touches[0].clientX; clientY = e.touches[0].clientY; }
     if (clientX === undefined || clientY === undefined) return;
 
-    const rect = gridRef.current.getBoundingClientRect();
-    const pixelSizePx = gridSize <= 8 ? 20 : gridSize <= 16 ? 12 : gridSize <= 32 ? 6 : 4;
-    
-    // Menghitung kordinat asli relatif terhadap grid box (meskipun sudah di zoom)
-    const xReal = (clientX - rect.left) / scale;
-    const yReal = (clientY - rect.top) / scale;
+    // Sembunyikan element lain untuk mendapatkan target pixel yang sebenarnya
+    const elements = document.elementsFromPoint(clientX, clientY);
+    let pixelElement = null;
+    for (let el of elements) {
+       if (el.getAttribute('data-pixel-index')) {
+          pixelElement = el; break;
+       }
+    }
 
-    if (xReal < 0 || yReal < 0 || xReal >= (gridSize * pixelSizePx) || yReal >= (gridSize * pixelSizePx)) return;
-
-    const col = Math.floor(xReal / pixelSizePx);
-    const row = Math.floor(yReal / pixelSizePx);
-    const index = row * gridSize + col;
-
-    if (index >= 0 && index < gridSize * gridSize) {
+    if (pixelElement) {
+      const idx = pixelElement.getAttribute('data-pixel-index');
       if (activeTool === 'picker') {
-         const pickedColor = mergedPixels[index] !== 'transparent' ? mergedPixels[index] : (isTransparent ? '#ffffff' : canvasBgColor);
+         const pickedColor = mergedPixels[Number(idx)] !== 'transparent' ? mergedPixels[Number(idx)] : (isTransparent ? '#ffffff' : canvasBgColor);
          setColor(pickedColor); setActiveTool('draw'); return;
       }
-      paintPixel(index);
+      paintPixel(Number(idx));
     }
   };
 
@@ -446,10 +468,38 @@ export const PluginPixelDrawing = () => {
   const handleGridSubmit = () => { let val = parseInt(localGridInput, 10); if (isNaN(val) || val < 8) val = 8; if (val > 64) val = 64; setGridSize(val); setLocalGridInput(val.toString()); };
   const addToPalette = () => { if (!palette.includes(color)) setPalette([color, ...palette].slice(0, 15)); };
 
+  const downloadImage = () => {
+    const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
+    canvas.width = outputSize; canvas.height = outputSize;
+    const pSize = outputSize / gridSize;
+
+    if (!isTransparent) { ctx.fillStyle = canvasBgColor; ctx.fillRect(0, 0, outputSize, outputSize); }
+    mergedPixels.forEach((p, i) => {
+      if (p !== 'transparent') {
+        ctx.fillStyle = p;
+        const x = (i % gridSize) * pSize; const y = Math.floor(i / gridSize) * pSize;
+        ctx.fillRect(x, y, pSize, pSize);
+      }
+    });
+
+    const link = document.createElement('a'); link.download = `pixel-art-${outputSize}px.png`;
+    link.href = canvas.toDataURL('image/png'); link.click();
+  };
+
   const pixelSizePx = gridSize <= 8 ? 20 : gridSize <= 16 ? 12 : gridSize <= 32 ? 6 : 4;
-  const generateBoxShadow = () => { let shadow = []; mergedPixels.forEach((p, i) => { if (p !== 'transparent') { const x = (i % gridSize) * pixelSizePx; const y = Math.floor(i / gridSize) * pixelSizePx; shadow.push(`${x}px ${y}px ${p}`); } }); return shadow.length > 0 ? shadow.join(',\n    ') : 'none'; };
+  const generateBoxShadow = () => {
+    let shadow = [];
+    mergedPixels.forEach((p, i) => {
+      if (p !== 'transparent') {
+        const x = (i % gridSize) * pixelSizePx; const y = Math.floor(i / gridSize) * pixelSizePx;
+        shadow.push(`${x}px ${y}px ${p}`);
+      }
+    });
+    return shadow.length > 0 ? shadow.join(',\n    ') : 'none';
+  };
+
   const actualBg = isTransparent ? 'transparent' : canvasBgColor;
-  const css = `.pixel-art {\n  width: ${pixelSizePx}px;\n  height: ${pixelSizePx}px;\n  background: ${actualBg};\n  box-shadow: \n    ${generateBoxShadow()};\n}`;
+  const css = `/* Pure CSS Pixel Art (${gridSize}x${gridSize}) */\n.pixel-art {\n  width: ${pixelSizePx}px;\n  height: ${pixelSizePx}px;\n  background: ${actualBg};\n  box-shadow: \n    ${generateBoxShadow()};\n}`;
   const html = `<div style="width: ${pixelSizePx}px; height: ${pixelSizePx}px; background: ${actualBg}; box-shadow: ${generateBoxShadow().replace(/\n\s+/g, ' ')};"></div>`;
   const jsx = `<div style={{ width: '${pixelSizePx}px', height: '${pixelSizePx}px', background: '${actualBg}', boxShadow: '${generateBoxShadow().replace(/\n\s+/g, ' ')}' }} />`;
 
@@ -457,10 +507,9 @@ export const PluginPixelDrawing = () => {
     <div className="relative w-full h-[300px] flex items-center justify-center overflow-hidden border border-white/5 bg-[#050505] rounded-xl touch-none"
       onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={handlePointerUp} onPointerCancel={handlePointerUp}
       onTouchStart={(e) => { if (activeTool === 'pan' || e.touches.length > 1) onTouchStart(e); }} 
-      onTouchMove={(e) => { if (activeTool === 'pan' || e.touches.length > 1) onTouchMove(e); }}
+      onTouchMove={(e) => { if (activeTool === 'pan' || e.touches.length > 1) onTouchMove(e); else if(isDrawing) paintByEvent(e); }}
     >
-      {/* TOOLBAR KIRI (Dibuat vertikal melayang agar tidak menutupi gambar) */}
-      <div className="absolute top-1/2 -translate-y-1/2 left-3 bg-[#141414]/90 backdrop-blur border border-[#2a2a2a] p-1.5 rounded-xl flex flex-col gap-2 z-20 shadow-2xl">
+      <div className="absolute top-3 left-3 bg-[#141414]/90 backdrop-blur border border-[#2a2a2a] p-1.5 rounded-xl flex flex-col gap-2 z-20 shadow-2xl">
         <button onClick={() => setActiveTool('draw')} className={`w-8 h-8 flex items-center justify-center rounded-lg transition-all ${activeTool === 'draw' ? 'bg-cyan-500 text-black shadow-[0_0_10px_rgba(6,182,212,0.5)]' : 'text-slate-400 hover:bg-[#2a2a2a]'}`} title="Kuas"><div className="w-4 h-4"><Icons.Brush /></div></button>
         <button onClick={() => setActiveTool('erase')} className={`w-8 h-8 flex items-center justify-center rounded-lg transition-all ${activeTool === 'erase' ? 'bg-cyan-500 text-black shadow-[0_0_10px_rgba(6,182,212,0.5)]' : 'text-slate-400 hover:bg-[#2a2a2a]'}`} title="Penghapus"><div className="w-4 h-4"><Icons.Eraser /></div></button>
         <button onClick={() => setActiveTool('bucket')} className={`w-8 h-8 flex items-center justify-center rounded-lg transition-all ${activeTool === 'bucket' ? 'bg-cyan-500 text-black shadow-[0_0_10px_rgba(6,182,212,0.5)]' : 'text-slate-400 hover:bg-[#2a2a2a]'}`} title="Ember Cat"><div className="w-4 h-4"><Icons.Bucket /></div></button>
@@ -474,7 +523,6 @@ export const PluginPixelDrawing = () => {
            <span className="bg-red-500 text-white text-[7px] font-bold px-3 py-0.5 rounded-t-md tracking-widest shadow-lg">TOP</span>
         </div>
         <div 
-           ref={gridRef}
            className="grid shadow-[0_0_50px_rgba(0,0,0,0.8)] border-t-2 border-t-red-500" 
            style={{ 
              width: gridSize * pixelSizePx, height: gridSize * pixelSizePx,
@@ -485,7 +533,11 @@ export const PluginPixelDrawing = () => {
            }}
         >
           {mergedPixels.map((bg, i) => (
-            <div key={i} className={`w-full h-full border-[0.5px] pointer-events-none ${isTransparent ? 'border-white/10' : (canvasBgColor==='#ffffff'?'border-black/10':'border-white/20')}`} style={{ backgroundColor: bg !== 'transparent' ? bg : undefined }} />
+            <div 
+              key={i} data-pixel-index={i} 
+              className={`w-full h-full border-[0.5px] ${isTransparent ? 'border-white/10' : (canvasBgColor==='#ffffff'?'border-black/10':'border-white/20')} hover:bg-black/30 pointer-events-auto cursor-crosshair`}
+              style={{ backgroundColor: bg !== 'transparent' ? bg : undefined }}
+            />
           ))}
         </div>
       </div>
@@ -499,7 +551,7 @@ export const PluginPixelDrawing = () => {
 
   const controls = (
     <>
-      <PluginTip text="PANDUAN: Saat TANGAN aktif, Kuas terkunci otomatis agar aman saat zoom 2 jari. Klik angka di slider untuk mengetik ukuran secara manual." />
+      <PluginTip text="CANVAS PRO: Gunakan 2 Jari untuk memutar & zoom layar. Garis merah adalah panduan posisi ATAS. Gunakan sistem layer untuk mencegah salah coret pada desain yang sudah jadi." />
       
       <div className="mb-4 mt-2">
          <label className="text-[10px] font-medium text-slate-400 block mb-2">Grid Resolusi (Min: 8, Max: 64)</label>
@@ -554,19 +606,7 @@ export const PluginPixelDrawing = () => {
             </div>
          </div>
          <FigmaSlider label="Output Size" min={gridSize} max={1920} step={gridSize} value={outputSize} onChange={setOutputSize} unit="px" />
-         <button onClick={() => {
-            const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
-            canvas.width = outputSize; canvas.height = outputSize; const pSize = outputSize / gridSize;
-            if (!isTransparent) { ctx.fillStyle = canvasBgColor; ctx.fillRect(0, 0, outputSize, outputSize); }
-            mergedPixels.forEach((p, i) => {
-              if (p !== 'transparent') {
-                ctx.fillStyle = p; const x = (i % gridSize) * pSize; const y = Math.floor(i / gridSize) * pSize;
-                ctx.fillRect(x, y, pSize, pSize);
-              }
-            });
-            const link = document.createElement('a'); link.download = `pixel-art-${outputSize}px.png`;
-            link.href = canvas.toDataURL('image/png'); link.click();
-         }} className="mt-4 w-full flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all shadow-lg hover:shadow-cyan-500/25">
+         <button onClick={downloadImage} className="mt-4 w-full flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all shadow-lg hover:shadow-cyan-500/25">
            <div className="w-4 h-4"><Icons.Download /></div> Download HD PNG
          </button>
       </div>
@@ -577,7 +617,7 @@ export const PluginPixelDrawing = () => {
 };
 
 // =========================================================================
-// FITUR 3D STUDIO (DIRUBAH MENJADI KUBUS 3D ASLI DENGAN 6 SISI)
+// FITUR 3D STUDIO (FIX: KUBUS ASLI 6 SISI)
 // =========================================================================
 export const PluginTransform = () => {
   const [rx, setRx] = useState(30); const [ry, setRy] = useState(-30); const [rz, setRz] = useState(0); 
@@ -587,33 +627,38 @@ export const PluginTransform = () => {
 
   const { scale: touchScale, pan, onTouchStart, onTouchMove, resetView } = useMultiTouch();
 
-  const faceStyle = "absolute flex items-center justify-center font-black text-white/50 tracking-widest text-[10px] border border-white/20 shadow-[inset_0_0_20px_rgba(0,0,0,0.5)]";
+  const faceStyle = "absolute flex items-center justify-center font-black text-white/80 tracking-widest text-[16px] border border-white/20 shadow-[inset_0_0_20px_rgba(0,0,0,0.5)]";
 
   const preview = (
     <div className="relative w-full h-full flex items-center justify-center touch-none" style={{ perspective: '1000px' }} onTouchStart={onTouchStart} onTouchMove={onTouchMove}>
       <div 
-        className="relative"
         style={{ 
-          width: `${cubeSize}px`, height: `${cubeSize}px`,
           transformStyle: 'preserve-3d',
-          transform: `translate(${pan.x}px, ${pan.y}px) scale(${touchScale * scale}) translate3d(${tx}px, ${ty}px, ${tz}px) rotateX(${rx}deg) rotateY(${ry}deg) rotateZ(${rz}deg)`,
+          transform: `translate(${pan.x}px, ${pan.y}px) scale(${touchScale * scale})`,
           transition: 'transform 0.1s linear'
         }}
       >
-        {/* 6 Sisi Kubus Asli */}
-        <div className={faceStyle} style={{ width: '100%', height: '100%', background: 'rgba(14, 165, 233, 0.8)', transform: `translateZ(${cubeSize/2}px)` }}>FRONT</div>
-        <div className={faceStyle} style={{ width: '100%', height: '100%', background: 'rgba(139, 92, 246, 0.8)', transform: `rotateY(180deg) translateZ(${cubeSize/2}px)` }}>BACK</div>
-        <div className={faceStyle} style={{ width: '100%', height: '100%', background: 'rgba(236, 72, 153, 0.8)', transform: `rotateY(90deg) translateZ(${cubeSize/2}px)` }}>RIGHT</div>
-        <div className={faceStyle} style={{ width: '100%', height: '100%', background: 'rgba(245, 158, 11, 0.8)', transform: `rotateY(-90deg) translateZ(${cubeSize/2}px)` }}>LEFT</div>
-        <div className={faceStyle} style={{ width: '100%', height: '100%', background: 'rgba(16, 185, 129, 0.8)', transform: `rotateX(90deg) translateZ(${cubeSize/2}px)` }}>TOP</div>
-        <div className={faceStyle} style={{ width: '100%', height: '100%', background: 'rgba(239, 68, 68, 0.8)', transform: `rotateX(-90deg) translateZ(${cubeSize/2}px)` }}>BOTTOM</div>
+        <div 
+           style={{ 
+             width: `${cubeSize}px`, height: `${cubeSize}px`, transformStyle: 'preserve-3d',
+             transform: `translate3d(${tx}px, ${ty}px, ${tz}px) rotateX(${rx}deg) rotateY(${ry}deg) rotateZ(${rz}deg)`
+           }}
+        >
+          {/* 6 Sisi Kubus Asli */}
+          <div className={faceStyle} style={{ width: '100%', height: '100%', background: 'rgba(14, 165, 233, 0.8)', transform: `translateZ(${cubeSize/2}px)` }}>FRONT</div>
+          <div className={faceStyle} style={{ width: '100%', height: '100%', background: 'rgba(139, 92, 246, 0.8)', transform: `rotateY(180deg) translateZ(${cubeSize/2}px)` }}>BACK</div>
+          <div className={faceStyle} style={{ width: '100%', height: '100%', background: 'rgba(236, 72, 153, 0.8)', transform: `rotateY(90deg) translateZ(${cubeSize/2}px)` }}>RIGHT</div>
+          <div className={faceStyle} style={{ width: '100%', height: '100%', background: 'rgba(245, 158, 11, 0.8)', transform: `rotateY(-90deg) translateZ(${cubeSize/2}px)` }}>LEFT</div>
+          <div className={faceStyle} style={{ width: '100%', height: '100%', background: 'rgba(16, 185, 129, 0.8)', transform: `rotateX(90deg) translateZ(${cubeSize/2}px)` }}>TOP</div>
+          <div className={faceStyle} style={{ width: '100%', height: '100%', background: 'rgba(239, 68, 68, 0.8)', transform: `rotateX(-90deg) translateZ(${cubeSize/2}px)` }}>BOTTOM</div>
+        </div>
       </div>
     </div>
   );
 
   const css = `.scene { perspective: 1000px; }\n.cube {\n  position: relative;\n  width: ${cubeSize}px; height: ${cubeSize}px;\n  transform-style: preserve-3d;\n  transform: rotateX(${rx}deg) rotateY(${ry}deg) rotateZ(${rz}deg) translate3d(${tx}px, ${ty}px, ${tz}px) scale(${scale});\n}\n.face { position: absolute; width: 100%; height: 100%; }\n.front { transform: translateZ(${cubeSize/2}px); }\n.back { transform: rotateY(180deg) translateZ(${cubeSize/2}px); }\n.right { transform: rotateY(90deg) translateZ(${cubeSize/2}px); }\n.left { transform: rotateY(-90deg) translateZ(${cubeSize/2}px); }\n.top { transform: rotateX(90deg) translateZ(${cubeSize/2}px); }\n.bottom { transform: rotateX(-90deg) translateZ(${cubeSize/2}px); }`;
   const html = `<div class="scene">\n  <div class="cube">\n    <div class="face front">Front</div>\n    <div class="face back">Back</div>\n    <div class="face right">Right</div>\n    <div class="face left">Left</div>\n    <div class="face top">Top</div>\n    <div class="face bottom">Bottom</div>\n  </div>\n</div>`;
-  const jsx = `// Silakan copy struktur CSS untuk div-nya`;
+  const jsx = `// Copy struktur CSS & HTML untuk menerapkan efek ini.`;
   
   const controls = (
     <>
