@@ -4,14 +4,20 @@ import React, { useState, useEffect } from 'react';
 import { Icons } from './icons';
 import { PluginTip, FigmaSlider, FigmaColorPicker, FigmaSelect, FigmaCustomDropdown, WorkspaceLayout, hexToRgb, adjustBrightness, ControlHeader } from './ui';
 
+// =========================================================================
+// 6. GLASSMORPHISM
+// =========================================================================
 export const PluginGlassmorphism = () => {
   const [blur, setBlur] = useState(12); const [opacity, setOpacity] = useState(15); const [color, setColor] = useState('#ffffff');
   const handleReset = () => { setBlur(12); setOpacity(15); setColor('#ffffff'); };
+  
   const rgb = hexToRgb(color);
   const css = `.glass {\n  background: rgba(${rgb}, ${opacity / 100});\n  backdrop-filter: blur(${blur}px);\n  -webkit-backdrop-filter: blur(${blur}px);\n  border: 1px solid rgba(255, 255, 255, 0.3);\n  border-radius: 16px;\n}`;
   const html = `<div style="background: rgba(${rgb}, ${opacity/100}); backdrop-filter: blur(${blur}px); border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 16px; width: 240px; height: 140px;"></div>`;
   const jsx = `<div style={{ background: 'rgba(${rgb}, ${opacity/100})', backdropFilter: 'blur(${blur}px)', border: '1px solid rgba(255,255,255, 0.3)' }} className="w-60 h-36 rounded-2xl shadow-xl"></div>`;
+  
   const preview = <div style={{ width: '80%', maxWidth: '240px', height: '140px', background: `rgba(${rgb}, ${opacity / 100})`, backdropFilter: `blur(${blur}px)`, WebkitBackdropFilter: `blur(${blur}px)`, border: `1px solid rgba(255, 255, 255, 0.3)`, borderRadius: '16px', boxShadow: '0 8px 32px rgba(0,0,0,0.15)' }}></div>;
+  
   const controls = (
     <>
       <PluginTip text="PANDUAN: Gunakan opacity rendah (sekitar 10-20%) agar background tembus, namun berikan Blur Intensity yang tinggi agar teks mudah dibaca." />
@@ -24,21 +30,32 @@ export const PluginGlassmorphism = () => {
   return <WorkspaceLayout name="Glassmorphism" controls={controls} preview={preview} cssOutput={css} htmlOutput={html} jsxOutput={jsx} bgType="glass" />;
 };
 
+// =========================================================================
+// 7. NEUMORPHISM
+// =========================================================================
 export const PluginNeumorphism = () => {
   const [bg, setBg] = useState('#e0e5ec'); const [dist, setDist] = useState(10); const [blur, setBlur] = useState(20); const [invert, setInvert] = useState(false);
   const handleReset = () => { setBg('#e0e5ec'); setDist(10); setBlur(20); setInvert(false); };
+  
   const lightShadow = adjustBrightness(bg, 15); const darkShadow = adjustBrightness(bg, -15);
   const shadowValue = invert ? `inset ${dist}px ${dist}px ${blur}px ${darkShadow}, inset -${dist}px -${dist}px ${blur}px ${lightShadow}` : `${dist}px ${dist}px ${blur}px ${darkShadow}, -${dist}px -${dist}px ${blur}px ${lightShadow}`;
+  
   const css = `.neumorph {\n  background-color: ${bg};\n  border-radius: 20px;\n  box-shadow: ${shadowValue};\n}`;
   const html = `<div style="background-color: ${bg}; border-radius: 20px; box-shadow: ${shadowValue}; width: 140px; height: 140px;"></div>`;
   const jsx = `<div style={{ backgroundColor: '${bg}', boxShadow: '${shadowValue}' }} className="w-36 h-36 rounded-[20px]"></div>`;
   const preview = <div style={{ width: 160, height: 160, backgroundColor: bg, borderRadius: 24, boxShadow: shadowValue, transition: 'all 0.3s' }}></div>;
+  
   const controls = (
     <>
-      <PluginTip text="PANDUAN: Pilih warna Base Background lembut/pastel. Sistem kami secara pintar akan menghitung rumus bayangan terang dan gelap agar efek 3D terlihat natural." />
+      <PluginTip text="PANDUAN: Pilih warna Base Background lembut/pastel. Sistem kami secara pintar akan menghitung rumus bayangan terang dan gelap." />
       <ControlHeader title="Neumorph Setup" onReset={handleReset} />
       <FigmaColorPicker label="Base Background" hexValue={bg} onChange={setBg} />
-      <div className="mb-5"><div className="flex bg-[#0a0a0a] p-1.5 rounded-xl border border-[#2a2a2a]"><button onClick={() => setInvert(false)} className={`flex-1 py-2 rounded-lg text-[10px] font-bold uppercase ${!invert ? 'bg-[#1f1f1f] text-white border border-[#333]' : 'text-slate-500'}`}>Extrude</button><button onClick={() => setInvert(true)} className={`flex-1 py-2 rounded-lg text-[10px] font-bold uppercase ${invert ? 'bg-[#1f1f1f] text-white border border-[#333]' : 'text-slate-500'}`}>Inset</button></div></div>
+      <div className="mb-5">
+         <div className="flex bg-[#0a0a0a] p-1.5 rounded-xl border border-[#2a2a2a]">
+            <button onClick={() => setInvert(false)} className={`flex-1 py-2 rounded-lg text-[10px] font-bold uppercase transition-all ${!invert ? 'bg-[#1f1f1f] text-white border border-[#333]' : 'text-slate-500 hover:text-slate-300'}`}>Extrude (Timbul)</button>
+            <button onClick={() => setInvert(true)} className={`flex-1 py-2 rounded-lg text-[10px] font-bold uppercase transition-all ${invert ? 'bg-[#1f1f1f] text-white border border-[#333]' : 'text-slate-500 hover:text-slate-300'}`}>Inset (Cekung)</button>
+         </div>
+      </div>
       <FigmaSlider label="Distance" min={1} max={30} value={dist} onChange={setDist} unit="px" />
       <FigmaSlider label="Blur Radius" min={1} max={60} value={blur} onChange={setBlur} unit="px" />
     </>
@@ -46,13 +63,18 @@ export const PluginNeumorphism = () => {
   return <WorkspaceLayout name="Neumorphism" controls={controls} preview={preview} cssOutput={css} htmlOutput={html} jsxOutput={jsx} bgType="light" bgHex={bg} />;
 };
 
+// =========================================================================
+// 8. DROP SHADOW
+// =========================================================================
 export const PluginShadow = () => {
   const [x, setX] = useState(10); const [y, setY] = useState(15); const [blur, setBlur] = useState(30); const [spread, setSpread] = useState(0); const [opacity, setOpacity] = useState(40); const [color, setColor] = useState('#000000');
   const handleReset = () => { setX(10); setY(15); setBlur(30); setSpread(0); setOpacity(40); setColor('#000000'); };
+  
   const css = `.shadow-box {\n  box-shadow: ${x}px ${y}px ${blur}px ${spread}px rgba(${hexToRgb(color)}, ${opacity/100});\n  border-radius: 12px;\n  background-color: #ffffff;\n}`;
   const html = `<div style="box-shadow: ${x}px ${y}px ${blur}px ${spread}px rgba(${hexToRgb(color)}, ${opacity/100}); border-radius: 12px; background-color: #ffffff; width: 140px; height: 140px;"></div>`;
   const jsx = `<div style={{ boxShadow: '${x}px ${y}px ${blur}px ${spread}px rgba(${hexToRgb(color)}, ${opacity/100})' }} className="w-36 h-36 rounded-xl bg-white"></div>`;
   const preview = <div style={{ width: 140, height: 140, backgroundColor: '#ffffff', borderRadius: 12, boxShadow: `${x}px ${y}px ${blur}px ${spread}px rgba(${hexToRgb(color)}, ${opacity/100})` }}></div>;
+  
   const controls = (
     <>
       <PluginTip text="PANDUAN: Turunkan Opacity lalu naikkan Blur Radius dan Y Offset agar elemen seakan melayang elegan." />
@@ -68,16 +90,21 @@ export const PluginShadow = () => {
   return <WorkspaceLayout name="Drop Shadow" controls={controls} preview={preview} cssOutput={css} htmlOutput={html} jsxOutput={jsx} bgType="light" />;
 };
 
+// =========================================================================
+// 9. NEON GLOW
+// =========================================================================
 export const PluginGlow = () => {
   const [color, setColor] = useState('#0ea5e9'); const [blur, setBlur] = useState(40); const [spread, setSpread] = useState(10);
   const handleReset = () => { setColor('#0ea5e9'); setBlur(40); setSpread(10); };
+  
   const css = `.neon-glow {\n  box-shadow: 0 0 ${blur}px ${spread}px rgba(${hexToRgb(color)}, 0.8);\n  border-radius: 50%;\n  background-color: ${color};\n}`;
   const html = `<div style="box-shadow: 0 0 ${blur}px ${spread}px rgba(${hexToRgb(color)}, 0.8); border-radius: 50%; background-color: ${color}; width: 80px; height: 80px;"></div>`;
   const jsx = `<div style={{ boxShadow: '0 0 ${blur}px ${spread}px rgba(${hexToRgb(color)}, 0.8)', backgroundColor: '${color}' }} className="w-20 h-20 rounded-full"></div>`;
   const preview = <div style={{ width: 80, height: 80, backgroundColor: color, borderRadius: '50%', boxShadow: `0 0 ${blur}px ${spread}px rgba(${hexToRgb(color)}, 0.8)` }}></div>;
+  
   const controls = (
     <>
-      <PluginTip text="PANDUAN: Efek Glow sangat kuat di background hitam. Gunakan warna-warna vibran lalu tambah ukuran Blur." />
+      <PluginTip text="PANDUAN: Efek pendaran (Glow) sangat kuat di background hitam. Gunakan warna-warna vibran lalu tambah ukuran Blur agar cahaya menyebar." />
       <ControlHeader title="Glow Setup" onReset={handleReset} />
       <FigmaColorPicker label="Glow Color" hexValue={color} onChange={setColor} />
       <FigmaSlider label="Blur Radius" min={0} max={150} value={blur} onChange={setBlur} unit="px" />
@@ -87,7 +114,11 @@ export const PluginGlow = () => {
   return <WorkspaceLayout name="Neon Glow" controls={controls} preview={preview} cssOutput={css} htmlOutput={html} jsxOutput={jsx} />;
 };
 
+// =========================================================================
+// 10. IMAGE FILTERS
+// =========================================================================
 const IMAGE_TEMPLATES = ["https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800", "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=800", "https://images.unsplash.com/photo-1604871000636-074fa5117945?q=80&w=800"];
+
 export const PluginFilters = () => {
   const [bgImg, setBgImg] = useState(IMAGE_TEMPLATES[0]);
   const [brightness, setBrightness] = useState(100); const [contrast, setContrast] = useState(100); const [saturate, setSaturate] = useState(100); const [hue, setHue] = useState(0); const [blur, setBlur] = useState(0); const [shadow, setShadow] = useState(0); const [opacity, setOpacity] = useState(100);
@@ -97,6 +128,7 @@ export const PluginFilters = () => {
   const css = `.filtered-img {\n  filter: \n    brightness(${brightness}%)\n    contrast(${contrast}%)\n    saturate(${saturate}%)\n    hue-rotate(${hue}deg)\n    blur(${blur}px)\n    drop-shadow(0px 10px ${shadow}px rgba(0,0,0,0.5))\n    opacity(${opacity}%);\n}`;
   const html = `<img src="${bgImg}" style="filter: ${filterStr}; width: 100%; border-radius: 12px;" />`;
   const jsx = `<img src="${bgImg}" style={{ filter: '${filterStr}' }} className="w-full object-cover rounded-xl" />`;
+  
   const preview = <div className="relative w-full h-full max-w-[360px] max-h-[260px] rounded-xl overflow-hidden shadow-2xl ring-1 ring-white/10 group aspect-video"><img src={bgImg} alt="Filter Demo" className="w-full h-full object-cover transition-all duration-200" style={{ filter: filterStr }} /></div>;
 
   const controls = (
@@ -125,7 +157,17 @@ export const PluginFilters = () => {
   return <WorkspaceLayout name="Pro Filters" controls={controls} preview={preview} cssOutput={css} htmlOutput={html} jsxOutput={jsx} bgType="dark" />;
 };
 
-const ANIMATION_DATA = { "Attention": [{ name: "Bounce", val: "bounce" }, { name: "Flash", val: "flash" }, { name: "Pulse", val: "pulse" }, { name: "RubberBand", val: "rubberBand" }, { name: "Shake", val: "shake" }, { name: "Swing", val: "swing" }], "Fade Entrances": [{ name: "Fade In", val: "fadeIn" }, { name: "Fade In Down", val: "fadeInDown" }, { name: "Fade In Left", val: "fadeInLeft" }], "Zoom Entrances": [{ name: "Zoom In", val: "zoomIn" }, { name: "Zoom In Down", val: "zoomInDown" }, { name: "Zoom In Up", val: "zoomInUp" }], "Rotations": [{ name: "Spin 360", val: "spin" }, { name: "Flip X", val: "flipInX" }, { name: "Flip Y", val: "flipInY" }], "Looping": [{ name: "Floating", val: "float" }, { name: "Breathe", val: "breathe" }] };
+// =========================================================================
+// 11. KEYFRAME ANIMATIONS
+// =========================================================================
+const ANIMATION_DATA = { 
+  "Attention": [{ name: "Bounce", val: "bounce" }, { name: "Flash", val: "flash" }, { name: "Pulse", val: "pulse" }, { name: "RubberBand", val: "rubberBand" }, { name: "Shake", val: "shake" }, { name: "Swing", val: "swing" }], 
+  "Fade Entrances": [{ name: "Fade In", val: "fadeIn" }, { name: "Fade In Down", val: "fadeInDown" }, { name: "Fade In Left", val: "fadeInLeft" }], 
+  "Zoom Entrances": [{ name: "Zoom In", val: "zoomIn" }, { name: "Zoom In Down", val: "zoomInDown" }, { name: "Zoom In Up", val: "zoomInUp" }], 
+  "Rotations": [{ name: "Spin 360", val: "spin" }, { name: "Flip X", val: "flipInX" }, { name: "Flip Y", val: "flipInY" }], 
+  "Looping": [{ name: "Floating", val: "float" }, { name: "Breathe", val: "breathe" }] 
+};
+
 const getDynamicKeyframes = (type) => {
   const map = {
     bounce: `0%, 20%, 50%, 80%, 100% {transform: translateY(0);} 40% {transform: translateY(-30px);} 60% {transform: translateY(-15px);}`,
@@ -167,13 +209,22 @@ export const PluginAnimation = () => {
       <FigmaSlider label="Duration" min={0.1} max={5} step={0.1} value={duration} onChange={setDuration} unit="s" />
       <FigmaSelect label="Timing Function" options={['linear', 'ease', 'ease-in-out', 'ease-in']} value={timing} onChange={setTiming} />
       <FigmaSelect label="Iteration Count" options={['1', '2', '3', 'infinite']} value={iteration} onChange={setIteration} />
-      <button onClick={() => setKey(k => k + 1)} className="w-full mt-4 py-3 bg-[#1a1a1a] hover:bg-cyan-500/20 border border-[#333] hover:border-cyan-500/50 text-cyan-400 rounded-xl text-[11px] font-bold uppercase tracking-widest transition-all">Replay Animation</button>
+      <button onClick={() => setKey(k => k + 1)} className="w-full mt-4 py-3 bg-[#1a1a1a] hover:bg-cyan-500/20 border border-[#333] hover:border-cyan-500/50 text-cyan-400 rounded-xl text-[11px] font-bold uppercase tracking-widest transition-all shadow-sm">Replay Animation</button>
     </>
   );
   return <WorkspaceLayout name="Animation Builder" controls={controls} preview={preview} cssOutput={css} htmlOutput={html} jsxOutput={jsx} bgType="grid" />;
 };
 
-const TRANSITIONS_DATA = { "Scale Effects": [{ name: "Grow", val: "scale(1.1)" }, { name: "Shrink", val: "scale(0.9)" }, { name: "Pop", val: "scale(1.2)" }], "Translates": [{ name: "Push Up", val: "translateY(-10px)" }, { name: "Push Down", val: "translateY(10px)" }, { name: "Push Left", val: "translateX(-10px)" }, { name: "Push Right", val: "translateX(10px)" }], "Rotations": [{ name: "Rotate Right", val: "rotate(15deg)" }, { name: "Rotate Left", val: "rotate(-15deg)" }, { name: "Spin Quarter", val: "rotate(90deg)" }, { name: "Spin Half", val: "rotate(180deg)" }], "Skews": [{ name: "Skew Forward", val: "skewX(-15deg)" }, { name: "Skew Backward", val: "skewX(15deg)" }] };
+// =========================================================================
+// 12. HOVER TRANSITIONS
+// =========================================================================
+const TRANSITIONS_DATA = { 
+  "Scale Effects": [{ name: "Grow", val: "scale(1.1)" }, { name: "Shrink", val: "scale(0.9)" }, { name: "Pop", val: "scale(1.2)" }], 
+  "Translates": [{ name: "Push Up", val: "translateY(-10px)" }, { name: "Push Down", val: "translateY(10px)" }, { name: "Push Left", val: "translateX(-10px)" }, { name: "Push Right", val: "translateX(10px)" }], 
+  "Rotations": [{ name: "Rotate Right", val: "rotate(15deg)" }, { name: "Rotate Left", val: "rotate(-15deg)" }, { name: "Spin Quarter", val: "rotate(90deg)" }, { name: "Spin Half", val: "rotate(180deg)" }], 
+  "Skews": [{ name: "Skew Forward", val: "skewX(-15deg)" }, { name: "Skew Backward", val: "skewX(15deg)" }] 
+};
+
 export const PluginTransitions = () => {
   const [transType, setTransType] = useState('scale(1.1)'); const [duration, setDuration] = useState(0.3); const [timing, setTiming] = useState('ease-in-out');
   const handleReset = () => { setTransType('scale(1.1)'); setDuration(0.3); setTiming('ease-in-out'); };
@@ -191,7 +242,7 @@ export const PluginTransitions = () => {
 
   const controls = (
     <>
-      <PluginTip text="PANDUAN PENTING: Tempatkan output CSS '.element' di class default, dan pastikan menambahkan selector pseudo '.element:hover' untuk memicu efek transisinya." />
+      <PluginTip text="PANDUAN: Tempatkan output CSS '.element' di class default, dan pastikan menambahkan selector pseudo '.element:hover' untuk memicu efek transisi." />
       <ControlHeader title="Hover Setup" onReset={handleReset} />
       <FigmaCustomDropdown label="Hover Effect Type" groups={TRANSITIONS_DATA} value={transType} onChange={setTransType} />
       <FigmaSlider label="Duration" min={0.1} max={3} step={0.1} value={duration} onChange={setDuration} unit="s" />
