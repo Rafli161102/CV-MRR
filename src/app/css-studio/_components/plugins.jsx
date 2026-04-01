@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Icons } from './icons';
-import { PluginTip, FigmaSlider, FigmaColorPicker, FigmaSelect, FigmaCustomDropdown, WorkspaceLayout, hexToRgb, adjustBrightness } from './ui';
+import { PluginTip, FigmaSlider, FigmaColorPicker, FigmaSelect, FigmaTextInput, FigmaCustomDropdown, WorkspaceLayout, hexToRgb, adjustBrightness } from './ui';
 
 export const PluginBackgroundGradient = () => {
   const [color1, setColor1] = useState('#0ea5e9'); const [color2, setColor2] = useState('#8b5cf6'); const [angle, setAngle] = useState(145);
@@ -12,7 +12,7 @@ export const PluginBackgroundGradient = () => {
   const preview = <div style={{ background: `linear-gradient(${angle}deg, ${color1}, ${color2})`, borderRadius: '16px', boxShadow: '0 20px 40px rgba(0,0,0,0.3)' }} className="w-full max-w-[320px] aspect-[2/1] transition-all"></div>;
   const controls = (
     <>
-      <PluginTip text="Pilih warna awal dan akhir, lalu putar angle untuk mendapatkan arah gradasi." />
+      <PluginTip text="Pilih warna awal dan akhir, lalu putar angle untuk mendapatkan arah gradasi yang kamu inginkan." />
       <FigmaColorPicker label="Start Color" hexValue={color1} onChange={setColor1} />
       <FigmaColorPicker label="End Color" hexValue={color2} onChange={setColor2} />
       <FigmaSlider label="Angle" min={0} max={360} value={angle} onChange={setAngle} unit="°" />
@@ -22,17 +22,19 @@ export const PluginBackgroundGradient = () => {
 };
 
 export const PluginTextGradient = () => {
+  const [text, setText] = useState('GRADIENT');
   const [color1, setColor1] = useState('#ec4899'); const [color2, setColor2] = useState('#f59e0b'); const [angle, setAngle] = useState(90);
   const css = `.text-gradient {\n  background-image: linear-gradient(${angle}deg, ${color1}, ${color2});\n  -webkit-background-clip: text;\n  -webkit-text-fill-color: transparent;\n}`;
-  const html = `<h1 style="background-image: linear-gradient(${angle}deg, ${color1}, ${color2}); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">GRADIENT</h1>`;
-  const jsx = `<h1 className="text-5xl font-black bg-clip-text text-transparent" style={{ backgroundImage: 'linear-gradient(${angle}deg, ${color1}, ${color2})' }}>GRADIENT</h1>`;
+  const html = `<h1 style="background-image: linear-gradient(${angle}deg, ${color1}, ${color2}); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">${text}</h1>`;
+  const jsx = `<h1 className="text-5xl font-black bg-clip-text text-transparent" style={{ backgroundImage: 'linear-gradient(${angle}deg, ${color1}, ${color2})' }}>${text}</h1>`;
   const preview = (
     <div className="w-full h-full flex items-center justify-center text-center">
-      <span style={{ backgroundImage: `linear-gradient(${angle}deg, ${color1}, ${color2})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontSize: 'clamp(2rem, 8vw, 5rem)', fontWeight: '900', textTransform: 'uppercase' }}>GRADIENT</span>
+      <span style={{ backgroundImage: `linear-gradient(${angle}deg, ${color1}, ${color2})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontSize: 'clamp(2rem, 8vw, 5rem)', fontWeight: '900', textTransform: 'uppercase' }}>{text || 'GRADIENT'}</span>
     </div>
   );
   const controls = (
     <>
+      <FigmaTextInput label="Custom Text" value={text} onChange={setText} placeholder="Misal: MRR STUDIO" />
       <FigmaColorPicker label="Start Color" hexValue={color1} onChange={setColor1} />
       <FigmaColorPicker label="End Color" hexValue={color2} onChange={setColor2} />
       <FigmaSlider label="Angle" min={0} max={360} value={angle} onChange={setAngle} unit="°" />
@@ -48,12 +50,15 @@ const FONTS_DATA = {
 
 export const PluginTypography = () => {
   const [tab, setTab] = useState('Heading');
-  const [h1, setH1] = useState({ font: 'Montserrat', size: 48, color: '#ffffff', align: 'center', space: 0, rot: 0 });
-  const [h2, setH2] = useState({ font: 'Inter', size: 20, color: '#0ea5e9', align: 'center', space: 0, rot: 0 });
-  const [p, setP] = useState({ font: 'Inter', size: 14, color: '#94a3b8', align: 'center', space: 0, rot: 0 });
+  
+  // INITIAL STATE SUDAH DILENGKAPI 'text' dan 'trans' KEMBALI AGAR TIDAK ERROR
+  const [h1, setH1] = useState({ text: 'Hero Title', font: 'Montserrat', size: 48, color: '#ffffff', align: 'center', trans: 'none', space: 0, rot: 0 });
+  const [h2, setH2] = useState({ text: 'Beautiful Typography', font: 'Inter', size: 20, color: '#0ea5e9', align: 'center', trans: 'none', space: 0, rot: 0 });
+  const [p, setP] = useState({ text: 'Ini adalah contoh paragraf yang aman saat dirotasi.', font: 'Inter', size: 14, color: '#94a3b8', align: 'center', trans: 'none', space: 0, rot: 0 });
 
   useEffect(() => {
     [h1.font, h2.font, p.font].forEach(f => {
+      if (!f) return;
       const linkId = `gfont-${f.replace(/\s+/g, '-')}`;
       if (!document.getElementById(linkId)) {
         const link = document.createElement('link'); link.id = linkId;
@@ -63,29 +68,32 @@ export const PluginTypography = () => {
     });
   }, [h1.font, h2.font, p.font]);
 
-  const css = `h1 {\n  font-family: '${h1.font}', sans-serif;\n  font-size: ${h1.size}px;\n  color: ${h1.color};\n  text-align: ${h1.align};\n  letter-spacing: ${h1.space}px;\n  transform: rotate(${h1.rot}deg);\n  transform-origin: center center;\n}\n/* Lakukan hal yang sama untuk h2 dan p */`;
-  const html = `<div style="display: flex; flex-direction: column; gap: 30px;">\n  \n</div>`;
-  const jsx = `// Gunakan flex gap untuk mencegah elemen menabrak saat di-rotate\n<div className="flex flex-col gap-8">\n  <h1 style={{ transform: 'rotate(${h1.rot}deg)' }}>Hero Title</h1>\n</div>`;
+  const css = `h1 {\n  font-family: '${h1.font}', sans-serif;\n  font-size: ${h1.size}px;\n  color: ${h1.color};\n  text-align: ${h1.align};\n  text-transform: ${h1.trans};\n  letter-spacing: ${h1.space}px;\n  transform: rotate(${h1.rot}deg);\n  transform-origin: center center;\n}\n/* Lakukan hal yang sama untuk h2 dan p */`;
+  const html = `<div style="display: flex; flex-direction: column; gap: 32px;">\n  <h1 style="transform: rotate(${h1.rot}deg);">${h1.text}</h1>\n</div>`;
+  const jsx = `// Gunakan flex gap untuk mencegah elemen menabrak saat di-rotate\n<div className="flex flex-col gap-8">\n  <h1 style={{ transform: 'rotate(${h1.rot}deg)' }}>{h1.text}</h1>\n</div>`;
 
-  // FIX BUG: Kita kasih padding/margin container agar saat di-rotate teks tidak bertumpuk/nabrak ke text lain!
   const preview = (
     <div className="w-full flex flex-col justify-center max-w-[440px] gap-8">
-      <div className="flex justify-center w-full"><h1 style={{ fontFamily: `"${h1.font}", sans-serif`, fontSize: `${h1.size}px`, color: h1.color, fontWeight: 800, textAlign: h1.align, letterSpacing: `${h1.space}px`, transform: `rotate(${h1.rot}deg)`, transformOrigin: 'center center', transition: 'all 0.2s', margin:0 }}>Hero Title</h1></div>
-      <div className="flex justify-center w-full"><h2 style={{ fontFamily: `"${h2.font}", sans-serif`, fontSize: `${h2.size}px`, color: h2.color, fontWeight: 600, textAlign: h2.align, letterSpacing: `${h2.space}px`, transform: `rotate(${h2.rot}deg)`, transformOrigin: 'center center', transition: 'all 0.2s', margin:0 }}>Beautiful Typography</h2></div>
-      <div className="flex justify-center w-full"><p style={{ fontFamily: `"${p.font}", sans-serif`, fontSize: `${p.size}px`, color: p.color, lineHeight: 1.6, textAlign: p.align, letterSpacing: `${p.space}px`, transform: `rotate(${p.rot}deg)`, transformOrigin: 'center center', transition: 'all 0.2s', margin:0 }}>Ini adalah contoh paragraf di mana komponen teks aman saat dirotasi.</p></div>
+      <div className="flex justify-center w-full"><h1 style={{ fontFamily: `"${h1.font}", sans-serif`, fontSize: `${h1.size}px`, color: h1.color, fontWeight: 800, textAlign: h1.align, textTransform: h1.trans, letterSpacing: `${h1.space}px`, transform: `rotate(${h1.rot}deg)`, transformOrigin: 'center center', transition: 'all 0.2s', margin:0 }}>{h1.text || 'Hero Title'}</h1></div>
+      <div className="flex justify-center w-full"><h2 style={{ fontFamily: `"${h2.font}", sans-serif`, fontSize: `${h2.size}px`, color: h2.color, fontWeight: 600, textAlign: h2.align, textTransform: h2.trans, letterSpacing: `${h2.space}px`, transform: `rotate(${h2.rot}deg)`, transformOrigin: 'center center', transition: 'all 0.2s', margin:0 }}>{h2.text || 'Beautiful Typography'}</h2></div>
+      <div className="flex justify-center w-full"><p style={{ fontFamily: `"${p.font}", sans-serif`, fontSize: `${p.size}px`, color: p.color, lineHeight: 1.6, textAlign: p.align, textTransform: p.trans, letterSpacing: `${p.space}px`, transform: `rotate(${p.rot}deg)`, transformOrigin: 'center center', transition: 'all 0.2s', margin:0 }}>{p.text || 'Paragraf.'}</p></div>
     </div>
   );
 
-  const TextControls = ({ state, setState }) => {
+  const TextControls = ({ state, setState, isPara = false }) => {
     const update = (key, val) => setState(prev => ({ ...prev, [key]: val }));
     return (
       <div className="animate-fade-in space-y-2">
+        <FigmaTextInput label="Edit Text" value={state.text} onChange={(v) => update('text', v)} placeholder={isPara ? "Ketik paragraf..." : "Ketik judul..."} isTextArea={isPara} />
         <FigmaCustomDropdown label="Font Family" groups={FONTS_DATA} value={state.font} onChange={(v) => update('font', v)} />
         <FigmaColorPicker label="Text Color" hexValue={state.color} onChange={(v) => update('color', v)} />
         <FigmaSlider label="Font Size" min={10} max={100} value={state.size} onChange={(v) => update('size', v)} unit="px" />
         <FigmaSlider label="Letter Spacing" min={-5} max={20} step={0.5} value={state.space} onChange={(v) => update('space', v)} unit="px" />
         <FigmaSlider label="Rotate" min={-180} max={180} value={state.rot} onChange={(v) => update('rot', v)} unit="°" />
-        <FigmaSelect label="Alignment" options={['left', 'center', 'right', 'justify']} value={state.align} onChange={(v) => update('align', v)} />
+        <div className="grid grid-cols-2 gap-4 mt-2">
+          <FigmaSelect label="Alignment" options={['left', 'center', 'right', 'justify']} value={state.align} onChange={(v) => update('align', v)} />
+          <FigmaSelect label="Transform" options={['none', 'uppercase', 'lowercase', 'capitalize']} value={state.trans} onChange={(v) => update('trans', v)} />
+        </div>
       </div>
     );
   };
@@ -100,7 +108,7 @@ export const PluginTypography = () => {
       </div>
       {tab === 'Heading' && <TextControls state={h1} setState={setH1} />}
       {tab === 'Subheading' && <TextControls state={h2} setState={setH2} />}
-      {tab === 'Paragraph' && <TextControls state={p} setState={setP} />}
+      {tab === 'Paragraph' && <TextControls state={p} setState={setP} isPara={true} />}
     </>
   );
   return <WorkspaceLayout name="Advanced Typography" controls={controls} preview={preview} cssOutput={css} htmlOutput={html} jsxOutput={jsx} />;
@@ -202,7 +210,6 @@ export const PluginGlow = () => {
   return <WorkspaceLayout name="Neon Glow" controls={controls} preview={preview} cssOutput={css} htmlOutput={html} jsxOutput={jsx} />;
 };
 
-// FIX BUG IMAGE PRO: Tambahkan pilihan template gambar
 const IMAGE_TEMPLATES = [
   "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800",
   "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=800",
@@ -215,8 +222,8 @@ export const PluginFilters = () => {
   const filterStr = `brightness(${brightness}%) contrast(${contrast}%) saturate(${saturate}%) hue-rotate(${hue}deg) blur(${blur}px) drop-shadow(0px 10px ${shadow}px rgba(0,0,0,0.5)) opacity(${opacity}%)`;
   
   const css = `.filtered-img {\n  filter: \n    brightness(${brightness}%)\n    contrast(${contrast}%)\n    saturate(${saturate}%)\n    hue-rotate(${hue}deg)\n    blur(${blur}px)\n    drop-shadow(0px 10px ${shadow}px rgba(0,0,0,0.5))\n    opacity(${opacity}%);\n}`;
-  const html = `<img src="..." style="filter: ${filterStr};" />`;
-  const jsx = `<img src="..." style={{ filter: '${filterStr}' }} className="w-full object-cover rounded-xl" />`;
+  const html = `<img src="${bgImg}" style="filter: ${filterStr}; width: 100%; border-radius: 12px;" />`;
+  const jsx = `<img src="${bgImg}" style={{ filter: '${filterStr}' }} className="w-full object-cover rounded-xl" />`;
   
   const preview = (
     <div className="relative w-full h-full max-w-[360px] max-h-[260px] rounded-xl overflow-hidden shadow-2xl ring-1 ring-white/10 group aspect-video">
@@ -227,7 +234,7 @@ export const PluginFilters = () => {
   const controls = (
     <div className="space-y-1 pb-4">
       <div className="mb-4">
-         <label className="text-[10px] font-medium text-slate-400 block mb-2">Pilih Foto Uji Coba</label>
+         <label className="text-[10px] font-medium text-slate-400 block mb-2">Pilih Foto Template</label>
          <div className="flex gap-2">
             {IMAGE_TEMPLATES.map((img, idx) => (
               <button key={idx} onClick={() => setBgImg(img)} className={`w-12 h-12 rounded-lg bg-cover bg-center border-2 transition-all ${bgImg === img ? 'border-cyan-400 scale-110 shadow-lg' : 'border-[#333] hover:border-[#555]'}`} style={{backgroundImage: `url(${img})`}}></button>
@@ -266,26 +273,12 @@ export const PluginTransform = () => {
   return <WorkspaceLayout name="True 3D Studio" controls={controls} preview={preview} cssOutput={css} htmlOutput={html} jsxOutput={jsx} bgType="grid" />;
 };
 
-// =========================================================================
-// FITUR ANIMATION
-// =========================================================================
 const ANIMATION_DATA = {
-  "Attention": [
-    { name: "Bounce", val: "bounce" }, { name: "Flash", val: "flash" }, { name: "Pulse", val: "pulse" },
-    { name: "RubberBand", val: "rubberBand" }, { name: "Shake", val: "shake" }, { name: "Swing", val: "swing" }
-  ],
-  "Fade Entrances": [
-    { name: "Fade In", val: "fadeIn" }, { name: "Fade In Down", val: "fadeInDown" }, { name: "Fade In Left", val: "fadeInLeft" }
-  ],
-  "Zoom Entrances": [
-    { name: "Zoom In", val: "zoomIn" }, { name: "Zoom In Down", val: "zoomInDown" }, { name: "Zoom In Up", val: "zoomInUp" }
-  ],
-  "Rotations": [
-    { name: "Spin 360", val: "spin" }, { name: "Flip X", val: "flipInX" }, { name: "Flip Y", val: "flipInY" }
-  ],
-  "Looping": [
-    { name: "Floating", val: "float" }, { name: "Breathe", val: "breathe" }
-  ]
+  "Attention": [{ name: "Bounce", val: "bounce" }, { name: "Flash", val: "flash" }, { name: "Pulse", val: "pulse" }, { name: "RubberBand", val: "rubberBand" }, { name: "Shake", val: "shake" }, { name: "Swing", val: "swing" }],
+  "Fade Entrances": [{ name: "Fade In", val: "fadeIn" }, { name: "Fade In Down", val: "fadeInDown" }, { name: "Fade In Left", val: "fadeInLeft" }],
+  "Zoom Entrances": [{ name: "Zoom In", val: "zoomIn" }, { name: "Zoom In Down", val: "zoomInDown" }, { name: "Zoom In Up", val: "zoomInUp" }],
+  "Rotations": [{ name: "Spin 360", val: "spin" }, { name: "Flip X", val: "flipInX" }, { name: "Flip Y", val: "flipInY" }],
+  "Looping": [{ name: "Floating", val: "float" }, { name: "Breathe", val: "breathe" }]
 };
 
 const getDynamicKeyframes = (type) => {
@@ -343,34 +336,18 @@ export const PluginAnimation = () => {
       <FigmaSlider label="Duration" min={0.1} max={5} step={0.1} value={duration} onChange={setDuration} unit="s" />
       <FigmaSelect label="Timing Function" options={['linear', 'ease', 'ease-in-out', 'ease-in']} value={timing} onChange={setTiming} />
       <FigmaSelect label="Iteration Count" options={['1', '2', '3', 'infinite']} value={iteration} onChange={setIteration} />
-      <button onClick={() => setKey(k => k + 1)} className="w-full mt-4 py-2.5 bg-[#1a1a1a] hover:bg-[#333] border border-[#2a2a2a] text-cyan-400 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all">
-        Replay Animation
-      </button>
+      <button onClick={() => setKey(k => k + 1)} className="w-full mt-4 py-2.5 bg-[#1a1a1a] hover:bg-[#333] border border-[#2a2a2a] text-cyan-400 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all">Replay Animation</button>
     </>
   );
 
   return <WorkspaceLayout name="Animation Builder" controls={controls} preview={preview} cssOutput={css} htmlOutput={html} jsxOutput={jsx} bgType="grid" />;
 };
 
-
-// =========================================================================
-// FITUR TRANSITIONS
-// =========================================================================
 const TRANSITIONS_DATA = {
-  "Scale Effects": [
-    { name: "Grow", val: "scale(1.1)" }, { name: "Shrink", val: "scale(0.9)" }, { name: "Pop", val: "scale(1.2)" }
-  ],
-  "Translates": [
-    { name: "Push Up", val: "translateY(-10px)" }, { name: "Push Down", val: "translateY(10px)" },
-    { name: "Push Left", val: "translateX(-10px)" }, { name: "Push Right", val: "translateX(10px)" }
-  ],
-  "Rotations": [
-    { name: "Rotate Right", val: "rotate(15deg)" }, { name: "Rotate Left", val: "rotate(-15deg)" },
-    { name: "Spin Quarter", val: "rotate(90deg)" }, { name: "Spin Half", val: "rotate(180deg)" }
-  ],
-  "Skews": [
-    { name: "Skew Forward", val: "skewX(-15deg)" }, { name: "Skew Backward", val: "skewX(15deg)" }
-  ]
+  "Scale Effects": [{ name: "Grow", val: "scale(1.1)" }, { name: "Shrink", val: "scale(0.9)" }, { name: "Pop", val: "scale(1.2)" }],
+  "Translates": [{ name: "Push Up", val: "translateY(-10px)" }, { name: "Push Down", val: "translateY(10px)" }, { name: "Push Left", val: "translateX(-10px)" }, { name: "Push Right", val: "translateX(10px)" }],
+  "Rotations": [{ name: "Rotate Right", val: "rotate(15deg)" }, { name: "Rotate Left", val: "rotate(-15deg)" }, { name: "Spin Quarter", val: "rotate(90deg)" }, { name: "Spin Half", val: "rotate(180deg)" }],
+  "Skews": [{ name: "Skew Forward", val: "skewX(-15deg)" }, { name: "Skew Backward", val: "skewX(15deg)" }]
 };
 
 export const PluginTransitions = () => {
@@ -408,15 +385,10 @@ export const PluginTransitions = () => {
   return <WorkspaceLayout name="Hover Transitions" controls={controls} preview={preview} cssOutput={css} htmlOutput={html} jsxOutput={jsx} bgType="dark" />;
 };
 
-
-// =========================================================================
-// FITUR PIXEL ART (Dengan Undo/Redo Baru)
-// =========================================================================
 export const PluginPixelArt = () => {
   const [gridSize, setGridSize] = useState(8); 
   const [color, setColor] = useState('#0ea5e9');
   
-  // History State untuk Undo & Redo
   const [history, setHistory] = useState([Array(64).fill('transparent')]);
   const [step, setStep] = useState(0);
 
@@ -431,8 +403,6 @@ export const PluginPixelArt = () => {
   const paintPixel = (index) => {
     const newPixels = [...currentPixels];
     newPixels[index] = newPixels[index] === color ? 'transparent' : color;
-    
-    // Menyimpan state ke history untuk fitur undo/redo
     const newHistory = history.slice(0, step + 1);
     newHistory.push(newPixels);
     setHistory(newHistory);
@@ -483,8 +453,6 @@ export const PluginPixelArt = () => {
           />
         ))}
       </div>
-      
-      {/* Tombol Undo & Redo */}
       <div className="flex gap-4 mt-6">
         <button onClick={handleUndo} disabled={step === 0} className={`p-2 rounded-full border ${step === 0 ? 'border-[#1f1f1f] text-slate-600' : 'border-[#333] text-slate-300 hover:text-white hover:bg-[#1a1a1a]'}`}><Icons.Undo /></button>
         <button onClick={handleRedo} disabled={step === history.length - 1} className={`p-2 rounded-full border ${step === history.length - 1 ? 'border-[#1f1f1f] text-slate-600' : 'border-[#333] text-slate-300 hover:text-white hover:bg-[#1a1a1a]'}`}><Icons.Redo /></button>
