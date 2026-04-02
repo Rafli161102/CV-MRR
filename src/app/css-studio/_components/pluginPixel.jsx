@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { PluginTip, FigmaSlider, FigmaColorPicker, ControlHeader, COLOR_PRESETS, useMultiTouch, FigmaToggle } from './ui';
+import { FigmaSlider, FigmaColorPicker, COLOR_PRESETS, useMultiTouch, FigmaToggle } from './ui';
 
-// IKON NATIVE KHUSUS PIXEL DRAW
+// 1. IKON SVG NATIVE
 const PixIcons = {
   Brush: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-full h-full"><path strokeLinecap="round" strokeLinejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.813-3.814a1.151 1.151 0 00-1.628-1.628l-3.814 3.813a15.995 15.995 0 00-4.648 4.764z" /></svg>,
   Eraser: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-full h-full"><path strokeLinecap="round" strokeLinejoin="round" d="M12 9.75L14.25 12m0 0l2.25 2.25M14.25 12l2.25-2.25M14.25 12L12 14.25m-2.58 4.92l-6.375-6.375a1.125 1.125 0 010-1.59L9.42 4.83c.211-.211.498-.33.796-.33H19.5a2.25 2.25 0 012.25 2.25v10.5a2.25 2.25 0 01-2.25 2.25h-9.284c-.298 0-.585-.119-.796-.33z" /></svg>,
@@ -26,6 +26,7 @@ const PixIcons = {
   Download: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-full h-full"><path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>,
 };
 
+// Algoritma Ember Cat (Flood Fill)
 const floodFill = (pixels, startIndex, targetColor, replacementColor, gridSize) => {
   if (targetColor === replacementColor) return pixels;
   const newPixels = [...pixels];
@@ -45,14 +46,13 @@ const floodFill = (pixels, startIndex, targetColor, replacementColor, gridSize) 
   return newPixels;
 };
 
-// Mengunci event bubbling agar tombol/slider tidak mengganggu kanvas
+// Mencegah klik nyasar ke belakang UI
 const stopProp = (e) => { 
    e.stopPropagation(); 
    if (e.nativeEvent && e.nativeEvent.stopImmediatePropagation) e.nativeEvent.stopImmediatePropagation(); 
 };
 
 export const PluginPixelDrawing = () => {
-  // SETTINGS
   const [gridSize, setGridSize] = useState(16);
   const [localGridInput, setLocalGridInput] = useState('16');
   const [canvasBgColor, setCanvasBgColor] = useState('#ffffff');
@@ -62,37 +62,48 @@ export const PluginPixelDrawing = () => {
   const [palette, setPalette] = useState(['#ffffff', '#1e1e1e', '#0ea5e9', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#ef4444']);
   const [outputSize, setOutputSize] = useState(1080);
   
-  // NAVIGASI KHUSUS MOBILE
   const [mobileTab, setMobileTab] = useState('tools'); 
   const [isFullscreen, setIsFullscreen] = useState(false);
   const containerRef = useRef(null);
+  const gridRef = useRef(null);
 
-  // LAYER & HISTORY
   const createEmptyLayer = (id, name) => ({ id, name, pixels: Array(gridSize * gridSize).fill('transparent'), visible: true, locked: false });
   const [layers, setLayers] = useState([]);
   const [activeLayerId, setActiveLayerId] = useState(1);
+  
   const [history, setHistory] = useState([]);
   const [step, setStep] = useState(-1);
   
-  // FIX MUTLAK UNDO/REDO: Kita menggunakan state "renderKey" agar React dipaksa membuang inline-style sisa saat Undo
-  const [renderKey, setRenderKey] = useState(0);
-  const currentLayersRef = useRef([]);
+  // FIX BRESENHAM: Melacak koordinat (X,Y) jari terakhir agar garis tidak putus-putus
+  const lastPosRef = useRef(null);
 
   // KANVAS & MULTI-TOUCH
   const { scale, pan, rotation, setScale, setPan, onTouchStart: onTouchStartMulti, onTouchMove: onTouchMoveMulti, resetView } = useMultiTouch();
   const [activeTool, setActiveTool] = useState('draw'); 
   const [isDrawing, setIsDrawing] = useState(false);
-  const gridRef = useRef(null);
-  
-  // FIX CORETAN PATAH-PATAH (BRESENHAM ENGINE)
-  const lastPos = useRef(null);
 
-  // FIX PULL-TO-REFRESH NATIVE BROWSER (Mencegah Layar Bergoyang saat disentuh)
+  // 1. STATE RENDER KEY (Memaksa DOM Sinkron Setelah Undo/Redo)
+  const [renderKey, setRenderKey] = useState(0);
+
+  const [baseScale, setBaseScale] = useState(1);
+  useEffect(() => { if (typeof window !== 'undefined') setBaseScale(window.innerWidth < 768 ? 0.6 : 1); }, []);
+
+  // Inisialisasi Kanvas Awal
+  useEffect(() => {
+    const safeGrid = Math.min(Math.max(gridSize, 8), 32); 
+    const initialLayer = createEmptyLayer(1, "Layer 1");
+    setLayers([initialLayer]); 
+    setHistory([JSON.parse(JSON.stringify([initialLayer]))]); 
+    setStep(0); setActiveLayerId(1);
+    setLocalGridInput(safeGrid.toString()); resetView();
+  }, [gridSize]);
+
+  // FIX PULL-TO-REFRESH DI HP
   const canvasAreaRef = useRef(null);
   useEffect(() => {
     const el = canvasAreaRef.current;
     const preventScroll = (e) => { 
-        if (e.touches && e.touches.length > 1) return; // Izinkan zoom 2 jari
+        if (e.touches && e.touches.length > 1) return; // Allow 2 fingers
         e.preventDefault(); 
     };
     if (el) {
@@ -107,21 +118,6 @@ export const PluginPixelDrawing = () => {
     };
   }, []);
 
-  const [baseScale, setBaseScale] = useState(1);
-  useEffect(() => { if (typeof window !== 'undefined') setBaseScale(window.innerWidth < 768 ? 0.6 : 1); }, []);
-
-  // Inisialisasi Kanvas Awal
-  useEffect(() => {
-    const safeGrid = Math.min(Math.max(gridSize, 8), 32); 
-    const initialLayers = [createEmptyLayer(1, "Layer 1")];
-    setLayers(initialLayers); currentLayersRef.current = initialLayers;
-    setHistory([JSON.parse(JSON.stringify(initialLayers))]); setStep(0); setActiveLayerId(1);
-    setLocalGridInput(safeGrid.toString()); resetView();
-  }, [gridSize]);
-
-  // Pantau Sinkronisasi
-  useEffect(() => { currentLayersRef.current = layers; }, [layers]);
-
   const mergedPixels = Array(gridSize * gridSize).fill('transparent');
   if (layers && layers.length > 0) {
      layers.forEach(layer => {
@@ -130,15 +126,16 @@ export const PluginPixelDrawing = () => {
      });
   }
 
-  // FIX UNDO MACET: Memastikan History Tersimpan Sempurna
-  const saveHistory = useCallback(() => {
-    const currentStr = JSON.stringify(currentLayersRef.current);
+  // PENYIMPANAN HISTORY YANG AMAN (Dipanggil saat pointerUp)
+  const saveHistory = useCallback((stateToSave) => {
+    if (!stateToSave || stateToSave.length === 0) return;
+    const currentStr = JSON.stringify(stateToSave);
     const lastStr = JSON.stringify(history[step]);
     
     if (currentStr !== lastStr) {
         const newHistory = history.slice(0, step + 1);
         newHistory.push(JSON.parse(currentStr));
-        if (newHistory.length > 25) newHistory.shift(); 
+        if (newHistory.length > 20) newHistory.shift(); 
         setHistory(newHistory); 
         setStep(newHistory.length - 1);
     }
@@ -148,62 +145,46 @@ export const PluginPixelDrawing = () => {
      if (step <= 0) return;
      const newStep = step - 1;
      setStep(newStep); 
-     const oldState = JSON.parse(JSON.stringify(history[newStep]));
-     setLayers(oldState); 
-     currentLayersRef.current = oldState;
-     setRenderKey(prev => prev + 1); // Paksa sinkronisasi DOM dari sisa coretan
+     setLayers(JSON.parse(JSON.stringify(history[newStep]))); 
+     setRenderKey(k => k + 1); // Paksa Refresh DOM
   };
   
   const handleRedo = () => { 
      if (step >= history.length - 1) return;
      const newStep = step + 1;
      setStep(newStep); 
-     const newState = JSON.parse(JSON.stringify(history[newStep]));
-     setLayers(newState); 
-     currentLayersRef.current = newState;
-     setRenderKey(prev => prev + 1); // Paksa sinkronisasi DOM
+     setLayers(JSON.parse(JSON.stringify(history[newStep]))); 
+     setRenderKey(k => k + 1); // Paksa Refresh DOM
   };
 
-  // ENGINE PENGGAMBAR & BRESENHAM (Smooth Line Drawing)
-  const applyPixelColor = (c, r) => {
+  // ENGINE PENGGAMBAR (Update DOM langsung untuk Performa)
+  const applyPixelColor = (c, r, currentLayersData) => {
     if (c < 0 || c >= gridSize || r < 0 || r >= gridSize) return false;
     const index = r * gridSize + c;
     
-    const newLayers = [...currentLayersRef.current];
-    const activeIdx = newLayers.findIndex(l => l.id === activeLayerId);
-    if (activeIdx === -1 || newLayers[activeIdx].locked || !newLayers[activeIdx].visible) return false;
+    const activeIdx = currentLayersData.findIndex(l => l.id === activeLayerId);
+    if (activeIdx === -1 || currentLayersData[activeIdx].locked || !currentLayersData[activeIdx].visible) return false;
 
-    let changed = false;
     if (activeTool === 'bucket') {
-      const newPixels = floodFill(newLayers[activeIdx].pixels, index, newLayers[activeIdx].pixels[index], color, gridSize);
-      if (newPixels !== newLayers[activeIdx].pixels) { 
-         newLayers[activeIdx] = { ...newLayers[activeIdx], pixels: newPixels }; 
-         changed = true; 
-      }
+      const newPixels = floodFill(currentLayersData[activeIdx].pixels, index, currentLayersData[activeIdx].pixels[index], color, gridSize);
+      currentLayersData[activeIdx].pixels = newPixels;
     } else {
       const targetColor = activeTool === 'erase' ? 'transparent' : color;
-      if (newLayers[activeIdx].pixels[index] !== targetColor) {
-         const newPixels = [...newLayers[activeIdx].pixels]; 
-         newPixels[index] = targetColor;
-         newLayers[activeIdx] = { ...newLayers[activeIdx], pixels: newPixels }; 
+      if (currentLayersData[activeIdx].pixels[index] !== targetColor) {
+         currentLayersData[activeIdx].pixels[index] = targetColor;
          
-         // DOM Bypass untuk menghindari patah-patah di HP
+         // Injeksi warna langsung ke elemen HTML agar tidak Lag di HP!
          if (gridRef.current && gridRef.current.children[index]) {
              gridRef.current.children[index].style.backgroundColor = targetColor === 'transparent' ? '' : targetColor;
          }
-         changed = true;
       }
     }
-
-    if (changed) {
-       setLayers(newLayers); 
-       currentLayersRef.current = newLayers;
-    }
-    return changed;
+    return true;
   };
 
-  const paintByCoords = (clientX, clientY) => {
-    if (!gridRef.current) return;
+  const paintByCoords = (clientX, clientY, isFirstTouch = false) => {
+    if (!gridRef.current || activeTool === 'pan') return;
+    
     const rect = gridRef.current.getBoundingClientRect();
     const pixelSizePx = gridSize <= 8 ? 20 : gridSize <= 16 ? 12 : gridSize <= 32 ? 6 : 4;
     
@@ -221,55 +202,61 @@ export const PluginPixelDrawing = () => {
     const col = Math.floor(unscaledX / pixelSizePx);
     const row = Math.floor(unscaledY / pixelSizePx);
 
+    // Jika jari keluar batas grid, lupakan titik terakhir
     if (col < 0 || col >= gridSize || row < 0 || row >= gridSize) {
-       lastPos.current = null; // Putuskan garis kalau keluar kanvas
+       lastPosRef.current = null;
        return;
     }
 
     if (activeTool === 'picker') {
       const index = row * gridSize + col;
       const picked = mergedPixels[index] !== 'transparent' ? mergedPixels[index] : (isTransparent ? '#ffffff' : canvasBgColor);
-      setColor(picked); setActiveTool('draw'); return;
+      setColor(picked); setActiveTool('draw'); 
+      return;
     }
 
-    // Algoritma Bresenham: Menggambar garis mulus penghubung antar titik saat jari digeser cepat
-    if (lastPos.current && activeTool !== 'bucket') {
-        let x0 = lastPos.current.c; let y0 = lastPos.current.r;
+    const currentLayersData = JSON.parse(JSON.stringify(layers)); // Clone state
+
+    // 2. FIX BRESENHAM LINE ALGORITHM (Coretan Mulus Tanpa Titik Bolong)
+    if (!isFirstTouch && lastPosRef.current && activeTool !== 'bucket') {
+        let x0 = lastPosRef.current.x; let y0 = lastPosRef.current.y;
         let x1 = col; let y1 = row;
+        
         let dxLine = Math.abs(x1 - x0); let dyLine = Math.abs(y1 - y0);
         let sx = (x0 < x1) ? 1 : -1; let sy = (y0 < y1) ? 1 : -1;
         let err = dxLine - dyLine;
 
         while (true) {
-            applyPixelColor(x0, y0);
+            applyPixelColor(x0, y0, currentLayersData);
             if (x0 === x1 && y0 === y1) break;
             let e2 = 2 * err;
             if (e2 > -dyLine) { err -= dyLine; x0 += sx; }
             if (e2 < dxLine) { err += dxLine; y0 += sy; }
         }
     } else {
-        applyPixelColor(col, row);
+        applyPixelColor(col, row, currentLayersData);
     }
     
-    lastPos.current = { c: col, r: row };
+    lastPosRef.current = { x: col, y: row }; // Update posisi terakhir
+    setLayers(currentLayersData);
   };
 
   const handlePointerDown = (e) => {
-    if (e.pointerType === 'touch' || activeTool === 'pan') return; 
-    setIsDrawing(true); lastPos.current = null;
-    paintByCoords(e.clientX, e.clientY);
-    try { e.currentTarget.setPointerCapture(e.pointerId); } catch(err){}
+    if (e.pointerType === 'touch' && activeTool === 'pan') return; 
+    setIsDrawing(true); 
+    paintByCoords(e.clientX, e.clientY, true);
   };
-  
   const handlePointerMove = (e) => {
-    if (e.pointerType === 'touch' || activeTool === 'pan' || !isDrawing) return;
-    paintByCoords(e.clientX, e.clientY);
+    if (e.pointerType === 'touch' && activeTool === 'pan') return;
+    if (!isDrawing) return;
+    paintByCoords(e.clientX, e.clientY, false);
   };
-  
-  const handlePointerUp = (e) => {
-    if (isDrawing) { setIsDrawing(false); saveHistory(); }
-    lastPos.current = null;
-    try { e.currentTarget.releasePointerCapture(e.pointerId); } catch(err){}
+  const handlePointerUp = () => {
+    if (isDrawing) { 
+        setIsDrawing(false); 
+        lastPosRef.current = null;
+        saveHistory(layers); // Simpan history ke memori
+    }
   };
 
   const toggleFullscreen = async () => {
@@ -290,10 +277,10 @@ export const PluginPixelDrawing = () => {
     } catch (err) { setIsFullscreen(!isFullscreen); }
   };
 
-  const addLayer = () => { const newId = Date.now(); const newLayers = [...layers, createEmptyLayer(newId, `Layer ${layers.length + 1}`)]; setLayers(newLayers); setActiveLayerId(newId); setTimeout(saveHistory, 50); };
-  const duplicateLayer = (id) => { const layerToCopy = layers.find(l => l.id === id); if (!layerToCopy) return; const newId = Date.now(); const newLayers = [...layers, { ...layerToCopy, id: newId, name: `${layerToCopy.name} Copy` }]; setLayers(newLayers); setActiveLayerId(newId); setTimeout(saveHistory, 50); };
-  const deleteLayer = (id) => { if (layers.length <= 1) return; const newLayers = layers.filter(l => l.id !== id); setLayers(newLayers); if (activeLayerId === id) setActiveLayerId(newLayers[newLayers.length - 1].id); setTimeout(saveHistory, 50); };
-  const toggleLayerProp = (id, prop) => { const newLayers = layers.map(l => l.id === id ? { ...l, [prop]: !l[prop] } : l); setLayers(newLayers); setTimeout(saveHistory, 50); };
+  const addLayer = () => { const newId = Date.now(); const newLayers = [...layers, createEmptyLayer(newId, `Layer ${layers.length + 1}`)]; setLayers(newLayers); setActiveLayerId(newId); setTimeout(()=>saveHistory(newLayers), 50); };
+  const duplicateLayer = (id) => { const layerToCopy = layers.find(l => l.id === id); if (!layerToCopy) return; const newId = Date.now(); const newLayers = [...layers, { ...layerToCopy, id: newId, name: `${layerToCopy.name} Copy` }]; setLayers(newLayers); setActiveLayerId(newId); setTimeout(()=>saveHistory(newLayers), 50); };
+  const deleteLayer = (id) => { if (layers.length <= 1) return; const newLayers = layers.filter(l => l.id !== id); setLayers(newLayers); if (activeLayerId === id) setActiveLayerId(newLayers[newLayers.length - 1].id); setTimeout(()=>saveHistory(newLayers), 50); };
+  const toggleLayerProp = (id, prop) => { const newLayers = layers.map(l => l.id === id ? { ...l, [prop]: !l[prop] } : l); setLayers(newLayers); setTimeout(()=>saveHistory(newLayers), 50); };
 
   const downloadImage = () => {
     const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
@@ -306,10 +293,9 @@ export const PluginPixelDrawing = () => {
 
   const pixelSizePx = gridSize <= 8 ? 20 : gridSize <= 16 ? 12 : gridSize <= 32 ? 6 : 4;
   
-  // FIX WARNA GRID TERLALU PUTIH: Diubah ke #e8e8e8 sesuai instruksimu! (Pakai ukuran 1px inset agar tegas)
+  // WARNA GRID: Diubah ke #e8e8e8
   const gridStyle = showGrid ? 'inset 0 0 0 1px #e8e8e8' : 'none';
 
-  // --- TAB UI ALAT DESAIN ---
   const ToolsTab = () => (
     <div className="grid grid-cols-3 sm:grid-cols-6 landscape:grid-cols-6 lg:grid-cols-3 gap-3 animate-fade-in-fast h-full items-start">
       <button onClick={() => setActiveTool('draw')} className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl transition-all border ${activeTool === 'draw' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500 shadow-[0_0_15px_rgba(6,182,212,0.2)]' : 'bg-[#141414] text-slate-400 border-transparent hover:bg-[#1f1f1f]'}`}><div className="w-6 h-6 shrink-0"><PixIcons.Brush /></div><span className="text-[10px] font-black tracking-widest uppercase">Kuas</span></button>
@@ -390,10 +376,11 @@ export const PluginPixelDrawing = () => {
                onPointerMove={handlePointerMove} 
                onPointerUp={handlePointerUp} 
                onPointerCancel={handlePointerUp}
-               onTouchStart={(e) => { if(activeTool === 'pan' || e.touches.length > 1) onTouchStartMulti(e); else { setIsDrawing(true); lastPos.current = null; paintByCoords(e.touches[0].clientX, e.touches[0].clientY); } }}
-               onTouchMove={(e) => { if(activeTool === 'pan' || e.touches.length > 1) onTouchMoveMulti(e); else if(isDrawing) paintByCoords(e.touches[0].clientX, e.touches[0].clientY); }}
-               onTouchEnd={() => { if(isDrawing) { setIsDrawing(false); saveHistory(); } lastPos.current = null; }}
+               onTouchStart={(e) => { if(activeTool === 'pan' || e.touches.length > 1) onTouchStartMulti(e); else handlePointerDown(e.touches[0]); }}
+               onTouchMove={(e) => { if(activeTool === 'pan' || e.touches.length > 1) onTouchMoveMulti(e); else handlePointerMove(e.touches[0]); }}
+               onTouchEnd={handlePointerUp}
           >
+            {/* Tombol Undo/Redo Murni tanpa Race Condition */}
             <div className="absolute top-4 right-4 flex gap-2 z-30" onPointerDown={stopProp} onTouchStart={stopProp} onClick={stopProp}>
               <button onPointerDown={(e) => { stopProp(e); handleUndo(); }} disabled={step <= 0} className="w-11 h-11 flex items-center justify-center rounded-xl border border-[#2a2a2a] bg-[#141414]/90 backdrop-blur text-slate-300 disabled:opacity-30 shadow-lg hover:text-white transition-colors active:scale-95"><div className="w-5 h-5 shrink-0"><PixIcons.Undo /></div></button>
               <button onPointerDown={(e) => { stopProp(e); handleRedo(); }} disabled={step >= history.length - 1} className="w-11 h-11 flex items-center justify-center rounded-xl border border-[#2a2a2a] bg-[#141414]/90 backdrop-blur text-slate-300 disabled:opacity-30 shadow-lg hover:text-white transition-colors active:scale-95"><div className="w-5 h-5 shrink-0"><PixIcons.Redo /></div></button>
@@ -401,6 +388,8 @@ export const PluginPixelDrawing = () => {
 
             <div style={{ transform: `translate(${pan.x}px, ${pan.y}px) scale(${scale * baseScale}) rotate(${rotation}deg)`, transition: isDrawing ? 'none' : 'transform 0.1s ease-out' }} className="absolute pointer-events-none">
               <div className="absolute -top-7 left-0 w-full flex justify-center"><span className="bg-red-500 text-white text-[9px] font-black px-4 py-1.5 rounded-t-lg shadow-lg uppercase tracking-widest">SISI ATAS</span></div>
+              
+              {/* KEY RENDER: Memaksa Sinkronisasi DOM secara Instan saat Undo/Redo */}
               <div ref={gridRef} key={`grid-${renderKey}`} className="grid shadow-[0_0_50px_rgba(0,0,0,0.8)] border-t-[4px] border-t-red-500" 
                    style={{ 
                      gridTemplateColumns: `repeat(${gridSize}, 1fr)`, width: gridSize * pixelSizePx, height: gridSize * pixelSizePx,
@@ -437,7 +426,7 @@ export const PluginPixelDrawing = () => {
              <button onClick={() => setMobileTab('tools')} className={`flex-1 flex flex-col items-center justify-center gap-1.5 transition-all ${mobileTab === 'tools' ? 'text-cyan-400 border-t-2 landscape:border-t-0 landscape:border-l-2 border-cyan-500 bg-[#141414]' : 'text-slate-500 hover:text-slate-300 border-t-2 landscape:border-t-0 landscape:border-l-2 border-transparent'}`}><div className="w-5 h-5 sm:w-6 sm:h-6 shrink-0"><PixIcons.Brush /></div><span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider">Alat</span></button>
              <button onClick={() => setMobileTab('colors')} className={`flex-1 flex flex-col items-center justify-center gap-1.5 transition-all ${mobileTab === 'colors' ? 'text-cyan-400 border-t-2 landscape:border-t-0 landscape:border-l-2 border-cyan-500 bg-[#141414]' : 'text-slate-500 hover:text-slate-300 border-t-2 landscape:border-t-0 landscape:border-l-2 border-transparent'}`}><div className="w-5 h-5 sm:w-6 sm:h-6 shrink-0"><PixIcons.Picker /></div><span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider">Warna</span></button>
              <button onClick={() => setMobileTab('layers')} className={`flex-1 flex flex-col items-center justify-center gap-1.5 transition-all ${mobileTab === 'layers' ? 'text-cyan-400 border-t-2 landscape:border-t-0 landscape:border-l-2 border-cyan-500 bg-[#141414]' : 'text-slate-500 hover:text-slate-300 border-t-2 landscape:border-t-0 landscape:border-l-2 border-transparent'}`}><div className="w-5 h-5 sm:w-6 sm:h-6 shrink-0"><PixIcons.Layers /></div><span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider">Layers</span></button>
-             <button onClick={() => setMobileTab('settings')} className={`flex-1 flex flex-col items-center justify-center gap-1.5 transition-all ${mobileTab === 'settings' ? 'text-cyan-400 border-t-2 landscape:border-t-0 landscape:border-l-2 border-cyan-500 bg-[#141414]' : 'text-slate-500 hover:text-slate-300 border-t-2 landscape:border-t-0 landscape:border-l-2 border-transparent'}`}><div className="w-5 h-5 sm:w-6 sm:h-6 shrink-0"><PixIcons.Settings /></div><span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider">Kanvas</span></button>
+             <button onClick={() => setMobileTab('settings')} className={`flex-1 flex flex-col items-center justify-center gap-1.5 transition-all ${mobileTab === 'settings' ? 'text-cyan-400 border-t-2 landscape:border-t-0 landscape:border-l-2 border-cyan-500 bg-[#141414]' : 'text-slate-500 hover:text-slate-300 border-t-2 landscape:border-t-0 landscape:border-l-2 border-transparent'}`}><div className="w-5 h-5 sm:w-6 sm:h-6 shrink-0"><PixIcons.Settings /></div><span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider">Seting</span></button>
           </div>
        </div>
 
