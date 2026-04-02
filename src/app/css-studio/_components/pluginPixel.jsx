@@ -6,7 +6,6 @@ import { PluginTip, FigmaSlider, FigmaColorPicker, WorkspaceLayout, ControlHeade
 
 const LocalIcons = {
   Focus: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-full h-full"><path strokeLinecap="round" strokeLinejoin="round" d="M7.5 3.75H6A2.25 2.25 0 003.75 6v1.5M16.5 3.75H18A2.25 2.25 0 0120.25 6v1.5m0 9V18A2.25 2.25 0 0118 20.25h-1.5m-9 0H6A2.25 2.25 0 013.75 18v-1.5M12 8.25a3.75 3.75 0 100 7.5 3.75 3.75 0 000-7.5z" /></svg>,
-  Grid: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-full h-full"><path strokeLinecap="round" strokeLinejoin="round" d="M3.375 19.5h17.25m-17.25-15h17.25m-17.25 7.5h17.25m-10.5 7.5v-15m7.5 15v-15" /></svg>
 };
 
 const floodFill = (pixels, startIndex, targetColor, replacementColor, gridSize) => {
@@ -53,7 +52,6 @@ export const PluginPixelDrawing = () => {
   }, []);
 
   const { scale, pan, rotation, setScale, setPan, onTouchStart, onTouchMove, resetView } = useMultiTouch();
-  
   const [activeTool, setActiveTool] = useState('draw'); 
   const [isDrawing, setIsDrawing] = useState(false);
   const gridRef = useRef(null);
@@ -82,7 +80,7 @@ export const PluginPixelDrawing = () => {
   const handleRedo = () => { const newStep = Math.min(history.length - 1, step + 1); setStep(newStep); setLayers(JSON.parse(JSON.stringify(history[newStep]))); };
 
   const paintPixel = (index) => {
-    if (activeTool === 'pan' || activeTool === 'picker') return;
+    if (activeTool === 'pan') return;
     const newLayers = [...layers];
     const activeIdx = newLayers.findIndex(l => l.id === activeLayerId);
     if (activeIdx === -1 || newLayers[activeIdx].locked || !newLayers[activeIdx].visible) return;
@@ -98,8 +96,6 @@ export const PluginPixelDrawing = () => {
     }
   };
 
-  // FIX MUTLAK ANTI-CRASH MOBILE:
-  // Menggunakan Math Invers Matrix, bukan bergantung pada setPointerCapture dari browser yang rawan bug di TouchEvent!
   const paintByCoords = (clientX, clientY) => {
     if (!gridRef.current) return;
     const rect = gridRef.current.getBoundingClientRect();
@@ -133,6 +129,29 @@ export const PluginPixelDrawing = () => {
     }
   };
 
+  // PENGAMANAN CRASH POINTER CAPTURE MENGGUNAKAN TRY-CATCH
+  const handlePointerEvent = (e, isDown = false) => {
+    if (activeTool === 'pan') return;
+    if (e.touches && e.touches.length > 1) return;
+    
+    let clientX = e.clientX, clientY = e.clientY;
+    if (e.touches && e.touches.length > 0) {
+      clientX = e.touches[0].clientX; clientY = e.touches[0].clientY;
+    }
+    
+    if (isDown) { 
+       setIsDrawing(true); paintByCoords(clientX, clientY); 
+       try { if(e.pointerId !== undefined && e.currentTarget.setPointerCapture) e.currentTarget.setPointerCapture(e.pointerId); } catch(err){}
+    } else if (isDrawing) { 
+       paintByCoords(clientX, clientY); 
+    }
+  };
+
+  const handlePointerUp = (e) => {
+    if (isDrawing) { setIsDrawing(false); saveHistory(layers); }
+    try { if(e.pointerId !== undefined && e.currentTarget.releasePointerCapture) e.currentTarget.releasePointerCapture(e.pointerId); } catch(err){}
+  };
+
   const addLayer = () => { const newId = Date.now(); const newLayers = [...layers, createEmptyLayer(newId, `Layer ${layers.length + 1}`)]; setLayers(newLayers); setActiveLayerId(newId); saveHistory(newLayers); };
   const duplicateLayer = (id) => { const layerToCopy = layers.find(l => l.id === id); if (!layerToCopy) return; const newId = Date.now(); const newLayers = [...layers, { ...layerToCopy, id: newId, name: `${layerToCopy.name} Copy` }]; setLayers(newLayers); setActiveLayerId(newId); saveHistory(newLayers); };
   const deleteLayer = (id) => { if (layers.length <= 1) return; const newLayers = layers.filter(l => l.id !== id); setLayers(newLayers); if (activeLayerId === id) setActiveLayerId(newLayers[newLayers.length - 1].id); saveHistory(newLayers); };
@@ -158,33 +177,15 @@ export const PluginPixelDrawing = () => {
   const boxShadowData = mergedPixels.map((p, i) => p !== 'transparent' ? `${(i % gridSize) * pixelSizePx}px ${Math.floor(i / gridSize) * pixelSizePx}px ${p}` : null).filter(Boolean).join(', ');
 
   const preview = (
-    <div className="relative w-full h-[45vh] sm:h-[450px] flex items-center justify-center overflow-hidden bg-[#050505] touch-none"
-      onPointerDown={(e) => {
-         if(activeTool === 'pan') return;
-         setIsDrawing(true);
-         paintByCoords(e.clientX, e.clientY);
-         // Gunakan PointerCapture HANYA JIKA BROWSER MENDUKUNGNYA! (Menghindari Touch Crash)
-         if(e.pointerId !== undefined && e.currentTarget.setPointerCapture) {
-            e.currentTarget.setPointerCapture(e.pointerId);
-         }
-      }} 
-      onPointerMove={(e) => {
-         if(isDrawing && activeTool !== 'pan') paintByCoords(e.clientX, e.clientY);
-      }} 
-      onPointerUp={(e) => {
-         if(isDrawing) { setIsDrawing(false); saveHistory(layers); }
-         if(e.pointerId !== undefined && e.currentTarget.releasePointerCapture) {
-            e.currentTarget.releasePointerCapture(e.pointerId);
-         }
-      }}
-      onPointerCancel={(e) => {
-         if(isDrawing) { setIsDrawing(false); saveHistory(layers); }
-      }}
-      // Event MultiTouch (Zoom 2 Jari) diamankan dan dipisah
-      onTouchStart={(e) => { if(activeTool === 'pan' || e.touches.length > 1) onTouchStart(e); }}
-      onTouchMove={(e) => { if(activeTool === 'pan' || e.touches.length > 1) onTouchMove(e); }}
+    <div className="relative w-full h-[45vh] sm:h-[450px] flex items-center justify-center overflow-hidden bg-[#050505]"
+      style={{ touchAction: 'none' }} // KUNCI UTAMA: MEMBEKUKAN SCROLL BROWSER SAAT MENGGAMBAR DI HP
+      onPointerDown={(e) => handlePointerEvent(e, true)} 
+      onPointerMove={(e) => handlePointerEvent(e, false)} 
+      onPointerUp={handlePointerUp}
+      onPointerCancel={handlePointerUp}
+      onTouchStart={(e) => { if(activeTool === 'pan' || e.touches.length > 1) onTouchStart(e); else handlePointerEvent(e, true); }}
+      onTouchMove={(e) => { if(activeTool === 'pan' || e.touches.length > 1) onTouchMove(e); else handlePointerEvent(e, false); }}
     >
-      {/* TOOLBAR MELAYANG */}
       <div className="absolute z-50 flex items-center justify-center gap-1.5 sm:gap-2 p-2 bg-[#141414]/95 backdrop-blur-md border border-[#2a2a2a] rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.8)] transition-all duration-300
         bottom-4 left-1/2 -translate-x-1/2 flex-row 
         lg:bottom-auto lg:top-1/2 lg:-translate-y-1/2 lg:left-4 lg:translate-x-0 lg:flex-col lg:rounded-2xl"
@@ -193,9 +194,7 @@ export const PluginPixelDrawing = () => {
         <button onClick={() => setActiveTool('erase')} className={`w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center rounded-xl transition-all ${activeTool === 'erase' ? 'bg-cyan-500 text-black shadow-[0_0_15px_rgba(6,182,212,0.5)] scale-110' : 'text-slate-400 hover:bg-[#2a2a2a]'}`} title="Penghapus"><div className="w-5 h-5"><Icons.Eraser /></div></button>
         <button onClick={() => setActiveTool('bucket')} className={`w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center rounded-xl transition-all ${activeTool === 'bucket' ? 'bg-cyan-500 text-black shadow-[0_0_15px_rgba(6,182,212,0.5)] scale-110' : 'text-slate-400 hover:bg-[#2a2a2a]'}`} title="Ember Cat"><div className="w-5 h-5"><Icons.Bucket /></div></button>
         <button onClick={() => setActiveTool('picker')} className={`w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center rounded-xl transition-all ${activeTool === 'picker' ? 'bg-cyan-500 text-black shadow-[0_0_15px_rgba(6,182,212,0.5)] scale-110' : 'text-slate-400 hover:bg-[#2a2a2a]'}`} title="Pipet"><div className="w-5 h-5"><Icons.Picker /></div></button>
-        
         <div className="w-px h-6 lg:w-8 lg:h-px bg-[#333] mx-1 lg:my-1 shrink-0"></div>
-        
         <button onClick={() => setActiveTool('pan')} className={`w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center rounded-xl transition-all ${activeTool === 'pan' ? 'bg-cyan-500 text-black shadow-[0_0_15px_rgba(6,182,212,0.5)] scale-110' : 'text-slate-400 hover:bg-[#2a2a2a]'}`} title="Geser Kanvas"><div className="w-5 h-5"><Icons.HandPan /></div></button>
         <button onClick={resetView} className="w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center rounded-xl text-slate-400 hover:text-cyan-400 hover:bg-[#2a2a2a] transition-all" title="Fokus/Kembali ke Tengah"><div className="w-5 h-5"><LocalIcons.Focus /></div></button>
       </div>
@@ -215,8 +214,7 @@ export const PluginPixelDrawing = () => {
         </div>
       </div>
       
-      {/* UNDO REDO */}
-      <div className="absolute top-4 right-4 flex gap-2 z-20 lg:bottom-4 lg:top-auto">
+      <div className="absolute top-4 right-4 flex gap-2 z-20">
         <button onClick={handleUndo} disabled={step <= 0} className="w-10 h-10 flex items-center justify-center rounded-full border border-[#2a2a2a] bg-[#141414]/90 backdrop-blur text-slate-300 disabled:opacity-30 shadow-lg hover:text-white"><div className="w-4 h-4"><Icons.Undo /></div></button>
         <button onClick={handleRedo} disabled={step >= history.length - 1} className="w-10 h-10 flex items-center justify-center rounded-full border border-[#2a2a2a] bg-[#141414]/90 backdrop-blur text-slate-300 disabled:opacity-30 shadow-lg hover:text-white"><div className="w-4 h-4"><Icons.Redo /></div></button>
       </div>
@@ -228,18 +226,14 @@ export const PluginPixelDrawing = () => {
       <PluginTip title="TUTORIAL PIXEL STUDIO" text="1. Resolusi Maksimal dibatasi ke 32x32 agar browser HP Anda tidak Crash. 2. Pilih alat 'Geser' (Ikon Tangan) jika ingin zoom menggunakan 2 jari agar kanvas tidak tercoret tanpa sengaja. 3. Matikan saklar 'Tampilkan Grid' untuk melihat hasil gambar bersih sebelum di-download." />
       
       <ControlHeader title="Workspace Setup" onReset={handleReset} />
+      <div className="mb-4 mt-2"><FigmaToggle label="Tampilkan Garis Grid" checked={showGrid} onChange={setShowGrid} /></div>
       
-      <div className="mb-4 mt-2">
-         <FigmaToggle label="Tampilkan Garis Grid" checked={showGrid} onChange={setShowGrid} />
-      </div>
-
       <div className="flex gap-3 mb-6">
         <input type="number" value={localGridInput} onChange={(e) => setLocalGridInput(e.target.value)} className="flex-1 bg-[#0a0a0a] border border-[#2a2a2a] rounded-xl px-4 py-3 text-white font-mono text-[12px] shadow-inner outline-none focus:border-cyan-500 transition-colors" />
         <button onClick={() => setGridSize(Math.min(32, Math.max(8, parseInt(localGridInput))))} className="px-5 py-3 bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 rounded-xl text-[11px] font-black uppercase tracking-wider hover:bg-cyan-500/20 active:scale-95 transition-all">Set Grid</button>
       </div>
 
       <FigmaColorPicker label="Warna Kuas (Brush Color)" hexValue={color} onChange={setColor} />
-      
       <div className="flex flex-wrap gap-2.5 mt-4">
         {palette.map((c, i) => (
           <button key={i} onClick={() => {setColor(c); setActiveTool('draw');}} className={`w-9 h-9 rounded-xl border-2 transition-transform shadow-sm ${color === c ? 'border-cyan-400 scale-110 shadow-[0_0_10px_rgba(6,182,212,0.4)]' : 'border-[#333] hover:scale-105'}`} style={{backgroundColor: c}} />
@@ -271,9 +265,7 @@ export const PluginPixelDrawing = () => {
 
       <div className="pt-6 border-t border-[#1f1f1f] mt-6">
         <FigmaColorPicker label="Warna Background Kanvas" hexValue={canvasBgColor} onChange={setCanvasBgColor} />
-        <div className="mt-4 mb-6">
-           <FigmaToggle label="Background Transparan (PNG)" checked={isTransparent} onChange={setIsTransparent} />
-        </div>
+        <div className="mt-4 mb-6"><FigmaToggle label="Background Transparan (PNG)" checked={isTransparent} onChange={setIsTransparent} /></div>
         <FigmaSlider label="HD Export Size" min={gridSize} max={1920} step={gridSize} value={outputSize} onChange={setOutputSize} unit="px" />
         <button onClick={downloadImage} className="w-full mt-8 py-4 bg-gradient-to-r from-cyan-600 to-blue-600 rounded-xl text-[12px] font-black uppercase tracking-widest text-white shadow-[0_0_20px_rgba(6,182,212,0.3)] hover:shadow-[0_0_30px_rgba(6,182,212,0.5)] active:scale-95 transition-all flex items-center justify-center gap-2"><div className="w-5 h-5"><Icons.Download /></div> Download HD PNG</button>
       </div>
@@ -282,9 +274,7 @@ export const PluginPixelDrawing = () => {
 
   return (
     <WorkspaceLayout 
-      name="Pixel Drawing Pro" 
-      preview={preview}
-      controls={controls}
+      name="Pixel Drawing Pro" preview={preview} controls={controls}
       cssOutput={`.pixel-art {\n  width: ${pixelSizePx}px;\n  height: ${pixelSizePx}px;\n  background-color: ${isTransparent ? 'transparent' : canvasBgColor};\n  box-shadow: ${boxShadowData || 'none'};\n}`}
       htmlOutput={`\n<div class="pixel-art"></div>`}
       jsxOutput={`<div className="pixel-art" />`}
