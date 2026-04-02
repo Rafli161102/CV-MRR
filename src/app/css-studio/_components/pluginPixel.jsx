@@ -47,15 +47,18 @@ export const PluginPixelDrawing = () => {
   const [history, setHistory] = useState([]);
   const [step, setStep] = useState(-1);
 
+  // FIX HYDRATION ERROR: Set Scale setelah Render di Browser
   const [baseScale, setBaseScale] = useState(1);
-  useEffect(() => { if (window.innerWidth < 768) setBaseScale(0.7); }, []);
+  useEffect(() => {
+     setBaseScale(window.innerWidth < 768 ? 0.6 : 1);
+  }, []);
 
   const { scale, pan, rotation, setScale, setPan, onTouchStart, onTouchMove, resetView } = useMultiTouch();
-  
   const [activeTool, setActiveTool] = useState('draw'); 
   const [isDrawing, setIsDrawing] = useState(false);
-  const gridRef = useRef(null);
+  const parentRef = useRef(null);
 
+  // FIX OOM CRASH: Batas maksimal grid 32
   useEffect(() => {
     const safeGrid = Math.min(Math.max(gridSize, 8), 32); 
     const newLayers = [createEmptyLayer(1, "Layer 1")];
@@ -80,7 +83,6 @@ export const PluginPixelDrawing = () => {
   const handleRedo = () => { const newStep = Math.min(history.length - 1, step + 1); setStep(newStep); setLayers(JSON.parse(JSON.stringify(history[newStep]))); };
 
   const paintPixel = (index) => {
-    if (activeTool === 'pan' || activeTool === 'picker') return;
     const newLayers = [...layers];
     const activeIdx = newLayers.findIndex(l => l.id === activeLayerId);
     if (activeIdx === -1 || newLayers[activeIdx].locked || !newLayers[activeIdx].visible) return;
@@ -96,21 +98,40 @@ export const PluginPixelDrawing = () => {
     }
   };
 
-  // LOGIKA HIT-TEST NATIVE (AKURAT 100% UNTUK MOBILE)
-  const paintByEvent = (e) => {
-    if (activeTool === 'pan') return;
-    if (e.touches && e.touches.length > 1) return; 
+  // RUMUS MATRIKS MATEMATIKA MURNI (DIJAMIN 100% KENA TITIK JARI)
+  const paintByCoords = (clientX, clientY) => {
+    if (!parentRef.current) return;
 
-    let clientX = e.clientX, clientY = e.clientY;
-    if (e.touches && e.touches.length > 0) { 
-      clientX = e.touches[0].clientX; 
-      clientY = e.touches[0].clientY; 
-    }
+    // Mendapatkan batas kotak kanvas yang tidak di-rotasi
+    const parentRect = parentRef.current.getBoundingClientRect();
+    const pixelSizePx = gridSize <= 8 ? 20 : gridSize <= 16 ? 12 : gridSize <= 32 ? 6 : 4;
+    
+    // Titik pusat kanvas di layar
+    const centerX = parentRect.left + parentRect.width / 2;
+    const centerY = parentRect.top + parentRect.height / 2;
+    
+    // Jarak jari dari titik pusat
+    const dx = clientX - centerX;
+    const dy = clientY - centerY;
 
-    // Melacak elemen tepat di bawah jari menggunakan engine browser
-    const target = document.elementFromPoint(clientX, clientY);
-    if (target && target.hasAttribute('data-pixel-index')) {
-      const index = Number(target.getAttribute('data-pixel-index'));
+    // Invers Rotasi (memutar balik kordinat jari)
+    const angleRad = -rotation * (Math.PI / 180);
+    const rotatedX = dx * Math.cos(angleRad) - dy * Math.sin(angleRad);
+    const rotatedY = dx * Math.sin(angleRad) + dy * Math.cos(angleRad);
+
+    // Kordinat Asli ke dalam Grid
+    const actualScale = scale * baseScale;
+    const unscaledX = (rotatedX / actualScale) + ((gridSize * pixelSizePx) / 2);
+    const unscaledY = (rotatedY / actualScale) + ((gridSize * pixelSizePx) / 2);
+
+    // Cek apakah jari berada di luar batas kanvas
+    if (unscaledX < 0 || unscaledY < 0 || unscaledX >= gridSize * pixelSizePx || unscaledY >= gridSize * pixelSizePx) return;
+
+    const col = Math.floor(unscaledX / pixelSizePx);
+    const row = Math.floor(unscaledY / pixelSizePx);
+    const index = row * gridSize + col;
+
+    if (index >= 0 && index < gridSize * gridSize) {
       if (activeTool === 'picker') {
         const picked = mergedPixels[index] !== 'transparent' ? mergedPixels[index] : (isTransparent ? '#ffffff' : canvasBgColor);
         setColor(picked); setActiveTool('draw'); return;
@@ -120,8 +141,14 @@ export const PluginPixelDrawing = () => {
   };
 
   const handlePointerDown = (e) => {
-    if (activeTool !== 'pan') { setIsDrawing(true); paintByEvent(e); }
+    if (activeTool === 'pan') return;
+    setIsDrawing(true); 
+    paintByCoords(e.clientX, e.clientY);
     e.currentTarget.setPointerCapture(e.pointerId);
+  };
+
+  const handlePointerMove = (e) => {
+    if (isDrawing && activeTool !== 'pan') paintByCoords(e.clientX, e.clientY);
   };
 
   const handlePointerUp = (e) => {
@@ -154,53 +181,66 @@ export const PluginPixelDrawing = () => {
   const boxShadowData = mergedPixels.map((p, i) => p !== 'transparent' ? `${(i % gridSize) * pixelSizePx}px ${Math.floor(i / gridSize) * pixelSizePx}px ${p}` : null).filter(Boolean).join(', ');
 
   const preview = (
-    <div className="relative w-full h-[40vh] sm:h-[400px] flex items-center justify-center overflow-hidden bg-[#050505] touch-none"
-      onPointerDown={handlePointerDown} onPointerMove={(e) => isDrawing && paintByEvent(e)} onPointerUp={handlePointerUp}
-      onTouchStart={(e) => { if(activeTool === 'pan' || e.touches.length > 1) onTouchStart(e); else {setIsDrawing(true); paintByEvent(e);} }}
-      onTouchMove={(e) => { if(activeTool === 'pan' || e.touches.length > 1) onTouchMove(e); else if(isDrawing) paintByEvent(e); }}
+    <div className="relative w-full h-[45vh] sm:h-[400px] flex items-center justify-center overflow-hidden bg-[#050505] touch-none"
+      onPointerDown={handlePointerDown} 
+      onPointerMove={handlePointerMove} 
+      onPointerUp={handlePointerUp}
+      onPointerCancel={handlePointerUp}
+      onTouchStart={(e) => { if(activeTool === 'pan' || e.touches.length > 1) onTouchStart(e); }}
+      onTouchMove={(e) => { if(activeTool === 'pan' || e.touches.length > 1) onTouchMove(e); }}
     >
-      <div style={{ transform: `translate(${pan.x}px, ${pan.y}px) scale(${scale * baseScale}) rotate(${rotation}deg)`, transition: isDrawing ? 'none' : 'transform 0.1s ease-out' }} className="absolute">
-        <div className="absolute -top-6 left-0 w-full flex justify-center pointer-events-none"><span className="bg-red-500 text-white text-[8px] font-black px-3 py-1 rounded-t-md shadow-lg uppercase tracking-widest">SISI ATAS</span></div>
-        <div ref={gridRef} className="grid shadow-[0_0_50px_rgba(0,0,0,0.8)] border-t-[3px] border-t-red-500" 
-             style={{ 
-               gridTemplateColumns: `repeat(${gridSize}, 1fr)`,
-               width: gridSize * pixelSizePx, height: gridSize * pixelSizePx,
-               backgroundColor: isTransparent ? 'transparent' : canvasBgColor,
-               backgroundImage: isTransparent ? 'linear-gradient(45deg, #1a1a1a 25%, transparent 25%), linear-gradient(-45deg, #1a1a1a 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #1a1a1a 75%), linear-gradient(-45deg, transparent 75%, #1a1a1a 75%)' : 'none',
-               backgroundSize: '12px 12px'
-             }}>
-          {mergedPixels.map((bg, i) => (
-            // FIX MUTLAK: Saat Pan aktif, pixel tembus pandang. Saat Draw aktif, pixel bisa disentuh!
-            <div key={i} data-pixel-index={i} className={`w-full h-full touch-none transition-colors duration-75 ${showGrid ? 'border-[0.5px] border-black/10' : 'border-0'} ${activeTool === 'pan' ? 'pointer-events-none' : 'pointer-events-auto cursor-crosshair'}`} style={{ backgroundColor: bg !== 'transparent' ? bg : undefined }} />
-          ))}
-        </div>
+      {/* FIX MOBILE OVERLAP: Toolbar Menurun (Vertikal) di Kiri Layar agar Aman 100% */}
+      <div className="absolute top-1/2 -translate-y-1/2 left-2 sm:left-4 z-50 flex flex-col gap-2 p-1.5 bg-[#141414]/95 backdrop-blur-md border border-[#2a2a2a] rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.8)]">
+        <button onClick={() => setActiveTool('draw')} className={`w-9 h-9 flex items-center justify-center rounded-xl transition-all ${activeTool === 'draw' ? 'bg-cyan-500 text-black shadow-lg scale-110' : 'text-slate-400 hover:bg-[#2a2a2a]'}`} title="Kuas"><div className="w-4 h-4"><Icons.Brush /></div></button>
+        <button onClick={() => setActiveTool('erase')} className={`w-9 h-9 flex items-center justify-center rounded-xl transition-all ${activeTool === 'erase' ? 'bg-cyan-500 text-black shadow-lg scale-110' : 'text-slate-400 hover:bg-[#2a2a2a]'}`} title="Penghapus"><div className="w-4 h-4"><Icons.Eraser /></div></button>
+        <button onClick={() => setActiveTool('bucket')} className={`w-9 h-9 flex items-center justify-center rounded-xl transition-all ${activeTool === 'bucket' ? 'bg-cyan-500 text-black shadow-lg scale-110' : 'text-slate-400 hover:bg-[#2a2a2a]'}`} title="Ember Cat"><div className="w-4 h-4"><Icons.Bucket /></div></button>
+        <button onClick={() => setActiveTool('picker')} className={`w-9 h-9 flex items-center justify-center rounded-xl transition-all ${activeTool === 'picker' ? 'bg-cyan-500 text-black shadow-lg scale-110' : 'text-slate-400 hover:bg-[#2a2a2a]'}`} title="Pipet"><div className="w-4 h-4"><Icons.Picker /></div></button>
+        <div className="w-full h-px bg-[#333] my-1"></div>
+        <button onClick={() => setActiveTool('pan')} className={`w-9 h-9 flex items-center justify-center rounded-xl transition-all ${activeTool === 'pan' ? 'bg-cyan-500 text-black shadow-lg scale-110' : 'text-slate-400 hover:bg-[#2a2a2a]'}`} title="Geser"><div className="w-4 h-4"><Icons.HandPan /></div></button>
+        <button onClick={resetView} className="w-9 h-9 flex items-center justify-center rounded-xl text-slate-400 hover:text-cyan-400 hover:bg-[#2a2a2a] transition-all" title="Fokus"><div className="w-4 h-4"><LocalIcons.Focus /></div></button>
+      </div>
+
+      {/* WADAH PENGHITUNG MATRIKS MURNI */}
+      <div 
+        ref={parentRef}
+        className="absolute flex items-center justify-center pointer-events-none"
+        style={{ 
+          width: gridSize * pixelSizePx, height: gridSize * pixelSizePx,
+          transform: `translate(${pan.x}px, ${pan.y}px) scale(${scale * baseScale})`, 
+          transition: isDrawing ? 'none' : 'transform 0.1s ease-out' 
+        }}
+      >
+         <div className="absolute -top-6 w-full flex justify-center pointer-events-none"><span className="bg-red-500 text-white text-[8px] font-black px-3 py-1 rounded-t-md shadow-lg uppercase tracking-widest">SISI ATAS</span></div>
+         <div className="grid shadow-[0_0_50px_rgba(0,0,0,0.8)] border-t-[3px] border-t-red-500 w-full h-full pointer-events-none" 
+              style={{ 
+                gridTemplateColumns: `repeat(${gridSize}, 1fr)`,
+                backgroundColor: isTransparent ? 'transparent' : canvasBgColor,
+                backgroundImage: isTransparent ? 'linear-gradient(45deg, #1a1a1a 25%, transparent 25%), linear-gradient(-45deg, #1a1a1a 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #1a1a1a 75%), linear-gradient(-45deg, transparent 75%, #1a1a1a 75%)' : 'none',
+                backgroundSize: '12px 12px',
+                transform: `rotate(${rotation}deg)`
+              }}>
+           {mergedPixels.map((bg, i) => (
+             <div key={i} className={`w-full h-full transition-colors duration-75 ${showGrid ? 'border-[0.5px] border-black/10' : 'border-0'}`} style={{ backgroundColor: bg !== 'transparent' ? bg : undefined }} />
+           ))}
+         </div>
+      </div>
+      
+      {/* UNDO REDO */}
+      <div className="absolute top-4 right-4 flex gap-2 z-20">
+        <button onClick={handleUndo} disabled={step <= 0} className="w-10 h-10 flex items-center justify-center rounded-full border border-[#2a2a2a] bg-[#141414]/90 backdrop-blur text-slate-300 disabled:opacity-30 shadow-lg hover:text-white"><div className="w-4 h-4"><Icons.Undo /></div></button>
+        <button onClick={handleRedo} disabled={step >= history.length - 1} className="w-10 h-10 flex items-center justify-center rounded-full border border-[#2a2a2a] bg-[#141414]/90 backdrop-blur text-slate-300 disabled:opacity-30 shadow-lg hover:text-white"><div className="w-4 h-4"><Icons.Redo /></div></button>
       </div>
     </div>
   );
 
   const controls = (
     <div className="space-y-4">
-      <PluginTip title="TUTORIAL PIXEL STUDIO" text="1. Jika kanvas hilang atau tertutup, klik tombol Fokus di Toolbar. 2. Jika Anda ingin zoom menggunakan 2 jari, pastikan Anda sedang memilih alat 'Geser' (Ikon Tangan) agar kanvas tidak tercoret tanpa sengaja. 3. Matikan saklar 'Tampilkan Grid' jika Anda ingin melihat hasil gambar bersih." />
+      <PluginTip title="TUTORIAL PIXEL STUDIO" text="1. Resolusi Maksimal dibatasi ke 32x32 agar browser HP Anda tidak kelebihan beban memori (Crash) dan tetap mulus. 2. Jika Anda ingin zoom dan menggeser layar menggunakan 2 jari, pastikan Anda sedang memilih alat 'Geser' (Ikon Tangan) agar kanvas tidak tercoret tanpa sengaja. 3. Matikan saklar 'Tampilkan Grid' jika Anda ingin melihat hasil gambar murni tanpa garis pembatas." />
       
       <ControlHeader title="Workspace Setup" onReset={handleReset} />
       
-      {/* FIX UX: TOOLBAR SEKARANG ADA DI PANEL KONTROL, TIDAK AKAN PERNAH KEPOTONG */}
-      <div className="flex items-center gap-2 bg-[#050505] p-2 rounded-2xl border border-[#2a2a2a] w-full mb-6 shadow-inner overflow-x-auto custom-scroll snap-x">
-        <button onClick={() => setActiveTool('draw')} className={`snap-start shrink-0 px-4 py-2.5 flex items-center gap-2 rounded-xl transition-all font-bold text-[10px] uppercase tracking-wider ${activeTool === 'draw' ? 'bg-cyan-500 text-black shadow-md' : 'text-slate-400 hover:bg-[#1a1a1a]'}`}><div className="w-4 h-4"><Icons.Brush /></div> Kuas</button>
-        <button onClick={() => setActiveTool('erase')} className={`snap-start shrink-0 px-4 py-2.5 flex items-center gap-2 rounded-xl transition-all font-bold text-[10px] uppercase tracking-wider ${activeTool === 'erase' ? 'bg-cyan-500 text-black shadow-md' : 'text-slate-400 hover:bg-[#1a1a1a]'}`}><div className="w-4 h-4"><Icons.Eraser /></div> Hapus</button>
-        <button onClick={() => setActiveTool('bucket')} className={`snap-start shrink-0 px-4 py-2.5 flex items-center gap-2 rounded-xl transition-all font-bold text-[10px] uppercase tracking-wider ${activeTool === 'bucket' ? 'bg-cyan-500 text-black shadow-md' : 'text-slate-400 hover:bg-[#1a1a1a]'}`}><div className="w-4 h-4"><Icons.Bucket /></div> Ember</button>
-        <button onClick={() => setActiveTool('picker')} className={`snap-start shrink-0 px-4 py-2.5 flex items-center gap-2 rounded-xl transition-all font-bold text-[10px] uppercase tracking-wider ${activeTool === 'picker' ? 'bg-cyan-500 text-black shadow-md' : 'text-slate-400 hover:bg-[#1a1a1a]'}`}><div className="w-4 h-4"><Icons.Picker /></div> Pipet</button>
-        <div className="w-px h-6 bg-[#333] shrink-0 mx-1"></div>
-        <button onClick={() => setActiveTool('pan')} className={`snap-start shrink-0 px-4 py-2.5 flex items-center gap-2 rounded-xl transition-all font-bold text-[10px] uppercase tracking-wider ${activeTool === 'pan' ? 'bg-cyan-500 text-black shadow-md' : 'text-slate-400 hover:bg-[#1a1a1a]'}`}><div className="w-4 h-4"><Icons.HandPan /></div> Geser</button>
-        <button onClick={resetView} className="snap-start shrink-0 px-4 py-2.5 flex items-center gap-2 rounded-xl text-slate-400 hover:text-cyan-400 hover:bg-[#1a1a1a] transition-all font-bold text-[10px] uppercase tracking-wider"><div className="w-4 h-4"><LocalIcons.Focus /></div> Fokus</button>
-      </div>
-
-      <div className="flex items-center justify-between mb-4 mt-4">
-        <div className="flex gap-2">
-          <button onClick={handleUndo} disabled={step <= 0} className="w-10 h-10 flex items-center justify-center rounded-xl border border-[#2a2a2a] bg-[#141414] text-slate-300 disabled:opacity-30 hover:text-white transition-colors"><div className="w-4 h-4"><Icons.Undo /></div></button>
-          <button onClick={handleRedo} disabled={step >= history.length - 1} className="w-10 h-10 flex items-center justify-center rounded-xl border border-[#2a2a2a] bg-[#141414] text-slate-300 disabled:opacity-30 hover:text-white transition-colors"><div className="w-4 h-4"><Icons.Redo /></div></button>
-        </div>
-        <FigmaToggle label="Tampilkan Grid" checked={showGrid} onChange={setShowGrid} />
+      <div className="mb-4 mt-2">
+         <FigmaToggle label="Tampilkan Garis Grid" checked={showGrid} onChange={setShowGrid} />
       </div>
 
       <div className="flex gap-3 mb-6">
