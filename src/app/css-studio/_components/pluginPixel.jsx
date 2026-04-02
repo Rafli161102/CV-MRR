@@ -5,7 +5,7 @@ import { Icons } from './icons';
 import { PluginTip, FigmaSlider, FigmaColorPicker, WorkspaceLayout, ControlHeader, COLOR_PRESETS, useMultiTouch, FigmaToggle } from './ui';
 
 const LocalIcons = {
-  Focus: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-full h-full"><path strokeLinecap="round" strokeLinejoin="round" d="M7.5 3.75H6A2.25 2.25 0 003.75 6v1.5M16.5 3.75H18A2.25 2.25 0 0120.25 6v1.5m0 9V18A2.25 2.25 0 0118 20.25h-1.5m-9 0H6A2.25 2.25 0 013.75 18v-1.5M12 8.25a3.75 3.75 0 100 7.5 3.75 3.75 0 000-7.5z" /></svg>,
+  Focus: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-full h-full"><path strokeLinecap="round" strokeLinejoin="round" d="M7.5 3.75H6A2.25 2.25 0 003.75 6v1.5M16.5 3.75H18A2.25 2.25 0 0120.25 6v1.5m0 9V18A2.25 2.25 0 0118 20.25h-1.5m-9 0H6A2.25 2.25 0 013.75 18v-1.5M12 8.25a3.75 3.75 0 100 7.5 3.75 3.75 0 000-7.5z" /></svg>
 };
 
 const floodFill = (pixels, startIndex, targetColor, replacementColor, gridSize) => {
@@ -85,6 +85,11 @@ export const PluginPixelDrawing = () => {
     const activeIdx = newLayers.findIndex(l => l.id === activeLayerId);
     if (activeIdx === -1 || newLayers[activeIdx].locked || !newLayers[activeIdx].visible) return;
 
+    if (activeTool === 'picker') {
+      const picked = mergedPixels[index] !== 'transparent' ? mergedPixels[index] : (isTransparent ? '#ffffff' : canvasBgColor);
+      setColor(picked); setActiveTool('draw'); return;
+    }
+
     if (activeTool === 'bucket') {
       newLayers[activeIdx].pixels = floodFill(newLayers[activeIdx].pixels, index, newLayers[activeIdx].pixels[index], color, gridSize);
       setLayers(newLayers); saveHistory(newLayers);
@@ -96,6 +101,7 @@ export const PluginPixelDrawing = () => {
     }
   };
 
+  // MATRIKS PENDETEKSI JARI SUPER PRESISI
   const paintByCoords = (clientX, clientY) => {
     if (!gridRef.current) return;
     const rect = gridRef.current.getBoundingClientRect();
@@ -121,18 +127,13 @@ export const PluginPixelDrawing = () => {
     const index = row * gridSize + col;
 
     if (index >= 0 && index < gridSize * gridSize) {
-      if (activeTool === 'picker') {
-        const picked = mergedPixels[index] !== 'transparent' ? mergedPixels[index] : (isTransparent ? '#ffffff' : canvasBgColor);
-        setColor(picked); setActiveTool('draw'); return;
-      }
       paintPixel(index);
     }
   };
 
-  // PENGAMANAN CRASH POINTER CAPTURE MENGGUNAKAN TRY-CATCH
+  // HANDLER PINTAR (ANTI-ERROR DI TOUCH SCREEN HP)
   const handlePointerEvent = (e, isDown = false) => {
-    if (activeTool === 'pan') return;
-    if (e.touches && e.touches.length > 1) return;
+    if (activeTool === 'pan' || (e.touches && e.touches.length > 1)) return;
     
     let clientX = e.clientX, clientY = e.clientY;
     if (e.touches && e.touches.length > 0) {
@@ -141,15 +142,13 @@ export const PluginPixelDrawing = () => {
     
     if (isDown) { 
        setIsDrawing(true); paintByCoords(clientX, clientY); 
-       try { if(e.pointerId !== undefined && e.currentTarget.setPointerCapture) e.currentTarget.setPointerCapture(e.pointerId); } catch(err){}
     } else if (isDrawing) { 
        paintByCoords(clientX, clientY); 
     }
   };
 
-  const handlePointerUp = (e) => {
+  const handlePointerUp = () => {
     if (isDrawing) { setIsDrawing(false); saveHistory(layers); }
-    try { if(e.pointerId !== undefined && e.currentTarget.releasePointerCapture) e.currentTarget.releasePointerCapture(e.pointerId); } catch(err){}
   };
 
   const addLayer = () => { const newId = Date.now(); const newLayers = [...layers, createEmptyLayer(newId, `Layer ${layers.length + 1}`)]; setLayers(newLayers); setActiveLayerId(newId); saveHistory(newLayers); };
@@ -178,13 +177,14 @@ export const PluginPixelDrawing = () => {
 
   const preview = (
     <div className="relative w-full h-[45vh] sm:h-[450px] flex items-center justify-center overflow-hidden bg-[#050505]"
-      style={{ touchAction: 'none' }} // KUNCI UTAMA: MEMBEKUKAN SCROLL BROWSER SAAT MENGGAMBAR DI HP
+      style={{ touchAction: 'none' }} // KUNCI UTAMA: MEMBEKUKAN LAYAR AGAR BISA DICORET TANPA GESER HALAMAN
       onPointerDown={(e) => handlePointerEvent(e, true)} 
       onPointerMove={(e) => handlePointerEvent(e, false)} 
       onPointerUp={handlePointerUp}
       onPointerCancel={handlePointerUp}
       onTouchStart={(e) => { if(activeTool === 'pan' || e.touches.length > 1) onTouchStart(e); else handlePointerEvent(e, true); }}
       onTouchMove={(e) => { if(activeTool === 'pan' || e.touches.length > 1) onTouchMove(e); else handlePointerEvent(e, false); }}
+      onTouchEnd={handlePointerUp}
     >
       <div className="absolute z-50 flex items-center justify-center gap-1.5 sm:gap-2 p-2 bg-[#141414]/95 backdrop-blur-md border border-[#2a2a2a] rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.8)] transition-all duration-300
         bottom-4 left-1/2 -translate-x-1/2 flex-row 
@@ -225,7 +225,7 @@ export const PluginPixelDrawing = () => {
     <div className="space-y-4">
       <PluginTip title="TUTORIAL PIXEL STUDIO" text="1. Resolusi Maksimal dibatasi ke 32x32 agar browser HP Anda tidak Crash. 2. Pilih alat 'Geser' (Ikon Tangan) jika ingin zoom menggunakan 2 jari agar kanvas tidak tercoret tanpa sengaja. 3. Matikan saklar 'Tampilkan Grid' untuk melihat hasil gambar bersih sebelum di-download." />
       
-      <ControlHeader title="Workspace Setup" onReset={handleReset} />
+      <ControlHeader title="Workspace Setup" onReset={() => {}} />
       <div className="mb-4 mt-2"><FigmaToggle label="Tampilkan Garis Grid" checked={showGrid} onChange={setShowGrid} /></div>
       
       <div className="flex gap-3 mb-6">
