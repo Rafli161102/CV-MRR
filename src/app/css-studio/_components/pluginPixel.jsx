@@ -47,7 +47,6 @@ export const PluginPixelDrawing = () => {
   const [history, setHistory] = useState([]);
   const [step, setStep] = useState(-1);
 
-  // FIX HYDRATION & SCALE
   const [baseScale, setBaseScale] = useState(1);
   useEffect(() => { if (window.innerWidth < 768) setBaseScale(0.7); }, []);
 
@@ -57,7 +56,6 @@ export const PluginPixelDrawing = () => {
   const [isDrawing, setIsDrawing] = useState(false);
   const gridRef = useRef(null);
 
-  // FIX OOM: Maksimal Grid 32x32 agar HP aman
   useEffect(() => {
     const safeGrid = Math.min(Math.max(gridSize, 8), 32); 
     const newLayers = [createEmptyLayer(1, "Layer 1")];
@@ -74,7 +72,7 @@ export const PluginPixelDrawing = () => {
   const saveHistory = (newLayers) => {
     const newHistory = history.slice(0, step + 1);
     newHistory.push(JSON.parse(JSON.stringify(newLayers)));
-    if (newHistory.length > 10) newHistory.shift(); // Limit history to 10
+    if (newHistory.length > 10) newHistory.shift(); 
     setHistory(newHistory); setStep(newHistory.length - 1);
   };
 
@@ -98,38 +96,21 @@ export const PluginPixelDrawing = () => {
     }
   };
 
-  // FIX: RUMUS MATRIKS MURNI (ANTI-CRASH)
+  // LOGIKA HIT-TEST NATIVE (AKURAT 100% UNTUK MOBILE)
   const paintByEvent = (e) => {
-    if (activeTool === 'pan' || !gridRef.current) return;
+    if (activeTool === 'pan') return;
     if (e.touches && e.touches.length > 1) return; 
 
     let clientX = e.clientX, clientY = e.clientY;
-    if (e.touches && e.touches.length > 0) { clientX = e.touches[0].clientX; clientY = e.touches[0].clientY; }
+    if (e.touches && e.touches.length > 0) { 
+      clientX = e.touches[0].clientX; 
+      clientY = e.touches[0].clientY; 
+    }
 
-    const rect = gridRef.current.getBoundingClientRect();
-    const pixelSizePx = gridSize <= 8 ? 20 : gridSize <= 16 ? 12 : gridSize <= 32 ? 6 : 4;
-    
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-    const dx = clientX - centerX;
-    const dy = clientY - centerY;
-
-    const angleRad = -rotation * (Math.PI / 180);
-    const rotatedX = dx * Math.cos(angleRad) - dy * Math.sin(angleRad);
-    const rotatedY = dx * Math.sin(angleRad) + dy * Math.cos(angleRad);
-
-    const actualScale = scale * baseScale;
-    
-    const xLocal = (rotatedX / actualScale) + ((gridSize * pixelSizePx) / 2);
-    const yLocal = (rotatedY / actualScale) + ((gridSize * pixelSizePx) / 2);
-
-    if (xLocal < 0 || yLocal < 0 || xLocal >= gridSize * pixelSizePx || yLocal >= gridSize * pixelSizePx) return;
-
-    const col = Math.floor(xLocal / pixelSizePx);
-    const row = Math.floor(yLocal / pixelSizePx);
-    const index = row * gridSize + col;
-
-    if (index >= 0 && index < gridSize * gridSize) {
+    // Melacak elemen tepat di bawah jari menggunakan engine browser
+    const target = document.elementFromPoint(clientX, clientY);
+    if (target && target.hasAttribute('data-pixel-index')) {
+      const index = Number(target.getAttribute('data-pixel-index'));
       if (activeTool === 'picker') {
         const picked = mergedPixels[index] !== 'transparent' ? mergedPixels[index] : (isTransparent ? '#ffffff' : canvasBgColor);
         setColor(picked); setActiveTool('draw'); return;
@@ -172,108 +153,109 @@ export const PluginPixelDrawing = () => {
   const pixelSizePx = gridSize <= 8 ? 20 : gridSize <= 16 ? 12 : gridSize <= 32 ? 6 : 4;
   const boxShadowData = mergedPixels.map((p, i) => p !== 'transparent' ? `${(i % gridSize) * pixelSizePx}px ${Math.floor(i / gridSize) * pixelSizePx}px ${p}` : null).filter(Boolean).join(', ');
 
+  const preview = (
+    <div className="relative w-full h-[40vh] sm:h-[400px] flex items-center justify-center overflow-hidden bg-[#050505] touch-none"
+      onPointerDown={handlePointerDown} onPointerMove={(e) => isDrawing && paintByEvent(e)} onPointerUp={handlePointerUp}
+      onTouchStart={(e) => { if(activeTool === 'pan' || e.touches.length > 1) onTouchStart(e); else {setIsDrawing(true); paintByEvent(e);} }}
+      onTouchMove={(e) => { if(activeTool === 'pan' || e.touches.length > 1) onTouchMove(e); else if(isDrawing) paintByEvent(e); }}
+    >
+      <div style={{ transform: `translate(${pan.x}px, ${pan.y}px) scale(${scale * baseScale}) rotate(${rotation}deg)`, transition: isDrawing ? 'none' : 'transform 0.1s ease-out' }} className="absolute">
+        <div className="absolute -top-6 left-0 w-full flex justify-center pointer-events-none"><span className="bg-red-500 text-white text-[8px] font-black px-3 py-1 rounded-t-md shadow-lg uppercase tracking-widest">SISI ATAS</span></div>
+        <div ref={gridRef} className="grid shadow-[0_0_50px_rgba(0,0,0,0.8)] border-t-[3px] border-t-red-500" 
+             style={{ 
+               gridTemplateColumns: `repeat(${gridSize}, 1fr)`,
+               width: gridSize * pixelSizePx, height: gridSize * pixelSizePx,
+               backgroundColor: isTransparent ? 'transparent' : canvasBgColor,
+               backgroundImage: isTransparent ? 'linear-gradient(45deg, #1a1a1a 25%, transparent 25%), linear-gradient(-45deg, #1a1a1a 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #1a1a1a 75%), linear-gradient(-45deg, transparent 75%, #1a1a1a 75%)' : 'none',
+               backgroundSize: '12px 12px'
+             }}>
+          {mergedPixels.map((bg, i) => (
+            // FIX MUTLAK: Saat Pan aktif, pixel tembus pandang. Saat Draw aktif, pixel bisa disentuh!
+            <div key={i} data-pixel-index={i} className={`w-full h-full touch-none transition-colors duration-75 ${showGrid ? 'border-[0.5px] border-black/10' : 'border-0'} ${activeTool === 'pan' ? 'pointer-events-none' : 'pointer-events-auto cursor-crosshair'}`} style={{ backgroundColor: bg !== 'transparent' ? bg : undefined }} />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+
+  const controls = (
+    <div className="space-y-4">
+      <PluginTip title="TUTORIAL PIXEL STUDIO" text="1. Jika kanvas hilang atau tertutup, klik tombol Fokus di Toolbar. 2. Jika Anda ingin zoom menggunakan 2 jari, pastikan Anda sedang memilih alat 'Geser' (Ikon Tangan) agar kanvas tidak tercoret tanpa sengaja. 3. Matikan saklar 'Tampilkan Grid' jika Anda ingin melihat hasil gambar bersih." />
+      
+      <ControlHeader title="Workspace Setup" onReset={handleReset} />
+      
+      {/* FIX UX: TOOLBAR SEKARANG ADA DI PANEL KONTROL, TIDAK AKAN PERNAH KEPOTONG */}
+      <div className="flex items-center gap-2 bg-[#050505] p-2 rounded-2xl border border-[#2a2a2a] w-full mb-6 shadow-inner overflow-x-auto custom-scroll snap-x">
+        <button onClick={() => setActiveTool('draw')} className={`snap-start shrink-0 px-4 py-2.5 flex items-center gap-2 rounded-xl transition-all font-bold text-[10px] uppercase tracking-wider ${activeTool === 'draw' ? 'bg-cyan-500 text-black shadow-md' : 'text-slate-400 hover:bg-[#1a1a1a]'}`}><div className="w-4 h-4"><Icons.Brush /></div> Kuas</button>
+        <button onClick={() => setActiveTool('erase')} className={`snap-start shrink-0 px-4 py-2.5 flex items-center gap-2 rounded-xl transition-all font-bold text-[10px] uppercase tracking-wider ${activeTool === 'erase' ? 'bg-cyan-500 text-black shadow-md' : 'text-slate-400 hover:bg-[#1a1a1a]'}`}><div className="w-4 h-4"><Icons.Eraser /></div> Hapus</button>
+        <button onClick={() => setActiveTool('bucket')} className={`snap-start shrink-0 px-4 py-2.5 flex items-center gap-2 rounded-xl transition-all font-bold text-[10px] uppercase tracking-wider ${activeTool === 'bucket' ? 'bg-cyan-500 text-black shadow-md' : 'text-slate-400 hover:bg-[#1a1a1a]'}`}><div className="w-4 h-4"><Icons.Bucket /></div> Ember</button>
+        <button onClick={() => setActiveTool('picker')} className={`snap-start shrink-0 px-4 py-2.5 flex items-center gap-2 rounded-xl transition-all font-bold text-[10px] uppercase tracking-wider ${activeTool === 'picker' ? 'bg-cyan-500 text-black shadow-md' : 'text-slate-400 hover:bg-[#1a1a1a]'}`}><div className="w-4 h-4"><Icons.Picker /></div> Pipet</button>
+        <div className="w-px h-6 bg-[#333] shrink-0 mx-1"></div>
+        <button onClick={() => setActiveTool('pan')} className={`snap-start shrink-0 px-4 py-2.5 flex items-center gap-2 rounded-xl transition-all font-bold text-[10px] uppercase tracking-wider ${activeTool === 'pan' ? 'bg-cyan-500 text-black shadow-md' : 'text-slate-400 hover:bg-[#1a1a1a]'}`}><div className="w-4 h-4"><Icons.HandPan /></div> Geser</button>
+        <button onClick={resetView} className="snap-start shrink-0 px-4 py-2.5 flex items-center gap-2 rounded-xl text-slate-400 hover:text-cyan-400 hover:bg-[#1a1a1a] transition-all font-bold text-[10px] uppercase tracking-wider"><div className="w-4 h-4"><LocalIcons.Focus /></div> Fokus</button>
+      </div>
+
+      <div className="flex items-center justify-between mb-4 mt-4">
+        <div className="flex gap-2">
+          <button onClick={handleUndo} disabled={step <= 0} className="w-10 h-10 flex items-center justify-center rounded-xl border border-[#2a2a2a] bg-[#141414] text-slate-300 disabled:opacity-30 hover:text-white transition-colors"><div className="w-4 h-4"><Icons.Undo /></div></button>
+          <button onClick={handleRedo} disabled={step >= history.length - 1} className="w-10 h-10 flex items-center justify-center rounded-xl border border-[#2a2a2a] bg-[#141414] text-slate-300 disabled:opacity-30 hover:text-white transition-colors"><div className="w-4 h-4"><Icons.Redo /></div></button>
+        </div>
+        <FigmaToggle label="Tampilkan Grid" checked={showGrid} onChange={setShowGrid} />
+      </div>
+
+      <div className="flex gap-3 mb-6">
+        <input type="number" value={localGridInput} onChange={(e) => setLocalGridInput(e.target.value)} className="flex-1 bg-[#0a0a0a] border border-[#2a2a2a] rounded-xl px-4 py-3 text-white font-mono text-[12px] shadow-inner outline-none focus:border-cyan-500 transition-colors" />
+        <button onClick={() => setGridSize(Math.min(32, Math.max(8, parseInt(localGridInput))))} className="px-5 py-3 bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 rounded-xl text-[11px] font-black uppercase tracking-wider hover:bg-cyan-500/20 active:scale-95 transition-all">Set Grid</button>
+      </div>
+
+      <FigmaColorPicker label="Warna Kuas (Brush Color)" hexValue={color} onChange={setColor} />
+      
+      <div className="flex flex-wrap gap-2.5 mt-4">
+        {palette.map((c, i) => (
+          <button key={i} onClick={() => {setColor(c); setActiveTool('draw');}} className={`w-9 h-9 rounded-xl border-2 transition-transform shadow-sm ${color === c ? 'border-cyan-400 scale-110 shadow-[0_0_10px_rgba(6,182,212,0.4)]' : 'border-[#333] hover:scale-105'}`} style={{backgroundColor: c}} />
+        ))}
+        <button onClick={() => !palette.includes(color) && setPalette([color, ...palette].slice(0, 15))} className="w-9 h-9 rounded-xl border-2 border-[#333] flex items-center justify-center text-slate-500 hover:text-white hover:border-[#555] bg-[#141414] transition-all">+</button>
+      </div>
+
+      {/* LAYERS PANEL */}
+      <div className="pt-6 border-t border-[#1f1f1f] mt-8">
+        <div className="flex items-center justify-between mb-4">
+          <span className="text-[12px] font-black text-cyan-400 uppercase tracking-widest flex items-center gap-2"><Icons.Layers /> Layers Panel</span>
+          <button onClick={addLayer} className="text-[9px] text-cyan-400 bg-cyan-500/10 border border-cyan-500/30 px-3 py-1.5 rounded-lg uppercase tracking-wider hover:bg-cyan-500/20 transition-all">+ Layer Baru</button>
+        </div>
+        <div className="space-y-3 max-h-[180px] overflow-y-auto custom-scroll pr-2">
+          {[...layers].reverse().map(l => (
+            <div key={l.id} onClick={() => setActiveLayerId(l.id)} className={`flex items-center justify-between p-3.5 rounded-xl border cursor-pointer transition-all ${activeLayerId === l.id ? 'bg-[#1a1a1a] border-cyan-500 shadow-md' : 'bg-[#0a0a0a] border-[#2a2a2a] hover:border-[#444]'}`}>
+              <div className="flex items-center gap-3">
+                <button onClick={(e) => {e.stopPropagation(); toggleLayerProp(l.id, 'visible')}} className={`w-5 h-5 transition-colors ${l.visible ? 'text-cyan-400' : 'text-slate-600'}`}>{l.visible ? <Icons.Eye /> : <Icons.EyeOff />}</button>
+                <button onClick={(e) => {e.stopPropagation(); toggleLayerProp(l.id, 'locked')}} className={`w-5 h-5 transition-colors ${l.locked ? 'text-red-400' : 'text-slate-500'}`}>{l.locked ? <Icons.Lock /> : <Icons.Unlock />}</button>
+                <span className={`text-[11px] font-bold uppercase tracking-wider ${activeLayerId === l.id ? 'text-white' : 'text-slate-400'}`}>{l.name} {activeLayerId === l.id && '(Aktif)'}</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <button onClick={(e) => {e.stopPropagation(); duplicateLayer(l.id)}} className="w-5 h-5 text-slate-400 hover:text-white transition-colors" title="Gandakan"><Icons.Copy /></button>
+                <button onClick={(e) => {e.stopPropagation(); deleteLayer(l.id)}} disabled={layers.length <= 1} className="w-5 h-5 text-slate-400 hover:text-red-400 disabled:opacity-30 transition-colors"><Icons.Trash /></button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="pt-6 border-t border-[#1f1f1f] mt-6">
+        <FigmaColorPicker label="Warna Background Kanvas" hexValue={canvasBgColor} onChange={setCanvasBgColor} />
+        <div className="mt-4 mb-6">
+           <FigmaToggle label="Background Transparan (PNG)" checked={isTransparent} onChange={setIsTransparent} />
+        </div>
+        <FigmaSlider label="HD Export Size" min={gridSize} max={1920} step={gridSize} value={outputSize} onChange={setOutputSize} unit="px" />
+        <button onClick={downloadImage} className="w-full mt-8 py-4 bg-gradient-to-r from-cyan-600 to-blue-600 rounded-xl text-[12px] font-black uppercase tracking-widest text-white shadow-[0_0_20px_rgba(6,182,212,0.3)] hover:shadow-[0_0_30px_rgba(6,182,212,0.5)] active:scale-95 transition-all flex items-center justify-center gap-2"><div className="w-5 h-5"><Icons.Download /></div> Download HD PNG</button>
+      </div>
+    </div>
+  );
+
   return (
     <WorkspaceLayout 
       name="Pixel Drawing Pro" 
-      preview={
-        <div className="relative w-full h-[45vh] sm:h-[400px] flex items-center justify-center overflow-hidden bg-[#050505] touch-none"
-          onPointerDown={handlePointerDown} onPointerMove={(e) => isDrawing && paintByEvent(e)} onPointerUp={handlePointerUp}
-          onTouchStart={(e) => { if(activeTool === 'pan' || e.touches.length > 1) onTouchStart(e); else {setIsDrawing(true); paintByEvent(e);} }}
-          onTouchMove={(e) => { if(activeTool === 'pan' || e.touches.length > 1) onTouchMove(e); else if(isDrawing) paintByEvent(e); }}
-        >
-          {/* FIX MOBILE OVERLAP: Toolbar pindah ke bawah (Horizontal) di HP */}
-          <div className="absolute z-30 bg-[#141414]/90 backdrop-blur border border-[#2a2a2a] p-1.5 shadow-2xl flex gap-1.5 sm:gap-2 transition-all duration-300
-            bottom-5 left-1/2 -translate-x-1/2 flex-row rounded-2xl
-            lg:bottom-auto lg:top-1/2 lg:-translate-y-1/2 lg:left-4 lg:translate-x-0 lg:flex-col lg:rounded-2xl"
-          >
-            <button onClick={() => setActiveTool('draw')} className={`w-9 h-9 flex items-center justify-center rounded-xl transition-all ${activeTool === 'draw' ? 'bg-cyan-500 text-black shadow-lg scale-110' : 'text-slate-400 hover:bg-[#2a2a2a]'}`} title="Kuas"><div className="w-5 h-5"><Icons.Brush /></div></button>
-            <button onClick={() => setActiveTool('erase')} className={`w-9 h-9 flex items-center justify-center rounded-xl transition-all ${activeTool === 'erase' ? 'bg-cyan-500 text-black shadow-lg scale-110' : 'text-slate-400 hover:bg-[#2a2a2a]'}`} title="Penghapus"><div className="w-5 h-5"><Icons.Eraser /></div></button>
-            <button onClick={() => setActiveTool('bucket')} className={`w-9 h-9 flex items-center justify-center rounded-xl transition-all ${activeTool === 'bucket' ? 'bg-cyan-500 text-black shadow-lg scale-110' : 'text-slate-400 hover:bg-[#2a2a2a]'}`} title="Ember Cat"><div className="w-5 h-5"><Icons.Bucket /></div></button>
-            <button onClick={() => setActiveTool('picker')} className={`w-9 h-9 flex items-center justify-center rounded-xl transition-all ${activeTool === 'picker' ? 'bg-cyan-500 text-black shadow-lg scale-110' : 'text-slate-400 hover:bg-[#2a2a2a]'}`} title="Pipet"><div className="w-5 h-5"><Icons.Picker /></div></button>
-            
-            <div className="w-px h-auto lg:w-full lg:h-px bg-[#333] mx-1 lg:my-1"></div>
-            
-            <button onClick={() => setActiveTool('pan')} className={`w-9 h-9 flex items-center justify-center rounded-xl transition-all ${activeTool === 'pan' ? 'bg-cyan-500 text-black shadow-lg scale-110' : 'text-slate-400 hover:bg-[#2a2a2a]'}`} title="Geser"><div className="w-5 h-5"><Icons.HandPan /></div></button>
-            <button onClick={resetView} className="w-9 h-9 flex items-center justify-center rounded-xl text-slate-400 hover:text-cyan-400 hover:bg-[#2a2a2a] transition-all" title="Fokus / Reset Zoom"><div className="w-5 h-5"><LocalIcons.Focus /></div></button>
-          </div>
-
-          {/* UNDO REDO */}
-          <div className="absolute top-4 right-4 flex gap-2 z-20 lg:bottom-4 lg:top-auto">
-            <button onClick={handleUndo} disabled={step <= 0} className="w-10 h-10 flex items-center justify-center rounded-full border border-[#2a2a2a] bg-[#141414]/90 backdrop-blur text-slate-300 disabled:opacity-30 shadow-lg hover:text-white"><div className="w-4 h-4"><Icons.Undo /></div></button>
-            <button onClick={handleRedo} disabled={step >= history.length - 1} className="w-10 h-10 flex items-center justify-center rounded-full border border-[#2a2a2a] bg-[#141414]/90 backdrop-blur text-slate-300 disabled:opacity-30 shadow-lg hover:text-white"><div className="w-4 h-4"><Icons.Redo /></div></button>
-          </div>
-
-          <div style={{ transform: `translate(${pan.x}px, ${pan.y}px) scale(${scale * baseScale}) rotate(${rotation}deg)`, transition: isDrawing ? 'none' : 'transform 0.1s ease-out' }} className="absolute">
-            <div className="absolute -top-6 left-0 w-full flex justify-center pointer-events-none"><span className="bg-red-500 text-white text-[8px] font-black px-3 py-1 rounded-t-md shadow-lg uppercase tracking-widest">SISI ATAS</span></div>
-            <div ref={gridRef} className="grid shadow-[0_0_50px_rgba(0,0,0,0.8)] border-t-[3px] border-t-red-500" 
-                 style={{ 
-                   gridTemplateColumns: `repeat(${gridSize}, 1fr)`, width: gridSize * pixelSizePx, height: gridSize * pixelSizePx,
-                   backgroundColor: isTransparent ? 'transparent' : canvasBgColor,
-                   backgroundImage: isTransparent ? 'linear-gradient(45deg, #1a1a1a 25%, transparent 25%), linear-gradient(-45deg, #1a1a1a 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #1a1a1a 75%), linear-gradient(-45deg, transparent 75%, #1a1a1a 75%)' : 'none',
-                   backgroundSize: '12px 12px'
-                 }}>
-              {mergedPixels.map((bg, i) => (
-                <div key={i} className={`w-full h-full pointer-events-none transition-colors duration-75 ${showGrid ? 'border-[0.5px] border-black/10' : 'border-0'}`} style={{ backgroundColor: bg !== 'transparent' ? bg : undefined }} />
-              ))}
-            </div>
-          </div>
-        </div>
-      }
-      controls={
-        <div className="space-y-4">
-          <PluginTip title="TUTORIAL PIXEL STUDIO" text="1. Jika kanvas hilang atau tertutup tangan, klik tombol Fokus di Toolbar. 2. Jika Anda ingin zoom menggunakan 2 jari, pastikan Anda sedang memilih alat 'Geser' (Ikon Tangan) agar kanvas tidak tercoret tanpa sengaja. 3. Matikan saklar 'Tampilkan Grid' jika Anda ingin melihat hasil gambar bersih." />
-          
-          <div className="mb-4 mt-2">
-             <FigmaToggle label="Tampilkan Garis Grid" checked={showGrid} onChange={setShowGrid} />
-          </div>
-
-          <div className="flex gap-3 mb-6">
-            <input type="number" value={localGridInput} onChange={(e) => setLocalGridInput(e.target.value)} className="flex-1 bg-[#0a0a0a] border border-[#2a2a2a] rounded-xl px-4 py-3 text-white font-mono text-[12px] shadow-inner outline-none focus:border-cyan-500 transition-colors" />
-            <button onClick={() => setGridSize(Math.min(32, Math.max(8, parseInt(localGridInput))))} className="px-5 py-3 bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 rounded-xl text-[11px] font-black uppercase tracking-wider hover:bg-cyan-500/20 active:scale-95 transition-all">Set Grid</button>
-          </div>
-
-          <FigmaColorPicker label="Warna Kuas (Brush Color)" hexValue={color} onChange={setColor} />
-          
-          <div className="flex flex-wrap gap-2.5 mt-4">
-            {palette.map((c, i) => (
-              <button key={i} onClick={() => {setColor(c); setActiveTool('draw');}} className={`w-9 h-9 rounded-xl border-2 transition-transform shadow-sm ${color === c ? 'border-cyan-400 scale-110 shadow-[0_0_10px_rgba(6,182,212,0.4)]' : 'border-[#333] hover:scale-105'}`} style={{backgroundColor: c}} />
-            ))}
-            <button onClick={() => !palette.includes(color) && setPalette([color, ...palette].slice(0, 15))} className="w-9 h-9 rounded-xl border-2 border-[#333] flex items-center justify-center text-slate-500 hover:text-white hover:border-[#555] bg-[#141414] transition-all">+</button>
-          </div>
-
-          {/* LAYERS PANEL */}
-          <div className="pt-6 border-t border-[#1f1f1f] mt-8">
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-[12px] font-black text-cyan-400 uppercase tracking-widest flex items-center gap-2"><Icons.Layers /> Layers Panel</span>
-              <button onClick={addLayer} className="text-[9px] text-cyan-400 bg-cyan-500/10 border border-cyan-500/30 px-3 py-1.5 rounded-lg uppercase tracking-wider hover:bg-cyan-500/20 transition-all">+ Layer Baru</button>
-            </div>
-            <div className="space-y-3 max-h-[180px] overflow-y-auto custom-scroll pr-2">
-              {[...layers].reverse().map(l => (
-                <div key={l.id} onClick={() => setActiveLayerId(l.id)} className={`flex items-center justify-between p-3.5 rounded-xl border cursor-pointer transition-all ${activeLayerId === l.id ? 'bg-[#1a1a1a] border-cyan-500 shadow-md' : 'bg-[#0a0a0a] border-[#2a2a2a] hover:border-[#444]'}`}>
-                  <div className="flex items-center gap-3">
-                    <button onClick={(e) => {e.stopPropagation(); toggleLayerProp(l.id, 'visible')}} className={`w-5 h-5 transition-colors ${l.visible ? 'text-cyan-400' : 'text-slate-600'}`}>{l.visible ? <Icons.Eye /> : <Icons.EyeOff />}</button>
-                    <button onClick={(e) => {e.stopPropagation(); toggleLayerProp(l.id, 'locked')}} className={`w-5 h-5 transition-colors ${l.locked ? 'text-red-400' : 'text-slate-500'}`}>{l.locked ? <Icons.Lock /> : <Icons.Unlock />}</button>
-                    <span className={`text-[11px] font-bold uppercase tracking-wider ${activeLayerId === l.id ? 'text-white' : 'text-slate-400'}`}>{l.name} {activeLayerId === l.id && '(Aktif)'}</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <button onClick={(e) => {e.stopPropagation(); duplicateLayer(l.id)}} className="w-5 h-5 text-slate-400 hover:text-white transition-colors" title="Gandakan"><Icons.Copy /></button>
-                    <button onClick={(e) => {e.stopPropagation(); deleteLayer(l.id)}} disabled={layers.length <= 1} className="w-5 h-5 text-slate-400 hover:text-red-400 disabled:opacity-30 transition-colors"><Icons.Trash /></button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="pt-6 border-t border-[#1f1f1f] mt-6">
-            <FigmaColorPicker label="Warna Background Kanvas" hexValue={canvasBgColor} onChange={setCanvasBgColor} />
-            <div className="mt-4 mb-6">
-               <FigmaToggle label="Background Transparan (PNG)" checked={isTransparent} onChange={setIsTransparent} />
-            </div>
-            <FigmaSlider label="HD Export Size" min={gridSize} max={1920} step={gridSize} value={outputSize} onChange={setOutputSize} unit="px" />
-            <button onClick={downloadImage} className="w-full mt-8 py-4 bg-gradient-to-r from-cyan-600 to-blue-600 rounded-xl text-[12px] font-black uppercase tracking-widest text-white shadow-[0_0_20px_rgba(6,182,212,0.3)] hover:shadow-[0_0_30px_rgba(6,182,212,0.5)] active:scale-95 transition-all flex items-center justify-center gap-2"><div className="w-5 h-5"><Icons.Download /></div> Download HD PNG</button>
-          </div>
-        </div>
-      }
+      preview={preview}
+      controls={controls}
       cssOutput={`.pixel-art {\n  width: ${pixelSizePx}px;\n  height: ${pixelSizePx}px;\n  background-color: ${isTransparent ? 'transparent' : canvasBgColor};\n  box-shadow: ${boxShadowData || 'none'};\n}`}
       htmlOutput={`\n<div class="pixel-art"></div>`}
       jsxOutput={`<div className="pixel-art" />`}
