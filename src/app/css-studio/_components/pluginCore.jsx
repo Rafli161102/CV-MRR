@@ -135,7 +135,7 @@ export const PluginBorder = () => {
 };
 
 // =========================================================================
-// 5. MULTI TYPOGRAPHY (INTERACTIVE DRAG & DROP FIX Z-INDEX)
+// 5. MULTI TYPOGRAPHY
 // =========================================================================
 const FONTS_DATA = { 
   "Sans Serif": [{ name: "Inter", val: "Inter" }, { name: "Roboto", val: "Roboto" }, { name: "Montserrat", val: "Montserrat" }, { name: "Poppins", val: "Poppins" }], 
@@ -198,7 +198,7 @@ export const PluginTypography = () => {
 
   const preview = (
     <div className="relative w-full h-[300px] sm:h-[400px] flex items-center justify-center overflow-hidden border border-white/5 bg-[#0a0a0a] rounded-xl touch-none">
-      <div className="absolute top-2 left-2 px-3 py-1.5 bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-[9px] font-black rounded-lg uppercase tracking-widest pointer-events-none z-10 shadow-sm">Interactive Canvas Mode</div>
+      <div className="absolute top-3 left-3 px-3 py-1.5 bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-[9px] font-black rounded-lg uppercase tracking-widest pointer-events-none z-10 shadow-sm">Interactive Canvas Mode</div>
       {renderInteractiveText(h1, 'h1')}{renderInteractiveText(h2, 'h2')}{renderInteractiveText(p, 'p', true)}
     </div>
   );
@@ -206,7 +206,7 @@ export const PluginTypography = () => {
   const renderTextControls = (state, setState, isPara = false) => {
     const update = (key, val) => setState(prev => ({ ...prev, [key]: val }));
     return (
-      <div className="animate-fade-in space-y-4">
+      <div className="animate-fade-in space-y-4 mt-2">
         <FigmaTextInput label="Isi Konten Teks" value={state.text} onChange={(v) => update('text', v)} placeholder="Ketik disini..." isTextArea={isPara} />
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
            <FigmaCustomDropdown label="Pilih Jenis Font" groups={FONTS_DATA} value={state.font} onChange={(v) => update('font', v)} />
