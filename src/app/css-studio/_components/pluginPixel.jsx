@@ -54,7 +54,6 @@ export const PluginPixelDrawing = () => {
   const { scale, pan, rotation, setScale, setPan, onTouchStart, onTouchMove, resetView } = useMultiTouch();
   const [activeTool, setActiveTool] = useState('draw'); 
   const [isDrawing, setIsDrawing] = useState(false);
-  const gridRef = useRef(null);
 
   useEffect(() => {
     const safeGrid = Math.min(Math.max(gridSize, 8), 32); 
@@ -80,15 +79,9 @@ export const PluginPixelDrawing = () => {
   const handleRedo = () => { const newStep = Math.min(history.length - 1, step + 1); setStep(newStep); setLayers(JSON.parse(JSON.stringify(history[newStep]))); };
 
   const paintPixel = (index) => {
-    if (activeTool === 'pan') return;
     const newLayers = [...layers];
     const activeIdx = newLayers.findIndex(l => l.id === activeLayerId);
     if (activeIdx === -1 || newLayers[activeIdx].locked || !newLayers[activeIdx].visible) return;
-
-    if (activeTool === 'picker') {
-      const picked = mergedPixels[index] !== 'transparent' ? mergedPixels[index] : (isTransparent ? '#ffffff' : canvasBgColor);
-      setColor(picked); setActiveTool('draw'); return;
-    }
 
     if (activeTool === 'bucket') {
       newLayers[activeIdx].pixels = floodFill(newLayers[activeIdx].pixels, index, newLayers[activeIdx].pixels[index], color, gridSize);
@@ -101,54 +94,36 @@ export const PluginPixelDrawing = () => {
     }
   };
 
-  // MATRIKS PENDETEKSI JARI SUPER PRESISI
-  const paintByCoords = (clientX, clientY) => {
-    if (!gridRef.current) return;
-    const rect = gridRef.current.getBoundingClientRect();
-    const pixelSizePx = gridSize <= 8 ? 20 : gridSize <= 16 ? 12 : gridSize <= 32 ? 6 : 4;
-    
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-    const dx = clientX - centerX;
-    const dy = clientY - centerY;
-
-    const angleRad = -rotation * (Math.PI / 180);
-    const rotatedX = dx * Math.cos(angleRad) - dy * Math.sin(angleRad);
-    const rotatedY = dx * Math.sin(angleRad) + dy * Math.cos(angleRad);
-
-    const actualScale = scale * baseScale;
-    const unscaledX = (rotatedX / actualScale) + ((gridSize * pixelSizePx) / 2);
-    const unscaledY = (rotatedY / actualScale) + ((gridSize * pixelSizePx) / 2);
-
-    if (unscaledX < 0 || unscaledY < 0 || unscaledX >= gridSize * pixelSizePx || unscaledY >= gridSize * pixelSizePx) return;
-
-    const col = Math.floor(unscaledX / pixelSizePx);
-    const row = Math.floor(unscaledY / pixelSizePx);
-    const index = row * gridSize + col;
-
-    if (index >= 0 && index < gridSize * gridSize) {
+  // LOGIKA PENDETEKSI JARI NATIVE (SANGAT PRESISI)
+  const paintByEvent = (clientX, clientY) => {
+    const target = document.elementFromPoint(clientX, clientY);
+    if (target && target.hasAttribute('data-pixel-index')) {
+      const index = Number(target.getAttribute('data-pixel-index'));
+      
+      // Jika mode pipet, ambil warna lalu ubah ke kuas
+      if (activeTool === 'picker') {
+        const picked = mergedPixels[index] !== 'transparent' ? mergedPixels[index] : (isTransparent ? '#ffffff' : canvasBgColor);
+        setColor(picked); setActiveTool('draw'); return;
+      }
+      
       paintPixel(index);
     }
   };
 
-  // HANDLER PINTAR (ANTI-ERROR DI TOUCH SCREEN HP)
-  const handlePointerEvent = (e, isDown = false) => {
-    if (activeTool === 'pan' || (e.touches && e.touches.length > 1)) return;
-    
-    let clientX = e.clientX, clientY = e.clientY;
-    if (e.touches && e.touches.length > 0) {
-      clientX = e.touches[0].clientX; clientY = e.touches[0].clientY;
-    }
-    
-    if (isDown) { 
-       setIsDrawing(true); paintByCoords(clientX, clientY); 
-    } else if (isDrawing) { 
-       paintByCoords(clientX, clientY); 
-    }
+  const handlePointerDown = (e) => {
+    if (activeTool === 'pan') return;
+    setIsDrawing(true);
+    paintByEvent(e.clientX, e.clientY);
+    try { e.currentTarget.setPointerCapture(e.pointerId); } catch(err){}
   };
 
-  const handlePointerUp = () => {
+  const handlePointerMove = (e) => {
+    if (isDrawing && activeTool !== 'pan') paintByEvent(e.clientX, e.clientY);
+  };
+
+  const handlePointerUp = (e) => {
     if (isDrawing) { setIsDrawing(false); saveHistory(layers); }
+    try { e.currentTarget.releasePointerCapture(e.pointerId); } catch(err){}
   };
 
   const addLayer = () => { const newId = Date.now(); const newLayers = [...layers, createEmptyLayer(newId, `Layer ${layers.length + 1}`)]; setLayers(newLayers); setActiveLayerId(newId); saveHistory(newLayers); };
@@ -176,54 +151,74 @@ export const PluginPixelDrawing = () => {
   const boxShadowData = mergedPixels.map((p, i) => p !== 'transparent' ? `${(i % gridSize) * pixelSizePx}px ${Math.floor(i / gridSize) * pixelSizePx}px ${p}` : null).filter(Boolean).join(', ');
 
   const preview = (
-    <div className="relative w-full h-[45vh] sm:h-[450px] flex items-center justify-center overflow-hidden bg-[#050505]"
-      style={{ touchAction: 'none' }} // KUNCI UTAMA: MEMBEKUKAN LAYAR AGAR BISA DICORET TANPA GESER HALAMAN
-      onPointerDown={(e) => handlePointerEvent(e, true)} 
-      onPointerMove={(e) => handlePointerEvent(e, false)} 
-      onPointerUp={handlePointerUp}
-      onPointerCancel={handlePointerUp}
-      onTouchStart={(e) => { if(activeTool === 'pan' || e.touches.length > 1) onTouchStart(e); else handlePointerEvent(e, true); }}
-      onTouchMove={(e) => { if(activeTool === 'pan' || e.touches.length > 1) onTouchMove(e); else handlePointerEvent(e, false); }}
-      onTouchEnd={handlePointerUp}
-    >
-      <div className="absolute z-50 flex items-center justify-center gap-1.5 sm:gap-2 p-2 bg-[#141414]/95 backdrop-blur-md border border-[#2a2a2a] rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.8)] transition-all duration-300
-        bottom-4 left-1/2 -translate-x-1/2 flex-row 
-        lg:bottom-auto lg:top-1/2 lg:-translate-y-1/2 lg:left-4 lg:translate-x-0 lg:flex-col lg:rounded-2xl"
-      >
-        <button onClick={() => setActiveTool('draw')} className={`w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center rounded-xl transition-all ${activeTool === 'draw' ? 'bg-cyan-500 text-black shadow-[0_0_15px_rgba(6,182,212,0.5)] scale-110' : 'text-slate-400 hover:bg-[#2a2a2a]'}`} title="Kuas"><div className="w-5 h-5"><Icons.Brush /></div></button>
-        <button onClick={() => setActiveTool('erase')} className={`w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center rounded-xl transition-all ${activeTool === 'erase' ? 'bg-cyan-500 text-black shadow-[0_0_15px_rgba(6,182,212,0.5)] scale-110' : 'text-slate-400 hover:bg-[#2a2a2a]'}`} title="Penghapus"><div className="w-5 h-5"><Icons.Eraser /></div></button>
-        <button onClick={() => setActiveTool('bucket')} className={`w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center rounded-xl transition-all ${activeTool === 'bucket' ? 'bg-cyan-500 text-black shadow-[0_0_15px_rgba(6,182,212,0.5)] scale-110' : 'text-slate-400 hover:bg-[#2a2a2a]'}`} title="Ember Cat"><div className="w-5 h-5"><Icons.Bucket /></div></button>
-        <button onClick={() => setActiveTool('picker')} className={`w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center rounded-xl transition-all ${activeTool === 'picker' ? 'bg-cyan-500 text-black shadow-[0_0_15px_rgba(6,182,212,0.5)] scale-110' : 'text-slate-400 hover:bg-[#2a2a2a]'}`} title="Pipet"><div className="w-5 h-5"><Icons.Picker /></div></button>
-        <div className="w-px h-6 lg:w-8 lg:h-px bg-[#333] mx-1 lg:my-1 shrink-0"></div>
-        <button onClick={() => setActiveTool('pan')} className={`w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center rounded-xl transition-all ${activeTool === 'pan' ? 'bg-cyan-500 text-black shadow-[0_0_15px_rgba(6,182,212,0.5)] scale-110' : 'text-slate-400 hover:bg-[#2a2a2a]'}`} title="Geser Kanvas"><div className="w-5 h-5"><Icons.HandPan /></div></button>
-        <button onClick={resetView} className="w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center rounded-xl text-slate-400 hover:text-cyan-400 hover:bg-[#2a2a2a] transition-all" title="Fokus/Kembali ke Tengah"><div className="w-5 h-5"><LocalIcons.Focus /></div></button>
+    <div className="relative w-full h-[55vh] sm:h-[450px] flex flex-col overflow-hidden bg-[#050505] rounded-xl border border-[#1f1f1f]">
+      
+      {/* 1. PHYSICAL TOOLBAR MOBILE: Berada di atas kanvas, tidak akan pernah overlap! */}
+      <div className="lg:hidden w-full bg-[#0a0a0a] border-b border-[#2a2a2a] p-2 flex items-center gap-2 overflow-x-auto custom-scroll shrink-0 z-20 shadow-md">
+        <button onClick={() => setActiveTool('draw')} className={`shrink-0 w-10 h-10 flex items-center justify-center rounded-xl transition-all ${activeTool === 'draw' ? 'bg-cyan-500 text-black shadow-[0_0_15px_rgba(6,182,212,0.5)]' : 'text-slate-400 hover:bg-[#1a1a1a]'}`} title="Kuas"><div className="w-5 h-5"><Icons.Brush /></div></button>
+        <button onClick={() => setActiveTool('erase')} className={`shrink-0 w-10 h-10 flex items-center justify-center rounded-xl transition-all ${activeTool === 'erase' ? 'bg-cyan-500 text-black shadow-[0_0_15px_rgba(6,182,212,0.5)]' : 'text-slate-400 hover:bg-[#1a1a1a]'}`} title="Penghapus"><div className="w-5 h-5"><Icons.Eraser /></div></button>
+        <button onClick={() => setActiveTool('bucket')} className={`shrink-0 w-10 h-10 flex items-center justify-center rounded-xl transition-all ${activeTool === 'bucket' ? 'bg-cyan-500 text-black shadow-[0_0_15px_rgba(6,182,212,0.5)]' : 'text-slate-400 hover:bg-[#1a1a1a]'}`} title="Ember Cat"><div className="w-5 h-5"><Icons.Bucket /></div></button>
+        <button onClick={() => setActiveTool('picker')} className={`shrink-0 w-10 h-10 flex items-center justify-center rounded-xl transition-all ${activeTool === 'picker' ? 'bg-cyan-500 text-black shadow-[0_0_15px_rgba(6,182,212,0.5)]' : 'text-slate-400 hover:bg-[#1a1a1a]'}`} title="Pipet"><div className="w-5 h-5"><Icons.Picker /></div></button>
+        <div className="w-px h-6 bg-[#333] shrink-0 mx-1"></div>
+        <button onClick={() => setActiveTool('pan')} className={`shrink-0 w-10 h-10 flex items-center justify-center rounded-xl transition-all ${activeTool === 'pan' ? 'bg-cyan-500 text-black shadow-[0_0_15px_rgba(6,182,212,0.5)]' : 'text-slate-400 hover:bg-[#1a1a1a]'}`} title="Geser Kanvas"><div className="w-5 h-5"><Icons.HandPan /></div></button>
+        <button onClick={resetView} className="shrink-0 w-10 h-10 flex items-center justify-center rounded-xl text-slate-400 hover:text-cyan-400 hover:bg-[#1a1a1a] transition-all" title="Fokus/Kembali ke Tengah"><div className="w-5 h-5"><LocalIcons.Focus /></div></button>
       </div>
 
-      <div style={{ transform: `translate(${pan.x}px, ${pan.y}px) scale(${scale * baseScale}) rotate(${rotation}deg)`, transition: isDrawing ? 'none' : 'transform 0.1s ease-out' }} className="absolute">
-        <div className="absolute -top-7 left-0 w-full flex justify-center pointer-events-none"><span className="bg-red-500 text-white text-[9px] font-black px-4 py-1.5 rounded-t-lg shadow-lg uppercase tracking-widest">SISI ATAS</span></div>
-        <div ref={gridRef} className="grid shadow-[0_0_50px_rgba(0,0,0,0.8)] border-t-[4px] border-t-red-500" 
-             style={{ 
-               gridTemplateColumns: `repeat(${gridSize}, 1fr)`, width: gridSize * pixelSizePx, height: gridSize * pixelSizePx,
-               backgroundColor: isTransparent ? 'transparent' : canvasBgColor,
-               backgroundImage: isTransparent ? 'linear-gradient(45deg, #1a1a1a 25%, transparent 25%), linear-gradient(-45deg, #1a1a1a 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #1a1a1a 75%), linear-gradient(-45deg, transparent 75%, #1a1a1a 75%)' : 'none',
-               backgroundSize: '12px 12px'
-             }}>
-          {mergedPixels.map((bg, i) => (
-            <div key={i} className={`w-full h-full pointer-events-none transition-colors duration-75 ${showGrid ? 'border-[0.5px] border-white/10' : 'border-0'}`} style={{ backgroundColor: bg !== 'transparent' ? bg : undefined }} />
-          ))}
+      {/* 2. TOOLBAR DESKTOP: Melayang Vertikal di Kiri */}
+      <div className="hidden lg:flex absolute top-1/2 -translate-y-1/2 left-4 z-50 flex-col gap-2 p-1.5 bg-[#141414]/95 backdrop-blur-md border border-[#2a2a2a] rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.8)]">
+        <button onClick={() => setActiveTool('draw')} className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all ${activeTool === 'draw' ? 'bg-cyan-500 text-black shadow-[0_0_15px_rgba(6,182,212,0.5)] scale-110' : 'text-slate-400 hover:bg-[#2a2a2a]'}`} title="Kuas"><div className="w-5 h-5"><Icons.Brush /></div></button>
+        <button onClick={() => setActiveTool('erase')} className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all ${activeTool === 'erase' ? 'bg-cyan-500 text-black shadow-[0_0_15px_rgba(6,182,212,0.5)] scale-110' : 'text-slate-400 hover:bg-[#2a2a2a]'}`} title="Penghapus"><div className="w-5 h-5"><Icons.Eraser /></div></button>
+        <button onClick={() => setActiveTool('bucket')} className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all ${activeTool === 'bucket' ? 'bg-cyan-500 text-black shadow-[0_0_15px_rgba(6,182,212,0.5)] scale-110' : 'text-slate-400 hover:bg-[#2a2a2a]'}`} title="Ember Cat"><div className="w-5 h-5"><Icons.Bucket /></div></button>
+        <button onClick={() => setActiveTool('picker')} className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all ${activeTool === 'picker' ? 'bg-cyan-500 text-black shadow-[0_0_15px_rgba(6,182,212,0.5)] scale-110' : 'text-slate-400 hover:bg-[#2a2a2a]'}`} title="Pipet"><div className="w-5 h-5"><Icons.Picker /></div></button>
+        <div className="w-full h-px bg-[#333] my-1"></div>
+        <button onClick={() => setActiveTool('pan')} className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all ${activeTool === 'pan' ? 'bg-cyan-500 text-black shadow-[0_0_15px_rgba(6,182,212,0.5)] scale-110' : 'text-slate-400 hover:bg-[#2a2a2a]'}`} title="Geser Kanvas"><div className="w-5 h-5"><Icons.HandPan /></div></button>
+        <button onClick={resetView} className="w-10 h-10 flex items-center justify-center rounded-xl text-slate-400 hover:text-cyan-400 hover:bg-[#2a2a2a] transition-all" title="Fokus/Kembali ke Tengah"><div className="w-5 h-5"><LocalIcons.Focus /></div></button>
+      </div>
+
+      {/* 3. AREA KANVAS GAMBAR */}
+      <div 
+        className="flex-1 relative w-full flex items-center justify-center touch-none overflow-hidden"
+        style={{ touchAction: 'none' }} // Bekukan pergerakan layar
+        onPointerDown={handlePointerDown} 
+        onPointerMove={handlePointerMove} 
+        onPointerUp={handlePointerUp}
+        onPointerCancel={handlePointerUp}
+        onTouchStart={(e) => { if(activeTool === 'pan' || e.touches.length > 1) onTouchStart(e); }}
+        onTouchMove={(e) => { if(activeTool === 'pan' || e.touches.length > 1) onTouchMove(e); }}
+      >
+        {/* Tombol Undo Redo di pojok kanvas */}
+        <div className="absolute top-3 right-3 flex gap-2 z-20">
+          <button onClick={handleUndo} disabled={step <= 0} className="w-10 h-10 flex items-center justify-center rounded-xl border border-[#2a2a2a] bg-[#141414]/90 backdrop-blur text-slate-300 disabled:opacity-30 shadow-lg hover:text-white"><div className="w-4 h-4"><Icons.Undo /></div></button>
+          <button onClick={handleRedo} disabled={step >= history.length - 1} className="w-10 h-10 flex items-center justify-center rounded-xl border border-[#2a2a2a] bg-[#141414]/90 backdrop-blur text-slate-300 disabled:opacity-30 shadow-lg hover:text-white"><div className="w-4 h-4"><Icons.Redo /></div></button>
+        </div>
+
+        <div style={{ transform: `translate(${pan.x}px, ${pan.y}px) scale(${scale * baseScale}) rotate(${rotation}deg)`, transition: isDrawing ? 'none' : 'transform 0.1s ease-out' }} className="absolute">
+          <div className="absolute -top-7 left-0 w-full flex justify-center pointer-events-none"><span className="bg-red-500 text-white text-[9px] font-black px-4 py-1.5 rounded-t-lg shadow-lg uppercase tracking-widest">SISI ATAS</span></div>
+          <div className="grid shadow-[0_0_50px_rgba(0,0,0,0.8)] border-t-[4px] border-t-red-500" 
+               style={{ 
+                 gridTemplateColumns: `repeat(${gridSize}, 1fr)`, width: gridSize * pixelSizePx, height: gridSize * pixelSizePx,
+                 backgroundColor: isTransparent ? 'transparent' : canvasBgColor,
+                 backgroundImage: isTransparent ? 'linear-gradient(45deg, #1a1a1a 25%, transparent 25%), linear-gradient(-45deg, #1a1a1a 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #1a1a1a 75%), linear-gradient(-45deg, transparent 75%, #1a1a1a 75%)' : 'none',
+                 backgroundSize: '12px 12px'
+               }}>
+            {mergedPixels.map((bg, i) => (
+              <div 
+                key={i} 
+                data-pixel-index={i} 
+                className={`w-full h-full transition-colors duration-75 ${showGrid ? 'border-[0.5px] border-white/10' : 'border-0'} ${activeTool === 'pan' ? 'pointer-events-none' : 'pointer-events-auto cursor-crosshair'}`} 
+                style={{ backgroundColor: bg !== 'transparent' ? bg : undefined }} 
+              />
+            ))}
+          </div>
         </div>
       </div>
-      
-      <div className="absolute top-4 right-4 flex gap-2 z-20">
-        <button onClick={handleUndo} disabled={step <= 0} className="w-10 h-10 flex items-center justify-center rounded-full border border-[#2a2a2a] bg-[#141414]/90 backdrop-blur text-slate-300 disabled:opacity-30 shadow-lg hover:text-white"><div className="w-4 h-4"><Icons.Undo /></div></button>
-        <button onClick={handleRedo} disabled={step >= history.length - 1} className="w-10 h-10 flex items-center justify-center rounded-full border border-[#2a2a2a] bg-[#141414]/90 backdrop-blur text-slate-300 disabled:opacity-30 shadow-lg hover:text-white"><div className="w-4 h-4"><Icons.Redo /></div></button>
-      </div>
+
     </div>
   );
 
   const controls = (
     <div className="space-y-4">
-      <PluginTip title="TUTORIAL PIXEL STUDIO" text="1. Resolusi Maksimal dibatasi ke 32x32 agar browser HP Anda tidak Crash. 2. Pilih alat 'Geser' (Ikon Tangan) jika ingin zoom menggunakan 2 jari agar kanvas tidak tercoret tanpa sengaja. 3. Matikan saklar 'Tampilkan Grid' untuk melihat hasil gambar bersih sebelum di-download." />
+      <PluginTip title="TUTORIAL PIXEL STUDIO" text="1. Resolusi Maksimal dibatasi ke 32x32 agar browser HP Anda tetap mulus. 2. Pilih alat 'Geser' (Ikon Tangan) jika ingin zoom menggunakan 2 jari agar kanvas tidak tercoret tanpa sengaja. 3. Matikan saklar 'Tampilkan Grid' untuk melihat hasil gambar bersih sebelum di-download." />
       
       <ControlHeader title="Workspace Setup" onReset={() => {}} />
       <div className="mb-4 mt-2"><FigmaToggle label="Tampilkan Garis Grid" checked={showGrid} onChange={setShowGrid} /></div>
