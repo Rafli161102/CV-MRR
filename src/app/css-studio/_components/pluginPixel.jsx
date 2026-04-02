@@ -47,52 +47,39 @@ export const PluginPixelDrawing = () => {
   const [history, setHistory] = useState([]);
   const [step, setStep] = useState(-1);
 
-  const initialScale = typeof window !== 'undefined' && window.innerWidth < 768 ? 0.7 : 1;
+  // FIX HYDRATION & SCALE
+  const [baseScale, setBaseScale] = useState(1);
+  useEffect(() => { if (window.innerWidth < 768) setBaseScale(0.7); }, []);
+
   const { scale, pan, rotation, setScale, setPan, onTouchStart, onTouchMove, resetView } = useMultiTouch();
   
   const [activeTool, setActiveTool] = useState('draw'); 
   const [isDrawing, setIsDrawing] = useState(false);
   const gridRef = useRef(null);
 
-  // Batas Maksimal Grid 32x32 agar HP RAM kecil tidak crash
+  // FIX OOM: Maksimal Grid 32x32 agar HP aman
   useEffect(() => {
     const safeGrid = Math.min(Math.max(gridSize, 8), 32); 
     const newLayers = [createEmptyLayer(1, "Layer 1")];
-    setLayers(newLayers);
-    setHistory([newLayers]);
-    setStep(0);
-    setActiveLayerId(1);
-    setLocalGridInput(safeGrid.toString());
-    resetView();
+    setLayers(newLayers); setHistory([newLayers]); setStep(0); setActiveLayerId(1);
+    setLocalGridInput(safeGrid.toString()); resetView();
   }, [gridSize]);
 
   const mergedPixels = Array(gridSize * gridSize).fill('transparent');
   layers.forEach(layer => {
     if (!layer.visible) return;
-    layer.pixels.forEach((p, j) => {
-      if (p !== 'transparent') mergedPixels[j] = p;
-    });
+    layer.pixels.forEach((p, j) => { if (p !== 'transparent') mergedPixels[j] = p; });
   });
 
   const saveHistory = (newLayers) => {
     const newHistory = history.slice(0, step + 1);
     newHistory.push(JSON.parse(JSON.stringify(newLayers)));
-    if (newHistory.length > 10) newHistory.shift(); 
-    setHistory(newHistory);
-    setStep(newHistory.length - 1);
+    if (newHistory.length > 10) newHistory.shift(); // Limit history to 10
+    setHistory(newHistory); setStep(newHistory.length - 1);
   };
 
-  const handleUndo = () => {
-    const newStep = Math.max(0, step - 1);
-    setStep(newStep);
-    setLayers(JSON.parse(JSON.stringify(history[newStep])));
-  };
-
-  const handleRedo = () => {
-    const newStep = Math.min(history.length - 1, step + 1);
-    setStep(newStep);
-    setLayers(JSON.parse(JSON.stringify(history[newStep])));
-  };
+  const handleUndo = () => { const newStep = Math.max(0, step - 1); setStep(newStep); setLayers(JSON.parse(JSON.stringify(history[newStep]))); };
+  const handleRedo = () => { const newStep = Math.min(history.length - 1, step + 1); setStep(newStep); setLayers(JSON.parse(JSON.stringify(history[newStep]))); };
 
   const paintPixel = (index) => {
     if (activeTool === 'pan' || activeTool === 'picker') return;
@@ -111,21 +98,19 @@ export const PluginPixelDrawing = () => {
     }
   };
 
+  // FIX: RUMUS MATRIKS MURNI (ANTI-CRASH)
   const paintByEvent = (e) => {
     if (activeTool === 'pan' || !gridRef.current) return;
     if (e.touches && e.touches.length > 1) return; 
 
     let clientX = e.clientX, clientY = e.clientY;
-    if (e.touches && e.touches.length > 0) {
-      clientX = e.touches[0].clientX; clientY = e.touches[0].clientY;
-    }
+    if (e.touches && e.touches.length > 0) { clientX = e.touches[0].clientX; clientY = e.touches[0].clientY; }
 
     const rect = gridRef.current.getBoundingClientRect();
     const pixelSizePx = gridSize <= 8 ? 20 : gridSize <= 16 ? 12 : gridSize <= 32 ? 6 : 4;
     
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
-    
     const dx = clientX - centerX;
     const dy = clientY - centerY;
 
@@ -133,7 +118,7 @@ export const PluginPixelDrawing = () => {
     const rotatedX = dx * Math.cos(angleRad) - dy * Math.sin(angleRad);
     const rotatedY = dx * Math.sin(angleRad) + dy * Math.cos(angleRad);
 
-    const actualScale = scale * initialScale;
+    const actualScale = scale * baseScale;
     
     const xLocal = (rotatedX / actualScale) + ((gridSize * pixelSizePx) / 2);
     const yLocal = (rotatedY / actualScale) + ((gridSize * pixelSizePx) / 2);
@@ -163,6 +148,11 @@ export const PluginPixelDrawing = () => {
     e.currentTarget.releasePointerCapture(e.pointerId);
   };
 
+  const addLayer = () => { const newId = Date.now(); const newLayers = [...layers, createEmptyLayer(newId, `Layer ${layers.length + 1}`)]; setLayers(newLayers); setActiveLayerId(newId); saveHistory(newLayers); };
+  const duplicateLayer = (id) => { const layerToCopy = layers.find(l => l.id === id); if (!layerToCopy) return; const newId = Date.now(); const newLayers = [...layers, { ...layerToCopy, id: newId, name: `${layerToCopy.name} Copy` }]; setLayers(newLayers); setActiveLayerId(newId); saveHistory(newLayers); };
+  const deleteLayer = (id) => { if (layers.length <= 1) return; const newLayers = layers.filter(l => l.id !== id); setLayers(newLayers); if (activeLayerId === id) setActiveLayerId(newLayers[newLayers.length - 1].id); saveHistory(newLayers); };
+  const toggleLayerProp = (id, prop) => { const newLayers = layers.map(l => l.id === id ? { ...l, [prop]: !l[prop] } : l); setLayers(newLayers); saveHistory(newLayers); };
+
   const downloadImage = () => {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
@@ -175,8 +165,7 @@ export const PluginPixelDrawing = () => {
         ctx.fillRect((i % gridSize) * pSize, Math.floor(i / gridSize) * pSize, pSize, pSize);
       }
     });
-    const link = document.createElement('a');
-    link.download = `pixel-art-hd.png`;
+    const link = document.createElement('a'); link.download = `pixel-art-hd.png`;
     link.href = canvas.toDataURL('image/png'); link.click();
   };
 
@@ -187,14 +176,14 @@ export const PluginPixelDrawing = () => {
     <WorkspaceLayout 
       name="Pixel Drawing Pro" 
       preview={
-        <div className="relative w-full h-[40vh] sm:h-[400px] flex items-center justify-center overflow-hidden bg-[#050505] touch-none"
+        <div className="relative w-full h-[45vh] sm:h-[400px] flex items-center justify-center overflow-hidden bg-[#050505] touch-none"
           onPointerDown={handlePointerDown} onPointerMove={(e) => isDrawing && paintByEvent(e)} onPointerUp={handlePointerUp}
           onTouchStart={(e) => { if(activeTool === 'pan' || e.touches.length > 1) onTouchStart(e); else {setIsDrawing(true); paintByEvent(e);} }}
           onTouchMove={(e) => { if(activeTool === 'pan' || e.touches.length > 1) onTouchMove(e); else if(isDrawing) paintByEvent(e); }}
         >
-          {/* FIX MOBILE UI: Toolbar menjadi Horizontal di Bawah saat di HP, Vertikal di Kiri saat di Desktop */}
+          {/* FIX MOBILE OVERLAP: Toolbar pindah ke bawah (Horizontal) di HP */}
           <div className="absolute z-30 bg-[#141414]/90 backdrop-blur border border-[#2a2a2a] p-1.5 shadow-2xl flex gap-1.5 sm:gap-2 transition-all duration-300
-            bottom-4 left-1/2 -translate-x-1/2 flex-row rounded-2xl
+            bottom-5 left-1/2 -translate-x-1/2 flex-row rounded-2xl
             lg:bottom-auto lg:top-1/2 lg:-translate-y-1/2 lg:left-4 lg:translate-x-0 lg:flex-col lg:rounded-2xl"
           >
             <button onClick={() => setActiveTool('draw')} className={`w-9 h-9 flex items-center justify-center rounded-xl transition-all ${activeTool === 'draw' ? 'bg-cyan-500 text-black shadow-lg scale-110' : 'text-slate-400 hover:bg-[#2a2a2a]'}`} title="Kuas"><div className="w-5 h-5"><Icons.Brush /></div></button>
@@ -214,12 +203,11 @@ export const PluginPixelDrawing = () => {
             <button onClick={handleRedo} disabled={step >= history.length - 1} className="w-10 h-10 flex items-center justify-center rounded-full border border-[#2a2a2a] bg-[#141414]/90 backdrop-blur text-slate-300 disabled:opacity-30 shadow-lg hover:text-white"><div className="w-4 h-4"><Icons.Redo /></div></button>
           </div>
 
-          <div style={{ transform: `translate(${pan.x}px, ${pan.y}px) scale(${scale * initialScale}) rotate(${rotation}deg)`, transition: isDrawing ? 'none' : 'transform 0.1s ease-out' }} className="absolute">
+          <div style={{ transform: `translate(${pan.x}px, ${pan.y}px) scale(${scale * baseScale}) rotate(${rotation}deg)`, transition: isDrawing ? 'none' : 'transform 0.1s ease-out' }} className="absolute">
             <div className="absolute -top-6 left-0 w-full flex justify-center pointer-events-none"><span className="bg-red-500 text-white text-[8px] font-black px-3 py-1 rounded-t-md shadow-lg uppercase tracking-widest">SISI ATAS</span></div>
             <div ref={gridRef} className="grid shadow-[0_0_50px_rgba(0,0,0,0.8)] border-t-[3px] border-t-red-500" 
                  style={{ 
-                   gridTemplateColumns: `repeat(${gridSize}, 1fr)`,
-                   width: gridSize * pixelSizePx, height: gridSize * pixelSizePx,
+                   gridTemplateColumns: `repeat(${gridSize}, 1fr)`, width: gridSize * pixelSizePx, height: gridSize * pixelSizePx,
                    backgroundColor: isTransparent ? 'transparent' : canvasBgColor,
                    backgroundImage: isTransparent ? 'linear-gradient(45deg, #1a1a1a 25%, transparent 25%), linear-gradient(-45deg, #1a1a1a 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #1a1a1a 75%), linear-gradient(-45deg, transparent 75%, #1a1a1a 75%)' : 'none',
                    backgroundSize: '12px 12px'
@@ -233,8 +221,7 @@ export const PluginPixelDrawing = () => {
       }
       controls={
         <div className="space-y-4">
-          <PluginTip title="TUTORIAL PIXEL STUDIO" text="1. Resolusi Maksimal dibatasi ke 32x32 agar browser HP Anda tidak kelebihan beban memori (Crash) dan tetap mulus. 2. Jika Anda ingin zoom dan menggeser layar menggunakan 2 jari, pastikan Anda sedang memilih alat 'Geser' (Tangan) agar kanvas tidak tercoret tanpa sengaja. 3. Matikan saklar 'Tampilkan Grid' jika Anda ingin melihat hasil gambar murni tanpa garis pembatas." />
-          <ControlHeader title="Workspace Setup" onReset={handleReset} />
+          <PluginTip title="TUTORIAL PIXEL STUDIO" text="1. Jika kanvas hilang atau tertutup tangan, klik tombol Fokus di Toolbar. 2. Jika Anda ingin zoom menggunakan 2 jari, pastikan Anda sedang memilih alat 'Geser' (Ikon Tangan) agar kanvas tidak tercoret tanpa sengaja. 3. Matikan saklar 'Tampilkan Grid' jika Anda ingin melihat hasil gambar bersih." />
           
           <div className="mb-4 mt-2">
              <FigmaToggle label="Tampilkan Garis Grid" checked={showGrid} onChange={setShowGrid} />
