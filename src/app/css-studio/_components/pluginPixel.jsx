@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { FigmaSlider, FigmaColorPicker, COLOR_PRESETS, useMultiTouch, FigmaToggle } from './ui';
+import { FigmaSlider, FigmaColorPicker, ControlHeader, COLOR_PRESETS, useMultiTouch, FigmaToggle } from './ui';
 
-// 1. IKON SVG NATIVE
+// IKON SVG KHUSUS PIXEL DRAW
 const PixIcons = {
   Brush: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-full h-full"><path strokeLinecap="round" strokeLinejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.813-3.814a1.151 1.151 0 00-1.628-1.628l-3.814 3.813a15.995 15.995 0 00-4.648 4.764z" /></svg>,
   Eraser: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-full h-full"><path strokeLinecap="round" strokeLinejoin="round" d="M12 9.75L14.25 12m0 0l2.25 2.25M14.25 12l2.25-2.25M14.25 12L12 14.25m-2.58 4.92l-6.375-6.375a1.125 1.125 0 010-1.59L9.42 4.83c.211-.211.498-.33.796-.33H19.5a2.25 2.25 0 012.25 2.25v10.5a2.25 2.25 0 01-2.25 2.25h-9.284c-.298 0-.585-.119-.796-.33z" /></svg>,
@@ -46,7 +46,6 @@ const floodFill = (pixels, startIndex, targetColor, replacementColor, gridSize) 
   return newPixels;
 };
 
-// Mencegah klik nyasar ke belakang UI
 const stopProp = (e) => { 
    e.stopPropagation(); 
    if (e.nativeEvent && e.nativeEvent.stopImmediatePropagation) e.nativeEvent.stopImmediatePropagation(); 
@@ -64,46 +63,30 @@ export const PluginPixelDrawing = () => {
   
   const [mobileTab, setMobileTab] = useState('tools'); 
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const containerRef = useRef(null);
-  const gridRef = useRef(null);
-
+  
   const createEmptyLayer = (id, name) => ({ id, name, pixels: Array(gridSize * gridSize).fill('transparent'), visible: true, locked: false });
   const [layers, setLayers] = useState([]);
   const [activeLayerId, setActiveLayerId] = useState(1);
-  
   const [history, setHistory] = useState([]);
   const [step, setStep] = useState(-1);
-  
-  // FIX BRESENHAM: Melacak koordinat (X,Y) jari terakhir agar garis tidak putus-putus
-  const lastPosRef = useRef(null);
 
-  // KANVAS & MULTI-TOUCH
+  // REF PENTING UNTUK MENCEGAH LAG & BIKIN CORETAN MULUS
+  const currentLayersRef = useRef([]);
+  const lastDrawPosRef = useRef(null); 
+
   const { scale, pan, rotation, setScale, setPan, onTouchStart: onTouchStartMulti, onTouchMove: onTouchMoveMulti, resetView } = useMultiTouch();
   const [activeTool, setActiveTool] = useState('draw'); 
   const [isDrawing, setIsDrawing] = useState(false);
-
-  // 1. STATE RENDER KEY (Memaksa DOM Sinkron Setelah Undo/Redo)
-  const [renderKey, setRenderKey] = useState(0);
-
-  const [baseScale, setBaseScale] = useState(1);
-  useEffect(() => { if (typeof window !== 'undefined') setBaseScale(window.innerWidth < 768 ? 0.6 : 1); }, []);
-
-  // Inisialisasi Kanvas Awal
-  useEffect(() => {
-    const safeGrid = Math.min(Math.max(gridSize, 8), 32); 
-    const initialLayer = createEmptyLayer(1, "Layer 1");
-    setLayers([initialLayer]); 
-    setHistory([JSON.parse(JSON.stringify([initialLayer]))]); 
-    setStep(0); setActiveLayerId(1);
-    setLocalGridInput(safeGrid.toString()); resetView();
-  }, [gridSize]);
-
-  // FIX PULL-TO-REFRESH DI HP
+  
+  const containerRef = useRef(null);
   const canvasAreaRef = useRef(null);
+  const gridRef = useRef(null);
+
+  // FIX PULL TO REFRESH: Mematikan native gesture browser di area kanvas
   useEffect(() => {
     const el = canvasAreaRef.current;
     const preventScroll = (e) => { 
-        if (e.touches && e.touches.length > 1) return; // Allow 2 fingers
+        if (e.touches && e.touches.length > 1) return; // Izinkan Multi-touch zoom
         e.preventDefault(); 
     };
     if (el) {
@@ -118,15 +101,21 @@ export const PluginPixelDrawing = () => {
     };
   }, []);
 
-  const mergedPixels = Array(gridSize * gridSize).fill('transparent');
-  if (layers && layers.length > 0) {
-     layers.forEach(layer => {
-       if (!layer.visible) return;
-       layer.pixels.forEach((p, j) => { if (p !== 'transparent') mergedPixels[j] = p; });
-     });
-  }
+  const [baseScale, setBaseScale] = useState(1);
+  useEffect(() => { if (typeof window !== 'undefined') setBaseScale(window.innerWidth < 768 ? 0.6 : 1); }, []);
 
-  // PENYIMPANAN HISTORY YANG AMAN (Dipanggil saat pointerUp)
+  // INIT AWAL
+  useEffect(() => {
+    const safeGrid = Math.min(Math.max(gridSize, 8), 32); 
+    const initialLayers = [createEmptyLayer(1, "Layer 1")];
+    setLayers(initialLayers); currentLayersRef.current = initialLayers;
+    setHistory([JSON.parse(JSON.stringify(initialLayers))]); setStep(0); setActiveLayerId(1);
+    setLocalGridInput(safeGrid.toString()); resetView();
+  }, [gridSize]);
+
+  useEffect(() => { currentLayersRef.current = layers; }, [layers]);
+
+  // FIX HISTORY: Jangan simpan jika state tidak berubah
   const saveHistory = useCallback((stateToSave) => {
     if (!stateToSave || stateToSave.length === 0) return;
     const currentStr = JSON.stringify(stateToSave);
@@ -145,45 +134,61 @@ export const PluginPixelDrawing = () => {
      if (step <= 0) return;
      const newStep = step - 1;
      setStep(newStep); 
-     setLayers(JSON.parse(JSON.stringify(history[newStep]))); 
-     setRenderKey(k => k + 1); // Paksa Refresh DOM
+     const oldState = JSON.parse(JSON.stringify(history[newStep]));
+     setLayers(oldState); 
+     currentLayersRef.current = oldState;
   };
   
   const handleRedo = () => { 
      if (step >= history.length - 1) return;
      const newStep = step + 1;
      setStep(newStep); 
-     setLayers(JSON.parse(JSON.stringify(history[newStep]))); 
-     setRenderKey(k => k + 1); // Paksa Refresh DOM
+     const newState = JSON.parse(JSON.stringify(history[newStep]));
+     setLayers(newState); 
+     currentLayersRef.current = newState;
   };
 
-  // ENGINE PENGGAMBAR (Update DOM langsung untuk Performa)
-  const applyPixelColor = (c, r, currentLayersData) => {
-    if (c < 0 || c >= gridSize || r < 0 || r >= gridSize) return false;
-    const index = r * gridSize + c;
+  // ENGINE PENGGAMBAR BATCH (Bisa menggambar banyak titik sekaligus tanpa lag)
+  const paintPixelsBatch = (indicesToPaint) => {
+    if (activeTool === 'pan' || activeTool === 'picker' || indicesToPaint.length === 0) return;
     
-    const activeIdx = currentLayersData.findIndex(l => l.id === activeLayerId);
-    if (activeIdx === -1 || currentLayersData[activeIdx].locked || !currentLayersData[activeIdx].visible) return false;
+    const newLayers = [...currentLayersRef.current];
+    const activeIdx = newLayers.findIndex(l => l.id === activeLayerId);
+    if (activeIdx === -1 || newLayers[activeIdx].locked || !newLayers[activeIdx].visible) return;
 
-    if (activeTool === 'bucket') {
-      const newPixels = floodFill(currentLayersData[activeIdx].pixels, index, currentLayersData[activeIdx].pixels[index], color, gridSize);
-      currentLayersData[activeIdx].pixels = newPixels;
-    } else {
-      const targetColor = activeTool === 'erase' ? 'transparent' : color;
-      if (currentLayersData[activeIdx].pixels[index] !== targetColor) {
-         currentLayersData[activeIdx].pixels[index] = targetColor;
-         
-         // Injeksi warna langsung ke elemen HTML agar tidak Lag di HP!
-         if (gridRef.current && gridRef.current.children[index]) {
-             gridRef.current.children[index].style.backgroundColor = targetColor === 'transparent' ? '' : targetColor;
-         }
-      }
+    let changed = false;
+    const newPixels = [...newLayers[activeIdx].pixels];
+
+    indicesToPaint.forEach(index => {
+        if (index < 0 || index >= gridSize * gridSize) return;
+
+        if (activeTool === 'bucket') {
+          const filledPixels = floodFill(newPixels, index, newPixels[index], color, gridSize);
+          for(let i=0; i<newPixels.length; i++) newPixels[i] = filledPixels[i];
+          changed = true;
+        } else {
+          const targetColor = activeTool === 'erase' ? 'transparent' : color;
+          if (newPixels[index] !== targetColor) {
+             newPixels[index] = targetColor;
+             // MANIPULASI DOM LANGSUNG UNTUK PERFORMA 10.000x LEBIH CEPAT DI HP!
+             if (gridRef.current && gridRef.current.children[index]) {
+                 gridRef.current.children[index].style.backgroundColor = targetColor === 'transparent' ? '' : targetColor;
+             }
+             changed = true;
+          }
+        }
+    });
+
+    if (changed) {
+       newLayers[activeIdx] = { ...newLayers[activeIdx], pixels: newPixels };
+       setLayers(newLayers); 
+       currentLayersRef.current = newLayers;
     }
-    return true;
   };
 
-  const paintByCoords = (clientX, clientY, isFirstTouch = false) => {
-    if (!gridRef.current || activeTool === 'pan') return;
+  // CALCULATOR KOORDINAT & BRESENHAM ALGORITHM (Garis tidak akan putus-putus)
+  const paintByCoords = (clientX, clientY, isStart = false) => {
+    if (!gridRef.current) return;
     
     const rect = gridRef.current.getBoundingClientRect();
     const pixelSizePx = gridSize <= 8 ? 20 : gridSize <= 16 ? 12 : gridSize <= 32 ? 6 : 4;
@@ -202,24 +207,33 @@ export const PluginPixelDrawing = () => {
     const col = Math.floor(unscaledX / pixelSizePx);
     const row = Math.floor(unscaledY / pixelSizePx);
 
-    // Jika jari keluar batas grid, lupakan titik terakhir
+    // Cek batas kanvas
     if (col < 0 || col >= gridSize || row < 0 || row >= gridSize) {
-       lastPosRef.current = null;
+       lastDrawPosRef.current = null;
        return;
     }
 
     if (activeTool === 'picker') {
-      const index = row * gridSize + col;
-      const picked = mergedPixels[index] !== 'transparent' ? mergedPixels[index] : (isTransparent ? '#ffffff' : canvasBgColor);
-      setColor(picked); setActiveTool('draw'); 
-      return;
+      const idx = row * gridSize + col;
+      // Gunakan state React untuk mergedPixels, atau hitung on the fly
+      let picked = 'transparent';
+      for(let i = currentLayersRef.current.length -1; i >=0; i--){
+          if(currentLayersRef.current[i].visible && currentLayersRef.current[i].pixels[idx] !== 'transparent'){
+              picked = currentLayersRef.current[i].pixels[idx];
+              break;
+          }
+      }
+      if(picked === 'transparent') picked = isTransparent ? '#ffffff' : canvasBgColor;
+      setColor(picked); setActiveTool('draw'); return;
     }
 
-    const currentLayersData = JSON.parse(JSON.stringify(layers)); // Clone state
+    const indicesToPaint = [];
 
-    // 2. FIX BRESENHAM LINE ALGORITHM (Coretan Mulus Tanpa Titik Bolong)
-    if (!isFirstTouch && lastPosRef.current && activeTool !== 'bucket') {
-        let x0 = lastPosRef.current.x; let y0 = lastPosRef.current.y;
+    // ENGINE BRESENHAM: Menarik garis lurus dari piksel terakhir ke piksel sekarang
+    if (isStart || !lastDrawPosRef.current || activeTool === 'bucket') {
+        indicesToPaint.push(row * gridSize + col);
+    } else {
+        let x0 = lastDrawPosRef.current.col; let y0 = lastDrawPosRef.current.row;
         let x1 = col; let y1 = row;
         
         let dxLine = Math.abs(x1 - x0); let dyLine = Math.abs(y1 - y0);
@@ -227,23 +241,23 @@ export const PluginPixelDrawing = () => {
         let err = dxLine - dyLine;
 
         while (true) {
-            applyPixelColor(x0, y0, currentLayersData);
+            indicesToPaint.push(y0 * gridSize + x0);
             if (x0 === x1 && y0 === y1) break;
             let e2 = 2 * err;
             if (e2 > -dyLine) { err -= dyLine; x0 += sx; }
             if (e2 < dxLine) { err += dxLine; y0 += sy; }
         }
-    } else {
-        applyPixelColor(col, row, currentLayersData);
     }
-    
-    lastPosRef.current = { x: col, y: row }; // Update posisi terakhir
-    setLayers(currentLayersData);
+
+    paintPixelsBatch(indicesToPaint);
+    lastDrawPosRef.current = { col, row };
   };
 
+  // EVENT HANDLER SENTUHAN 
   const handlePointerDown = (e) => {
     if (e.pointerType === 'touch' && activeTool === 'pan') return; 
     setIsDrawing(true); 
+    lastDrawPosRef.current = null;
     paintByCoords(e.clientX, e.clientY, true);
   };
   const handlePointerMove = (e) => {
@@ -254,16 +268,18 @@ export const PluginPixelDrawing = () => {
   const handlePointerUp = () => {
     if (isDrawing) { 
         setIsDrawing(false); 
-        lastPosRef.current = null;
-        saveHistory(layers); // Simpan history ke memori
+        lastDrawPosRef.current = null;
+        saveHistory(currentLayersRef.current); 
     }
   };
 
+  // ENGINE FULLSCREEN & AUTO ROTATE
   const toggleFullscreen = async () => {
     try {
       if (!document.fullscreenElement) {
         if (containerRef.current.requestFullscreen) await containerRef.current.requestFullscreen();
         else if (containerRef.current.webkitRequestFullscreen) await containerRef.current.webkitRequestFullscreen();
+        
         if (window.screen && window.screen.orientation && window.screen.orientation.lock) {
           await window.screen.orientation.lock('landscape').catch(() => {});
         }
@@ -271,10 +287,16 @@ export const PluginPixelDrawing = () => {
       } else {
         if (document.exitFullscreen) await document.exitFullscreen();
         else if (document.webkitExitFullscreen) await document.webkitExitFullscreen();
-        if (window.screen && window.screen.orientation && window.screen.orientation.unlock) window.screen.orientation.unlock();
+        
+        if (window.screen && window.screen.orientation && window.screen.orientation.unlock) {
+          window.screen.orientation.unlock();
+        }
         setIsFullscreen(false);
       }
-    } catch (err) { setIsFullscreen(!isFullscreen); }
+    } catch (err) {
+      console.error(err);
+      setIsFullscreen(!isFullscreen);
+    }
   };
 
   const addLayer = () => { const newId = Date.now(); const newLayers = [...layers, createEmptyLayer(newId, `Layer ${layers.length + 1}`)]; setLayers(newLayers); setActiveLayerId(newId); setTimeout(()=>saveHistory(newLayers), 50); };
@@ -286,16 +308,25 @@ export const PluginPixelDrawing = () => {
     const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
     canvas.width = outputSize; canvas.height = outputSize; const pSize = outputSize / gridSize;
     if (!isTransparent) { ctx.fillStyle = canvasBgColor; ctx.fillRect(0, 0, outputSize, outputSize); }
-    mergedPixels.forEach((p, i) => { if (p !== 'transparent') { ctx.fillStyle = p; ctx.fillRect((i % gridSize) * pSize, Math.floor(i / gridSize) * pSize, pSize, pSize); } });
+    
+    // Gabung pixel saat download
+    const mergedForDl = Array(gridSize * gridSize).fill('transparent');
+    layers.forEach(layer => {
+       if (!layer.visible) return;
+       layer.pixels.forEach((p, j) => { if (p !== 'transparent') mergedForDl[j] = p; });
+    });
+
+    mergedForDl.forEach((p, i) => { if (p !== 'transparent') { ctx.fillStyle = p; ctx.fillRect((i % gridSize) * pSize, Math.floor(i / gridSize) * pSize, pSize, pSize); } });
     const link = document.createElement('a'); link.download = `pixel-art-hd.png`;
     link.href = canvas.toDataURL('image/png'); link.click();
   };
 
   const pixelSizePx = gridSize <= 8 ? 20 : gridSize <= 16 ? 12 : gridSize <= 32 ? 6 : 4;
   
-  // WARNA GRID: Diubah ke #e8e8e8
+  // FIX WARNA GRID: #e8e8e8
   const gridStyle = showGrid ? 'inset 0 0 0 1px #e8e8e8' : 'none';
 
+  // --- KOMPONEN TAB NAVIGASI ---
   const ToolsTab = () => (
     <div className="grid grid-cols-3 sm:grid-cols-6 landscape:grid-cols-6 lg:grid-cols-3 gap-3 animate-fade-in-fast h-full items-start">
       <button onClick={() => setActiveTool('draw')} className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl transition-all border ${activeTool === 'draw' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500 shadow-[0_0_15px_rgba(6,182,212,0.2)]' : 'bg-[#141414] text-slate-400 border-transparent hover:bg-[#1f1f1f]'}`}><div className="w-6 h-6 shrink-0"><PixIcons.Brush /></div><span className="text-[10px] font-black tracking-widest uppercase">Kuas</span></button>
@@ -356,6 +387,15 @@ export const PluginPixelDrawing = () => {
     </div>
   );
 
+  // GABUNGKAN MERGED PIXELS UNTUK INITIAL RENDER
+  const initialMergedPixels = Array(gridSize * gridSize).fill('transparent');
+  if (layers && layers.length > 0) {
+     layers.forEach(layer => {
+       if (!layer.visible) return;
+       layer.pixels.forEach((p, j) => { if (p !== 'transparent') initialMergedPixels[j] = p; });
+     });
+  }
+
   return (
     <div ref={containerRef} className={`w-full h-full flex flex-col landscape:flex-row lg:flex-row bg-[#050505] overflow-hidden font-sans ${isFullscreen ? 'fixed inset-0 z-[100]' : 'absolute inset-0 z-10'}`}>
        
@@ -376,11 +416,18 @@ export const PluginPixelDrawing = () => {
                onPointerMove={handlePointerMove} 
                onPointerUp={handlePointerUp} 
                onPointerCancel={handlePointerUp}
-               onTouchStart={(e) => { if(activeTool === 'pan' || e.touches.length > 1) onTouchStartMulti(e); else handlePointerDown(e.touches[0]); }}
-               onTouchMove={(e) => { if(activeTool === 'pan' || e.touches.length > 1) onTouchMoveMulti(e); else handlePointerMove(e.touches[0]); }}
-               onTouchEnd={handlePointerUp}
+               onTouchStart={(e) => { 
+                   if(activeTool === 'pan' || e.touches.length > 1) onTouchStartMulti(e); 
+                   else { setIsDrawing(true); lastDrawPosRef.current = null; paintByCoords(e.touches[0].clientX, e.touches[0].clientY, true); } 
+               }}
+               onTouchMove={(e) => { 
+                   if(activeTool === 'pan' || e.touches.length > 1) onTouchMoveMulti(e); 
+                   else if(isDrawing) paintByCoords(e.touches[0].clientX, e.touches[0].clientY, false); 
+               }}
+               onTouchEnd={() => { 
+                   if(isDrawing) { setIsDrawing(false); lastDrawPosRef.current = null; saveHistory(currentLayersRef.current); } 
+               }}
           >
-            {/* Tombol Undo/Redo Murni tanpa Race Condition */}
             <div className="absolute top-4 right-4 flex gap-2 z-30" onPointerDown={stopProp} onTouchStart={stopProp} onClick={stopProp}>
               <button onPointerDown={(e) => { stopProp(e); handleUndo(); }} disabled={step <= 0} className="w-11 h-11 flex items-center justify-center rounded-xl border border-[#2a2a2a] bg-[#141414]/90 backdrop-blur text-slate-300 disabled:opacity-30 shadow-lg hover:text-white transition-colors active:scale-95"><div className="w-5 h-5 shrink-0"><PixIcons.Undo /></div></button>
               <button onPointerDown={(e) => { stopProp(e); handleRedo(); }} disabled={step >= history.length - 1} className="w-11 h-11 flex items-center justify-center rounded-xl border border-[#2a2a2a] bg-[#141414]/90 backdrop-blur text-slate-300 disabled:opacity-30 shadow-lg hover:text-white transition-colors active:scale-95"><div className="w-5 h-5 shrink-0"><PixIcons.Redo /></div></button>
@@ -389,15 +436,14 @@ export const PluginPixelDrawing = () => {
             <div style={{ transform: `translate(${pan.x}px, ${pan.y}px) scale(${scale * baseScale}) rotate(${rotation}deg)`, transition: isDrawing ? 'none' : 'transform 0.1s ease-out' }} className="absolute pointer-events-none">
               <div className="absolute -top-7 left-0 w-full flex justify-center"><span className="bg-red-500 text-white text-[9px] font-black px-4 py-1.5 rounded-t-lg shadow-lg uppercase tracking-widest">SISI ATAS</span></div>
               
-              {/* KEY RENDER: Memaksa Sinkronisasi DOM secara Instan saat Undo/Redo */}
-              <div ref={gridRef} key={`grid-${renderKey}`} className="grid shadow-[0_0_50px_rgba(0,0,0,0.8)] border-t-[4px] border-t-red-500" 
+              <div ref={gridRef} className="grid shadow-[0_0_50px_rgba(0,0,0,0.8)] border-t-[4px] border-t-red-500" 
                    style={{ 
                      gridTemplateColumns: `repeat(${gridSize}, 1fr)`, width: gridSize * pixelSizePx, height: gridSize * pixelSizePx,
                      backgroundColor: isTransparent ? 'transparent' : canvasBgColor,
                      backgroundImage: isTransparent ? 'linear-gradient(45deg, #1a1a1a 25%, transparent 25%), linear-gradient(-45deg, #1a1a1a 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #1a1a1a 75%), linear-gradient(-45deg, transparent 75%, #1a1a1a 75%)' : 'none',
                      backgroundSize: '12px 12px'
                    }}>
-                {mergedPixels.map((bg, i) => (
+                {initialMergedPixels.map((bg, i) => (
                   <div key={i} data-pixel-index={i} className={`w-full h-full transition-colors duration-75`} 
                        style={{ backgroundColor: bg !== 'transparent' ? bg : undefined, boxShadow: gridStyle }} />
                 ))}
