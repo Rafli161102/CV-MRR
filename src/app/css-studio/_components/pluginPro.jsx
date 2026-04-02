@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Icons } from './icons';
-import { PluginTip, FigmaSlider, FigmaColorPicker, FigmaSelect, FigmaCustomDropdown, WorkspaceLayout, hexToRgb, adjustBrightness, ControlHeader } from './ui';
+import { PluginTip, FigmaSlider, FigmaColorPicker, FigmaSelect, FigmaCustomDropdown, WorkspaceLayout, hexToRgb, adjustBrightness, ControlHeader, FigmaToggle } from './ui';
 
 // =========================================================================
 // 6. GLASSMORPHISM
@@ -20,18 +20,18 @@ export const PluginGlassmorphism = () => {
   
   const controls = (
     <div className="space-y-1">
-      <PluginTip text="PANDUAN: Rahasia efek kaca yang mewah adalah Opacity rendah (10-20%) dikombinasikan dengan Blur yang tinggi (di atas 10px)." />
+      <PluginTip title="TIPS EFEK KACA (GLASSMORPHISM)" text="Kunci utama efek kaca yang mewah seperti desain Apple/iOS adalah menggunakan transparansi (Opacity) yang sangat rendah di kisaran 10% hingga 20%, dikombinasikan dengan efek blur latar (Blur Intensity) yang tinggi (sekitar 12px - 20px). Pastikan menambahkan border putih tipis transparan untuk menegaskan pantulan cahaya di tepi elemen." />
       <ControlHeader title="Glass Setup" onReset={handleReset} />
-      <FigmaColorPicker label="Glass Tint" hexValue={color} onChange={setColor} />
-      <FigmaSlider label="Opacity" min={1} max={100} value={opacity} onChange={setOpacity} unit="%" />
-      <FigmaSlider label="Blur Intensity" min={0} max={50} step={0.5} value={blur} onChange={setBlur} unit="px" />
+      <FigmaColorPicker label="Warna Kaca (Glass Tint)" hexValue={color} onChange={setColor} />
+      <FigmaSlider label="Tingkat Transparansi (Opacity)" min={1} max={100} value={opacity} onChange={setOpacity} unit="%" />
+      <FigmaSlider label="Intensitas Blur Latar" min={0} max={50} step={0.5} value={blur} onChange={setBlur} unit="px" />
     </div>
   );
   return <WorkspaceLayout name="Glassmorphism" controls={controls} preview={preview} cssOutput={css} htmlOutput={html} jsxOutput={jsx} bgType="glass" />;
 };
 
 // =========================================================================
-// 7. NEUMORPHISM
+// 7. NEUMORPHISM (IMPROVE: Menggunakan Native Switch Toggle)
 // =========================================================================
 export const PluginNeumorphism = () => {
   const [bg, setBg] = useState('#e0e5ec'); const [dist, setDist] = useState(10); const [blur, setBlur] = useState(20); const [invert, setInvert] = useState(false);
@@ -43,20 +43,17 @@ export const PluginNeumorphism = () => {
   const css = `.neumorph {\n  background-color: ${bg};\n  border-radius: 20px;\n  box-shadow: ${shadowValue};\n}`;
   const html = `<div style="background-color: ${bg}; border-radius: 20px; box-shadow: ${shadowValue}; width: 140px; height: 140px;"></div>`;
   const jsx = `<div style={{ backgroundColor: '${bg}', boxShadow: '${shadowValue}' }} className="w-36 h-36 rounded-[20px]"></div>`;
-  const preview = <div style={{ width: 160, height: 160, backgroundColor: bg, borderRadius: 24, boxShadow: shadowValue, transition: 'all 0.3s' }}></div>;
+  const preview = <div style={{ width: 160, height: 160, backgroundColor: bg, borderRadius: 24, boxShadow: shadowValue, transition: 'all 0.4s ease-out' }}></div>;
   
   const controls = (
     <div className="space-y-1">
-      <PluginTip text="PANDUAN: Pilih warna Base Background lembut/pastel. Sistem kami secara pintar akan menghitung rumus bayangan terang dan gelap agar efek 3D terlihat natural." />
+      <PluginTip title="TIPS DESAIN NEUMORPHISM" text="Desain Neumorphism (Soft UI) mengandalkan manipulasi bayangan untuk membuat elemen terlihat menyatu dengan latar belakang. Wajib menggunakan warna dasar latar belakang yang lembut atau pastel (bukan murni hitam/putih). Nyalakan efek 'Cekung (Inset)' jika ingin membuat tombol yang sedang ditekan." />
       <ControlHeader title="Neumorph Setup" onReset={handleReset} />
-      <FigmaColorPicker label="Base Background" hexValue={bg} onChange={setBg} />
-      <div className="mb-5 mt-2">
-         <div className="flex bg-[#0a0a0a] p-1.5 rounded-xl border border-[#2a2a2a]">
-            <button onClick={() => setInvert(false)} className={`flex-1 py-3 rounded-lg text-[10px] font-bold uppercase transition-all ${!invert ? 'bg-[#1f1f1f] text-white border border-[#333]' : 'text-slate-500 hover:text-slate-300'}`}>Extrude (Timbul)</button>
-            <button onClick={() => setInvert(true)} className={`flex-1 py-3 rounded-lg text-[10px] font-bold uppercase transition-all ${invert ? 'bg-[#1f1f1f] text-white border border-[#333]' : 'text-slate-500 hover:text-slate-300'}`}>Inset (Cekung)</button>
-         </div>
+      <FigmaColorPicker label="Base Background Color" hexValue={bg} onChange={setBg} />
+      <div className="mt-2 mb-2">
+         <FigmaToggle label="Efek Cekung (Inset Mode)" checked={invert} onChange={setInvert} />
       </div>
-      <FigmaSlider label="Distance" min={1} max={30} value={dist} onChange={setDist} unit="px" />
+      <FigmaSlider label="Jarak Bayangan (Distance)" min={1} max={30} value={dist} onChange={setDist} unit="px" />
       <FigmaSlider label="Blur Radius" min={1} max={60} value={blur} onChange={setBlur} unit="px" />
     </div>
   );
@@ -73,18 +70,18 @@ export const PluginShadow = () => {
   const css = `.shadow-box {\n  box-shadow: ${x}px ${y}px ${blur}px ${spread}px rgba(${hexToRgb(color)}, ${opacity/100});\n  border-radius: 12px;\n  background-color: #ffffff;\n}`;
   const html = `<div style="box-shadow: ${x}px ${y}px ${blur}px ${spread}px rgba(${hexToRgb(color)}, ${opacity/100}); border-radius: 12px; background-color: #ffffff; width: 140px; height: 140px;"></div>`;
   const jsx = `<div style={{ boxShadow: '${x}px ${y}px ${blur}px ${spread}px rgba(${hexToRgb(color)}, ${opacity/100})' }} className="w-36 h-36 rounded-xl bg-white"></div>`;
-  const preview = <div style={{ width: 140, height: 140, backgroundColor: '#ffffff', borderRadius: 12, boxShadow: `${x}px ${y}px ${blur}px ${spread}px rgba(${hexToRgb(color)}, ${opacity/100})` }}></div>;
+  const preview = <div style={{ width: 140, height: 140, backgroundColor: '#ffffff', borderRadius: 12, transition: 'box-shadow 0.3s ease', boxShadow: `${x}px ${y}px ${blur}px ${spread}px rgba(${hexToRgb(color)}, ${opacity/100})` }}></div>;
   
   const controls = (
     <div className="space-y-1">
-      <PluginTip text="PANDUAN: 'Soft Shadow' sangat populer saat ini. Turunkan Opacity dan naikkan Blur Radius agar elemen terlihat melayang elegan." />
+      <PluginTip title="TEKNIK ELEGAN: SOFT SHADOW" text="Hindari penggunaan bayangan hitam solid yang kaku. Tren UI/UX modern mempopulerkan efek 'Soft Shadow'. Caranya: Turunkan Opacity bayangan ke angka 10% - 20%, lalu naikkan Blur Radius (30px ke atas) dan posisikan sedikit ke bawah (Y Offset positif). Elemen Anda akan terlihat melayang mulus di atas layar." />
       <ControlHeader title="Shadow Setup" onReset={handleReset} />
-      <FigmaColorPicker label="Shadow Color" hexValue={color} onChange={setColor} />
-      <FigmaSlider label="Opacity" min={0} max={100} value={opacity} onChange={setOpacity} unit="%" />
-      <FigmaSlider label="X Offset" min={-50} max={50} value={x} onChange={setX} unit="px" />
-      <FigmaSlider label="Y Offset" min={-50} max={50} value={y} onChange={setY} unit="px" />
-      <FigmaSlider label="Blur Radius" min={0} max={100} value={blur} onChange={setBlur} unit="px" />
-      <FigmaSlider label="Spread Radius" min={-50} max={50} value={spread} onChange={setSpread} unit="px" />
+      <FigmaColorPicker label="Warna Bayangan (Shadow Color)" hexValue={color} onChange={setColor} />
+      <FigmaSlider label="Ketebalan/Transparansi (Opacity)" min={0} max={100} value={opacity} onChange={setOpacity} unit="%" />
+      <FigmaSlider label="Posisi Horizontal (X Offset)" min={-50} max={50} value={x} onChange={setX} unit="px" />
+      <FigmaSlider label="Posisi Vertikal (Y Offset)" min={-50} max={50} value={y} onChange={setY} unit="px" />
+      <FigmaSlider label="Kelembutan (Blur Radius)" min={0} max={100} value={blur} onChange={setBlur} unit="px" />
+      <FigmaSlider label="Sebaran (Spread Radius)" min={-50} max={50} value={spread} onChange={setSpread} unit="px" />
     </div>
   );
   return <WorkspaceLayout name="Drop Shadow" controls={controls} preview={preview} cssOutput={css} htmlOutput={html} jsxOutput={jsx} bgType="light" />;
@@ -100,15 +97,15 @@ export const PluginGlow = () => {
   const css = `.neon-glow {\n  box-shadow: 0 0 ${blur}px ${spread}px rgba(${hexToRgb(color)}, 0.8);\n  border-radius: 50%;\n  background-color: ${color};\n}`;
   const html = `<div style="box-shadow: 0 0 ${blur}px ${spread}px rgba(${hexToRgb(color)}, 0.8); border-radius: 50%; background-color: ${color}; width: 80px; height: 80px;"></div>`;
   const jsx = `<div style={{ boxShadow: '0 0 ${blur}px ${spread}px rgba(${hexToRgb(color)}, 0.8)', backgroundColor: '${color}' }} className="w-20 h-20 rounded-full"></div>`;
-  const preview = <div style={{ width: 80, height: 80, backgroundColor: color, borderRadius: '50%', boxShadow: `0 0 ${blur}px ${spread}px rgba(${hexToRgb(color)}, 0.8)` }}></div>;
+  const preview = <div style={{ width: 80, height: 80, backgroundColor: color, borderRadius: '50%', transition: 'all 0.3s ease', boxShadow: `0 0 ${blur}px ${spread}px rgba(${hexToRgb(color)}, 0.8)` }}></div>;
   
   const controls = (
     <div className="space-y-1">
-      <PluginTip text="PANDUAN: Efek pendaran (Glow) sangat kuat di background hitam. Gunakan warna-warna vibran (seperti Cyan atau Neon Green) lalu tambah ukuran Blur." />
+      <PluginTip title="TIPS DESAIN CYBERPUNK (GLOW)" text="Efek Neon/Glow sangat kuat saat diaplikasikan di latar belakang gelap (Dark Mode). Gunakan warna-warna vibran tinggi seperti Cyan terang, Magenta, atau Neon Green. Besarkan nilai 'Blur Radius' dan 'Spread' agar cahaya terlihat menyebar luas menyerupai efek pendaran lampu LED asli." />
       <ControlHeader title="Glow Setup" onReset={handleReset} />
-      <FigmaColorPicker label="Glow Color" hexValue={color} onChange={setColor} />
-      <FigmaSlider label="Blur Radius" min={0} max={150} value={blur} onChange={setBlur} unit="px" />
-      <FigmaSlider label="Spread Radius" min={0} max={100} value={spread} onChange={setSpread} unit="px" />
+      <FigmaColorPicker label="Warna Pendaran Cahaya" hexValue={color} onChange={setColor} />
+      <FigmaSlider label="Penyebaran Cahaya (Blur Radius)" min={0} max={150} value={blur} onChange={setBlur} unit="px" />
+      <FigmaSlider label="Jangkauan Terang (Spread Radius)" min={0} max={100} value={spread} onChange={setSpread} unit="px" />
     </div>
   );
   return <WorkspaceLayout name="Neon Glow" controls={controls} preview={preview} cssOutput={css} htmlOutput={html} jsxOutput={jsx} />;
@@ -129,28 +126,28 @@ export const PluginFilters = () => {
   const html = `<img src="${bgImg}" style="filter: ${filterStr}; width: 100%; border-radius: 12px;" />`;
   const jsx = `<img src="${bgImg}" style={{ filter: '${filterStr}' }} className="w-full object-cover rounded-xl" />`;
   
-  const preview = <div className="relative w-full h-full max-w-[360px] max-h-[260px] rounded-xl overflow-hidden shadow-2xl ring-1 ring-white/10 group aspect-video"><img src={bgImg} alt="Filter Demo" className="w-full h-full object-cover transition-all duration-200" style={{ filter: filterStr }} /></div>;
+  const preview = <div className="relative w-full h-full max-w-[360px] max-h-[260px] rounded-xl overflow-hidden shadow-[0_15px_35px_rgba(0,0,0,0.5)] ring-1 ring-white/10 group aspect-video"><img src={bgImg} alt="Filter Demo" className="w-full h-full object-cover transition-all duration-200" style={{ filter: filterStr }} /></div>;
 
   const controls = (
     <div className="space-y-4">
-      <PluginTip text="PANDUAN: Trik agar gambar memukau: Naikkan sedikit Contrast dan Vibrance (Saturasi), lalu berikan efek Drop Shadow untuk efek timbul (pop-out)." />
+      <PluginTip title="EDIT FOTO ALA INSTAGRAM" text="CSS Filter memungkinkan Anda merekayasa foto tanpa aplikasi editing. Trik membuat foto standar menjadi sangat sinematik: Naikkan Contrast hingga 110%, tambahkan Vibrance (Saturasi) ke 120% untuk warna kulit yang hidup, lalu berikan efek Drop Shadow tipis agar foto Anda terlihat menyembul keluar dari layar." />
       <div className="mb-4">
-         <label className="text-[11px] font-medium text-slate-400 block mb-3">Pilih Foto Template</label>
+         <label className="text-[11px] font-bold text-slate-300 block mb-3 uppercase tracking-widest">Ganti Foto Template</label>
          <div className="flex gap-3">
             {IMAGE_TEMPLATES.map((img, idx) => (
-              <button key={idx} onClick={() => setBgImg(img)} className={`w-14 h-14 rounded-xl bg-cover bg-center border-2 transition-all ${bgImg === img ? 'border-cyan-400 scale-110 shadow-[0_0_15px_rgba(6,182,212,0.4)]' : 'border-[#333] hover:border-[#555]'}`} style={{backgroundImage: `url(${img})`}}></button>
+              <button key={idx} onClick={() => setBgImg(img)} className={`w-14 h-14 rounded-xl bg-cover bg-center border-[3px] transition-all duration-300 ${bgImg === img ? 'border-cyan-400 scale-110 shadow-[0_0_15px_rgba(6,182,212,0.4)]' : 'border-[#333] hover:border-[#555] opacity-50 hover:opacity-100'}`} style={{backgroundImage: `url(${img})`}}></button>
             ))}
          </div>
       </div>
       <ControlHeader title="Filters Setup" onReset={handleReset} />
-      <FigmaSlider label="Exposure" min={0} max={200} value={brightness} onChange={setBrightness} unit="%" />
-      <FigmaSlider label="Contrast" min={0} max={200} value={contrast} onChange={setContrast} unit="%" />
-      <FigmaSlider label="Vibrance" min={0} max={200} value={saturate} onChange={setSaturate} unit="%" />
-      <FigmaSlider label="Tint (Hue)" min={0} max={360} value={hue} onChange={setHue} unit="°" />
+      <FigmaSlider label="Pencahayaan (Exposure)" min={0} max={200} value={brightness} onChange={setBrightness} unit="%" />
+      <FigmaSlider label="Ketajaman Warna (Contrast)" min={0} max={200} value={contrast} onChange={setContrast} unit="%" />
+      <FigmaSlider label="Saturasi Warna (Vibrance)" min={0} max={200} value={saturate} onChange={setSaturate} unit="%" />
+      <FigmaSlider label="Ubah Nada Warna (Hue Tint)" min={0} max={360} value={hue} onChange={setHue} unit="°" />
       <div className="pt-4 border-t border-[#1f1f1f]">
-        <FigmaSlider label="Lens Blur" min={0} max={20} step={0.5} value={blur} onChange={setBlur} unit="px" />
-        <FigmaSlider label="Drop Shadow" min={0} max={50} value={shadow} onChange={setShadow} unit="px" />
-        <FigmaSlider label="Opacity" min={0} max={100} value={opacity} onChange={setOpacity} unit="%" />
+        <FigmaSlider label="Sensor Blur (Bokeh)" min={0} max={20} step={0.5} value={blur} onChange={setBlur} unit="px" />
+        <FigmaSlider label="Efek Timbul (Drop Shadow)" min={0} max={50} value={shadow} onChange={setShadow} unit="px" />
+        <FigmaSlider label="Transparansi Foto (Opacity)" min={0} max={100} value={opacity} onChange={setOpacity} unit="%" />
       </div>
     </div>
   );
@@ -161,11 +158,11 @@ export const PluginFilters = () => {
 // 11. KEYFRAME ANIMATIONS
 // =========================================================================
 const ANIMATION_DATA = { 
-  "Attention": [{ name: "Bounce", val: "bounce" }, { name: "Flash", val: "flash" }, { name: "Pulse", val: "pulse" }, { name: "RubberBand", val: "rubberBand" }, { name: "Shake", val: "shake" }, { name: "Swing", val: "swing" }], 
-  "Fade Entrances": [{ name: "Fade In", val: "fadeIn" }, { name: "Fade In Down", val: "fadeInDown" }, { name: "Fade In Left", val: "fadeInLeft" }], 
-  "Zoom Entrances": [{ name: "Zoom In", val: "zoomIn" }, { name: "Zoom In Down", val: "zoomInDown" }, { name: "Zoom In Up", val: "zoomInUp" }], 
-  "Rotations": [{ name: "Spin 360", val: "spin" }, { name: "Flip X", val: "flipInX" }, { name: "Flip Y", val: "flipInY" }], 
-  "Looping": [{ name: "Floating", val: "float" }, { name: "Breathe", val: "breathe" }] 
+  "Attention (Perhatian)": [{ name: "Bounce (Memantul)", val: "bounce" }, { name: "Flash (Berkedip)", val: "flash" }, { name: "Pulse (Berdetak)", val: "pulse" }, { name: "RubberBand (Karet)", val: "rubberBand" }, { name: "Shake (Bergetar)", val: "shake" }, { name: "Swing (Berayun)", val: "swing" }], 
+  "Fade Entrances (Masuk Halus)": [{ name: "Fade In", val: "fadeIn" }, { name: "Fade In Down", val: "fadeInDown" }, { name: "Fade In Left", val: "fadeInLeft" }], 
+  "Zoom Entrances (Masuk Zoom)": [{ name: "Zoom In", val: "zoomIn" }, { name: "Zoom In Down", val: "zoomInDown" }, { name: "Zoom In Up", val: "zoomInUp" }], 
+  "Rotations (Putaran)": [{ name: "Spin 360", val: "spin" }, { name: "Flip Horizontal", val: "flipInX" }, { name: "Flip Vertical", val: "flipInY" }], 
+  "Looping (Berkelanjutan)": [{ name: "Floating (Melayang)", val: "float" }, { name: "Breathe (Bernapas)", val: "breathe" }] 
 };
 
 const getDynamicKeyframes = (type) => {
@@ -203,13 +200,15 @@ export const PluginAnimation = () => {
 
   const controls = (
     <div className="space-y-1">
-      <PluginTip text="PANDUAN: Pilih jenis animasi dan ubah Iteration ke 'infinite' jika ingin pergerakan berulang." />
+      <PluginTip title="PANDUAN KEYFRAME ANIMATION" text="Animasi web diatur oleh properti Waktu dan Gaya (Timing). Gunakan 'linear' untuk animasi memutar yang terus-menerus tanpa henti. Gunakan kategori 'Looping' (seperti Floating) dan atur Iteration menjadi 'Infinite' untuk menciptakan efek elemen yang terus melayang tanpa perlu disentuh." />
       <ControlHeader title="Animation Setup" onReset={handleReset} />
-      <FigmaCustomDropdown label="Animation Style" groups={ANIMATION_DATA} value={animType} onChange={setAnimType} />
-      <FigmaSlider label="Duration" min={0.1} max={5} step={0.1} value={duration} onChange={setDuration} unit="s" />
-      <FigmaSelect label="Timing Function" options={['linear', 'ease', 'ease-in-out', 'ease-in']} value={timing} onChange={setTiming} />
-      <FigmaSelect label="Iteration Count" options={['1', '2', '3', 'infinite']} value={iteration} onChange={setIteration} />
-      <button onClick={() => setKey(k => k + 1)} className="w-full mt-4 py-3 bg-[#1a1a1a] hover:bg-cyan-500/20 border border-[#333] hover:border-cyan-500/50 text-cyan-400 rounded-xl text-[11px] font-bold uppercase tracking-widest transition-all shadow-sm">Replay Animation</button>
+      <FigmaCustomDropdown label="Pilih Efek Animasi" groups={ANIMATION_DATA} value={animType} onChange={setAnimType} />
+      <FigmaSlider label="Durasi / Kecepatan" min={0.1} max={5} step={0.1} value={duration} onChange={setDuration} unit="s" />
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-3 border-t border-[#1f1f1f]">
+         <FigmaSelect label="Gaya Pergerakan (Timing)" options={['linear', 'ease', 'ease-in-out', 'ease-in']} value={timing} onChange={setTiming} />
+         <FigmaSelect label="Pengulangan (Iteration)" options={['1', '2', '3', 'infinite']} value={iteration} onChange={setIteration} />
+      </div>
+      <button onClick={() => setKey(k => k + 1)} className="w-full mt-4 py-3.5 bg-[#141414] hover:bg-cyan-500/20 border border-[#333] hover:border-cyan-500 text-cyan-400 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all shadow-md active:scale-95">Putar Ulang Animasi</button>
     </div>
   );
   return <WorkspaceLayout name="Animation Builder" controls={controls} preview={preview} cssOutput={css} htmlOutput={html} jsxOutput={jsx} bgType="grid" />;
@@ -219,7 +218,7 @@ export const PluginAnimation = () => {
 // 12. HOVER TRANSITIONS
 // =========================================================================
 const TRANSITIONS_DATA = { 
-  "Scale Effects": [{ name: "Grow", val: "scale(1.1)" }, { name: "Shrink", val: "scale(0.9)" }, { name: "Pop", val: "scale(1.2)" }], 
+  "Scale Effects": [{ name: "Grow (Membesar)", val: "scale(1.1)" }, { name: "Shrink (Mengecil)", val: "scale(0.9)" }, { name: "Pop (Ekstrim)", val: "scale(1.2)" }], 
   "Translates": [{ name: "Push Up", val: "translateY(-10px)" }, { name: "Push Down", val: "translateY(10px)" }, { name: "Push Left", val: "translateX(-10px)" }, { name: "Push Right", val: "translateX(10px)" }], 
   "Rotations": [{ name: "Rotate Right", val: "rotate(15deg)" }, { name: "Rotate Left", val: "rotate(-15deg)" }, { name: "Spin Quarter", val: "rotate(90deg)" }, { name: "Spin Half", val: "rotate(180deg)" }], 
   "Skews": [{ name: "Skew Forward", val: "skewX(-15deg)" }, { name: "Skew Backward", val: "skewX(15deg)" }] 
@@ -235,18 +234,18 @@ export const PluginTransitions = () => {
 
   const preview = (
     <div className="relative w-full h-full flex items-center justify-center group cursor-pointer">
-      <div className="w-40 h-16 rounded-full bg-white text-black font-bold flex items-center justify-center shadow-lg transition-all" style={{ transition: `transform ${duration}s ${timing}` }} onMouseEnter={(e) => e.currentTarget.style.transform = transType} onMouseLeave={(e) => e.currentTarget.style.transform = 'none'}>HOVER ME</div>
-      <div className="absolute top-10 text-[10px] text-slate-500 uppercase tracking-widest animate-pulse pointer-events-none">Interact to preview</div>
+      <div className="w-48 h-16 rounded-full bg-white text-black text-[13px] font-black tracking-widest flex items-center justify-center shadow-2xl transition-all" style={{ transition: `transform ${duration}s ${timing}` }} onMouseEnter={(e) => e.currentTarget.style.transform = transType} onMouseLeave={(e) => e.currentTarget.style.transform = 'none'}>HOVER ME</div>
+      <div className="absolute top-10 text-[10px] text-slate-500 font-bold uppercase tracking-widest animate-pulse pointer-events-none">Arahkan Kursor / Sentuh</div>
     </div>
   );
 
   const controls = (
     <div className="space-y-1">
-      <PluginTip text="PANDUAN: Pastikan menambahkan selector pseudo ':hover' pada CSS untuk memicu efek transisi ini." />
+      <PluginTip title="PANDUAN EFEK HOVER" text="Transisi Hover adalah nyawa dari tombol yang interaktif. PENTING: Pada kode CSS hasil ekspor Anda, pastikan atribut 'transition' diletakkan di class induk (default), sedangkan atribut 'transform' diletakkan di dalam pseudo class ':hover' agar kembalinya tombol ke ukuran semula menjadi mulus." />
       <ControlHeader title="Hover Setup" onReset={handleReset} />
-      <FigmaCustomDropdown label="Hover Effect Type" groups={TRANSITIONS_DATA} value={transType} onChange={setTransType} />
-      <FigmaSlider label="Duration" min={0.1} max={3} step={0.1} value={duration} onChange={setDuration} unit="s" />
-      <FigmaSelect label="Timing/Easing" options={['ease', 'linear', 'ease-in-out', 'cubic']} value={timing} onChange={setTiming} />
+      <FigmaCustomDropdown label="Jenis Efek Sentuhan" groups={TRANSITIONS_DATA} value={transType} onChange={setTransType} />
+      <FigmaSlider label="Durasi Efek" min={0.1} max={3} step={0.1} value={duration} onChange={setDuration} unit="s" />
+      <FigmaSelect label="Gaya Timing/Easing" options={['ease', 'linear', 'ease-in-out', 'cubic']} value={timing} onChange={setTiming} />
     </div>
   );
   return <WorkspaceLayout name="Hover Transitions" controls={controls} preview={preview} cssOutput={css} htmlOutput={html} jsxOutput={jsx} bgType="dark" />;
