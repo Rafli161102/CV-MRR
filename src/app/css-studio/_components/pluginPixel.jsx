@@ -469,4 +469,3 @@ export const PluginPixelDrawing = () => {
     </div>
   );
 };
-
