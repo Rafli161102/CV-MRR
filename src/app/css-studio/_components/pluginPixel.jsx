@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { PluginTip, FigmaSlider, FigmaColorPicker, ControlHeader, COLOR_PRESETS, useMultiTouch, FigmaToggle } from './ui';
 
-// 1. IKON SVG KHUSUS PIXEL DRAW (Anti Hilang)
+// IKON NATIVE KHUSUS PIXEL DRAW
 const PixIcons = {
   Brush: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-full h-full"><path strokeLinecap="round" strokeLinejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.813-3.814a1.151 1.151 0 00-1.628-1.628l-3.814 3.813a15.995 15.995 0 00-4.648 4.764z" /></svg>,
   Eraser: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-full h-full"><path strokeLinecap="round" strokeLinejoin="round" d="M12 9.75L14.25 12m0 0l2.25 2.25M14.25 12l2.25-2.25M14.25 12L12 14.25m-2.58 4.92l-6.375-6.375a1.125 1.125 0 010-1.59L9.42 4.83c.211-.211.498-.33.796-.33H19.5a2.25 2.25 0 012.25 2.25v10.5a2.25 2.25 0 01-2.25 2.25h-9.284c-.298 0-.585-.119-.796-.33z" /></svg>,
@@ -26,7 +26,6 @@ const PixIcons = {
   Download: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-full h-full"><path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>,
 };
 
-// Algoritma Bucket Fill
 const floodFill = (pixels, startIndex, targetColor, replacementColor, gridSize) => {
   if (targetColor === replacementColor) return pixels;
   const newPixels = [...pixels];
@@ -46,13 +45,14 @@ const floodFill = (pixels, startIndex, targetColor, replacementColor, gridSize) 
   return newPixels;
 };
 
-// Mencegah Bubbling (Penting untuk Tombol di Atas Kanvas)
+// Mengunci event bubbling agar tombol/slider tidak mengganggu kanvas
 const stopProp = (e) => { 
    e.stopPropagation(); 
    if (e.nativeEvent && e.nativeEvent.stopImmediatePropagation) e.nativeEvent.stopImmediatePropagation(); 
 };
 
 export const PluginPixelDrawing = () => {
+  // SETTINGS
   const [gridSize, setGridSize] = useState(16);
   const [localGridInput, setLocalGridInput] = useState('16');
   const [canvasBgColor, setCanvasBgColor] = useState('#ffffff');
@@ -62,31 +62,33 @@ export const PluginPixelDrawing = () => {
   const [palette, setPalette] = useState(['#ffffff', '#1e1e1e', '#0ea5e9', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#ef4444']);
   const [outputSize, setOutputSize] = useState(1080);
   
-  // NAVIGASI
+  // NAVIGASI KHUSUS MOBILE
   const [mobileTab, setMobileTab] = useState('tools'); 
   const [isFullscreen, setIsFullscreen] = useState(false);
-  
+  const containerRef = useRef(null);
+
   // LAYER & HISTORY
   const createEmptyLayer = (id, name) => ({ id, name, pixels: Array(gridSize * gridSize).fill('transparent'), visible: true, locked: false });
   const [layers, setLayers] = useState([]);
   const [activeLayerId, setActiveLayerId] = useState(1);
   const [history, setHistory] = useState([]);
   const [step, setStep] = useState(-1);
+  
+  // FIX MUTLAK UNDO/REDO: Kita menggunakan state "renderKey" agar React dipaksa membuang inline-style sisa saat Undo
+  const [renderKey, setRenderKey] = useState(0);
   const currentLayersRef = useRef([]);
 
   // KANVAS & MULTI-TOUCH
   const { scale, pan, rotation, setScale, setPan, onTouchStart: onTouchStartMulti, onTouchMove: onTouchMoveMulti, resetView } = useMultiTouch();
   const [activeTool, setActiveTool] = useState('draw'); 
   const [isDrawing, setIsDrawing] = useState(false);
-  const lastPaintedIndex = useRef(-1); // Anti-lag penggambar real-time
-  
-  // REFERENSI DOM
-  const containerRef = useRef(null);
-  const canvasAreaRef = useRef(null);
   const gridRef = useRef(null);
+  
+  // FIX CORETAN PATAH-PATAH (BRESENHAM ENGINE)
+  const lastPos = useRef(null);
 
-  // 1. FIX PULL-TO-REFRESH & OVERSCROLL BROWSER MOBILE:
-  // Mematikan native behavior menggunakan event listener non-pasif!
+  // FIX PULL-TO-REFRESH NATIVE BROWSER (Mencegah Layar Bergoyang saat disentuh)
+  const canvasAreaRef = useRef(null);
   useEffect(() => {
     const el = canvasAreaRef.current;
     const preventScroll = (e) => { 
@@ -108,7 +110,7 @@ export const PluginPixelDrawing = () => {
   const [baseScale, setBaseScale] = useState(1);
   useEffect(() => { if (typeof window !== 'undefined') setBaseScale(window.innerWidth < 768 ? 0.6 : 1); }, []);
 
-  // Inisialisasi awal saat ganti grid
+  // Inisialisasi Kanvas Awal
   useEffect(() => {
     const safeGrid = Math.min(Math.max(gridSize, 8), 32); 
     const initialLayers = [createEmptyLayer(1, "Layer 1")];
@@ -117,7 +119,7 @@ export const PluginPixelDrawing = () => {
     setLocalGridInput(safeGrid.toString()); resetView();
   }, [gridSize]);
 
-  // Sinkronisasi state React dengan Ref agar cepat diakses oleh fungsi event
+  // Pantau Sinkronisasi
   useEffect(() => { currentLayersRef.current = layers; }, [layers]);
 
   const mergedPixels = Array(gridSize * gridSize).fill('transparent');
@@ -128,7 +130,7 @@ export const PluginPixelDrawing = () => {
      });
   }
 
-  // 2. SISTEM UNDO/REDO MENCEGAH RACE CONDITION
+  // FIX UNDO MACET: Memastikan History Tersimpan Sempurna
   const saveHistory = useCallback(() => {
     const currentStr = JSON.stringify(currentLayersRef.current);
     const lastStr = JSON.stringify(history[step]);
@@ -136,7 +138,7 @@ export const PluginPixelDrawing = () => {
     if (currentStr !== lastStr) {
         const newHistory = history.slice(0, step + 1);
         newHistory.push(JSON.parse(currentStr));
-        if (newHistory.length > 20) newHistory.shift();
+        if (newHistory.length > 25) newHistory.shift(); 
         setHistory(newHistory); 
         setStep(newHistory.length - 1);
     }
@@ -146,25 +148,30 @@ export const PluginPixelDrawing = () => {
      if (step <= 0) return;
      const newStep = step - 1;
      setStep(newStep); 
-     setLayers(JSON.parse(JSON.stringify(history[newStep]))); 
-     currentLayersRef.current = JSON.parse(JSON.stringify(history[newStep]));
-     lastPaintedIndex.current = -1;
+     const oldState = JSON.parse(JSON.stringify(history[newStep]));
+     setLayers(oldState); 
+     currentLayersRef.current = oldState;
+     setRenderKey(prev => prev + 1); // Paksa sinkronisasi DOM dari sisa coretan
   };
   
   const handleRedo = () => { 
      if (step >= history.length - 1) return;
      const newStep = step + 1;
      setStep(newStep); 
-     setLayers(JSON.parse(JSON.stringify(history[newStep]))); 
-     currentLayersRef.current = JSON.parse(JSON.stringify(history[newStep]));
-     lastPaintedIndex.current = -1;
+     const newState = JSON.parse(JSON.stringify(history[newStep]));
+     setLayers(newState); 
+     currentLayersRef.current = newState;
+     setRenderKey(prev => prev + 1); // Paksa sinkronisasi DOM
   };
 
-  const paintPixel = (index) => {
-    if (activeTool === 'pan' || activeTool === 'picker') return;
+  // ENGINE PENGGAMBAR & BRESENHAM (Smooth Line Drawing)
+  const applyPixelColor = (c, r) => {
+    if (c < 0 || c >= gridSize || r < 0 || r >= gridSize) return false;
+    const index = r * gridSize + c;
+    
     const newLayers = [...currentLayersRef.current];
     const activeIdx = newLayers.findIndex(l => l.id === activeLayerId);
-    if (activeIdx === -1 || newLayers[activeIdx].locked || !newLayers[activeIdx].visible) return;
+    if (activeIdx === -1 || newLayers[activeIdx].locked || !newLayers[activeIdx].visible) return false;
 
     let changed = false;
     if (activeTool === 'bucket') {
@@ -180,7 +187,7 @@ export const PluginPixelDrawing = () => {
          newPixels[index] = targetColor;
          newLayers[activeIdx] = { ...newLayers[activeIdx], pixels: newPixels }; 
          
-         // 3. OPTIMASI DRAWING REAL-TIME MURNI DOM (Bypass React render delay)
+         // DOM Bypass untuk menghindari patah-patah di HP
          if (gridRef.current && gridRef.current.children[index]) {
              gridRef.current.children[index].style.backgroundColor = targetColor === 'transparent' ? '' : targetColor;
          }
@@ -192,9 +199,9 @@ export const PluginPixelDrawing = () => {
        setLayers(newLayers); 
        currentLayersRef.current = newLayers;
     }
+    return changed;
   };
 
-  // MENCARI KOTAK PIXEL DENGAN RUMUS MATEMATIKA SUPER CEPAT O(1)
   const paintByCoords = (clientX, clientY) => {
     if (!gridRef.current) return;
     const rect = gridRef.current.getBoundingClientRect();
@@ -211,39 +218,58 @@ export const PluginPixelDrawing = () => {
     const unscaledX = (rotatedX / actualScale) + ((gridSize * pixelSizePx) / 2);
     const unscaledY = (rotatedY / actualScale) + ((gridSize * pixelSizePx) / 2);
 
-    if (unscaledX < 0 || unscaledY < 0 || unscaledX >= gridSize * pixelSizePx || unscaledY >= gridSize * pixelSizePx) return;
-
     const col = Math.floor(unscaledX / pixelSizePx);
     const row = Math.floor(unscaledY / pixelSizePx);
-    const index = row * gridSize + col;
 
-    // Hentikan jika jari belum berpindah piksel! Menghemat RAM HP secara luar biasa!
-    if (index === lastPaintedIndex.current) return;
-    lastPaintedIndex.current = index;
-
-    if (index >= 0 && index < gridSize * gridSize) {
-      if (activeTool === 'picker') {
-        const picked = mergedPixels[index] !== 'transparent' ? mergedPixels[index] : (isTransparent ? '#ffffff' : canvasBgColor);
-        setColor(picked); setActiveTool('draw'); return;
-      }
-      paintPixel(index);
+    if (col < 0 || col >= gridSize || row < 0 || row >= gridSize) {
+       lastPos.current = null; // Putuskan garis kalau keluar kanvas
+       return;
     }
+
+    if (activeTool === 'picker') {
+      const index = row * gridSize + col;
+      const picked = mergedPixels[index] !== 'transparent' ? mergedPixels[index] : (isTransparent ? '#ffffff' : canvasBgColor);
+      setColor(picked); setActiveTool('draw'); return;
+    }
+
+    // Algoritma Bresenham: Menggambar garis mulus penghubung antar titik saat jari digeser cepat
+    if (lastPos.current && activeTool !== 'bucket') {
+        let x0 = lastPos.current.c; let y0 = lastPos.current.r;
+        let x1 = col; let y1 = row;
+        let dxLine = Math.abs(x1 - x0); let dyLine = Math.abs(y1 - y0);
+        let sx = (x0 < x1) ? 1 : -1; let sy = (y0 < y1) ? 1 : -1;
+        let err = dxLine - dyLine;
+
+        while (true) {
+            applyPixelColor(x0, y0);
+            if (x0 === x1 && y0 === y1) break;
+            let e2 = 2 * err;
+            if (e2 > -dyLine) { err -= dyLine; x0 += sx; }
+            if (e2 < dxLine) { err += dxLine; y0 += sy; }
+        }
+    } else {
+        applyPixelColor(col, row);
+    }
+    
+    lastPos.current = { c: col, r: row };
   };
 
   const handlePointerDown = (e) => {
-    if (e.pointerType === 'touch' && activeTool === 'pan') return; 
-    setIsDrawing(true); 
-    lastPaintedIndex.current = -1;
+    if (e.pointerType === 'touch' || activeTool === 'pan') return; 
+    setIsDrawing(true); lastPos.current = null;
     paintByCoords(e.clientX, e.clientY);
+    try { e.currentTarget.setPointerCapture(e.pointerId); } catch(err){}
   };
+  
   const handlePointerMove = (e) => {
-    if (e.pointerType === 'touch' && activeTool === 'pan') return;
-    if (!isDrawing) return;
+    if (e.pointerType === 'touch' || activeTool === 'pan' || !isDrawing) return;
     paintByCoords(e.clientX, e.clientY);
   };
-  const handlePointerUp = () => {
+  
+  const handlePointerUp = (e) => {
     if (isDrawing) { setIsDrawing(false); saveHistory(); }
-    lastPaintedIndex.current = -1;
+    lastPos.current = null;
+    try { e.currentTarget.releasePointerCapture(e.pointerId); } catch(err){}
   };
 
   const toggleFullscreen = async () => {
@@ -280,15 +306,15 @@ export const PluginPixelDrawing = () => {
 
   const pixelSizePx = gridSize <= 8 ? 20 : gridSize <= 16 ? 12 : gridSize <= 32 ? 6 : 4;
   
-  // FIX WARNA GRID: Diubah ke #e8e8e8 sesuai request, menggunakan inset box-shadow
+  // FIX WARNA GRID TERLALU PUTIH: Diubah ke #e8e8e8 sesuai instruksimu! (Pakai ukuran 1px inset agar tegas)
   const gridStyle = showGrid ? 'inset 0 0 0 1px #e8e8e8' : 'none';
 
-  // --- KOMPONEN TAB NAVIGASI ---
+  // --- TAB UI ALAT DESAIN ---
   const ToolsTab = () => (
     <div className="grid grid-cols-3 sm:grid-cols-6 landscape:grid-cols-6 lg:grid-cols-3 gap-3 animate-fade-in-fast h-full items-start">
       <button onClick={() => setActiveTool('draw')} className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl transition-all border ${activeTool === 'draw' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500 shadow-[0_0_15px_rgba(6,182,212,0.2)]' : 'bg-[#141414] text-slate-400 border-transparent hover:bg-[#1f1f1f]'}`}><div className="w-6 h-6 shrink-0"><PixIcons.Brush /></div><span className="text-[10px] font-black tracking-widest uppercase">Kuas</span></button>
       <button onClick={() => setActiveTool('erase')} className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl transition-all border ${activeTool === 'erase' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500 shadow-[0_0_15px_rgba(6,182,212,0.2)]' : 'bg-[#141414] text-slate-400 border-transparent hover:bg-[#1f1f1f]'}`}><div className="w-6 h-6 shrink-0"><PixIcons.Eraser /></div><span className="text-[10px] font-black tracking-widest uppercase">Hapus</span></button>
-      <button onClick={() => setActiveTool('bucket')} className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl transition-all border ${activeTool === 'bucket' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500 shadow-[0_0_15px_rgba(6,182,212,0.2)]' : 'bg-[#141414] text-slate-400 border-transparent hover:bg-[#1f1f1f]'}`}><div className="w-6 h-6 shrink-0"><PixIcons.Bucket /></div><span className="text-[10px] font-black tracking-widest uppercase">Isi</span></button>
+      <button onClick={() => {setActiveTool('bucket');}} className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl transition-all border ${activeTool === 'bucket' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500 shadow-[0_0_15px_rgba(6,182,212,0.2)]' : 'bg-[#141414] text-slate-400 border-transparent hover:bg-[#1f1f1f]'}`}><div className="w-6 h-6 shrink-0"><PixIcons.Bucket /></div><span className="text-[10px] font-black tracking-widest uppercase">Isi</span></button>
       <button onClick={() => setActiveTool('picker')} className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl transition-all border ${activeTool === 'picker' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500 shadow-[0_0_15px_rgba(6,182,212,0.2)]' : 'bg-[#141414] text-slate-400 border-transparent hover:bg-[#1f1f1f]'}`}><div className="w-6 h-6 shrink-0"><PixIcons.Picker /></div><span className="text-[10px] font-black tracking-widest uppercase">Ambil</span></button>
       <button onClick={() => setActiveTool('pan')} className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl transition-all border ${activeTool === 'pan' ? 'bg-amber-500/10 text-amber-500 border-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.2)]' : 'bg-[#141414] text-slate-400 border-transparent hover:bg-[#1f1f1f]'}`}><div className="w-6 h-6 shrink-0"><PixIcons.HandPan /></div><span className="text-[10px] font-black tracking-widest uppercase">Geser</span></button>
       <button onClick={() => { setScale(1); setPan({x:0, y:0}); rotation!==0&&window.location.reload(); }} className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl transition-all border bg-[#141414] border-transparent text-slate-400 hover:bg-[#1f1f1f] hover:text-white active:scale-95`}><div className="w-6 h-6 shrink-0"><PixIcons.Focus /></div><span className="text-[10px] font-black tracking-widest uppercase">Fokus</span></button>
@@ -359,14 +385,14 @@ export const PluginPixelDrawing = () => {
           </div>
           
           <div ref={canvasAreaRef} className="flex-1 relative w-full h-full flex items-center justify-center overflow-hidden touch-none"
-               style={{ touchAction: 'none' }} // MENGUNCI OVERSCROLL
+               style={{ touchAction: 'none', overscrollBehavior: 'none' }} 
                onPointerDown={handlePointerDown} 
                onPointerMove={handlePointerMove} 
                onPointerUp={handlePointerUp} 
                onPointerCancel={handlePointerUp}
-               onTouchStart={(e) => { if(activeTool === 'pan' || e.touches.length > 1) onTouchStartMulti(e); else { setIsDrawing(true); paintByCoords(e.touches[0].clientX, e.touches[0].clientY); } }}
+               onTouchStart={(e) => { if(activeTool === 'pan' || e.touches.length > 1) onTouchStartMulti(e); else { setIsDrawing(true); lastPos.current = null; paintByCoords(e.touches[0].clientX, e.touches[0].clientY); } }}
                onTouchMove={(e) => { if(activeTool === 'pan' || e.touches.length > 1) onTouchMoveMulti(e); else if(isDrawing) paintByCoords(e.touches[0].clientX, e.touches[0].clientY); }}
-               onTouchEnd={handlePointerUp}
+               onTouchEnd={() => { if(isDrawing) { setIsDrawing(false); saveHistory(); } lastPos.current = null; }}
           >
             <div className="absolute top-4 right-4 flex gap-2 z-30" onPointerDown={stopProp} onTouchStart={stopProp} onClick={stopProp}>
               <button onPointerDown={(e) => { stopProp(e); handleUndo(); }} disabled={step <= 0} className="w-11 h-11 flex items-center justify-center rounded-xl border border-[#2a2a2a] bg-[#141414]/90 backdrop-blur text-slate-300 disabled:opacity-30 shadow-lg hover:text-white transition-colors active:scale-95"><div className="w-5 h-5 shrink-0"><PixIcons.Undo /></div></button>
@@ -375,7 +401,7 @@ export const PluginPixelDrawing = () => {
 
             <div style={{ transform: `translate(${pan.x}px, ${pan.y}px) scale(${scale * baseScale}) rotate(${rotation}deg)`, transition: isDrawing ? 'none' : 'transform 0.1s ease-out' }} className="absolute pointer-events-none">
               <div className="absolute -top-7 left-0 w-full flex justify-center"><span className="bg-red-500 text-white text-[9px] font-black px-4 py-1.5 rounded-t-lg shadow-lg uppercase tracking-widest">SISI ATAS</span></div>
-              <div ref={gridRef} className="grid shadow-[0_0_50px_rgba(0,0,0,0.8)] border-t-[4px] border-t-red-500" 
+              <div ref={gridRef} key={`grid-${renderKey}`} className="grid shadow-[0_0_50px_rgba(0,0,0,0.8)] border-t-[4px] border-t-red-500" 
                    style={{ 
                      gridTemplateColumns: `repeat(${gridSize}, 1fr)`, width: gridSize * pixelSizePx, height: gridSize * pixelSizePx,
                      backgroundColor: isTransparent ? 'transparent' : canvasBgColor,
