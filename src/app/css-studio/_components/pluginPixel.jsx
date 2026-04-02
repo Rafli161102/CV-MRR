@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { FigmaSlider, FigmaColorPicker, COLOR_PRESETS, useMultiTouch, FigmaToggle } from './ui';
+import { PluginTip, FigmaSlider, FigmaColorPicker, ControlHeader, COLOR_PRESETS, useMultiTouch, FigmaToggle } from './ui';
 
-// 1. IKON SVG (Ditanam langsung agar anti-hilang, dengan ukuran presisi)
+// 1. IKON SVG KHUSUS PIXEL DRAW (Anti Hilang)
 const PixIcons = {
   Brush: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-full h-full"><path strokeLinecap="round" strokeLinejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.813-3.814a1.151 1.151 0 00-1.628-1.628l-3.814 3.813a15.995 15.995 0 00-4.648 4.764z" /></svg>,
   Eraser: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-full h-full"><path strokeLinecap="round" strokeLinejoin="round" d="M12 9.75L14.25 12m0 0l2.25 2.25M14.25 12l2.25-2.25M14.25 12L12 14.25m-2.58 4.92l-6.375-6.375a1.125 1.125 0 010-1.59L9.42 4.83c.211-.211.498-.33.796-.33H19.5a2.25 2.25 0 012.25 2.25v10.5a2.25 2.25 0 01-2.25 2.25h-9.284c-.298 0-.585-.119-.796-.33z" /></svg>,
@@ -26,7 +26,7 @@ const PixIcons = {
   Download: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-full h-full"><path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>,
 };
 
-// Algoritma Cat Ember (Flood Fill)
+// Algoritma Bucket Fill
 const floodFill = (pixels, startIndex, targetColor, replacementColor, gridSize) => {
   if (targetColor === replacementColor) return pixels;
   const newPixels = [...pixels];
@@ -46,14 +46,13 @@ const floodFill = (pixels, startIndex, targetColor, replacementColor, gridSize) 
   return newPixels;
 };
 
-// Pengunci Bubbling Event untuk UI agar tidak memicu coretan di belakangnya
+// Mencegah Bubbling (Penting untuk Tombol di Atas Kanvas)
 const stopProp = (e) => { 
    e.stopPropagation(); 
    if (e.nativeEvent && e.nativeEvent.stopImmediatePropagation) e.nativeEvent.stopImmediatePropagation(); 
 };
 
 export const PluginPixelDrawing = () => {
-  // SETTINGS
   const [gridSize, setGridSize] = useState(16);
   const [localGridInput, setLocalGridInput] = useState('16');
   const [canvasBgColor, setCanvasBgColor] = useState('#ffffff');
@@ -63,7 +62,7 @@ export const PluginPixelDrawing = () => {
   const [palette, setPalette] = useState(['#ffffff', '#1e1e1e', '#0ea5e9', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#ef4444']);
   const [outputSize, setOutputSize] = useState(1080);
   
-  // NAVIGASI MOBILE TAB TAMPILAN NATIVE
+  // NAVIGASI
   const [mobileTab, setMobileTab] = useState('tools'); 
   const [isFullscreen, setIsFullscreen] = useState(false);
   
@@ -79,29 +78,25 @@ export const PluginPixelDrawing = () => {
   const { scale, pan, rotation, setScale, setPan, onTouchStart: onTouchStartMulti, onTouchMove: onTouchMoveMulti, resetView } = useMultiTouch();
   const [activeTool, setActiveTool] = useState('draw'); 
   const [isDrawing, setIsDrawing] = useState(false);
+  const lastPaintedIndex = useRef(-1); // Anti-lag penggambar real-time
   
   // REFERENSI DOM
   const containerRef = useRef(null);
   const canvasAreaRef = useRef(null);
   const gridRef = useRef(null);
 
-  // 1. FIX MUTLAK PULL-TO-REFRESH & SCROLL BROWSER
-  // Listener non-pasif agresif untuk mengunci scroll
+  // 1. FIX PULL-TO-REFRESH & OVERSCROLL BROWSER MOBILE:
+  // Mematikan native behavior menggunakan event listener non-pasif!
   useEffect(() => {
     const el = canvasAreaRef.current;
-    
-    // Fungsi untuk mencegah scroll browser SAAT menyentuh area kanvas
     const preventScroll = (e) => { 
-        // Biarkan zoom 2 jari lewat untuk fungsi pan/zoom
-        if (e.touches && e.touches.length > 1) return;
+        if (e.touches && e.touches.length > 1) return; // Izinkan zoom 2 jari
         e.preventDefault(); 
     };
-    
     if (el) {
       el.addEventListener('touchstart', preventScroll, { passive: false });
       el.addEventListener('touchmove', preventScroll, { passive: false });
     }
-    
     return () => {
       if (el) {
         el.removeEventListener('touchstart', preventScroll);
@@ -111,24 +106,18 @@ export const PluginPixelDrawing = () => {
   }, []);
 
   const [baseScale, setBaseScale] = useState(1);
-  useEffect(() => { 
-    if (typeof window !== 'undefined') setBaseScale(window.innerWidth < 768 ? 0.6 : 1); 
-  }, []);
+  useEffect(() => { if (typeof window !== 'undefined') setBaseScale(window.innerWidth < 768 ? 0.6 : 1); }, []);
 
-  // Inisialisasi Kanvas Awal saat Grid berubah
+  // Inisialisasi awal saat ganti grid
   useEffect(() => {
     const safeGrid = Math.min(Math.max(gridSize, 8), 32); 
     const initialLayers = [createEmptyLayer(1, "Layer 1")];
-    setLayers(initialLayers); 
-    currentLayersRef.current = initialLayers;
-    setHistory([JSON.parse(JSON.stringify(initialLayers))]); 
-    setStep(0); 
-    setActiveLayerId(1);
-    setLocalGridInput(safeGrid.toString()); 
-    resetView();
+    setLayers(initialLayers); currentLayersRef.current = initialLayers;
+    setHistory([JSON.parse(JSON.stringify(initialLayers))]); setStep(0); setActiveLayerId(1);
+    setLocalGridInput(safeGrid.toString()); resetView();
   }, [gridSize]);
 
-  // Pantau perubahan untuk tracking Ref mutlak
+  // Sinkronisasi state React dengan Ref agar cepat diakses oleh fungsi event
   useEffect(() => { currentLayersRef.current = layers; }, [layers]);
 
   const mergedPixels = Array(gridSize * gridSize).fill('transparent');
@@ -144,11 +133,10 @@ export const PluginPixelDrawing = () => {
     const currentStr = JSON.stringify(currentLayersRef.current);
     const lastStr = JSON.stringify(history[step]);
     
-    // Hanya simpan jika benar-benar ada perubahan piksel (mencegah bug history numpuk kosong)
     if (currentStr !== lastStr) {
         const newHistory = history.slice(0, step + 1);
         newHistory.push(JSON.parse(currentStr));
-        if (newHistory.length > 20) newHistory.shift(); // Limit memori 20 step
+        if (newHistory.length > 20) newHistory.shift();
         setHistory(newHistory); 
         setStep(newHistory.length - 1);
     }
@@ -158,25 +146,23 @@ export const PluginPixelDrawing = () => {
      if (step <= 0) return;
      const newStep = step - 1;
      setStep(newStep); 
-     const oldState = JSON.parse(JSON.stringify(history[newStep]));
-     setLayers(oldState); 
-     currentLayersRef.current = oldState;
-     lastPaintedIndex.current = -1; // Reset anti-lag
+     setLayers(JSON.parse(JSON.stringify(history[newStep]))); 
+     currentLayersRef.current = JSON.parse(JSON.stringify(history[newStep]));
+     lastPaintedIndex.current = -1;
   };
   
   const handleRedo = () => { 
      if (step >= history.length - 1) return;
      const newStep = step + 1;
      setStep(newStep); 
-     const newState = JSON.parse(JSON.stringify(history[newStep]));
-     setLayers(newState); 
-     currentLayersRef.current = newState;
-     lastPaintedIndex.current = -1; // Reset anti-lag
+     setLayers(JSON.parse(JSON.stringify(history[newStep]))); 
+     currentLayersRef.current = JSON.parse(JSON.stringify(history[newStep]));
+     lastPaintedIndex.current = -1;
   };
 
   const paintPixel = (index) => {
     if (activeTool === 'pan' || activeTool === 'picker') return;
-    const newLayers = [...layers];
+    const newLayers = [...currentLayersRef.current];
     const activeIdx = newLayers.findIndex(l => l.id === activeLayerId);
     if (activeIdx === -1 || newLayers[activeIdx].locked || !newLayers[activeIdx].visible) return;
 
@@ -184,8 +170,8 @@ export const PluginPixelDrawing = () => {
     if (activeTool === 'bucket') {
       const newPixels = floodFill(newLayers[activeIdx].pixels, index, newLayers[activeIdx].pixels[index], color, gridSize);
       if (newPixels !== newLayers[activeIdx].pixels) { 
-          newLayers[activeIdx] = { ...newLayers[activeIdx], pixels: newPixels }; 
-          changed = true; 
+         newLayers[activeIdx] = { ...newLayers[activeIdx], pixels: newPixels }; 
+         changed = true; 
       }
     } else {
       const targetColor = activeTool === 'erase' ? 'transparent' : color;
@@ -193,28 +179,29 @@ export const PluginPixelDrawing = () => {
          const newPixels = [...newLayers[activeIdx].pixels]; 
          newPixels[index] = targetColor;
          newLayers[activeIdx] = { ...newLayers[activeIdx], pixels: newPixels }; 
+         
+         // 3. OPTIMASI DRAWING REAL-TIME MURNI DOM (Bypass React render delay)
+         if (gridRef.current && gridRef.current.children[index]) {
+             gridRef.current.children[index].style.backgroundColor = targetColor === 'transparent' ? '' : targetColor;
+         }
          changed = true;
       }
     }
 
     if (changed) {
        setLayers(newLayers); 
-       currentLayersRef.current = newLayers; // Sinkronisasi ref instan!
+       currentLayersRef.current = newLayers;
     }
   };
 
-  // 3. MATEMATIKA PENENTU KOORDINAT & PERFORMA ANTI-LAG
-  const lastPaintedIndex = useRef(-1); // Menyimpan index kotak terakhir yg digambar
-
+  // MENCARI KOTAK PIXEL DENGAN RUMUS MATEMATIKA SUPER CEPAT O(1)
   const paintByCoords = (clientX, clientY) => {
     if (!gridRef.current) return;
     const rect = gridRef.current.getBoundingClientRect();
     const pixelSizePx = gridSize <= 8 ? 20 : gridSize <= 16 ? 12 : gridSize <= 32 ? 6 : 4;
     
-    const centerX = rect.left + rect.width / 2; 
-    const centerY = rect.top + rect.height / 2;
-    const dx = clientX - centerX; 
-    const dy = clientY - centerY;
+    const centerX = rect.left + rect.width / 2; const centerY = rect.top + rect.height / 2;
+    const dx = clientX - centerX; const dy = clientY - centerY;
 
     const angleRad = -rotation * (Math.PI / 180);
     const rotatedX = dx * Math.cos(angleRad) - dy * Math.sin(angleRad);
@@ -230,7 +217,7 @@ export const PluginPixelDrawing = () => {
     const row = Math.floor(unscaledY / pixelSizePx);
     const index = row * gridSize + col;
 
-    // FIX LAG: Hentikan eksekusi jika jari masih di atas kotak piksel yang sama (Mencegah Overload RAM)
+    // Hentikan jika jari belum berpindah piksel! Menghemat RAM HP secara luar biasa!
     if (index === lastPaintedIndex.current) return;
     lastPaintedIndex.current = index;
 
@@ -243,53 +230,38 @@ export const PluginPixelDrawing = () => {
     }
   };
 
-  // ENGINE PENANGKAP SENSOR JARI SUPER MULUS
   const handlePointerDown = (e) => {
-    if (e.pointerType === 'touch' && activeTool === 'pan') return; // Biarkan pan jalan via multi-touch
+    if (e.pointerType === 'touch' && activeTool === 'pan') return; 
     setIsDrawing(true); 
-    lastPaintedIndex.current = -1; // Reset memory saat mulai mencoret
+    lastPaintedIndex.current = -1;
     paintByCoords(e.clientX, e.clientY);
   };
-  
   const handlePointerMove = (e) => {
     if (e.pointerType === 'touch' && activeTool === 'pan') return;
     if (!isDrawing) return;
     paintByCoords(e.clientX, e.clientY);
   };
-  
   const handlePointerUp = () => {
-    if (isDrawing) { 
-        setIsDrawing(false); 
-        lastPaintedIndex.current = -1;
-        saveHistory(); // Simpan history saat jari diangkat
-    }
+    if (isDrawing) { setIsDrawing(false); saveHistory(); }
+    lastPaintedIndex.current = -1;
   };
 
-  // FULLSCREEN ENGINE CERDAS (Auto-Rotate to Landscape)
   const toggleFullscreen = async () => {
     try {
       if (!document.fullscreenElement) {
         if (containerRef.current.requestFullscreen) await containerRef.current.requestFullscreen();
         else if (containerRef.current.webkitRequestFullscreen) await containerRef.current.webkitRequestFullscreen();
-        
-        // Memaksa HP miring saat fullscreen!
         if (window.screen && window.screen.orientation && window.screen.orientation.lock) {
-          await window.screen.orientation.lock('landscape').catch(() => console.log('Auto rotate tidak didukung.'));
+          await window.screen.orientation.lock('landscape').catch(() => {});
         }
         setIsFullscreen(true);
       } else {
         if (document.exitFullscreen) await document.exitFullscreen();
         else if (document.webkitExitFullscreen) await document.webkitExitFullscreen();
-        
-        if (window.screen && window.screen.orientation && window.screen.orientation.unlock) {
-          window.screen.orientation.unlock();
-        }
+        if (window.screen && window.screen.orientation && window.screen.orientation.unlock) window.screen.orientation.unlock();
         setIsFullscreen(false);
       }
-    } catch (err) {
-      console.error(err);
-      setIsFullscreen(!isFullscreen);
-    }
+    } catch (err) { setIsFullscreen(!isFullscreen); }
   };
 
   const addLayer = () => { const newId = Date.now(); const newLayers = [...layers, createEmptyLayer(newId, `Layer ${layers.length + 1}`)]; setLayers(newLayers); setActiveLayerId(newId); setTimeout(saveHistory, 50); };
@@ -308,15 +280,15 @@ export const PluginPixelDrawing = () => {
 
   const pixelSizePx = gridSize <= 8 ? 20 : gridSize <= 16 ? 12 : gridSize <= 32 ? 6 : 4;
   
-  // FIX GRID COLOR: Menggunakan inset shadow 1px dengan opacity kelabu agar selalu terang & presisi di HP
-  const gridStyle = showGrid ? 'inset 0 0 0 1px rgba(255,255,255,0.15)' : 'none';
+  // FIX WARNA GRID: Diubah ke #e8e8e8 sesuai request, menggunakan inset box-shadow
+  const gridStyle = showGrid ? 'inset 0 0 0 1px #e8e8e8' : 'none';
 
-  // --- KOMPONEN TAB NAVIGASI KHUSUS LACI ---
+  // --- KOMPONEN TAB NAVIGASI ---
   const ToolsTab = () => (
     <div className="grid grid-cols-3 sm:grid-cols-6 landscape:grid-cols-6 lg:grid-cols-3 gap-3 animate-fade-in-fast h-full items-start">
       <button onClick={() => setActiveTool('draw')} className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl transition-all border ${activeTool === 'draw' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500 shadow-[0_0_15px_rgba(6,182,212,0.2)]' : 'bg-[#141414] text-slate-400 border-transparent hover:bg-[#1f1f1f]'}`}><div className="w-6 h-6 shrink-0"><PixIcons.Brush /></div><span className="text-[10px] font-black tracking-widest uppercase">Kuas</span></button>
       <button onClick={() => setActiveTool('erase')} className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl transition-all border ${activeTool === 'erase' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500 shadow-[0_0_15px_rgba(6,182,212,0.2)]' : 'bg-[#141414] text-slate-400 border-transparent hover:bg-[#1f1f1f]'}`}><div className="w-6 h-6 shrink-0"><PixIcons.Eraser /></div><span className="text-[10px] font-black tracking-widest uppercase">Hapus</span></button>
-      <button onClick={() => {setActiveTool('bucket');}} className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl transition-all border ${activeTool === 'bucket' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500 shadow-[0_0_15px_rgba(6,182,212,0.2)]' : 'bg-[#141414] text-slate-400 border-transparent hover:bg-[#1f1f1f]'}`}><div className="w-6 h-6 shrink-0"><PixIcons.Bucket /></div><span className="text-[10px] font-black tracking-widest uppercase">Isi</span></button>
+      <button onClick={() => setActiveTool('bucket')} className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl transition-all border ${activeTool === 'bucket' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500 shadow-[0_0_15px_rgba(6,182,212,0.2)]' : 'bg-[#141414] text-slate-400 border-transparent hover:bg-[#1f1f1f]'}`}><div className="w-6 h-6 shrink-0"><PixIcons.Bucket /></div><span className="text-[10px] font-black tracking-widest uppercase">Isi</span></button>
       <button onClick={() => setActiveTool('picker')} className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl transition-all border ${activeTool === 'picker' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500 shadow-[0_0_15px_rgba(6,182,212,0.2)]' : 'bg-[#141414] text-slate-400 border-transparent hover:bg-[#1f1f1f]'}`}><div className="w-6 h-6 shrink-0"><PixIcons.Picker /></div><span className="text-[10px] font-black tracking-widest uppercase">Ambil</span></button>
       <button onClick={() => setActiveTool('pan')} className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl transition-all border ${activeTool === 'pan' ? 'bg-amber-500/10 text-amber-500 border-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.2)]' : 'bg-[#141414] text-slate-400 border-transparent hover:bg-[#1f1f1f]'}`}><div className="w-6 h-6 shrink-0"><PixIcons.HandPan /></div><span className="text-[10px] font-black tracking-widest uppercase">Geser</span></button>
       <button onClick={() => { setScale(1); setPan({x:0, y:0}); rotation!==0&&window.location.reload(); }} className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl transition-all border bg-[#141414] border-transparent text-slate-400 hover:bg-[#1f1f1f] hover:text-white active:scale-95`}><div className="w-6 h-6 shrink-0"><PixIcons.Focus /></div><span className="text-[10px] font-black tracking-widest uppercase">Fokus</span></button>
@@ -372,49 +344,13 @@ export const PluginPixelDrawing = () => {
     </div>
   );
 
-  // THE CANVAS RENDERER Component
-  const CanvasRenderer = () => (
-    <div ref={canvasAreaRef} className="flex-1 relative w-full h-full flex items-center justify-center overflow-hidden bg-[#000]"
-         style={{ touchAction: 'none' }} // Kunci Murni CSS
-         onPointerDown={handlePointerDown} 
-         onPointerMove={handlePointerMove} 
-         onPointerUp={handlePointerUp} 
-         onPointerCancel={handlePointerUp}
-         onTouchStart={(e) => { if(activeTool === 'pan' || e.touches.length > 1) onTouchStartMulti(e); else handlePointerDown(e.touches[0]); }}
-         onTouchMove={(e) => { if(activeTool === 'pan' || e.touches.length > 1) onTouchMoveMulti(e); else handlePointerMove(e.touches[0]); }}
-         onTouchEnd={handlePointerUp}
-    >
-      {/* Tombol Undo/Redo di sudut kanvas yang diisolasi agar tidak merusak gambar */}
-      <div className="absolute top-4 right-4 flex gap-2 z-30" onPointerDown={stopProp} onTouchStart={stopProp} onClick={stopProp}>
-        <button onPointerDown={(e) => { stopProp(e); handleUndo(); }} disabled={step <= 0} className="w-11 h-11 flex items-center justify-center rounded-xl border border-[#2a2a2a] bg-[#141414]/90 backdrop-blur text-slate-300 disabled:opacity-30 shadow-lg hover:text-white transition-colors active:scale-95"><div className="w-5 h-5 shrink-0"><PixIcons.Undo /></div></button>
-        <button onPointerDown={(e) => { stopProp(e); handleRedo(); }} disabled={step >= history.length - 1} className="w-11 h-11 flex items-center justify-center rounded-xl border border-[#2a2a2a] bg-[#141414]/90 backdrop-blur text-slate-300 disabled:opacity-30 shadow-lg hover:text-white transition-colors active:scale-95"><div className="w-5 h-5 shrink-0"><PixIcons.Redo /></div></button>
-      </div>
-
-      <div style={{ transform: `translate(${pan.x}px, ${pan.y}px) scale(${scale * baseScale}) rotate(${rotation}deg)`, transition: isDrawing ? 'none' : 'transform 0.1s ease-out' }} className="absolute pointer-events-none">
-        <div className="absolute -top-7 left-0 w-full flex justify-center"><span className="bg-red-500 text-white text-[9px] font-black px-4 py-1.5 rounded-t-lg shadow-lg uppercase tracking-widest">SISI ATAS</span></div>
-        <div ref={gridRef} className="grid shadow-[0_0_50px_rgba(0,0,0,0.8)] border-t-[4px] border-t-red-500" 
-             style={{ 
-               gridTemplateColumns: `repeat(${gridSize}, 1fr)`, width: gridSize * pixelSizePx, height: gridSize * pixelSizePx,
-               backgroundColor: isTransparent ? 'transparent' : canvasBgColor,
-               backgroundImage: isTransparent ? 'linear-gradient(45deg, #1a1a1a 25%, transparent 25%), linear-gradient(-45deg, #1a1a1a 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #1a1a1a 75%), linear-gradient(-45deg, transparent 75%, #1a1a1a 75%)' : 'none',
-               backgroundSize: '12px 12px'
-             }}>
-          {mergedPixels.map((bg, i) => (
-            <div key={i} data-pixel-index={i} className={`w-full h-full transition-colors duration-75`} 
-                 style={{ backgroundColor: bg !== 'transparent' ? bg : undefined, boxShadow: gridStyle }} />
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-
   return (
     <div ref={containerRef} className={`w-full h-full flex flex-col landscape:flex-row lg:flex-row bg-[#050505] overflow-hidden font-sans ${isFullscreen ? 'fixed inset-0 z-[100]' : 'absolute inset-0 z-10'}`}>
        
        {/* 1. BAGIAN KANVAS MENGGAMBAR */}
        <div className="flex-[55%] landscape:flex-1 lg:flex-[2] relative flex flex-col border-b landscape:border-b-0 landscape:border-r lg:border-b-0 lg:border-r border-[#1f1f1f] bg-[#000] overflow-hidden shadow-xl z-20">
           
-          <div className="absolute top-4 left-4 z-30 lg:hidden" onPointerDown={stopProp} onTouchStart={stopProp} onClick={stopProp}>
+          <div className="absolute top-4 left-4 z-30 lg:hidden" onPointerDown={stopProp} onClick={stopProp}>
              <button onClick={toggleFullscreen} className={`px-4 py-2.5 flex items-center justify-center gap-2 rounded-xl transition-all font-black text-[10px] uppercase tracking-widest shadow-lg active:scale-95 ${isFullscreen ? 'bg-amber-500 text-black border border-amber-400' : 'bg-[#141414]/90 backdrop-blur border border-[#2a2a2a] text-cyan-400'}`}>
                 <div className="w-4 h-4 shrink-0">{isFullscreen ? <PixIcons.Close /> : <PixIcons.Expand />}</div> 
                 <span className="hidden sm:inline md:inline landscape:inline">{isFullscreen ? 'Keluar Layar Penuh' : 'Layar Penuh (Landscape)'}</span>
@@ -422,7 +358,37 @@ export const PluginPixelDrawing = () => {
              </button>
           </div>
           
-          <CanvasRenderer />
+          <div ref={canvasAreaRef} className="flex-1 relative w-full h-full flex items-center justify-center overflow-hidden touch-none"
+               style={{ touchAction: 'none' }} // MENGUNCI OVERSCROLL
+               onPointerDown={handlePointerDown} 
+               onPointerMove={handlePointerMove} 
+               onPointerUp={handlePointerUp} 
+               onPointerCancel={handlePointerUp}
+               onTouchStart={(e) => { if(activeTool === 'pan' || e.touches.length > 1) onTouchStartMulti(e); else { setIsDrawing(true); paintByCoords(e.touches[0].clientX, e.touches[0].clientY); } }}
+               onTouchMove={(e) => { if(activeTool === 'pan' || e.touches.length > 1) onTouchMoveMulti(e); else if(isDrawing) paintByCoords(e.touches[0].clientX, e.touches[0].clientY); }}
+               onTouchEnd={handlePointerUp}
+          >
+            <div className="absolute top-4 right-4 flex gap-2 z-30" onPointerDown={stopProp} onTouchStart={stopProp} onClick={stopProp}>
+              <button onPointerDown={(e) => { stopProp(e); handleUndo(); }} disabled={step <= 0} className="w-11 h-11 flex items-center justify-center rounded-xl border border-[#2a2a2a] bg-[#141414]/90 backdrop-blur text-slate-300 disabled:opacity-30 shadow-lg hover:text-white transition-colors active:scale-95"><div className="w-5 h-5 shrink-0"><PixIcons.Undo /></div></button>
+              <button onPointerDown={(e) => { stopProp(e); handleRedo(); }} disabled={step >= history.length - 1} className="w-11 h-11 flex items-center justify-center rounded-xl border border-[#2a2a2a] bg-[#141414]/90 backdrop-blur text-slate-300 disabled:opacity-30 shadow-lg hover:text-white transition-colors active:scale-95"><div className="w-5 h-5 shrink-0"><PixIcons.Redo /></div></button>
+            </div>
+
+            <div style={{ transform: `translate(${pan.x}px, ${pan.y}px) scale(${scale * baseScale}) rotate(${rotation}deg)`, transition: isDrawing ? 'none' : 'transform 0.1s ease-out' }} className="absolute pointer-events-none">
+              <div className="absolute -top-7 left-0 w-full flex justify-center"><span className="bg-red-500 text-white text-[9px] font-black px-4 py-1.5 rounded-t-lg shadow-lg uppercase tracking-widest">SISI ATAS</span></div>
+              <div ref={gridRef} className="grid shadow-[0_0_50px_rgba(0,0,0,0.8)] border-t-[4px] border-t-red-500" 
+                   style={{ 
+                     gridTemplateColumns: `repeat(${gridSize}, 1fr)`, width: gridSize * pixelSizePx, height: gridSize * pixelSizePx,
+                     backgroundColor: isTransparent ? 'transparent' : canvasBgColor,
+                     backgroundImage: isTransparent ? 'linear-gradient(45deg, #1a1a1a 25%, transparent 25%), linear-gradient(-45deg, #1a1a1a 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #1a1a1a 75%), linear-gradient(-45deg, transparent 75%, #1a1a1a 75%)' : 'none',
+                     backgroundSize: '12px 12px'
+                   }}>
+                {mergedPixels.map((bg, i) => (
+                  <div key={i} data-pixel-index={i} className={`w-full h-full transition-colors duration-75`} 
+                       style={{ backgroundColor: bg !== 'transparent' ? bg : undefined, boxShadow: gridStyle }} />
+                ))}
+              </div>
+            </div>
+          </div>
        </div>
 
        {/* 2. BAGIAN ALAT & NAVIGASI (RESPONSIVE KHUSUS MOBILE LANDSCAPE & PORTRAIT) */}
