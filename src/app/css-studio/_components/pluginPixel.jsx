@@ -46,18 +46,21 @@ export const PluginPixelDrawing = () => {
   const [history, setHistory] = useState([]);
   const [step, setStep] = useState(-1);
 
+  // Mencegah Hydration Mismatch & Memastikan skala pas di HP
   const [baseScale, setBaseScale] = useState(1);
   useEffect(() => { 
     if (typeof window !== 'undefined') setBaseScale(window.innerWidth < 768 ? 0.6 : 1); 
   }, []);
 
-  const { scale, pan, rotation, setScale, setPan, onTouchStart, onTouchMove, resetView } = useMultiTouch();
+  // Memisahkan fungsi sentuh multi-jari untuk Zoom & Panning
+  const { scale, pan, rotation, setScale, setPan, onTouchStart: onTouchStartMulti, onTouchMove: onTouchMoveMulti, resetView } = useMultiTouch();
+  
   const [activeTool, setActiveTool] = useState('draw'); 
   const [isDrawing, setIsDrawing] = useState(false);
   const gridRef = useRef(null);
 
   useEffect(() => {
-    const safeGrid = Math.min(Math.max(gridSize, 8), 32); 
+    const safeGrid = Math.min(Math.max(gridSize, 8), 32); // Max 32 agar HP kebal OOM (Crash)
     const newLayers = [createEmptyLayer(1, "Layer 1")];
     setLayers(newLayers); setHistory([newLayers]); setStep(0); setActiveLayerId(1);
     setLocalGridInput(safeGrid.toString()); resetView();
@@ -72,7 +75,7 @@ export const PluginPixelDrawing = () => {
   const saveHistory = (newLayers) => {
     const newHistory = history.slice(0, step + 1);
     newHistory.push(JSON.parse(JSON.stringify(newLayers)));
-    if (newHistory.length > 10) newHistory.shift(); 
+    if (newHistory.length > 15) newHistory.shift(); 
     setHistory(newHistory); setStep(newHistory.length - 1);
   };
 
@@ -80,15 +83,9 @@ export const PluginPixelDrawing = () => {
   const handleRedo = () => { const newStep = Math.min(history.length - 1, step + 1); setStep(newStep); setLayers(JSON.parse(JSON.stringify(history[newStep]))); };
 
   const paintPixel = (index) => {
-    if (activeTool === 'pan') return;
     const newLayers = [...layers];
     const activeIdx = newLayers.findIndex(l => l.id === activeLayerId);
     if (activeIdx === -1 || newLayers[activeIdx].locked || !newLayers[activeIdx].visible) return;
-
-    if (activeTool === 'picker') {
-      const picked = mergedPixels[index] !== 'transparent' ? mergedPixels[index] : (isTransparent ? '#ffffff' : canvasBgColor);
-      setColor(picked); setActiveTool('draw'); return;
-    }
 
     if (activeTool === 'bucket') {
       newLayers[activeIdx].pixels = floodFill(newLayers[activeIdx].pixels, index, newLayers[activeIdx].pixels[index], color, gridSize);
@@ -101,46 +98,31 @@ export const PluginPixelDrawing = () => {
     }
   };
 
-  const paintByCoords = (clientX, clientY) => {
-    if (!gridRef.current) return;
-    const rect = gridRef.current.getBoundingClientRect();
-    const pixelSizePx = gridSize <= 8 ? 20 : gridSize <= 16 ? 12 : gridSize <= 32 ? 6 : 4;
-    
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-    const dx = clientX - centerX;
-    const dy = clientY - centerY;
-
-    const angleRad = -rotation * (Math.PI / 180);
-    const rotatedX = dx * Math.cos(angleRad) - dy * Math.sin(angleRad);
-    const rotatedY = dx * Math.sin(angleRad) + dy * Math.cos(angleRad);
-
-    const actualScale = scale * baseScale;
-    const unscaledX = (rotatedX / actualScale) + ((gridSize * pixelSizePx) / 2);
-    const unscaledY = (rotatedY / actualScale) + ((gridSize * pixelSizePx) / 2);
-
-    if (unscaledX < 0 || unscaledY < 0 || unscaledX >= gridSize * pixelSizePx || unscaledY >= gridSize * pixelSizePx) return;
-
-    const col = Math.floor(unscaledX / pixelSizePx);
-    const row = Math.floor(unscaledY / pixelSizePx);
-    const index = row * gridSize + col;
-
-    if (index >= 0 && index < gridSize * gridSize) {
+  // MESIN PENDETEKSI CORETAN JARI MURNI
+  const handleDrawEvent = (clientX, clientY) => {
+    const target = document.elementFromPoint(clientX, clientY);
+    if (target && target.hasAttribute('data-pixel-index')) {
+      const index = Number(target.getAttribute('data-pixel-index'));
+      
+      if (activeTool === 'picker') {
+        const picked = mergedPixels[index] !== 'transparent' ? mergedPixels[index] : (isTransparent ? '#ffffff' : canvasBgColor);
+        setColor(picked); setActiveTool('draw'); return;
+      }
       paintPixel(index);
     }
   };
 
-  const handlePointerEvent = (e, isDown = false) => {
-    if (activeTool === 'pan' || (e.touches && e.touches.length > 1)) return;
-    let clientX = e.clientX, clientY = e.clientY;
-    if (e.touches && e.touches.length > 0) {
-      clientX = e.touches[0].clientX; clientY = e.touches[0].clientY;
-    }
-    if (isDown) { setIsDrawing(true); paintByCoords(clientX, clientY); } 
-    else if (isDrawing) { paintByCoords(clientX, clientY); }
+  const handlePointerDown = (e) => {
+    if (activeTool === 'pan' || (e.pointerType === 'touch' && !e.isPrimary)) return;
+    setIsDrawing(true);
+    handleDrawEvent(e.clientX, e.clientY);
   };
 
-  const handlePointerUp = () => {
+  const handlePointerMove = (e) => {
+    if (isDrawing && activeTool !== 'pan') handleDrawEvent(e.clientX, e.clientY);
+  };
+
+  const handlePointerUp = (e) => {
     if (isDrawing) { setIsDrawing(false); saveHistory(layers); }
   };
 
@@ -171,46 +153,46 @@ export const PluginPixelDrawing = () => {
   const preview = (
     <div className="relative w-full h-[55vh] sm:h-[450px] flex flex-col overflow-hidden bg-[#050505] rounded-xl border border-[#1f1f1f]">
       
-      {/* TOOLBAR MOBILE: Baris Fisik di Atas (Aman dari Overlap) */}
-      <div className="lg:hidden w-full bg-[#0a0a0a] border-b border-[#2a2a2a] p-2 flex items-center gap-2 overflow-x-auto custom-scroll shrink-0 z-20 shadow-md">
-        <button onClick={() => setActiveTool('draw')} className={`shrink-0 w-10 h-10 flex items-center justify-center rounded-xl transition-all ${activeTool === 'draw' ? 'bg-cyan-500 text-black shadow-[0_0_15px_rgba(6,182,212,0.5)]' : 'text-slate-400 hover:bg-[#1a1a1a]'}`} title="Kuas"><div className="w-5 h-5"><Icons.Brush /></div></button>
-        <button onClick={() => setActiveTool('erase')} className={`shrink-0 w-10 h-10 flex items-center justify-center rounded-xl transition-all ${activeTool === 'erase' ? 'bg-cyan-500 text-black shadow-[0_0_15px_rgba(6,182,212,0.5)]' : 'text-slate-400 hover:bg-[#1a1a1a]'}`} title="Penghapus"><div className="w-5 h-5"><Icons.Eraser /></div></button>
-        <button onClick={() => setActiveTool('bucket')} className={`shrink-0 w-10 h-10 flex items-center justify-center rounded-xl transition-all ${activeTool === 'bucket' ? 'bg-cyan-500 text-black shadow-[0_0_15px_rgba(6,182,212,0.5)]' : 'text-slate-400 hover:bg-[#1a1a1a]'}`} title="Ember Cat"><div className="w-5 h-5"><Icons.Bucket /></div></button>
-        <button onClick={() => setActiveTool('picker')} className={`shrink-0 w-10 h-10 flex items-center justify-center rounded-xl transition-all ${activeTool === 'picker' ? 'bg-cyan-500 text-black shadow-[0_0_15px_rgba(6,182,212,0.5)]' : 'text-slate-400 hover:bg-[#1a1a1a]'}`} title="Pipet"><div className="w-5 h-5"><Icons.Picker /></div></button>
+      {/* TOOLBAR MOBILE (Elegan & Anti-Overlap) */}
+      <div className="lg:hidden w-full bg-[#0a0a0a] border-b border-[#2a2a2a] p-3 flex items-center gap-2.5 overflow-x-auto custom-scroll shrink-0 z-20 shadow-md">
+        <button onClick={() => setActiveTool('draw')} className={`shrink-0 flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl transition-all font-bold text-[10px] uppercase tracking-wider ${activeTool === 'draw' ? 'bg-cyan-500 text-black shadow-md' : 'bg-[#141414] text-slate-400 hover:bg-[#1f1f1f]'}`}><div className="w-4 h-4"><Icons.Brush /></div> Kuas</button>
+        <button onClick={() => setActiveTool('erase')} className={`shrink-0 flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl transition-all font-bold text-[10px] uppercase tracking-wider ${activeTool === 'erase' ? 'bg-cyan-500 text-black shadow-md' : 'bg-[#141414] text-slate-400 hover:bg-[#1f1f1f]'}`}><div className="w-4 h-4"><Icons.Eraser /></div> Hapus</button>
+        <button onClick={() => setActiveTool('bucket')} className={`shrink-0 flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl transition-all font-bold text-[10px] uppercase tracking-wider ${activeTool === 'bucket' ? 'bg-cyan-500 text-black shadow-md' : 'bg-[#141414] text-slate-400 hover:bg-[#1f1f1f]'}`}><div className="w-4 h-4"><Icons.Bucket /></div> Isi</button>
+        <button onClick={() => setActiveTool('picker')} className={`shrink-0 flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl transition-all font-bold text-[10px] uppercase tracking-wider ${activeTool === 'picker' ? 'bg-cyan-500 text-black shadow-md' : 'bg-[#141414] text-slate-400 hover:bg-[#1f1f1f]'}`}><div className="w-4 h-4"><Icons.Picker /></div> Pipet</button>
         <div className="w-px h-6 bg-[#333] shrink-0 mx-1"></div>
-        <button onClick={() => setActiveTool('pan')} className={`shrink-0 w-10 h-10 flex items-center justify-center rounded-xl transition-all ${activeTool === 'pan' ? 'bg-cyan-500 text-black shadow-[0_0_15px_rgba(6,182,212,0.5)]' : 'text-slate-400 hover:bg-[#1a1a1a]'}`} title="Geser Kanvas"><div className="w-5 h-5"><Icons.HandPan /></div></button>
-        <button onClick={resetView} className="shrink-0 w-10 h-10 flex items-center justify-center rounded-xl text-slate-400 hover:text-cyan-400 hover:bg-[#1a1a1a] transition-all" title="Fokus/Kembali ke Tengah"><div className="w-5 h-5"><LocalIcons.Focus /></div></button>
+        <button onClick={() => setActiveTool('pan')} className={`shrink-0 flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl transition-all font-bold text-[10px] uppercase tracking-wider ${activeTool === 'pan' ? 'bg-amber-500 text-black shadow-md' : 'bg-[#141414] text-slate-400 hover:bg-[#1f1f1f]'}`}><div className="w-4 h-4"><Icons.HandPan /></div> Geser / Zoom</button>
+        <button onClick={resetView} className="shrink-0 flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl transition-all font-bold text-[10px] uppercase tracking-wider bg-[#141414] text-slate-400 hover:bg-[#1f1f1f] hover:text-white"><div className="w-4 h-4"><LocalIcons.Focus /></div> Fokus</button>
       </div>
 
-      {/* TOOLBAR DESKTOP: Melayang Vertikal di Kiri */}
-      <div className="hidden lg:flex absolute top-1/2 -translate-y-1/2 left-4 z-50 flex-col gap-2 p-1.5 bg-[#141414]/95 backdrop-blur-md border border-[#2a2a2a] rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.8)]">
-        <button onClick={() => setActiveTool('draw')} className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all ${activeTool === 'draw' ? 'bg-cyan-500 text-black shadow-[0_0_15px_rgba(6,182,212,0.5)] scale-110' : 'text-slate-400 hover:bg-[#2a2a2a]'}`} title="Kuas"><div className="w-5 h-5"><Icons.Brush /></div></button>
-        <button onClick={() => setActiveTool('erase')} className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all ${activeTool === 'erase' ? 'bg-cyan-500 text-black shadow-[0_0_15px_rgba(6,182,212,0.5)] scale-110' : 'text-slate-400 hover:bg-[#2a2a2a]'}`} title="Penghapus"><div className="w-5 h-5"><Icons.Eraser /></div></button>
-        <button onClick={() => setActiveTool('bucket')} className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all ${activeTool === 'bucket' ? 'bg-cyan-500 text-black shadow-[0_0_15px_rgba(6,182,212,0.5)] scale-110' : 'text-slate-400 hover:bg-[#2a2a2a]'}`} title="Ember Cat"><div className="w-5 h-5"><Icons.Bucket /></div></button>
-        <button onClick={() => setActiveTool('picker')} className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all ${activeTool === 'picker' ? 'bg-cyan-500 text-black shadow-[0_0_15px_rgba(6,182,212,0.5)] scale-110' : 'text-slate-400 hover:bg-[#2a2a2a]'}`} title="Pipet"><div className="w-5 h-5"><Icons.Picker /></div></button>
+      {/* TOOLBAR DESKTOP */}
+      <div className="hidden lg:flex absolute top-1/2 -translate-y-1/2 left-4 z-50 flex-col gap-2 p-1.5 bg-[#141414]/95 backdrop-blur-md border border-[#2a2a2a] rounded-2xl shadow-xl">
+        <button onClick={() => setActiveTool('draw')} className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all ${activeTool === 'draw' ? 'bg-cyan-500 text-black shadow-lg scale-110' : 'text-slate-400 hover:bg-[#2a2a2a]'}`} title="Kuas"><div className="w-5 h-5"><Icons.Brush /></div></button>
+        <button onClick={() => setActiveTool('erase')} className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all ${activeTool === 'erase' ? 'bg-cyan-500 text-black shadow-lg scale-110' : 'text-slate-400 hover:bg-[#2a2a2a]'}`} title="Penghapus"><div className="w-5 h-5"><Icons.Eraser /></div></button>
+        <button onClick={() => setActiveTool('bucket')} className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all ${activeTool === 'bucket' ? 'bg-cyan-500 text-black shadow-lg scale-110' : 'text-slate-400 hover:bg-[#2a2a2a]'}`} title="Ember Cat"><div className="w-5 h-5"><Icons.Bucket /></div></button>
+        <button onClick={() => setActiveTool('picker')} className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all ${activeTool === 'picker' ? 'bg-cyan-500 text-black shadow-lg scale-110' : 'text-slate-400 hover:bg-[#2a2a2a]'}`} title="Pipet"><div className="w-5 h-5"><Icons.Picker /></div></button>
         <div className="w-full h-px bg-[#333] my-1"></div>
-        <button onClick={() => setActiveTool('pan')} className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all ${activeTool === 'pan' ? 'bg-cyan-500 text-black shadow-[0_0_15px_rgba(6,182,212,0.5)] scale-110' : 'text-slate-400 hover:bg-[#2a2a2a]'}`} title="Geser Kanvas"><div className="w-5 h-5"><Icons.HandPan /></div></button>
+        <button onClick={() => setActiveTool('pan')} className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all ${activeTool === 'pan' ? 'bg-amber-500 text-black shadow-lg scale-110' : 'text-slate-400 hover:bg-[#2a2a2a]'}`} title="Geser Kanvas"><div className="w-5 h-5"><Icons.HandPan /></div></button>
         <button onClick={resetView} className="w-10 h-10 flex items-center justify-center rounded-xl text-slate-400 hover:text-cyan-400 hover:bg-[#2a2a2a] transition-all" title="Fokus/Kembali ke Tengah"><div className="w-5 h-5"><LocalIcons.Focus /></div></button>
       </div>
 
-      {/* KANVAS GAMBAR */}
+      {/* KANVAS MENGGAMBAR */}
       <div 
-        className="flex-1 relative w-full flex items-center justify-center overflow-hidden"
-        style={{ touchAction: 'none' }} // MENGUNCI OVERSCROLL 100% PADA KANVAS
-        onPointerDown={(e) => handlePointerEvent(e, true)} 
-        onPointerMove={(e) => handlePointerEvent(e, false)} 
+        className="flex-1 relative w-full flex items-center justify-center overflow-hidden bg-[#050505] touch-none"
+        style={{ touchAction: 'none' }} // Kunci Anti-Overscroll / Pull-to-refresh
+        onPointerDown={handlePointerDown} 
+        onPointerMove={handlePointerMove} 
         onPointerUp={handlePointerUp}
         onPointerCancel={handlePointerUp}
-        onTouchStart={(e) => { if(activeTool === 'pan' || e.touches.length > 1) onTouchStart(e); }}
-        onTouchMove={(e) => { if(activeTool === 'pan' || e.touches.length > 1) onTouchMove(e); }}
+        onTouchStart={(e) => { if(activeTool === 'pan' || e.touches.length > 1) onTouchStartMulti(e); }}
+        onTouchMove={(e) => { if(activeTool === 'pan' || e.touches.length > 1) onTouchMoveMulti(e); }}
       >
-        <div className="absolute top-3 right-3 flex gap-2 z-20">
-          <button onClick={handleUndo} disabled={step <= 0} className="w-10 h-10 flex items-center justify-center rounded-xl border border-[#2a2a2a] bg-[#141414]/90 backdrop-blur text-slate-300 disabled:opacity-30 shadow-lg hover:text-white"><div className="w-4 h-4"><Icons.Undo /></div></button>
-          <button onClick={handleRedo} disabled={step >= history.length - 1} className="w-10 h-10 flex items-center justify-center rounded-xl border border-[#2a2a2a] bg-[#141414]/90 backdrop-blur text-slate-300 disabled:opacity-30 shadow-lg hover:text-white"><div className="w-4 h-4"><Icons.Redo /></div></button>
+        <div className="absolute top-4 right-4 flex gap-2 z-20">
+          <button onClick={handleUndo} disabled={step <= 0} className="w-10 h-10 flex items-center justify-center rounded-xl border border-[#2a2a2a] bg-[#141414]/90 backdrop-blur text-slate-300 disabled:opacity-30 shadow-lg hover:text-white transition-colors"><div className="w-5 h-5"><Icons.Undo /></div></button>
+          <button onClick={handleRedo} disabled={step >= history.length - 1} className="w-10 h-10 flex items-center justify-center rounded-xl border border-[#2a2a2a] bg-[#141414]/90 backdrop-blur text-slate-300 disabled:opacity-30 shadow-lg hover:text-white transition-colors"><div className="w-5 h-5"><Icons.Redo /></div></button>
         </div>
 
         <div style={{ transform: `translate(${pan.x}px, ${pan.y}px) scale(${scale * baseScale}) rotate(${rotation}deg)`, transition: isDrawing ? 'none' : 'transform 0.1s ease-out' }} className="absolute">
-          <div className="absolute -top-7 left-0 w-full flex justify-center pointer-events-none"><span className="bg-red-500 text-white text-[9px] font-black px-4 py-1.5 rounded-t-lg shadow-lg uppercase tracking-widest">SISI ATAS</span></div>
+          <div className="absolute -top-7 left-0 w-full flex justify-center pointer-events-none"><span className="bg-red-500 text-white text-[9px] font-black px-4 py-1.5 rounded-t-lg shadow-lg uppercase tracking-widest">Sisi Atas</span></div>
           <div ref={gridRef} className="grid shadow-[0_0_50px_rgba(0,0,0,0.8)] border-t-[4px] border-t-red-500" 
                style={{ 
                  gridTemplateColumns: `repeat(${gridSize}, 1fr)`, width: gridSize * pixelSizePx, height: gridSize * pixelSizePx,
@@ -220,8 +202,7 @@ export const PluginPixelDrawing = () => {
                }}>
             {mergedPixels.map((bg, i) => (
               <div 
-                key={i} 
-                data-pixel-index={i} 
+                key={i} data-pixel-index={i} 
                 className={`w-full h-full transition-colors duration-75 ${showGrid ? 'border-[0.5px] border-white/10' : 'border-0'} ${activeTool === 'pan' ? 'pointer-events-none' : 'pointer-events-auto cursor-crosshair'}`} 
                 style={{ backgroundColor: bg !== 'transparent' ? bg : undefined }} 
               />
@@ -229,7 +210,6 @@ export const PluginPixelDrawing = () => {
           </div>
         </div>
       </div>
-
     </div>
   );
 
@@ -258,7 +238,6 @@ export const PluginPixelDrawing = () => {
           <span className="text-[12px] font-black text-cyan-400 uppercase tracking-widest flex items-center gap-2"><Icons.Layers /> Layers Panel</span>
           <button onClick={addLayer} className="text-[9px] text-cyan-400 bg-cyan-500/10 border border-cyan-500/30 px-3 py-1.5 rounded-lg uppercase tracking-wider hover:bg-cyan-500/20 transition-all">+ Layer Baru</button>
         </div>
-        {/* FIX BUG LAYER PENYOK: Menambahkan shrink-0 pada tombol icon */}
         <div className="space-y-3 max-h-[220px] overflow-y-auto custom-scroll pr-2">
           {[...layers].reverse().map(l => (
             <div key={l.id} onClick={() => setActiveLayerId(l.id)} className={`flex items-center justify-between p-3 sm:p-3.5 rounded-xl border cursor-pointer transition-all ${activeLayerId === l.id ? 'bg-[#1a1a1a] border-cyan-500 shadow-md' : 'bg-[#0a0a0a] border-[#2a2a2a] hover:border-[#444]'}`}>
