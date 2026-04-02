@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { FigmaSlider, FigmaColorPicker, COLOR_PRESETS, useMultiTouch, FigmaToggle, CodeOutput } from './ui';
+import { FigmaSlider, FigmaColorPicker, COLOR_PRESETS, useMultiTouch, FigmaToggle, ControlHeader, CodeOutput } from './ui';
 
-// 1. IKON SVG (Anti Hilang & Anti Crash)
+// 1. IKON SVG KHUSUS PIXEL DRAW
 const PixIcons = {
   Brush: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-full h-full"><path strokeLinecap="round" strokeLinejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.813-3.814a1.151 1.151 0 00-1.628-1.628l-3.814 3.813a15.995 15.995 0 00-4.648 4.764z" /></svg>,
   Eraser: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-full h-full"><path strokeLinecap="round" strokeLinejoin="round" d="M12 9.75L14.25 12m0 0l2.25 2.25M14.25 12l2.25-2.25M14.25 12L12 14.25m-2.58 4.92l-6.375-6.375a1.125 1.125 0 010-1.59L9.42 4.83c.211-.211.498-.33.796-.33H19.5a2.25 2.25 0 012.25 2.25v10.5a2.25 2.25 0 01-2.25 2.25h-9.284c-.298 0-.585-.119-.796-.33z" /></svg>,
@@ -27,7 +27,7 @@ const PixIcons = {
   Code: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-full h-full"><path strokeLinecap="round" strokeLinejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5" /></svg>,
 };
 
-// Algoritma Ember Cat (Flood Fill)
+// Algoritma Bucket Fill
 const floodFill = (pixels, startIndex, targetColor, replacementColor, gridSize) => {
   if (targetColor === replacementColor) return pixels;
   const newPixels = [...pixels];
@@ -47,7 +47,7 @@ const floodFill = (pixels, startIndex, targetColor, replacementColor, gridSize) 
   return newPixels;
 };
 
-// Mencegah Bubbling agar interaksi UI tidak memicu scroll/refresh/gambar
+// Mengunci event bubbling
 const stopProp = (e) => { 
    e.stopPropagation(); 
    if (e.nativeEvent && e.nativeEvent.stopImmediatePropagation) e.nativeEvent.stopImmediatePropagation(); 
@@ -64,21 +64,18 @@ export const PluginPixelDrawing = () => {
   const [palette, setPalette] = useState(['#ffffff', '#1e1e1e', '#0ea5e9', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#ef4444']);
   const [outputSize, setOutputSize] = useState(1080);
   
-  // NAVIGASI MOBILE: Tools, Colors, Layers, Settings, Code
+  // NAVIGASI MOBILE
   const [mobileTab, setMobileTab] = useState('tools'); 
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const containerRef = useRef(null);
 
   // LAYER & HISTORY
   const createEmptyLayer = (id, name) => ({ id, name, pixels: Array(gridSize * gridSize).fill('transparent'), visible: true, locked: false });
   const [layers, setLayers] = useState([]);
   const [activeLayerId, setActiveLayerId] = useState(1);
-  
-  // FIX CRASH: Menjadikan State History Lebih Aman
   const [history, setHistory] = useState([]);
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(-1);
 
-  // REFS UNTUK MENGHINDARI REACT RE-RENDER HELL & LAG
+  // REFS UNTUK MENGHINDARI REACT RE-RENDER HELL
   const currentLayersRef = useRef([]);
   const isDrawingRef = useRef(false);
   const lastDrawPosRef = useRef(null);
@@ -87,14 +84,16 @@ export const PluginPixelDrawing = () => {
   const { scale, pan, rotation, setScale, setPan, onTouchStart: onTouchStartMulti, onTouchMove: onTouchMoveMulti, resetView } = useMultiTouch();
   const [activeTool, setActiveTool] = useState('draw'); 
   
+  // REFERENSI DOM
+  const containerRef = useRef(null);
   const canvasAreaRef = useRef(null);
   const gridRef = useRef(null);
 
-  // Mencegah Pull-to-refresh
+  // Mencegah Pull-to-refresh (Scroll Browser Lock)
   useEffect(() => {
     const el = canvasAreaRef.current;
     const preventScroll = (e) => { 
-        if (e.touches && e.touches.length > 1) return; 
+        if (e.touches && e.touches.length > 1) return; // Izinkan zoom 2 jari
         e.preventDefault(); 
     };
     if (el) {
@@ -112,21 +111,13 @@ export const PluginPixelDrawing = () => {
   const [baseScale, setBaseScale] = useState(1);
   useEffect(() => { if (typeof window !== 'undefined') setBaseScale(window.innerWidth < 768 ? 0.6 : 1); }, []);
 
-  // Inisialisasi Kanvas Awal
+  // Inisialisasi Kanvas
   useEffect(() => {
     const safeGrid = Math.min(Math.max(gridSize, 8), 32); 
-    const initialLayer = createEmptyLayer(1, "Layer 1");
-    
-    const initialLayersArray = [initialLayer];
-    setLayers(initialLayersArray); 
-    currentLayersRef.current = initialLayersArray;
-    
-    // Simpan ke history state dengan aman
-    setHistory([JSON.parse(JSON.stringify(initialLayersArray))]); 
-    setStep(0); 
-    setActiveLayerId(1);
-    setLocalGridInput(safeGrid.toString()); 
-    resetView();
+    const initialLayers = [createEmptyLayer(1, "Layer 1")];
+    setLayers(initialLayers); currentLayersRef.current = initialLayers;
+    setHistory([JSON.parse(JSON.stringify(initialLayers))]); setStep(0); setActiveLayerId(1);
+    setLocalGridInput(safeGrid.toString()); resetView();
   }, [gridSize]);
 
   useEffect(() => { currentLayersRef.current = layers; }, [layers]);
@@ -146,39 +137,33 @@ export const PluginPixelDrawing = () => {
   const htmlCode = `\n<div class="pixel-art"></div>`;
   const jsxCode = `<div className="pixel-art" />`;
 
-  // FIX BUG UNDO/REDO Murni (Aman dari Exception Undefined)
-  const saveHistory = useCallback(() => {
-    const currentStr = JSON.stringify(currentLayersRef.current);
-    
-    // Proteksi saat history belum siap
-    if (!history || history.length === 0) return;
-    
-    const lastStr = JSON.stringify(history[step]) || "[]";
+  const saveHistory = useCallback((stateToSave) => {
+    if (!stateToSave || stateToSave.length === 0) return;
+    const currentStr = JSON.stringify(stateToSave);
+    const lastStr = JSON.stringify(history[step]);
     
     if (currentStr !== lastStr) {
         const newHistory = history.slice(0, step + 1);
         newHistory.push(JSON.parse(currentStr));
-        if (newHistory.length > 25) newHistory.shift(); 
+        if (newHistory.length > 20) newHistory.shift(); 
         setHistory(newHistory); 
         setStep(newHistory.length - 1);
     }
   }, [history, step]);
 
   const handleUndo = () => { 
-     if (step <= 0 || !history[step - 1]) return;
+     if (step <= 0) return;
      const newStep = step - 1;
      setStep(newStep); 
-     
      const oldState = JSON.parse(JSON.stringify(history[newStep]));
      setLayers(oldState); 
      currentLayersRef.current = oldState;
   };
   
   const handleRedo = () => { 
-     if (step >= history.length - 1 || !history[step + 1]) return;
+     if (step >= history.length - 1) return;
      const newStep = step + 1;
      setStep(newStep); 
-     
      const newState = JSON.parse(JSON.stringify(history[newStep]));
      setLayers(newState); 
      currentLayersRef.current = newState;
@@ -205,6 +190,7 @@ export const PluginPixelDrawing = () => {
           const targetColor = activeTool === 'erase' ? 'transparent' : color;
           if (newPixels[index] !== targetColor) {
              newPixels[index] = targetColor;
+             // MANIPULASI DOM LANGSUNG UNTUK PERFORMA
              if (gridRef.current && gridRef.current.children[index]) {
                  gridRef.current.children[index].style.backgroundColor = targetColor === 'transparent' ? '' : targetColor;
              }
@@ -219,7 +205,7 @@ export const PluginPixelDrawing = () => {
        
        if (activeTool === 'bucket') {
           setLayers(newLayers);
-          saveHistory();
+          saveHistory(newLayers);
        }
     }
   };
@@ -262,7 +248,7 @@ export const PluginPixelDrawing = () => {
 
     const indicesToPaint = [];
 
-    // BRESENHAM ALGORITHM
+    // BRESENHAM ALGORITHM UNTUK GARIS MULUS
     if (isStart || !lastDrawPosRef.current || activeTool === 'bucket') {
         indicesToPaint.push(row * gridSize + col);
     } else {
@@ -301,7 +287,7 @@ export const PluginPixelDrawing = () => {
         isDrawingRef.current = false; 
         lastDrawPosRef.current = null;
         setLayers([...currentLayersRef.current]);
-        saveHistory(); 
+        saveHistory(currentLayersRef.current); 
     }
   };
 
@@ -323,10 +309,10 @@ export const PluginPixelDrawing = () => {
     } catch (err) { setIsFullscreen(!isFullscreen); }
   };
 
-  const addLayer = () => { const newId = Date.now(); const newLayers = [...layers, createEmptyLayer(newId, `Layer ${layers.length + 1}`)]; setLayers(newLayers); setActiveLayerId(newId); setTimeout(saveHistory, 50); };
-  const duplicateLayer = (id) => { const layerToCopy = layers.find(l => l.id === id); if (!layerToCopy) return; const newId = Date.now(); const newLayers = [...layers, { ...layerToCopy, id: newId, name: `${layerToCopy.name} Copy` }]; setLayers(newLayers); setActiveLayerId(newId); setTimeout(saveHistory, 50); };
-  const deleteLayer = (id) => { if (layers.length <= 1) return; const newLayers = layers.filter(l => l.id !== id); setLayers(newLayers); if (activeLayerId === id) setActiveLayerId(newLayers[newLayers.length - 1].id); setTimeout(saveHistory, 50); };
-  const toggleLayerProp = (id, prop) => { const newLayers = layers.map(l => l.id === id ? { ...l, [prop]: !l[prop] } : l); setLayers(newLayers); setTimeout(saveHistory, 50); };
+  const addLayer = () => { const newId = Date.now(); const newLayers = [...layers, createEmptyLayer(newId, `Layer ${layers.length + 1}`)]; setLayers(newLayers); setActiveLayerId(newId); setTimeout(()=>saveHistory(newLayers), 50); };
+  const duplicateLayer = (id) => { const layerToCopy = layers.find(l => l.id === id); if (!layerToCopy) return; const newId = Date.now(); const newLayers = [...layers, { ...layerToCopy, id: newId, name: `${layerToCopy.name} Copy` }]; setLayers(newLayers); setActiveLayerId(newId); setTimeout(()=>saveHistory(newLayers), 50); };
+  const deleteLayer = (id) => { if (layers.length <= 1) return; const newLayers = layers.filter(l => l.id !== id); setLayers(newLayers); if (activeLayerId === id) setActiveLayerId(newLayers[newLayers.length - 1].id); setTimeout(()=>saveHistory(newLayers), 50); };
+  const toggleLayerProp = (id, prop) => { const newLayers = layers.map(l => l.id === id ? { ...l, [prop]: !l[prop] } : l); setLayers(newLayers); setTimeout(()=>saveHistory(newLayers), 50); };
 
   const downloadImage = () => {
     const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
@@ -346,8 +332,8 @@ export const PluginPixelDrawing = () => {
 
   const gridStyle = showGrid ? 'inset 0 0 0 1px #e8e8e8' : 'none';
 
-  // --- KOMPONEN TAB ---
-  const ToolsTab = () => (
+  // --- RENDER COMPONENT TOOLS ---
+  const renderToolsTab = () => (
     <div className="grid grid-cols-3 sm:grid-cols-6 landscape:grid-cols-3 lg:grid-cols-3 gap-3 animate-fade-in-fast h-full items-start">
       <button onClick={() => setActiveTool('draw')} className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl transition-all border ${activeTool === 'draw' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500 shadow-[0_0_15px_rgba(6,182,212,0.2)]' : 'bg-[#141414] text-slate-400 border-transparent hover:bg-[#1f1f1f]'}`}><div className="w-6 h-6 shrink-0"><PixIcons.Brush /></div><span className="text-[10px] font-black tracking-widest uppercase">Kuas</span></button>
       <button onClick={() => setActiveTool('erase')} className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl transition-all border ${activeTool === 'erase' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500 shadow-[0_0_15px_rgba(6,182,212,0.2)]' : 'bg-[#141414] text-slate-400 border-transparent hover:bg-[#1f1f1f]'}`}><div className="w-6 h-6 shrink-0"><PixIcons.Eraser /></div><span className="text-[10px] font-black tracking-widest uppercase">Hapus</span></button>
@@ -358,7 +344,7 @@ export const PluginPixelDrawing = () => {
     </div>
   );
 
-  const ColorsTab = () => (
+  const renderColorsTab = () => (
     <div className="space-y-4 animate-fade-in-fast">
       <FigmaColorPicker label="Warna Kuas Aktif" hexValue={color} onChange={setColor} />
       <div className="flex flex-wrap gap-3 mt-4">
@@ -369,11 +355,11 @@ export const PluginPixelDrawing = () => {
     </div>
   );
 
-  const LayersTab = () => (
+  const renderLayersTab = () => (
     <div className="animate-fade-in-fast flex flex-col h-full pb-8">
       <div className="flex items-center justify-between mb-4 shrink-0">
         <span className="text-[12px] font-black text-cyan-400 uppercase tracking-widest flex items-center gap-2"><div className="w-4 h-4 shrink-0"><PixIcons.Layers /></div> Layers Panel</span>
-        <button onClick={addLayer} className="text-[9px] text-cyan-400 bg-cyan-500/10 border border-cyan-500/30 px-3 py-1.5 rounded-lg uppercase tracking-wider hover:bg-cyan-500/20 transition-all">+ Layer Baru</button>
+        <button onClick={addLayer} className="text-[9px] text-cyan-400 bg-cyan-500/10 border border-cyan-500/30 px-3 py-1.5 rounded-lg uppercase tracking-wider hover:bg-cyan-500/20 transition-all">+ Baru</button>
       </div>
       <div className="space-y-3 flex-1 overflow-y-auto custom-scroll pr-2">
         {[...layers].reverse().map(l => (
@@ -393,7 +379,7 @@ export const PluginPixelDrawing = () => {
     </div>
   );
 
-  const SettingsTab = () => (
+  const renderSettingsTab = () => (
     <div className="space-y-6 animate-fade-in-fast pb-10">
       <div className="flex gap-3">
         <input type="number" value={localGridInput} onChange={(e) => setLocalGridInput(e.target.value)} className="flex-1 bg-[#141414] border border-[#2a2a2a] rounded-xl px-5 py-4 text-white font-mono text-[14px] shadow-inner outline-none focus:border-cyan-500 transition-colors" />
@@ -416,8 +402,7 @@ export const PluginPixelDrawing = () => {
           <div className="absolute top-4 left-4 z-30 lg:hidden" onPointerDown={stopProp} onClick={stopProp}>
              <button onClick={toggleFullscreen} className={`px-4 py-2.5 flex items-center justify-center gap-2 rounded-xl transition-all font-black text-[10px] uppercase tracking-widest shadow-lg active:scale-95 ${isFullscreen ? 'bg-amber-500 text-black border border-amber-400' : 'bg-[#141414]/90 backdrop-blur border border-[#2a2a2a] text-cyan-400'}`}>
                 <div className="w-4 h-4 shrink-0">{isFullscreen ? <PixIcons.Close /> : <PixIcons.Expand />}</div> 
-                <span className="hidden sm:inline md:inline landscape:inline">{isFullscreen ? 'Keluar Layar Penuh' : 'Layar Penuh (Landscape)'}</span>
-                <span className="sm:hidden landscape:hidden">Layar Penuh</span>
+                <span className="hidden sm:inline md:inline landscape:inline">{isFullscreen ? 'Keluar Layar Penuh' : 'Layar Penuh'}</span>
              </button>
           </div>
           
@@ -436,7 +421,7 @@ export const PluginPixelDrawing = () => {
                    else if(isDrawingRef.current) paintByCoords(e.touches[0].clientX, e.touches[0].clientY, false); 
                }}
                onTouchEnd={() => { 
-                   if(isDrawingRef.current) { isDrawingRef.current = false; lastDrawPosRef.current = null; setLayers([...currentLayersRef.current]); saveHistory(); } 
+                   if(isDrawingRef.current) { isDrawingRef.current = false; lastDrawPosRef.current = null; setLayers([...currentLayersRef.current]); saveHistory(currentLayersRef.current); } 
                }}
           >
             <div className="absolute top-4 right-4 flex gap-2 z-30" onPointerDown={stopProp} onTouchStart={stopProp} onClick={stopProp}>
@@ -463,23 +448,17 @@ export const PluginPixelDrawing = () => {
           </div>
        </div>
 
-       {/* 2. BAGIAN ALAT & NAVIGASI (RESPONSIVE KHUSUS MOBILE LANDSCAPE & PORTRAIT) */}
+       {/* 2. BAGIAN ALAT & NAVIGASI MOBILE/DESKTOP */}
        <div className="flex-[45%] landscape:flex-none landscape:w-[320px] lg:flex-none flex flex-col bg-[#050505] z-40 shrink-0 lg:w-[400px] lg:h-full shadow-[0_-10px_30px_rgba(0,0,0,0.5)] landscape:shadow-[-10px_0_30px_rgba(0,0,0,0.5)] lg:shadow-2xl">
           
-          <div className="hidden lg:flex px-6 py-5 border-b border-[#1f1f1f] bg-[#0a0a0a] shrink-0 items-center justify-between">
-             <h2 className="text-[13px] font-black text-white uppercase tracking-widest flex items-center gap-2">
-               <span className="w-2.5 h-2.5 rounded-full bg-cyan-500 inline-block animate-pulse shadow-[0_0_8px_rgba(6,182,212,0.8)]"></span> Pixel Studio Pro
-             </h2>
-          </div>
-
           <div className="flex-1 overflow-y-auto custom-scroll relative p-5 lg:p-7 bg-[#0a0a0a]">
              
-             {/* MODE MOBILE / LANDSCAPE */}
+             {/* MODE MOBILE / LANDSCAPE (Pakai Sistem Tab) */}
              <div className="lg:hidden h-full">
-                {mobileTab === 'tools' && <ToolsTab />}
-                {mobileTab === 'colors' && <ColorsTab />}
-                {mobileTab === 'layers' && <LayersTab />}
-                {mobileTab === 'settings' && <SettingsTab />}
+                {mobileTab === 'tools' && renderToolsTab()}
+                {mobileTab === 'colors' && renderColorsTab()}
+                {mobileTab === 'layers' && renderLayersTab()}
+                {mobileTab === 'settings' && renderSettingsTab()}
                 {mobileTab === 'code' && (
                     <div className="h-full pb-10">
                       <CodeOutput cssCode={cssCode} htmlCode={htmlCode} jsxCode={jsxCode} isMobileTab={true} />
@@ -487,15 +466,15 @@ export const PluginPixelDrawing = () => {
                 )}
              </div>
 
-             {/* MODE DESKTOP NORMAL */}
+             {/* MODE DESKTOP NORMAL (Semua alat disusun menurun) */}
              <div className="hidden lg:block space-y-8">
-                <div><ControlHeader title="Alat Desain" /><ToolsTab /></div>
+                <div><ControlHeader title="Alat Desain" />{renderToolsTab()}</div>
                 <div className="w-full h-px bg-[#1f1f1f]"></div>
-                <div><ControlHeader title="Warna Kuas" /><ColorsTab /></div>
+                <div><ControlHeader title="Warna Kuas" />{renderColorsTab()}</div>
                 <div className="w-full h-px bg-[#1f1f1f]"></div>
-                <div className="h-[250px]"><LayersTab /></div>
+                <div className="h-[250px]">{renderLayersTab()}</div>
                 <div className="w-full h-px bg-[#1f1f1f]"></div>
-                <div><ControlHeader title="Pengaturan Kanvas" /><SettingsTab /></div>
+                <div><ControlHeader title="Pengaturan Kanvas" />{renderSettingsTab()}</div>
              </div>
 
           </div>
@@ -504,7 +483,7 @@ export const PluginPixelDrawing = () => {
                <CodeOutput cssCode={cssCode} htmlCode={htmlCode} jsxCode={jsxCode} />
           </div>
 
-          {/* TAB NAVIGASI KHUSUS MOBILE */}
+          {/* MENU NAVIGASI KHUSUS MOBILE/LANDSCAPE */}
           <div className="lg:hidden h-[70px] landscape:h-full landscape:w-[70px] bg-[#050505] border-t landscape:border-t-0 landscape:border-l border-[#1a1a1a] flex flex-row landscape:flex-col shrink-0 pb-safe">
              <button onClick={() => setMobileTab('tools')} className={`flex-1 flex flex-col items-center justify-center gap-1 transition-all ${mobileTab === 'tools' ? 'text-cyan-400 border-t-2 landscape:border-t-0 landscape:border-l-2 border-cyan-500 bg-[#141414]' : 'text-slate-500 hover:text-slate-300 border-t-2 landscape:border-t-0 landscape:border-l-2 border-transparent'}`}><div className="w-5 h-5 shrink-0"><PixIcons.Brush /></div><span className="text-[9px] font-black uppercase tracking-wider">Alat</span></button>
              <button onClick={() => setMobileTab('colors')} className={`flex-1 flex flex-col items-center justify-center gap-1 transition-all ${mobileTab === 'colors' ? 'text-cyan-400 border-t-2 landscape:border-t-0 landscape:border-l-2 border-cyan-500 bg-[#141414]' : 'text-slate-500 hover:text-slate-300 border-t-2 landscape:border-t-0 landscape:border-l-2 border-transparent'}`}><div className="w-5 h-5 shrink-0"><PixIcons.Picker /></div><span className="text-[9px] font-black uppercase tracking-wider">Warna</span></button>
