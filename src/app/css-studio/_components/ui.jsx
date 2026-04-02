@@ -60,21 +60,19 @@ export const useMultiTouch = () => {
 export const ControlHeader = ({ title, onReset }) => (
   <div className="flex items-center justify-between pb-3 border-b border-[#1f1f1f] mb-5">
      <span className="text-[12px] font-black text-cyan-400 uppercase tracking-widest">{title}</span>
-     {onReset && (<button onClick={onReset} className="text-[9px] text-slate-300 hover:text-white bg-[#1a1a1a] border border-[#333] hover:border-red-500/50 px-3 py-1.5 rounded-md transition-colors uppercase tracking-wider shadow-sm">Reset Default</button>)}
+     {onReset && (<button onClick={onReset} className="text-[9px] text-slate-300 hover:text-white bg-[#1a1a1a] border border-[#333] hover:border-red-500/50 px-3 py-1.5 rounded-lg transition-colors uppercase tracking-wider shadow-sm">Reset Default</button>)}
   </div>
 );
 
-// FIX BUG: NATIVE APP STYLE TOGGLE SWITCH (Menggunakan Translate-X agar 100% mulus)
+// FIX BUG MUTLAK: Toggle menggunakan class default tailwind (translate-x-5) agar 100% jalan!
 export const FigmaToggle = ({ label, checked, onChange }) => (
-  <div className="flex items-center justify-between py-3 border-b border-[#1f1f1f] last:border-0">
+  <div className="flex items-center justify-between py-3.5 border-b border-[#1f1f1f] last:border-0">
      <span className="text-[11px] sm:text-[12px] font-bold text-slate-300">{label}</span>
      <button 
         onClick={() => onChange(!checked)} 
-        className={`w-12 h-6 rounded-full transition-colors duration-300 relative shadow-inner cursor-pointer flex items-center ${checked ? 'bg-cyan-500' : 'bg-[#333]'}`}
+        className={`w-12 h-6 rounded-full transition-colors duration-300 relative shadow-inner cursor-pointer ${checked ? 'bg-cyan-500' : 'bg-[#333]'}`}
      >
-        <div 
-           className={`absolute w-5 h-5 bg-white rounded-full shadow-md transform transition-transform duration-300 ease-in-out ${checked ? 'translate-x-[26px]' : 'translate-x-[2px]'}`}
-        ></div>
+        <div className={`absolute top-0.5 left-1 w-5 h-5 bg-white rounded-full shadow-md transform transition-transform duration-300 ease-in-out ${checked ? 'translate-x-5' : 'translate-x-0'}`}></div>
      </button>
   </div>
 );
@@ -244,13 +242,12 @@ export const WorkspaceLayout = ({ name, controls, preview, cssOutput, htmlOutput
   };
   return (
     <div className="flex flex-col lg:flex-row w-full h-full bg-[#050505] lg:bg-transparent overflow-hidden">
-       {/* KANVAS MOBILE (Atas) */}
+       
        <div className="h-[35vh] sm:h-[45vh] lg:hidden relative flex items-center justify-center overflow-hidden border-b border-[#1f1f1f] z-30 shadow-[0_10px_30px_rgba(0,0,0,0.5)] shrink-0" style={{backgroundColor: bgHex || '#050505'}}>
           {renderBackground()}
-          <div className="relative z-10 w-full h-full flex items-center justify-center p-4 sm:p-6 overflow-hidden perspective-1000">{preview}</div>
+          <div className="relative z-10 w-full h-full flex items-center justify-center p-6 overflow-hidden perspective-1000">{preview}</div>
        </div>
 
-       {/* KANVAS DESKTOP (Kiri) */}
        <div className="hidden lg:flex flex-1 flex-col min-w-0 lg:border-r border-[#1f1f1f]">
          <div className="flex-1 relative flex items-center justify-center overflow-hidden bg-[#050505] border-b border-[#1f1f1f] z-10 transition-colors duration-500" style={{backgroundColor: bgHex || '#050505'}}>
             {renderBackground()}
@@ -259,7 +256,6 @@ export const WorkspaceLayout = ({ name, controls, preview, cssOutput, htmlOutput
          <div className="h-[320px] shrink-0 p-5 bg-[#0a0a0a]"><CodeOutput cssCode={cssOutput} htmlCode={htmlOutput} jsxCode={jsxOutput} /></div>
        </div>
 
-       {/* KONTROL PANEL (Bawah di Mobile / Kanan di Desktop) */}
        <div className="flex-1 lg:w-[450px] lg:flex-none bg-[#0a0a0a] flex flex-col z-20 overflow-hidden shadow-2xl relative">
          <div className="px-6 py-5 border-b border-[#1f1f1f] bg-[#0a0a0a] shrink-0 z-10 relative shadow-sm">
             <h2 className="text-[15px] font-black text-white uppercase tracking-widest hidden lg:flex items-center gap-3">
