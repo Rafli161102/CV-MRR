@@ -86,10 +86,10 @@ export const PluginTip = ({ text, title = "TUTORIAL PENGGUNAAN" }) => {
     <div className="bg-gradient-to-r from-[#0a1929] to-[#0f172a] border border-cyan-500/30 rounded-2xl overflow-hidden mb-6 shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
        <div className="flex items-center justify-between p-3.5 cursor-pointer hover:bg-white/5 transition-colors" onClick={() => setIsOpen(!isOpen)}>
           <div className="flex items-center gap-3">
-             <div className="w-7 h-7 rounded-full bg-cyan-500/20 flex items-center justify-center text-cyan-400 shrink-0"><Icons.Info /></div>
+             <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-cyan-500/20 flex items-center justify-center text-cyan-400 shrink-0"><div className="w-3 h-3 sm:w-4 sm:h-4"><Icons.Info /></div></div>
              <span className="text-[10px] sm:text-[11px] font-black text-cyan-400 uppercase tracking-widest">{title}</span>
           </div>
-          <div className={`text-cyan-500 transition-transform duration-300 shrink-0 ${isOpen ? 'rotate-180' : ''}`}><Icons.ChevronDown /></div>
+          <div className={`w-4 h-4 text-cyan-500 transition-transform duration-300 shrink-0 ${isOpen ? 'rotate-180' : ''}`}><Icons.ChevronDown /></div>
        </div>
        <div className={`transition-all duration-300 ease-in-out px-4 overflow-hidden ${isOpen ? 'max-h-60 pb-4 opacity-100' : 'max-h-0 opacity-0'}`}>
          <div className="w-full h-px bg-cyan-500/20 mb-3"></div>
@@ -123,7 +123,7 @@ export const FigmaSlider = ({ label, min, max, step = 1, value, onChange, unit =
   );
 };
 
-// FIX BUG MUTLAK: Mengubah Absolute Picker menjadi Accordion (Mendorong Konten)
+// FIX BUG IKON RAKSASA: Membatasi ukuran <Icons.ChevronDown /> menjadi w-4 h-4 shrink-0
 export const FigmaColorPicker = ({ label, hexValue, onChange }) => {
   const [isOpen, setIsOpen] = useState(false);
   const safeHexVal = hexValue || '#ffffff';
@@ -135,7 +135,7 @@ export const FigmaColorPicker = ({ label, hexValue, onChange }) => {
     setHsl(newHsl); onChange(hslToHex(newHsl.h, newHsl.s, newHsl.l));
   };
   return (
-    <div className="mb-5">
+    <div className="mb-5 relative z-40">
       <div className="flex justify-between items-center mb-2">
          <label className="text-[11px] sm:text-[12px] font-bold text-slate-300 truncate">{label}</label>
       </div>
@@ -148,10 +148,9 @@ export const FigmaColorPicker = ({ label, hexValue, onChange }) => {
                <span className="text-[10px] font-mono text-cyan-500 uppercase mt-0.5">{safeHexVal}</span>
             </div>
           </div>
-          <div className={`text-slate-400 shrink-0 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}><Icons.ChevronDown /></div>
+          <div className={`w-4 h-4 text-slate-400 shrink-0 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}><Icons.ChevronDown /></div>
         </div>
         
-        {/* Accordion Body: Tidak pakai absolute, jadi aman di-scroll! */}
         <div className={`transition-all duration-300 ease-in-out bg-[#141414] ${isOpen ? 'max-h-[500px] border-t border-[#2a2a2a] p-4 sm:p-5 opacity-100' : 'max-h-0 opacity-0 overflow-hidden'}`}>
            <div className={`${isOpen ? 'block' : 'hidden'}`}>
               <div className="space-y-4">
@@ -191,18 +190,18 @@ export const FigmaTextInput = ({ label, value, onChange, placeholder = "Ketik se
   </div>
 );
 
-// FIX BUG MUTLAK: Mengubah Absolute Dropdown menjadi Accordion (Mendorong Konten)
+// FIX BUG IKON RAKSASA: Membatasi ukuran <Icons.ChevronDown /> menjadi w-4 h-4 shrink-0
 export const FigmaCustomDropdown = ({ label, groups = {}, value, onChange }) => {
   const [isOpen, setIsOpen] = useState(false);
   let currentName = value || 'Select...';
   for (const group in groups) { const found = groups[group].find(opt => opt.val === value); if (found) { currentName = found.name; break; } }
   return (
-    <div className="mb-5">
+    <div className="mb-5 relative z-40">
       <label className="text-[11px] sm:text-[12px] font-bold text-slate-300 block mb-2 truncate">{label}</label>
       <div className="bg-[#0a0a0a] border border-[#2a2a2a] rounded-2xl shadow-md transition-all duration-300 overflow-hidden">
         <div onClick={() => setIsOpen(!isOpen)} className="w-full px-5 py-4 flex justify-between items-center cursor-pointer hover:bg-[#141414] transition-colors">
           <span className="text-[12px] text-white font-mono font-bold truncate pr-4">{currentName}</span>
-          <div className={`text-slate-400 shrink-0 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}><Icons.ChevronDown /></div>
+          <div className={`w-4 h-4 text-slate-400 shrink-0 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}><Icons.ChevronDown /></div>
         </div>
         <div className={`transition-all duration-300 ease-in-out bg-[#141414] ${isOpen ? 'max-h-[300px] overflow-y-auto custom-scroll border-t border-[#2a2a2a] opacity-100' : 'max-h-0 opacity-0 overflow-hidden'}`}>
           {Object.entries(groups).map(([groupName, options]) => (
@@ -233,7 +232,7 @@ export const CodeOutput = ({ cssCode, htmlCode, jsxCode, isMobileTab }) => {
              ))}
           </div>
           <button onClick={handleCopy} className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500 hover:text-black transition-all text-[10px] font-black uppercase shrink-0 shadow-sm">
-            {copied ? <><Icons.Check /> Copied</> : <><Icons.Copy /> Copy</>}
+            <div className="w-3 h-3">{copied ? <Icons.Check /> : <Icons.Copy />}</div> {copied ? 'Copied' : 'Copy'}
           </button>
        </div>
        <div className={`p-6 overflow-y-auto flex-grow bg-[#050505] custom-scroll ${isMobileTab ? 'pb-32' : ''}`}>
@@ -280,7 +279,6 @@ export const WorkspaceLayout = ({ name, controls, preview, cssOutput, htmlOutput
             </div>
          </div>
          <div className="flex-1 overflow-y-auto custom-scroll relative bg-[#0a0a0a]">
-            {/* Ditambahkan pb-32 agar bisa di scroll ke paling bawah di HP */}
             <div className={`p-6 lg:p-8 pb-32 lg:pb-12 ${mobileTab === 'design' ? 'block animate-slide-up' : 'hidden'}`}>{controls}</div>
             <div className={`h-full lg:hidden ${mobileTab === 'code' ? 'block animate-slide-up' : 'hidden'}`}><CodeOutput cssCode={cssOutput} htmlCode={htmlOutput} jsxCode={jsxOutput} isMobileTab={true} /></div>
          </div>
