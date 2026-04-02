@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Icons } from './icons';
-import { PluginTip, FigmaSlider, FigmaColorPicker, FigmaSelect, FigmaTextInput, FigmaCustomDropdown, WorkspaceLayout, ControlHeader } from './ui';
+import { PluginTip, FigmaSlider, FigmaColorPicker, FigmaSelect, FigmaTextInput, FigmaCustomDropdown, WorkspaceLayout, ControlHeader, FigmaToggle } from './ui';
 
 // =========================================================================
 // 1. BOX BACKGROUND GRADIENT
@@ -18,17 +18,17 @@ export const PluginBackgroundGradient = () => {
   const html = `<div class="box-gradient"\n     style="background: linear-gradient(${angle}deg, ${color1}, ${color2}); border-radius: 16px; width: 100%; max-width: 320px; aspect-ratio: 2/1;">\n</div>`;
   const jsx = `<div className="w-full max-w-xs aspect-[2/1] rounded-2xl shadow-xl" style={{ background: 'linear-gradient(${angle}deg, ${color1}, ${color2})' }}></div>`;
   
-  const preview = <div style={{ background: `linear-gradient(${angle}deg, ${color1}, ${color2})`, borderRadius: '16px', boxShadow: '0 20px 40px rgba(0,0,0,0.3)' }} className="w-full max-w-[320px] aspect-[2/1] transition-all"></div>;
+  const preview = <div style={{ background: `linear-gradient(${angle}deg, ${color1}, ${color2})`, borderRadius: '16px', boxShadow: '0 20px 40px rgba(0,0,0,0.3)' }} className="w-full max-w-[320px] aspect-[2/1] transition-all duration-500"></div>;
   
   const controls = (
     <div className="space-y-1">
-      <PluginTip text="PANDUAN: Gunakan kombinasi warna yang memiliki kontras alami. Atur sudut (angle) untuk mengubah arah transisi warna agar lebih dinamis." />
+      <PluginTip title="TIPS DESAIN: GRADIENT" text="Gunakan kombinasi warna Analogous (warna yang bersebelahan di roda warna seperti Biru & Ungu) untuk hasil yang elegan dan modern. Hindari warna komplementer yang terlalu kontras karena dapat menyakiti mata. Atur sudut (angle) di 135°-145° untuk transisi cahaya yang natural dari sudut kiri atas ke kanan bawah." />
       <ControlHeader title="Gradient Setup" onReset={handleReset} />
       <div className="flex flex-col sm:flex-row gap-0 sm:gap-4">
-        <div className="flex-1"><FigmaColorPicker label="Start Color" hexValue={color1} onChange={setColor1} /></div>
-        <div className="flex-1"><FigmaColorPicker label="End Color" hexValue={color2} onChange={setColor2} /></div>
+        <div className="flex-1"><FigmaColorPicker label="Warna Awal (Start)" hexValue={color1} onChange={setColor1} /></div>
+        <div className="flex-1"><FigmaColorPicker label="Warna Akhir (End)" hexValue={color2} onChange={setColor2} /></div>
       </div>
-      <FigmaSlider label="Angle" min={0} max={360} value={angle} onChange={setAngle} unit="°" />
+      <FigmaSlider label="Rotasi Sudut" min={0} max={360} value={angle} onChange={setAngle} unit="°" />
     </div>
   );
   
@@ -50,18 +50,18 @@ export const PluginTextGradient = () => {
   const html = `<h1 style="background-image: linear-gradient(${angle}deg, ${color1}, ${color2}); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">${text}</h1>`;
   const jsx = `<h1 className="text-5xl font-black bg-clip-text text-transparent" style={{ backgroundImage: 'linear-gradient(${angle}deg, ${color1}, ${color2})' }}>${text}</h1>`;
   
-  const preview = <div className="w-full h-full flex items-center justify-center text-center"><span style={{ backgroundImage: `linear-gradient(${angle}deg, ${color1}, ${color2})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontSize: 'clamp(2rem, 8vw, 5rem)', fontWeight: '900', textTransform: 'uppercase' }}>{text || 'GRADIENT'}</span></div>;
+  const preview = <div className="w-full h-full flex items-center justify-center text-center p-4"><span style={{ backgroundImage: `linear-gradient(${angle}deg, ${color1}, ${color2})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontSize: 'clamp(2rem, 10vw, 5rem)', fontWeight: '900', textTransform: 'uppercase', lineHeight: '1.2' }}>{text || 'GRADIENT'}</span></div>;
   
   const controls = (
     <div className="space-y-1">
-      <PluginTip text="PANDUAN: Pilih jenis font yang tebal (Bold/Black) agar efek gradasi warna terlihat menyelimuti teks secara utuh." />
+      <PluginTip title="PANDUAN: TEXT GRADIENT" text="Efek teks gradasi sangat bergantung pada ketebalan Font. Semakin tebal Font yang digunakan (Bold/Black), efek gradasi akan semakin terlihat jelas dan memukau. Sangat direkomendasikan untuk digunakan pada Judul Utama (Hero Title) di website Anda, bukan untuk teks paragraf panjang." />
       <ControlHeader title="Text Setup" onReset={handleReset} />
-      <FigmaTextInput label="Custom Text" value={text} onChange={setText} placeholder="Misal: MRR STUDIO" />
+      <FigmaTextInput label="Custom Text (Ketik disini)" value={text} onChange={setText} placeholder="Misal: STUDIO" />
       <div className="flex flex-col sm:flex-row gap-0 sm:gap-4">
         <div className="flex-1"><FigmaColorPicker label="Start Color" hexValue={color1} onChange={setColor1} /></div>
         <div className="flex-1"><FigmaColorPicker label="End Color" hexValue={color2} onChange={setColor2} /></div>
       </div>
-      <FigmaSlider label="Angle" min={0} max={360} value={angle} onChange={setAngle} unit="°" />
+      <FigmaSlider label="Rotasi Gradasi" min={0} max={360} value={angle} onChange={setAngle} unit="°" />
     </div>
   );
   
@@ -69,7 +69,7 @@ export const PluginTextGradient = () => {
 };
 
 // =========================================================================
-// 3. BOX LAYOUT (Background & Text Color)
+// 3. BOX LAYOUT
 // =========================================================================
 export const PluginLayout = () => {
   const [padding, setPadding] = useState(32); 
@@ -83,18 +83,18 @@ export const PluginLayout = () => {
   const html = `<div style="padding: ${padding}px; border-radius: ${radius}px; background-color: ${bgColor}; color: ${textColor};">\n  Box Content\n</div>`;
   const jsx = `<div style={{ padding: '${padding}px', borderRadius: '${radius}px', backgroundColor: '${bgColor}', color: '${textColor}' }}>Box Content</div>`;
   
-  const preview = <div style={{ padding: `${padding}px`, borderRadius: `${radius}px`, backgroundColor: bgColor, color: textColor, textAlign: 'center', border: '1px solid #333', transition: 'all 0.3s' }}>Box Container</div>;
+  const preview = <div style={{ padding: `${padding}px`, borderRadius: `${radius}px`, backgroundColor: bgColor, color: textColor, textAlign: 'center', border: '1px solid #333', transition: 'all 0.4s ease-out' }} className="font-bold tracking-wide shadow-lg">Elemen Container</div>;
   
   const controls = (
     <div className="space-y-1">
-      <PluginTip text="PANDUAN: Gunakan Padding untuk mengatur ruang bernapas di dalam elemen. Kamu sekarang bisa menyesuaikan warna background dan teks!" />
+      <PluginTip title="TIPS DESAIN: KOTAK & RUANG" text="Whitespace (ruang kosong) adalah elemen desain yang paling penting. Gunakan Padding yang besar untuk memberikan ruang bernapas pada konten di dalamnya, sehingga tidak terlihat sesak. Sesuaikan Border Radius; desain modern biasanya menggunakan radius antara 16px hingga 24px untuk kesan bersahabat dan organik." />
       <ControlHeader title="Configuration" onReset={handleReset} />
-      <div className="flex flex-col sm:flex-row gap-0 sm:gap-4">
-        <div className="flex-1"><FigmaColorPicker label="Background Color" hexValue={bgColor} onChange={setBgColor} /></div>
-        <div className="flex-1"><FigmaColorPicker label="Text Color" hexValue={textColor} onChange={setTextColor} /></div>
+      <div className="flex flex-col gap-0 sm:gap-4">
+        <FigmaColorPicker label="Warna Latar (Background)" hexValue={bgColor} onChange={setBgColor} />
+        <FigmaColorPicker label="Warna Teks (Color)" hexValue={textColor} onChange={setTextColor} />
       </div>
-      <FigmaSlider label="Padding" min={0} max={100} value={padding} onChange={setPadding} unit="px" />
-      <FigmaSlider label="Border Radius" min={0} max={100} value={radius} onChange={setRadius} unit="px" />
+      <FigmaSlider label="Jarak Dalam (Padding)" min={0} max={100} value={padding} onChange={setPadding} unit="px" />
+      <FigmaSlider label="Lengkungan (Border Radius)" min={0} max={100} value={radius} onChange={setRadius} unit="px" />
     </div>
   );
   
@@ -116,16 +116,18 @@ export const PluginBorder = () => {
   const html = `<div style="border: ${width}px ${style} ${color}; border-radius: ${radius}px; width: 180px; height: 120px;"></div>`;
   const jsx = `<div style={{ border: '${width}px ${style} ${color}', borderRadius: '${radius}px' }} className="w-48 h-32 bg-transparent"></div>`;
   
-  const preview = <div style={{ width: 180, height: 120, border: `${width}px ${style} ${color}`, borderRadius: `${radius}px`, backgroundColor: 'rgba(255,255,255,0.02)', transition: 'all 0.2s' }}></div>;
+  const preview = <div style={{ width: 180, height: 120, border: `${width}px ${style} ${color}`, borderRadius: `${radius}px`, backgroundColor: 'rgba(255,255,255,0.02)', transition: 'all 0.3s ease' }} className="flex items-center justify-center text-white/30 text-xs font-mono">Pratinjau Border</div>;
   
   const controls = (
     <div className="space-y-1">
-      <PluginTip text="PANDUAN: Pilih ketebalan (width) yang selaras dengan radius lengkungan. Gaya 'dashed' (putus-putus) sangat bagus untuk desain kupon." />
+      <PluginTip title="PANDUAN: GAYA GARIS" text="Sesuaikan ketebalan Border dengan warna dan gaya. Border 'Solid' cocok untuk tombol dan card utama. Gunakan Border 'Dashed' (putus-putus tebal) untuk area drop-zone upload file atau desain bergaya kupon/tiket promo. Pastikan Border Radius selaras dengan desain keseluruhan aplikasi Anda." />
       <ControlHeader title="Border Setup" onReset={handleReset} />
-      <FigmaColorPicker label="Border Color" hexValue={color} onChange={setColor} />
-      <FigmaSelect label="Border Style" options={['solid', 'dashed', 'dotted', 'double']} value={style} onChange={setStyle} />
-      <FigmaSlider label="Border Width" min={1} max={30} value={width} onChange={setWidth} unit="px" />
-      <FigmaSlider label="Border Radius" min={0} max={100} value={radius} onChange={setRadius} unit="px" />
+      <FigmaColorPicker label="Warna Garis (Border Color)" hexValue={color} onChange={setColor} />
+      <FigmaSelect label="Gaya Garis (Border Style)" options={['solid', 'dashed', 'dotted', 'double']} value={style} onChange={setStyle} />
+      <div className="pt-2 border-t border-[#1f1f1f]">
+        <FigmaSlider label="Ketebalan (Width)" min={1} max={30} value={width} onChange={setWidth} unit="px" />
+        <FigmaSlider label="Lengkungan (Radius)" min={0} max={100} value={radius} onChange={setRadius} unit="px" />
+      </div>
     </div>
   );
   
@@ -133,7 +135,7 @@ export const PluginBorder = () => {
 };
 
 // =========================================================================
-// 5. MULTI TYPOGRAPHY (DRAG & DROP FIX)
+// 5. MULTI TYPOGRAPHY (INTERACTIVE DRAG & DROP FIX Z-INDEX)
 // =========================================================================
 const FONTS_DATA = { 
   "Sans Serif": [{ name: "Inter", val: "Inter" }, { name: "Roboto", val: "Roboto" }, { name: "Montserrat", val: "Montserrat" }, { name: "Poppins", val: "Poppins" }], 
@@ -195,8 +197,8 @@ export const PluginTypography = () => {
   );
 
   const preview = (
-    <div className="relative w-full h-[300px] flex items-center justify-center overflow-hidden border border-white/5 bg-[#0a0a0a] rounded-xl touch-none">
-      <div className="absolute top-2 left-2 px-2 py-1 bg-cyan-500/10 text-cyan-400 text-[8px] font-bold rounded uppercase tracking-widest pointer-events-none z-10">Interactive Canvas</div>
+    <div className="relative w-full h-[300px] sm:h-[400px] flex items-center justify-center overflow-hidden border border-white/5 bg-[#0a0a0a] rounded-xl touch-none">
+      <div className="absolute top-2 left-2 px-3 py-1.5 bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-[9px] font-black rounded-lg uppercase tracking-widest pointer-events-none z-10 shadow-sm">Interactive Canvas Mode</div>
       {renderInteractiveText(h1, 'h1')}{renderInteractiveText(h2, 'h2')}{renderInteractiveText(p, 'p', true)}
     </div>
   );
@@ -204,18 +206,18 @@ export const PluginTypography = () => {
   const renderTextControls = (state, setState, isPara = false) => {
     const update = (key, val) => setState(prev => ({ ...prev, [key]: val }));
     return (
-      <div className="animate-fade-in space-y-2 mt-2">
-        <FigmaTextInput label="Edit Text" value={state.text} onChange={(v) => update('text', v)} placeholder="Ketik disini..." isTextArea={isPara} />
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-0 sm:gap-4">
-           <FigmaCustomDropdown label="Font Family" groups={FONTS_DATA} value={state.font} onChange={(v) => update('font', v)} />
-           <FigmaColorPicker label="Text Color" hexValue={state.color} onChange={(v) => update('color', v)} />
+      <div className="animate-fade-in space-y-4">
+        <FigmaTextInput label="Isi Konten Teks" value={state.text} onChange={(v) => update('text', v)} placeholder="Ketik disini..." isTextArea={isPara} />
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+           <FigmaCustomDropdown label="Pilih Jenis Font" groups={FONTS_DATA} value={state.font} onChange={(v) => update('font', v)} />
+           <FigmaColorPicker label="Warna Teks" hexValue={state.color} onChange={(v) => update('color', v)} />
         </div>
-        <FigmaSlider label="Font Size" min={10} max={100} value={state.size} onChange={(v) => update('size', v)} unit="px" />
-        <FigmaSlider label="Letter Spacing" min={-5} max={20} step={0.5} value={state.space} onChange={(v) => update('space', v)} unit="px" />
-        <FigmaSlider label="Rotate" min={-180} max={180} value={state.rot} onChange={(v) => update('rot', v)} unit="°" />
-        <div className="grid grid-cols-2 gap-4 pt-4 border-t border-[#1f1f1f]">
-          <FigmaSelect label="Alignment" options={['left', 'center', 'right', 'justify']} value={state.align} onChange={(v) => update('align', v)} />
-          <FigmaSelect label="Transform" options={['none', 'uppercase', 'lowercase', 'capitalize']} value={state.trans} onChange={(v) => update('trans', v)} />
+        <FigmaSlider label="Ukuran Font (Size)" min={10} max={100} value={state.size} onChange={(v) => update('size', v)} unit="px" />
+        <FigmaSlider label="Jarak Huruf (Letter Spacing)" min={-5} max={20} step={0.5} value={state.space} onChange={(v) => update('space', v)} unit="px" />
+        <FigmaSlider label="Rotasi (Rotate)" min={-180} max={180} value={state.rot} onChange={(v) => update('rot', v)} unit="°" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-[#1f1f1f]">
+          <FigmaSelect label="Perataan (Alignment)" options={['left', 'center', 'right', 'justify']} value={state.align} onChange={(v) => update('align', v)} />
+          <FigmaSelect label="Huruf Kapital (Transform)" options={['none', 'uppercase', 'lowercase', 'capitalize']} value={state.trans} onChange={(v) => update('trans', v)} />
         </div>
       </div>
     );
@@ -223,10 +225,10 @@ export const PluginTypography = () => {
 
   const controls = (
     <div className="space-y-1">
-      <PluginTip text="PANDUAN: Sentuh lalu geser (Drag & Drop) teks di layar preview atas untuk merubah tata letaknya secara bebas!" />
-      <div className="flex bg-[#0a0a0a] p-1.5 rounded-xl border border-[#2a2a2a] w-full mb-6">
+      <PluginTip title="TUTORIAL: INTERACTIVE TYPO" text="1. Sentuh dan geser (Drag & Drop) teks apa saja di kanvas hitam di atas untuk mengatur tata letaknya secara presisi. Koordinat geseran akan otomatis ditulis ke dalam kode CSS! 2. Gunakan Hierarki: Heading harus besar & tebal, Subheading sedang, dan Paragraf kecil & tipis. Tambahkan jarak huruf (Letter Spacing) jika menggunakan efek Uppercase agar teks terlihat mewah." />
+      <div className="flex bg-[#050505] p-1.5 rounded-2xl border border-[#1f1f1f] w-full mb-6 shadow-inner">
         {['Heading', 'Subheading', 'Paragraph'].map(t => (
-          <button key={t} onClick={() => setTab(t)} className={`flex-1 py-3 rounded-lg text-[10px] font-bold uppercase transition-all ${tab === t ? 'bg-[#1f1f1f] text-white shadow-sm border border-[#333]' : 'text-slate-500 hover:text-slate-300'}`}>{t}</button>
+          <button key={t} onClick={() => setTab(t)} className={`flex-1 py-3 rounded-xl text-[10px] sm:text-[11px] font-black uppercase tracking-wider transition-all ${tab === t ? 'bg-[#1a1a1a] text-cyan-400 shadow-md border border-[#333]' : 'text-slate-500 hover:text-slate-300'}`}>{t}</button>
         ))}
       </div>
       <ControlHeader title={`${tab} Configuration`} onReset={handleReset} />
