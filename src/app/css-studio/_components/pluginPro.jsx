@@ -31,7 +31,7 @@ export const PluginGlassmorphism = () => {
 };
 
 // =========================================================================
-// 7. NEUMORPHISM (IMPROVE: Menggunakan Native Switch Toggle)
+// 7. NEUMORPHISM
 // =========================================================================
 export const PluginNeumorphism = () => {
   const [bg, setBg] = useState('#e0e5ec'); const [dist, setDist] = useState(10); const [blur, setBlur] = useState(20); const [invert, setInvert] = useState(false);
