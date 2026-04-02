@@ -45,6 +45,9 @@ export const PluginPixelDrawing = () => {
   const [activeLayerId, setActiveLayerId] = useState(1);
   const [history, setHistory] = useState([]);
   const [step, setStep] = useState(-1);
+  
+  // FIX: Ref untuk melacak state terkini menghindari stale-closure
+  const latestLayersRef = useRef(layers);
 
   const [baseScale, setBaseScale] = useState(1);
   useEffect(() => { 
@@ -58,8 +61,13 @@ export const PluginPixelDrawing = () => {
   useEffect(() => {
     const safeGrid = Math.min(Math.max(gridSize, 8), 32); 
     const newLayers = [createEmptyLayer(1, "Layer 1")];
-    setLayers(newLayers); setHistory([newLayers]); setStep(0); setActiveLayerId(1);
-    setLocalGridInput(safeGrid.toString()); resetView();
+    setLayers(newLayers); 
+    latestLayersRef.current = newLayers;
+    setHistory([newLayers]); 
+    setStep(0); 
+    setActiveLayerId(1);
+    setLocalGridInput(safeGrid.toString()); 
+    resetView();
   }, [gridSize]);
 
   const mergedPixels = Array(gridSize * gridSize).fill('transparent');
@@ -75,35 +83,62 @@ export const PluginPixelDrawing = () => {
     setHistory(newHistory); setStep(newHistory.length - 1);
   };
 
-  const handleUndo = () => { const newStep = Math.max(0, step - 1); setStep(newStep); setLayers(JSON.parse(JSON.stringify(history[newStep]))); };
-  const handleRedo = () => { const newStep = Math.min(history.length - 1, step + 1); setStep(newStep); setLayers(JSON.parse(JSON.stringify(history[newStep]))); };
-
-  const paintPixel = (index) => {
-    const newLayers = [...layers];
-    const activeIdx = newLayers.findIndex(l => l.id === activeLayerId);
-    if (activeIdx === -1 || newLayers[activeIdx].locked || !newLayers[activeIdx].visible) return;
-
-    if (activeTool === 'bucket') {
-      newLayers[activeIdx].pixels = floodFill(newLayers[activeIdx].pixels, index, newLayers[activeIdx].pixels[index], color, gridSize);
-      setLayers(newLayers); saveHistory(newLayers);
-    } else {
-      const targetColor = activeTool === 'erase' ? 'transparent' : color;
-      if (newLayers[activeIdx].pixels[index] === targetColor) return;
-      newLayers[activeIdx].pixels[index] = targetColor;
-      setLayers(newLayers);
-    }
+  const handleUndo = () => { 
+    const newStep = Math.max(0, step - 1); 
+    setStep(newStep); 
+    const newLayers = JSON.parse(JSON.stringify(history[newStep]));
+    setLayers(newLayers); 
+    latestLayersRef.current = newLayers;
+  };
+  
+  const handleRedo = () => { 
+    const newStep = Math.min(history.length - 1, step + 1); 
+    setStep(newStep); 
+    const newLayers = JSON.parse(JSON.stringify(history[newStep]));
+    setLayers(newLayers); 
+    latestLayersRef.current = newLayers;
   };
 
-  // LOGIKA PENDETEKSI JARI NATIVE (SANGAT PRESISI)
+  const paintPixel = (index) => {
+    // FIX: Gunakan (prevLayers) agar state selalu berurutan meski digeser dengan cepat
+    setLayers(prevLayers => {
+      const newLayers = JSON.parse(JSON.stringify(prevLayers));
+      const activeIdx = newLayers.findIndex(l => l.id === activeLayerId);
+      
+      if (activeIdx === -1 || newLayers[activeIdx].locked || !newLayers[activeIdx].visible) {
+        return prevLayers;
+      }
+  
+      if (activeTool === 'bucket') {
+        const targetCol = newLayers[activeIdx].pixels[index];
+        if (targetCol === color) return prevLayers;
+        
+        newLayers[activeIdx].pixels = floodFill(newLayers[activeIdx].pixels, index, targetCol, color, gridSize);
+      } else {
+        const targetColor = activeTool === 'erase' ? 'transparent' : color;
+        
+        // Mencegah re-render berlapis jika pixel yang di-hover warnanya sudah sama
+        if (newLayers[activeIdx].pixels[index] === targetColor) return prevLayers;
+        newLayers[activeIdx].pixels[index] = targetColor;
+      }
+      
+      // FIX: Sinkronisasi data ke Ref agar History up-to-date saat jari diangkat
+      latestLayersRef.current = newLayers; 
+      return newLayers;
+    });
+  };
+
   const paintByEvent = (clientX, clientY) => {
     const target = document.elementFromPoint(clientX, clientY);
     if (target && target.hasAttribute('data-pixel-index')) {
       const index = Number(target.getAttribute('data-pixel-index'));
       
-      // Jika mode pipet, ambil warna lalu ubah ke kuas
       if (activeTool === 'picker') {
         const picked = mergedPixels[index] !== 'transparent' ? mergedPixels[index] : (isTransparent ? '#ffffff' : canvasBgColor);
-        setColor(picked); setActiveTool('draw'); return;
+        setColor(picked); 
+        setActiveTool('draw'); 
+        setIsDrawing(false); // FIX: Mencegah bug auto-coret setelah ambil warna
+        return;
       }
       
       paintPixel(index);
@@ -111,25 +146,34 @@ export const PluginPixelDrawing = () => {
   };
 
   const handlePointerDown = (e) => {
-    if (activeTool === 'pan') return;
+    // FIX: e.isPrimary memblokir jari kedua / ghost touch yang merusak layar
+    if (activeTool === 'pan' || !e.isPrimary) return; 
+    
     setIsDrawing(true);
     paintByEvent(e.clientX, e.clientY);
     try { e.currentTarget.setPointerCapture(e.pointerId); } catch(err){}
   };
 
   const handlePointerMove = (e) => {
-    if (isDrawing && activeTool !== 'pan') paintByEvent(e.clientX, e.clientY);
+    // FIX: Pastikan hanya mendeteksi gerakan jari utama
+    if (isDrawing && activeTool !== 'pan' && e.isPrimary) { 
+      paintByEvent(e.clientX, e.clientY);
+    }
   };
 
   const handlePointerUp = (e) => {
-    if (isDrawing) { setIsDrawing(false); saveHistory(layers); }
+    if (isDrawing) { 
+      setIsDrawing(false); 
+      // FIX: Gunakan data dari REF, bukan state lama dari closure
+      saveHistory(latestLayersRef.current); 
+    }
     try { e.currentTarget.releasePointerCapture(e.pointerId); } catch(err){}
   };
 
-  const addLayer = () => { const newId = Date.now(); const newLayers = [...layers, createEmptyLayer(newId, `Layer ${layers.length + 1}`)]; setLayers(newLayers); setActiveLayerId(newId); saveHistory(newLayers); };
-  const duplicateLayer = (id) => { const layerToCopy = layers.find(l => l.id === id); if (!layerToCopy) return; const newId = Date.now(); const newLayers = [...layers, { ...layerToCopy, id: newId, name: `${layerToCopy.name} Copy` }]; setLayers(newLayers); setActiveLayerId(newId); saveHistory(newLayers); };
-  const deleteLayer = (id) => { if (layers.length <= 1) return; const newLayers = layers.filter(l => l.id !== id); setLayers(newLayers); if (activeLayerId === id) setActiveLayerId(newLayers[newLayers.length - 1].id); saveHistory(newLayers); };
-  const toggleLayerProp = (id, prop) => { const newLayers = layers.map(l => l.id === id ? { ...l, [prop]: !l[prop] } : l); setLayers(newLayers); saveHistory(newLayers); };
+  const addLayer = () => { const newId = Date.now(); const newLayers = [...layers, createEmptyLayer(newId, `Layer ${layers.length + 1}`)]; setLayers(newLayers); setActiveLayerId(newId); latestLayersRef.current = newLayers; saveHistory(newLayers); };
+  const duplicateLayer = (id) => { const layerToCopy = layers.find(l => l.id === id); if (!layerToCopy) return; const newId = Date.now(); const newLayers = [...layers, { ...layerToCopy, id: newId, name: `${layerToCopy.name} Copy` }]; setLayers(newLayers); setActiveLayerId(newId); latestLayersRef.current = newLayers; saveHistory(newLayers); };
+  const deleteLayer = (id) => { if (layers.length <= 1) return; const newLayers = layers.filter(l => l.id !== id); setLayers(newLayers); if (activeLayerId === id) setActiveLayerId(newLayers[newLayers.length - 1].id); latestLayersRef.current = newLayers; saveHistory(newLayers); };
+  const toggleLayerProp = (id, prop) => { const newLayers = layers.map(l => l.id === id ? { ...l, [prop]: !l[prop] } : l); setLayers(newLayers); latestLayersRef.current = newLayers; saveHistory(newLayers); };
 
   const downloadImage = () => {
     const canvas = document.createElement('canvas');
@@ -153,7 +197,7 @@ export const PluginPixelDrawing = () => {
   const preview = (
     <div className="relative w-full h-[55vh] sm:h-[450px] flex flex-col overflow-hidden bg-[#050505] rounded-xl border border-[#1f1f1f]">
       
-      {/* 1. PHYSICAL TOOLBAR MOBILE: Berada di atas kanvas, tidak akan pernah overlap! */}
+      {/* 1. PHYSICAL TOOLBAR MOBILE */}
       <div className="lg:hidden w-full bg-[#0a0a0a] border-b border-[#2a2a2a] p-2 flex items-center gap-2 overflow-x-auto custom-scroll shrink-0 z-20 shadow-md">
         <button onClick={() => setActiveTool('draw')} className={`shrink-0 w-10 h-10 flex items-center justify-center rounded-xl transition-all ${activeTool === 'draw' ? 'bg-cyan-500 text-black shadow-[0_0_15px_rgba(6,182,212,0.5)]' : 'text-slate-400 hover:bg-[#1a1a1a]'}`} title="Kuas"><div className="w-5 h-5"><Icons.Brush /></div></button>
         <button onClick={() => setActiveTool('erase')} className={`shrink-0 w-10 h-10 flex items-center justify-center rounded-xl transition-all ${activeTool === 'erase' ? 'bg-cyan-500 text-black shadow-[0_0_15px_rgba(6,182,212,0.5)]' : 'text-slate-400 hover:bg-[#1a1a1a]'}`} title="Penghapus"><div className="w-5 h-5"><Icons.Eraser /></div></button>
@@ -164,7 +208,7 @@ export const PluginPixelDrawing = () => {
         <button onClick={resetView} className="shrink-0 w-10 h-10 flex items-center justify-center rounded-xl text-slate-400 hover:text-cyan-400 hover:bg-[#1a1a1a] transition-all" title="Fokus/Kembali ke Tengah"><div className="w-5 h-5"><LocalIcons.Focus /></div></button>
       </div>
 
-      {/* 2. TOOLBAR DESKTOP: Melayang Vertikal di Kiri */}
+      {/* 2. TOOLBAR DESKTOP */}
       <div className="hidden lg:flex absolute top-1/2 -translate-y-1/2 left-4 z-50 flex-col gap-2 p-1.5 bg-[#141414]/95 backdrop-blur-md border border-[#2a2a2a] rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.8)]">
         <button onClick={() => setActiveTool('draw')} className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all ${activeTool === 'draw' ? 'bg-cyan-500 text-black shadow-[0_0_15px_rgba(6,182,212,0.5)] scale-110' : 'text-slate-400 hover:bg-[#2a2a2a]'}`} title="Kuas"><div className="w-5 h-5"><Icons.Brush /></div></button>
         <button onClick={() => setActiveTool('erase')} className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all ${activeTool === 'erase' ? 'bg-cyan-500 text-black shadow-[0_0_15px_rgba(6,182,212,0.5)] scale-110' : 'text-slate-400 hover:bg-[#2a2a2a]'}`} title="Penghapus"><div className="w-5 h-5"><Icons.Eraser /></div></button>
@@ -178,7 +222,7 @@ export const PluginPixelDrawing = () => {
       {/* 3. AREA KANVAS GAMBAR */}
       <div 
         className="flex-1 relative w-full flex items-center justify-center touch-none overflow-hidden"
-        style={{ touchAction: 'none' }} // Bekukan pergerakan layar
+        style={{ touchAction: 'none' }} 
         onPointerDown={handlePointerDown} 
         onPointerMove={handlePointerMove} 
         onPointerUp={handlePointerUp}
@@ -186,7 +230,6 @@ export const PluginPixelDrawing = () => {
         onTouchStart={(e) => { if(activeTool === 'pan' || e.touches.length > 1) onTouchStart(e); }}
         onTouchMove={(e) => { if(activeTool === 'pan' || e.touches.length > 1) onTouchMove(e); }}
       >
-        {/* Tombol Undo Redo di pojok kanvas */}
         <div className="absolute top-3 right-3 flex gap-2 z-20">
           <button onClick={handleUndo} disabled={step <= 0} className="w-10 h-10 flex items-center justify-center rounded-xl border border-[#2a2a2a] bg-[#141414]/90 backdrop-blur text-slate-300 disabled:opacity-30 shadow-lg hover:text-white"><div className="w-4 h-4"><Icons.Undo /></div></button>
           <button onClick={handleRedo} disabled={step >= history.length - 1} className="w-10 h-10 flex items-center justify-center rounded-xl border border-[#2a2a2a] bg-[#141414]/90 backdrop-blur text-slate-300 disabled:opacity-30 shadow-lg hover:text-white"><div className="w-4 h-4"><Icons.Redo /></div></button>
