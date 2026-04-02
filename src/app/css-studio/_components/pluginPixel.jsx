@@ -6,6 +6,7 @@ import { PluginTip, FigmaSlider, FigmaColorPicker, WorkspaceLayout, ControlHeade
 
 const LocalIcons = {
   Focus: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-full h-full"><path strokeLinecap="round" strokeLinejoin="round" d="M7.5 3.75H6A2.25 2.25 0 003.75 6v1.5M16.5 3.75H18A2.25 2.25 0 0120.25 6v1.5m0 9V18A2.25 2.25 0 0118 20.25h-1.5m-9 0H6A2.25 2.25 0 013.75 18v-1.5M12 8.25a3.75 3.75 0 100 7.5 3.75 3.75 0 000-7.5z" /></svg>,
+  Grid: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-full h-full"><path strokeLinecap="round" strokeLinejoin="round" d="M3.375 19.5h17.25m-17.25-15h17.25m-17.25 7.5h17.25m-10.5 7.5v-15m7.5 15v-15" /></svg>
 };
 
 const floodFill = (pixels, startIndex, targetColor, replacementColor, gridSize) => {
@@ -46,12 +47,9 @@ export const PluginPixelDrawing = () => {
   const [history, setHistory] = useState([]);
   const [step, setStep] = useState(-1);
 
-  // FIX HYDRATION ERROR: Set Scale setelah komponen di-mount di Client
   const [baseScale, setBaseScale] = useState(1);
   useEffect(() => { 
-    if (typeof window !== 'undefined') {
-      setBaseScale(window.innerWidth < 768 ? 0.6 : 1); 
-    }
+    if (typeof window !== 'undefined') setBaseScale(window.innerWidth < 768 ? 0.6 : 1); 
   }, []);
 
   const { scale, pan, rotation, setScale, setPan, onTouchStart, onTouchMove, resetView } = useMultiTouch();
@@ -60,7 +58,6 @@ export const PluginPixelDrawing = () => {
   const [isDrawing, setIsDrawing] = useState(false);
   const gridRef = useRef(null);
 
-  // FIX OOM CRASH: Batas maksimal grid 32
   useEffect(() => {
     const safeGrid = Math.min(Math.max(gridSize, 8), 32); 
     const newLayers = [createEmptyLayer(1, "Layer 1")];
@@ -101,26 +98,22 @@ export const PluginPixelDrawing = () => {
     }
   };
 
-  // FIX: RUMUS MATRIKS MURNI (ANTI-CRASH & SANGAT PRESISI)
+  // FIX MUTLAK ANTI-CRASH MOBILE:
+  // Menggunakan Math Invers Matrix, bukan bergantung pada setPointerCapture dari browser yang rawan bug di TouchEvent!
   const paintByCoords = (clientX, clientY) => {
     if (!gridRef.current) return;
     const rect = gridRef.current.getBoundingClientRect();
     const pixelSizePx = gridSize <= 8 ? 20 : gridSize <= 16 ? 12 : gridSize <= 32 ? 6 : 4;
     
-    // Titik pusat grid di layar
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
-    
-    // Jarak jari dari pusat (delta X, Y)
     const dx = clientX - centerX;
     const dy = clientY - centerY;
 
-    // Invers Rotasi (memutar balik kordinat jari)
     const angleRad = -rotation * (Math.PI / 180);
     const rotatedX = dx * Math.cos(angleRad) - dy * Math.sin(angleRad);
     const rotatedY = dx * Math.sin(angleRad) + dy * Math.cos(angleRad);
 
-    // Kordinat Asli ke dalam Grid
     const actualScale = scale * baseScale;
     const unscaledX = (rotatedX / actualScale) + ((gridSize * pixelSizePx) / 2);
     const unscaledY = (rotatedY / actualScale) + ((gridSize * pixelSizePx) / 2);
@@ -138,24 +131,6 @@ export const PluginPixelDrawing = () => {
       }
       paintPixel(index);
     }
-  };
-
-  const handlePointerEvent = (e, isDown = false) => {
-    if (activeTool === 'pan') return;
-    if (e.touches && e.touches.length > 1) return;
-    
-    let clientX = e.clientX, clientY = e.clientY;
-    if (e.touches && e.touches.length > 0) {
-      clientX = e.touches[0].clientX; clientY = e.touches[0].clientY;
-    }
-    
-    if (isDown) { setIsDrawing(true); paintByCoords(clientX, clientY); e.currentTarget.setPointerCapture(e.pointerId); }
-    else if (isDrawing) { paintByCoords(clientX, clientY); }
-  };
-
-  const handlePointerUp = (e) => {
-    if (isDrawing) { setIsDrawing(false); saveHistory(layers); }
-    e.currentTarget.releasePointerCapture(e.pointerId);
   };
 
   const addLayer = () => { const newId = Date.now(); const newLayers = [...layers, createEmptyLayer(newId, `Layer ${layers.length + 1}`)]; setLayers(newLayers); setActiveLayerId(newId); saveHistory(newLayers); };
@@ -184,14 +159,32 @@ export const PluginPixelDrawing = () => {
 
   const preview = (
     <div className="relative w-full h-[45vh] sm:h-[450px] flex items-center justify-center overflow-hidden bg-[#050505] touch-none"
-      onPointerDown={(e) => handlePointerEvent(e, true)} 
-      onPointerMove={(e) => handlePointerEvent(e, false)} 
-      onPointerUp={handlePointerUp}
-      onPointerCancel={handlePointerUp}
-      onTouchStart={(e) => { if(activeTool === 'pan' || e.touches.length > 1) onTouchStart(e); else handlePointerEvent(e, true); }}
-      onTouchMove={(e) => { if(activeTool === 'pan' || e.touches.length > 1) onTouchMove(e); else handlePointerEvent(e, false); }}
+      onPointerDown={(e) => {
+         if(activeTool === 'pan') return;
+         setIsDrawing(true);
+         paintByCoords(e.clientX, e.clientY);
+         // Gunakan PointerCapture HANYA JIKA BROWSER MENDUKUNGNYA! (Menghindari Touch Crash)
+         if(e.pointerId !== undefined && e.currentTarget.setPointerCapture) {
+            e.currentTarget.setPointerCapture(e.pointerId);
+         }
+      }} 
+      onPointerMove={(e) => {
+         if(isDrawing && activeTool !== 'pan') paintByCoords(e.clientX, e.clientY);
+      }} 
+      onPointerUp={(e) => {
+         if(isDrawing) { setIsDrawing(false); saveHistory(layers); }
+         if(e.pointerId !== undefined && e.currentTarget.releasePointerCapture) {
+            e.currentTarget.releasePointerCapture(e.pointerId);
+         }
+      }}
+      onPointerCancel={(e) => {
+         if(isDrawing) { setIsDrawing(false); saveHistory(layers); }
+      }}
+      // Event MultiTouch (Zoom 2 Jari) diamankan dan dipisah
+      onTouchStart={(e) => { if(activeTool === 'pan' || e.touches.length > 1) onTouchStart(e); }}
+      onTouchMove={(e) => { if(activeTool === 'pan' || e.touches.length > 1) onTouchMove(e); }}
     >
-      {/* FIX MOBILE OVERLAP: Toolbar Menyilang di Bawah (Horizontal) untuk HP agar aman */}
+      {/* TOOLBAR MELAYANG */}
       <div className="absolute z-50 flex items-center justify-center gap-1.5 sm:gap-2 p-2 bg-[#141414]/95 backdrop-blur-md border border-[#2a2a2a] rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.8)] transition-all duration-300
         bottom-4 left-1/2 -translate-x-1/2 flex-row 
         lg:bottom-auto lg:top-1/2 lg:-translate-y-1/2 lg:left-4 lg:translate-x-0 lg:flex-col lg:rounded-2xl"
@@ -223,7 +216,7 @@ export const PluginPixelDrawing = () => {
       </div>
       
       {/* UNDO REDO */}
-      <div className="absolute top-4 right-4 flex gap-2 z-20">
+      <div className="absolute top-4 right-4 flex gap-2 z-20 lg:bottom-4 lg:top-auto">
         <button onClick={handleUndo} disabled={step <= 0} className="w-10 h-10 flex items-center justify-center rounded-full border border-[#2a2a2a] bg-[#141414]/90 backdrop-blur text-slate-300 disabled:opacity-30 shadow-lg hover:text-white"><div className="w-4 h-4"><Icons.Undo /></div></button>
         <button onClick={handleRedo} disabled={step >= history.length - 1} className="w-10 h-10 flex items-center justify-center rounded-full border border-[#2a2a2a] bg-[#141414]/90 backdrop-blur text-slate-300 disabled:opacity-30 shadow-lg hover:text-white"><div className="w-4 h-4"><Icons.Redo /></div></button>
       </div>
@@ -254,7 +247,6 @@ export const PluginPixelDrawing = () => {
         <button onClick={() => !palette.includes(color) && setPalette([color, ...palette].slice(0, 15))} className="w-9 h-9 rounded-xl border-2 border-[#333] flex items-center justify-center text-slate-500 hover:text-white hover:border-[#555] bg-[#141414] transition-all">+</button>
       </div>
 
-      {/* LAYERS PANEL */}
       <div className="pt-6 border-t border-[#1f1f1f] mt-8">
         <div className="flex items-center justify-between mb-4">
           <span className="text-[12px] font-black text-cyan-400 uppercase tracking-widest flex items-center gap-2"><Icons.Layers /> Layers Panel</span>
