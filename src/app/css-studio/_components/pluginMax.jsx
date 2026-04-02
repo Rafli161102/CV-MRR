@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Icons } from './icons';
-import { PluginTip, FigmaSlider, FigmaSelect, FigmaCustomDropdown, WorkspaceLayout, ControlHeader, useMultiTouch, FigmaToggle } from './ui';
+import { PluginTip, FigmaSlider, FigmaColorPicker, FigmaSelect, FigmaCustomDropdown, WorkspaceLayout, ControlHeader, COLOR_PRESETS, useMultiTouch, FigmaToggle } from './ui';
 
 const LocalIcons = {
   Focus: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-full h-full"><path strokeLinecap="round" strokeLinejoin="round" d="M7.5 3.75H6A2.25 2.25 0 003.75 6v1.5M16.5 3.75H18A2.25 2.25 0 0120.25 6v1.5m0 9V18A2.25 2.25 0 0118 20.25h-1.5m-9 0H6A2.25 2.25 0 013.75 18v-1.5M12 8.25a3.75 3.75 0 100 7.5 3.75 3.75 0 000-7.5z" /></svg>,
@@ -17,7 +17,10 @@ export const PluginTransform = () => {
   const [scale, setScale] = useState(1); const [cubeSize, setCubeSize] = useState(120);
   const [isWireframe, setIsWireframe] = useState(false); 
   
-  const initialScale = typeof window !== 'undefined' && window.innerWidth < 768 ? 0.7 : 1;
+  // Fix Hydration Next.js
+  const [baseScale, setBaseScale] = useState(1);
+  useEffect(() => { if (window.innerWidth < 768) setBaseScale(0.7); }, []);
+
   const { scale: touchScale, pan, onTouchStart, onTouchMove, resetView } = useMultiTouch();
 
   const handleReset = () => { setRx(30); setRy(-30); setRz(0); setTx(0); setTy(0); setTz(0); setScale(1); setCubeSize(120); setIsWireframe(false); resetView(); };
@@ -29,7 +32,7 @@ export const PluginTransform = () => {
       <div className="absolute top-3 left-3 bg-[#141414]/90 backdrop-blur border border-[#2a2a2a] p-1.5 rounded-2xl flex flex-col gap-2 z-20 shadow-xl">
         <button onClick={resetView} className="w-9 h-9 flex items-center justify-center rounded-xl text-slate-400 hover:text-cyan-400 hover:bg-[#2a2a2a] transition-all" title="Kembalikan ke Tengah"><div className="w-5 h-5"><LocalIcons.Focus /></div></button>
       </div>
-      <div style={{ transformStyle: 'preserve-3d', transform: `translate(${pan.x}px, ${pan.y}px) scale(${touchScale * scale * initialScale})`, transition: 'transform 0.1s linear' }}>
+      <div style={{ transformStyle: 'preserve-3d', transform: `translate(${pan.x}px, ${pan.y}px) scale(${touchScale * scale * baseScale})`, transition: 'transform 0.1s linear' }}>
         <div style={{ width: `${cubeSize}px`, height: `${cubeSize}px`, transformStyle: 'preserve-3d', transform: `translate3d(${tx}px, ${ty}px, ${tz}px) rotateX(${rx}deg) rotateY(${ry}deg) rotateZ(${rz}deg)` }}>
           <div className={getFaceStyle('bg-sky-500/70')} style={{ width: '100%', height: '100%', transform: `translateZ(${cubeSize/2}px)` }}>DEPAN</div>
           <div className={getFaceStyle('bg-violet-500/70')} style={{ width: '100%', height: '100%', transform: `rotateY(180deg) translateZ(${cubeSize/2}px)` }}>BELKNG</div>
@@ -67,8 +70,6 @@ export const PluginTransform = () => {
 // =========================================================================
 // 14. VECTOR SHAPES
 // =========================================================================
-import { FigmaColorPicker } from './ui'; // pastikan import ini ada
-
 const SHAPES_PRESET = { "Polygon Base": [{ name: "Triangle", val: "triangle" }, { name: "Square", val: "square" }, { name: "Hexagon", val: "hexagon" }] };
 const P_NODES = {
   "triangle": [{id:1, x:50, y:0}, {id:2, x:0, y:100}, {id:3, x:100, y:100}],
@@ -82,7 +83,10 @@ export const PluginShapes = () => {
   const [activeShapeId, setActiveShapeId] = useState(1);
   const [snapToGrid, setSnapToGrid] = useState(true); 
 
-  const initialScale = typeof window !== 'undefined' && window.innerWidth < 768 ? 0.6 : 1;
+  // Fix Hydration
+  const [baseScale, setBaseScale] = useState(1);
+  useEffect(() => { if (window.innerWidth < 768) setBaseScale(0.6); }, []);
+
   const { scale, pan, onTouchStart, onTouchMove, resetView } = useMultiTouch();
   const [activeTool, setActiveTool] = useState('pan');
   const [draggingNode, setDraggingNode] = useState(null);
@@ -107,7 +111,7 @@ export const PluginShapes = () => {
       setIsDraggingPan(true); setDragStart({ x: e.clientX - pan.x, y: e.clientY - pan.y }); e.currentTarget.setPointerCapture(e.pointerId);
     } else if (activeTool === 'pen' && activeShape && !activeShape.locked) {
       const rect = e.currentTarget.getBoundingClientRect();
-      const actualScale = scale * initialScale;
+      const actualScale = scale * baseScale;
       const xPercent = (((e.clientX - rect.left) / actualScale) / activeShape.w) * 100; 
       const yPercent = (((e.clientY - rect.top) / actualScale) / activeShape.h) * 100;
       const newNode = { id: Date.now(), x: Math.max(0, Math.min(100, snapCoordinate(xPercent))), y: Math.max(0, Math.min(100, snapCoordinate(yPercent))) };
@@ -127,12 +131,12 @@ export const PluginShapes = () => {
     if (isDraggingPan) { setPan({ x: e.clientX - dragStart.x, y: e.clientY - dragStart.y }); }
     else if (draggingNode && activeTool === 'pen' && activeShape) {
       const rect = e.currentTarget.getBoundingClientRect();
-      const actualScale = scale * initialScale;
+      const actualScale = scale * baseScale;
       const xPercent = (((e.clientX - rect.left) / actualScale) / activeShape.w) * 100; 
       const yPercent = (((e.clientY - rect.top) / actualScale) / activeShape.h) * 100;
       updateActive('nodes', activeShape.nodes.map(n => n.id === draggingNode ? { ...n, x: Math.max(0, Math.min(100, snapCoordinate(xPercent))), y: Math.max(0, Math.min(100, snapCoordinate(yPercent))) } : n));
     } else if (draggingShape && activeTool === 'pan') {
-      const actualScale = scale * initialScale;
+      const actualScale = scale * baseScale;
       const dx = (e.clientX - dragStart.x) / actualScale; 
       const dy = (e.clientY - dragStart.y) / actualScale;
       updateActive('x', snapCoordinate(elemStart.x + dx)); updateActive('y', snapCoordinate(elemStart.y + dy));
@@ -161,7 +165,7 @@ export const PluginShapes = () => {
         <button onClick={resetView} className="w-9 h-9 flex items-center justify-center rounded-xl text-slate-400 hover:text-cyan-400 hover:bg-[#2a2a2a] transition-all" title="Kembalikan ke Tengah"><div className="w-5 h-5"><LocalIcons.Focus /></div></button>
       </div>
 
-      <div style={{ transform: `translate(${pan.x}px, ${pan.y}px) scale(${scale * initialScale})` }} className="absolute">
+      <div style={{ transform: `translate(${pan.x}px, ${pan.y}px) scale(${scale * baseScale})` }} className="absolute">
         <div 
           className={`relative ${activeTool === 'pen' ? 'cursor-crosshair' : ''}`} 
           style={{ width: '400px', height: '400px', backgroundColor: 'rgba(255,255,255,0.02)', border: '1px dashed #444' }}
