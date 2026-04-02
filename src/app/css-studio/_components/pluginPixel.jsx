@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { FigmaSlider, FigmaColorPicker, COLOR_PRESETS, useMultiTouch, FigmaToggle } from './ui';
 
-// IKON SVG KHUSUS PIXEL DRAW
+// IKON SVG MASTER
 const PixIcons = {
   Brush: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-full h-full"><path strokeLinecap="round" strokeLinejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.813-3.814a1.151 1.151 0 00-1.628-1.628l-3.814 3.813a15.995 15.995 0 00-4.648 4.764z" /></svg>,
   Eraser: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-full h-full"><path strokeLinecap="round" strokeLinejoin="round" d="M12 9.75L14.25 12m0 0l2.25 2.25M14.25 12l2.25-2.25M14.25 12L12 14.25m-2.58 4.92l-6.375-6.375a1.125 1.125 0 010-1.59L9.42 4.83c.211-.211.498-.33.796-.33H19.5a2.25 2.25 0 012.25 2.25v10.5a2.25 2.25 0 01-2.25 2.25h-9.284c-.298 0-.585-.119-.796-.33z" /></svg>,
@@ -26,7 +26,7 @@ const PixIcons = {
   Download: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-full h-full"><path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>,
 };
 
-// Algoritma Bucket Fill
+// Algoritma Ember Cat (Flood Fill)
 const floodFill = (pixels, startIndex, targetColor, replacementColor, gridSize) => {
   if (targetColor === replacementColor) return pixels;
   const newPixels = [...pixels];
@@ -46,7 +46,7 @@ const floodFill = (pixels, startIndex, targetColor, replacementColor, gridSize) 
   return newPixels;
 };
 
-// Mengunci event bubbling UI
+// Pengunci Bubbling Event
 const stopProp = (e) => { 
    e.stopPropagation(); 
    if (e.nativeEvent && e.nativeEvent.stopImmediatePropagation) e.nativeEvent.stopImmediatePropagation(); 
@@ -62,7 +62,7 @@ export const PluginPixelDrawing = () => {
   const [palette, setPalette] = useState(['#ffffff', '#1e1e1e', '#0ea5e9', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#ef4444']);
   const [outputSize, setOutputSize] = useState(1080);
   
-  // NAVIGASI MOBILE
+  // NAVIGASI MOBILE TAB TAMPILAN NATIVE
   const [mobileTab, setMobileTab] = useState('tools'); 
   const [isFullscreen, setIsFullscreen] = useState(false);
   
@@ -70,27 +70,36 @@ export const PluginPixelDrawing = () => {
   const [layers, setLayers] = useState([]);
   const [activeLayerId, setActiveLayerId] = useState(1);
   
-  // HISTORY STATE
+  // STATE HISTORY UNDO/REDO ROBUST
   const [history, setHistory] = useState([]);
   const [step, setStep] = useState(-1);
-
-  // MENCEGAH LAG (REF MURNI)
   const currentLayersRef = useRef([]);
-  const lastDrawPosRef = useRef(null);
 
+  // ENGINE MULTI-TOUCH & DRAWING
   const { scale, pan, rotation, setScale, setPan, onTouchStart: onTouchStartMulti, onTouchMove: onTouchMoveMulti, resetView } = useMultiTouch();
   const [activeTool, setActiveTool] = useState('draw'); 
   const [isDrawing, setIsDrawing] = useState(false);
   
+  // REFERENSI DOM
   const containerRef = useRef(null);
   const canvasAreaRef = useRef(null);
   const gridRef = useRef(null);
+  const scrollTabRef = useRef(null); // FIX MUTLAK 1: Ref untuk Reset Scroll posisi Tab
 
-  // Mencegah Pull-to-refresh
+  const lastPaintedIndex = useRef(-1);
+
+  // FIX MUTLAK 2: Reset Scroll saat Ganti Tab agar Layar Tidak Anjlok Kebawah!
+  useEffect(() => {
+      if (scrollTabRef.current) {
+          scrollTabRef.current.scrollTop = 0;
+      }
+  }, [mobileTab]);
+
+  // FIX PULL-TO-REFRESH & OVERSCROLL
   useEffect(() => {
     const el = canvasAreaRef.current;
     const preventScroll = (e) => { 
-        if (e.touches && e.touches.length > 1) return; // Zoom 2 jari
+        if (e.touches && e.touches.length > 1) return; 
         e.preventDefault(); 
     };
     if (el) {
@@ -108,7 +117,7 @@ export const PluginPixelDrawing = () => {
   const [baseScale, setBaseScale] = useState(1);
   useEffect(() => { if (typeof window !== 'undefined') setBaseScale(window.innerWidth < 768 ? 0.6 : 1); }, []);
 
-  // Inisialisasi Kanvas
+  // Inisialisasi Kanvas Awal
   useEffect(() => {
     const safeGrid = Math.min(Math.max(gridSize, 8), 32); 
     const initialLayers = [createEmptyLayer(1, "Layer 1")];
@@ -117,20 +126,12 @@ export const PluginPixelDrawing = () => {
     setLocalGridInput(safeGrid.toString()); resetView();
   }, [gridSize]);
 
-  // Pantau state update manual
   useEffect(() => { currentLayersRef.current = layers; }, [layers]);
 
-  const mergedPixels = Array(gridSize * gridSize).fill('transparent');
-  if (layers && layers.length > 0) {
-     layers.forEach(layer => {
-       if (!layer.visible) return;
-       layer.pixels.forEach((p, j) => { if (p !== 'transparent') mergedPixels[j] = p; });
-     });
-  }
-
-  // FIX BUG UNDO/REDO Murni
-  const saveHistory = useCallback(() => {
-    const currentStr = JSON.stringify(currentLayersRef.current);
+  // SISTEM UNDO/REDO SOLID
+  const saveHistory = useCallback((stateToSave) => {
+    if (!stateToSave || stateToSave.length === 0) return;
+    const currentStr = JSON.stringify(stateToSave);
     const lastStr = JSON.stringify(history[step]);
     
     if (currentStr !== lastStr) {
@@ -149,6 +150,7 @@ export const PluginPixelDrawing = () => {
      const oldState = JSON.parse(JSON.stringify(history[newStep]));
      setLayers(oldState); 
      currentLayersRef.current = oldState;
+     lastPaintedIndex.current = -1;
   };
   
   const handleRedo = () => { 
@@ -158,9 +160,9 @@ export const PluginPixelDrawing = () => {
      const newState = JSON.parse(JSON.stringify(history[newStep]));
      setLayers(newState); 
      currentLayersRef.current = newState;
+     lastPaintedIndex.current = -1;
   };
 
-  // ENGINE PENGGAMBAR YANG MENGHINDARI SET-STATE SELAMA SWIPE
   const paintPixelsBatch = (indicesToPaint) => {
     if (activeTool === 'pan' || activeTool === 'picker' || indicesToPaint.length === 0) return;
     
@@ -182,7 +184,6 @@ export const PluginPixelDrawing = () => {
           const targetColor = activeTool === 'erase' ? 'transparent' : color;
           if (newPixels[index] !== targetColor) {
              newPixels[index] = targetColor;
-             // MANIPULASI DOM LANGSUNG TANPA RENDER REACT (Cepat!)
              if (gridRef.current && gridRef.current.children[index]) {
                  gridRef.current.children[index].style.backgroundColor = targetColor === 'transparent' ? '' : targetColor;
              }
@@ -193,12 +194,9 @@ export const PluginPixelDrawing = () => {
 
     if (changed) {
        newLayers[activeIdx] = { ...newLayers[activeIdx], pixels: newPixels };
-       // UPDATE REF (BUKAN STATE) UNTUK MENGHINDARI UI REFRESH
        currentLayersRef.current = newLayers;
-       
        if (activeTool === 'bucket') {
-          setLayers(newLayers);
-          saveHistory();
+          setLayers(newLayers); saveHistory(newLayers);
        }
     }
   };
@@ -224,8 +222,7 @@ export const PluginPixelDrawing = () => {
     const row = Math.floor(unscaledY / pixelSizePx);
 
     if (col < 0 || col >= gridSize || row < 0 || row >= gridSize) {
-       lastDrawPosRef.current = null;
-       return;
+       lastDrawPosRef.current = null; return;
     }
 
     if (activeTool === 'picker') {
@@ -243,7 +240,6 @@ export const PluginPixelDrawing = () => {
 
     const indicesToPaint = [];
 
-    // BRESENHAM ALGORITHM
     if (isStart || !lastDrawPosRef.current || activeTool === 'bucket') {
         indicesToPaint.push(row * gridSize + col);
     } else {
@@ -267,26 +263,22 @@ export const PluginPixelDrawing = () => {
     lastDrawPosRef.current = { col, row };
   };
 
+  const lastDrawPosRef = useRef(null);
+
   const handlePointerDown = (e) => {
     if (e.pointerType === 'touch' && activeTool === 'pan') return; 
-    setIsDrawing(true); 
-    lastDrawPosRef.current = null;
+    setIsDrawing(true); lastDrawPosRef.current = null;
     paintByCoords(e.clientX, e.clientY, true);
   };
-  
   const handlePointerMove = (e) => {
     if (e.pointerType === 'touch' && activeTool === 'pan') return;
     if (!isDrawing) return;
     paintByCoords(e.clientX, e.clientY, false);
   };
-  
   const handlePointerUp = () => {
     if (isDrawing) { 
-        setIsDrawing(false); 
-        lastDrawPosRef.current = null;
-        // Sinkronisasi React State HANYA SAAT JARI DIANGKAT (menghilangkan kedipan tool)
-        setLayers([...currentLayersRef.current]);
-        saveHistory(); 
+        setIsDrawing(false); lastDrawPosRef.current = null;
+        setLayers([...currentLayersRef.current]); saveHistory(currentLayersRef.current); 
     }
   };
 
@@ -308,10 +300,10 @@ export const PluginPixelDrawing = () => {
     } catch (err) { setIsFullscreen(!isFullscreen); }
   };
 
-  const addLayer = () => { const newId = Date.now(); const newLayers = [...layers, createEmptyLayer(newId, `Layer ${layers.length + 1}`)]; setLayers(newLayers); setActiveLayerId(newId); setTimeout(saveHistory, 50); };
-  const duplicateLayer = (id) => { const layerToCopy = layers.find(l => l.id === id); if (!layerToCopy) return; const newId = Date.now(); const newLayers = [...layers, { ...layerToCopy, id: newId, name: `${layerToCopy.name} Copy` }]; setLayers(newLayers); setActiveLayerId(newId); setTimeout(saveHistory, 50); };
-  const deleteLayer = (id) => { if (layers.length <= 1) return; const newLayers = layers.filter(l => l.id !== id); setLayers(newLayers); if (activeLayerId === id) setActiveLayerId(newLayers[newLayers.length - 1].id); setTimeout(saveHistory, 50); };
-  const toggleLayerProp = (id, prop) => { const newLayers = layers.map(l => l.id === id ? { ...l, [prop]: !l[prop] } : l); setLayers(newLayers); setTimeout(saveHistory, 50); };
+  const addLayer = () => { const newId = Date.now(); const newLayers = [...layers, createEmptyLayer(newId, `Layer ${layers.length + 1}`)]; setLayers(newLayers); setActiveLayerId(newId); setTimeout(()=>saveHistory(newLayers), 50); };
+  const duplicateLayer = (id) => { const layerToCopy = layers.find(l => l.id === id); if (!layerToCopy) return; const newId = Date.now(); const newLayers = [...layers, { ...layerToCopy, id: newId, name: `${layerToCopy.name} Copy` }]; setLayers(newLayers); setActiveLayerId(newId); setTimeout(()=>saveHistory(newLayers), 50); };
+  const deleteLayer = (id) => { if (layers.length <= 1) return; const newLayers = layers.filter(l => l.id !== id); setLayers(newLayers); if (activeLayerId === id) setActiveLayerId(newLayers[newLayers.length - 1].id); setTimeout(()=>saveHistory(newLayers), 50); };
+  const toggleLayerProp = (id, prop) => { const newLayers = layers.map(l => l.id === id ? { ...l, [prop]: !l[prop] } : l); setLayers(newLayers); setTimeout(()=>saveHistory(newLayers), 50); };
 
   const downloadImage = () => {
     const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
@@ -332,8 +324,7 @@ export const PluginPixelDrawing = () => {
   const pixelSizePx = gridSize <= 8 ? 20 : gridSize <= 16 ? 12 : gridSize <= 32 ? 6 : 4;
   const gridStyle = showGrid ? 'inset 0 0 0 1px #e8e8e8' : 'none';
 
-  // --- KOMPONEN TAB BISA DI-RENDER SECARA INLINE UNTUK MENGHINDARI RE-RENDER HELL ---
-  const renderToolsTab = () => (
+  const ToolsTab = () => (
     <div className="grid grid-cols-3 sm:grid-cols-6 landscape:grid-cols-6 lg:grid-cols-3 gap-3 animate-fade-in-fast h-full items-start">
       <button onClick={() => setActiveTool('draw')} className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl transition-all border ${activeTool === 'draw' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500 shadow-[0_0_15px_rgba(6,182,212,0.2)]' : 'bg-[#141414] text-slate-400 border-transparent hover:bg-[#1f1f1f]'}`}><div className="w-6 h-6 shrink-0"><PixIcons.Brush /></div><span className="text-[10px] font-black tracking-widest uppercase">Kuas</span></button>
       <button onClick={() => setActiveTool('erase')} className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl transition-all border ${activeTool === 'erase' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500 shadow-[0_0_15px_rgba(6,182,212,0.2)]' : 'bg-[#141414] text-slate-400 border-transparent hover:bg-[#1f1f1f]'}`}><div className="w-6 h-6 shrink-0"><PixIcons.Eraser /></div><span className="text-[10px] font-black tracking-widest uppercase">Hapus</span></button>
@@ -344,7 +335,7 @@ export const PluginPixelDrawing = () => {
     </div>
   );
 
-  const renderColorsTab = () => (
+  const ColorsTab = () => (
     <div className="space-y-4 animate-fade-in-fast">
       <FigmaColorPicker label="Warna Kuas Aktif" hexValue={color} onChange={setColor} />
       <div className="flex flex-wrap gap-3 mt-4">
@@ -355,7 +346,7 @@ export const PluginPixelDrawing = () => {
     </div>
   );
 
-  const renderLayersTab = () => (
+  const LayersTab = () => (
     <div className="animate-fade-in-fast flex flex-col h-full pb-8">
       <div className="flex items-center justify-between mb-4 shrink-0">
         <span className="text-[12px] font-black text-cyan-400 uppercase tracking-widest flex items-center gap-2"><div className="w-4 h-4 shrink-0"><PixIcons.Layers /></div> Layers Panel</span>
@@ -379,7 +370,7 @@ export const PluginPixelDrawing = () => {
     </div>
   );
 
-  const renderSettingsTab = () => (
+  const SettingsTab = () => (
     <div className="space-y-6 animate-fade-in-fast pb-10">
       <div className="flex gap-3">
         <input type="number" value={localGridInput} onChange={(e) => setLocalGridInput(e.target.value)} className="flex-1 bg-[#141414] border border-[#2a2a2a] rounded-xl px-5 py-4 text-white font-mono text-[14px] shadow-inner outline-none focus:border-cyan-500 transition-colors" />
@@ -393,6 +384,16 @@ export const PluginPixelDrawing = () => {
     </div>
   );
 
+  // GABUNGKAN MERGED PIXELS UNTUK INITIAL RENDER SAAT TIDAK SEDANG DRAWING
+  const initialMergedPixels = Array(gridSize * gridSize).fill('transparent');
+  if (layers && layers.length > 0) {
+     layers.forEach(layer => {
+       if (!layer.visible) return;
+       layer.pixels.forEach((p, j) => { if (p !== 'transparent') initialMergedPixels[j] = p; });
+     });
+  }
+
+  // 4. FIX LAYOUT ENTERPRISE: STRUKTUR DOM FLEXBOX UNTUK LANDSCAPE (ALAT & KANVAS MUNCUL BERSAMAAN)
   return (
     <div ref={containerRef} className={`w-full h-full flex flex-col landscape:flex-row lg:flex-row bg-[#050505] overflow-hidden font-sans ${isFullscreen ? 'fixed inset-0 z-[100]' : 'absolute inset-0 z-10'}`}>
        
@@ -402,8 +403,7 @@ export const PluginPixelDrawing = () => {
           <div className="absolute top-4 left-4 z-30 lg:hidden" onPointerDown={stopProp} onClick={stopProp}>
              <button onClick={toggleFullscreen} className={`px-4 py-2.5 flex items-center justify-center gap-2 rounded-xl transition-all font-black text-[10px] uppercase tracking-widest shadow-lg active:scale-95 ${isFullscreen ? 'bg-amber-500 text-black border border-amber-400' : 'bg-[#141414]/90 backdrop-blur border border-[#2a2a2a] text-cyan-400'}`}>
                 <div className="w-4 h-4 shrink-0">{isFullscreen ? <PixIcons.Close /> : <PixIcons.Expand />}</div> 
-                <span className="hidden sm:inline md:inline landscape:inline">{isFullscreen ? 'Keluar Layar Penuh' : 'Layar Penuh (Landscape)'}</span>
-                <span className="sm:hidden landscape:hidden">Layar Penuh</span>
+                <span className="hidden sm:inline md:inline landscape:inline">{isFullscreen ? 'Keluar Layar Penuh' : 'Layar Penuh'}</span>
              </button>
           </div>
           
@@ -422,7 +422,7 @@ export const PluginPixelDrawing = () => {
                    else if(isDrawing) paintByCoords(e.touches[0].clientX, e.touches[0].clientY, false); 
                }}
                onTouchEnd={() => { 
-                   if(isDrawing) { setIsDrawing(false); lastDrawPosRef.current = null; setLayers([...currentLayersRef.current]); saveHistory(); } 
+                   if(isDrawing) { setIsDrawing(false); lastDrawPosRef.current = null; setLayers([...currentLayersRef.current]); saveHistory(currentLayersRef.current); } 
                }}
           >
             <div className="absolute top-4 right-4 flex gap-2 z-30" onPointerDown={stopProp} onTouchStart={stopProp} onClick={stopProp}>
@@ -432,6 +432,7 @@ export const PluginPixelDrawing = () => {
 
             <div style={{ transform: `translate(${pan.x}px, ${pan.y}px) scale(${scale * baseScale}) rotate(${rotation}deg)`, transition: isDrawing ? 'none' : 'transform 0.1s ease-out' }} className="absolute pointer-events-none">
               <div className="absolute -top-7 left-0 w-full flex justify-center"><span className="bg-red-500 text-white text-[9px] font-black px-4 py-1.5 rounded-t-lg shadow-lg uppercase tracking-widest">SISI ATAS</span></div>
+              
               <div ref={gridRef} className="grid shadow-[0_0_50px_rgba(0,0,0,0.8)] border-t-[4px] border-t-red-500" 
                    style={{ 
                      gridTemplateColumns: `repeat(${gridSize}, 1fr)`, width: gridSize * pixelSizePx, height: gridSize * pixelSizePx,
@@ -439,7 +440,7 @@ export const PluginPixelDrawing = () => {
                      backgroundImage: isTransparent ? 'linear-gradient(45deg, #1a1a1a 25%, transparent 25%), linear-gradient(-45deg, #1a1a1a 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #1a1a1a 75%), linear-gradient(-45deg, transparent 75%, #1a1a1a 75%)' : 'none',
                      backgroundSize: '12px 12px'
                    }}>
-                {mergedPixels.map((bg, i) => (
+                {initialMergedPixels.map((bg, i) => (
                   <div key={i} data-pixel-index={i} className={`w-full h-full transition-colors duration-75`} 
                        style={{ backgroundColor: bg !== 'transparent' ? bg : undefined, boxShadow: gridStyle }} />
                 ))}
@@ -448,26 +449,30 @@ export const PluginPixelDrawing = () => {
           </div>
        </div>
 
-       {/* 2. BAGIAN ALAT & NAVIGASI */}
-       <div className="flex-[45%] landscape:flex-none landscape:w-[320px] lg:flex-none flex-col bg-[#050505] z-40 shrink-0 lg:w-[400px] lg:h-full flex shadow-[0_-10px_30px_rgba(0,0,0,0.5)] landscape:shadow-[-10px_0_30px_rgba(0,0,0,0.5)] lg:shadow-2xl">
-          <div className="hidden lg:flex px-6 py-5 border-b border-[#1f1f1f] bg-[#0a0a0a] shrink-0 items-center justify-between">
-             <h2 className="text-[13px] font-black text-white uppercase tracking-widest flex items-center gap-2">
-               <span className="w-2.5 h-2.5 rounded-full bg-cyan-500 inline-block animate-pulse shadow-[0_0_8px_rgba(6,182,212,0.8)]"></span> Pixel Studio Pro
-             </h2>
-          </div>
-
-          <div className="flex-1 overflow-y-auto custom-scroll relative p-5 lg:p-7 bg-[#0a0a0a]">
-             {mobileTab === 'tools' && renderToolsTab()}
-             {mobileTab === 'colors' && renderColorsTab()}
-             {mobileTab === 'layers' && renderLayersTab()}
-             {mobileTab === 'settings' && renderSettingsTab()}
-          </div>
-
-          <div className="lg:hidden h-[70px] landscape:h-full landscape:w-[70px] bg-[#050505] border-t landscape:border-t-0 landscape:border-l border-[#1a1a1a] flex flex-row landscape:flex-col shrink-0 pb-safe">
+       {/* 2. BAGIAN PANEL KANAN / BAWAH (Navigasi + Alat Desain Bersamaan untuk Fullscreen Landscape) */}
+       <div className="flex-[45%] landscape:flex-none landscape:w-[320px] lg:flex-none flex flex-col landscape:flex-row bg-[#050505] z-40 shrink-0 lg:w-[400px] lg:h-full shadow-[0_-10px_30px_rgba(0,0,0,0.5)] landscape:shadow-[-10px_0_30px_rgba(0,0,0,0.5)] lg:shadow-2xl">
+          
+          {/* TAB NAVIGASI KHUSUS MOBILE (Diletakkan sebelum konten di DOM agar pada landscape flex-row dia di kiri) */}
+          <div className="lg:hidden h-[70px] landscape:h-full landscape:w-[70px] bg-[#050505] border-t landscape:border-t-0 landscape:border-r border-[#1a1a1a] flex flex-row landscape:flex-col shrink-0 pb-safe order-last landscape:order-first z-50">
              <button onClick={() => setMobileTab('tools')} className={`flex-1 flex flex-col items-center justify-center gap-1.5 transition-all ${mobileTab === 'tools' ? 'text-cyan-400 border-t-2 landscape:border-t-0 landscape:border-l-2 border-cyan-500 bg-[#141414]' : 'text-slate-500 hover:text-slate-300 border-t-2 landscape:border-t-0 landscape:border-l-2 border-transparent'}`}><div className="w-5 h-5 sm:w-6 sm:h-6 shrink-0"><PixIcons.Brush /></div><span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider">Alat</span></button>
              <button onClick={() => setMobileTab('colors')} className={`flex-1 flex flex-col items-center justify-center gap-1.5 transition-all ${mobileTab === 'colors' ? 'text-cyan-400 border-t-2 landscape:border-t-0 landscape:border-l-2 border-cyan-500 bg-[#141414]' : 'text-slate-500 hover:text-slate-300 border-t-2 landscape:border-t-0 landscape:border-l-2 border-transparent'}`}><div className="w-5 h-5 sm:w-6 sm:h-6 shrink-0"><PixIcons.Picker /></div><span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider">Warna</span></button>
              <button onClick={() => setMobileTab('layers')} className={`flex-1 flex flex-col items-center justify-center gap-1.5 transition-all ${mobileTab === 'layers' ? 'text-cyan-400 border-t-2 landscape:border-t-0 landscape:border-l-2 border-cyan-500 bg-[#141414]' : 'text-slate-500 hover:text-slate-300 border-t-2 landscape:border-t-0 landscape:border-l-2 border-transparent'}`}><div className="w-5 h-5 sm:w-6 sm:h-6 shrink-0"><PixIcons.Layers /></div><span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider">Layers</span></button>
              <button onClick={() => setMobileTab('settings')} className={`flex-1 flex flex-col items-center justify-center gap-1.5 transition-all ${mobileTab === 'settings' ? 'text-cyan-400 border-t-2 landscape:border-t-0 landscape:border-l-2 border-cyan-500 bg-[#141414]' : 'text-slate-500 hover:text-slate-300 border-t-2 landscape:border-t-0 landscape:border-l-2 border-transparent'}`}><div className="w-5 h-5 sm:w-6 sm:h-6 shrink-0"><PixIcons.Settings /></div><span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider">Seting</span></button>
+          </div>
+
+          <div className="flex-1 flex flex-col min-w-0 h-full bg-[#0a0a0a]">
+            <div className="hidden lg:flex px-6 py-5 border-b border-[#1f1f1f] bg-[#0a0a0a] shrink-0 items-center justify-between">
+               <h2 className="text-[13px] font-black text-white uppercase tracking-widest flex items-center gap-2">
+                 <span className="w-2.5 h-2.5 rounded-full bg-cyan-500 inline-block animate-pulse shadow-[0_0_8px_rgba(6,182,212,0.8)]"></span> Pixel Studio Pro
+               </h2>
+            </div>
+
+            <div ref={scrollTabRef} className="flex-1 overflow-y-auto custom-scroll relative p-5 lg:p-7 pb-10">
+               {mobileTab === 'tools' && <ToolsTab />}
+               {mobileTab === 'colors' && <ColorsTab />}
+               {mobileTab === 'layers' && <LayersTab />}
+               {mobileTab === 'settings' && <SettingsTab />}
+            </div>
           </div>
        </div>
 
