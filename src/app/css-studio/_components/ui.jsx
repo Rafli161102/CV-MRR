@@ -64,14 +64,13 @@ export const ControlHeader = ({ title, onReset }) => (
   </div>
 );
 
-// PENGAMANAN TOGGLE: Bypass Tailwind menggunakan atribut style
 export const FigmaToggle = ({ label, checked, onChange }) => (
   <div className="flex items-center justify-between py-3.5 border-b border-[#1f1f1f] last:border-0">
      <span className="text-[11px] sm:text-[12px] font-bold text-slate-300">{label}</span>
      <button 
         onClick={() => onChange(!checked)} 
         style={{ backgroundColor: checked ? '#0ea5e9' : '#333333' }}
-        className="w-12 h-6 rounded-full transition-colors duration-300 relative shadow-inner cursor-pointer flex items-center px-1"
+        className="w-12 h-6 rounded-full transition-colors duration-300 relative shadow-inner cursor-pointer flex items-center px-1 shrink-0"
      >
         <div 
           style={{ transform: checked ? 'translateX(24px)' : 'translateX(0px)' }}
@@ -112,7 +111,7 @@ export const FigmaSlider = ({ label, min, max, step = 1, value, onChange, unit =
   };
   return (
     <div className="flex flex-col sm:flex-row sm:items-center justify-between py-3.5 border-b border-[#1f1f1f] last:border-0 gap-3 sm:gap-0">
-      <label className="text-[11px] sm:text-[12px] font-bold text-slate-300 w-full sm:w-1/3">{label}</label>
+      <label className="text-[11px] sm:text-[12px] font-bold text-slate-300 w-full sm:w-1/3 truncate">{label}</label>
       <div className="w-full sm:w-2/3 flex items-center gap-3">
         <input type="range" min={min} max={max} step={step} value={value || 0} onChange={(e) => onChange(Number(e.target.value) || 0)} className="w-full h-[6px] bg-[#333] rounded-lg appearance-none cursor-pointer outline-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:bg-cyan-400 [&::-webkit-slider-thumb]:rounded-full hover:[&::-webkit-slider-thumb]:scale-125 transition-all" />
         <div className="bg-[#141414] px-2.5 py-2 rounded-xl border border-[#333] min-w-[75px] flex items-center justify-end shrink-0 cursor-text focus-within:border-cyan-500 transition-colors shadow-inner">
@@ -124,6 +123,7 @@ export const FigmaSlider = ({ label, min, max, step = 1, value, onChange, unit =
   );
 };
 
+// FIX BUG MUTLAK: Mengubah Absolute Picker menjadi Accordion (Mendorong Konten)
 export const FigmaColorPicker = ({ label, hexValue, onChange }) => {
   const [isOpen, setIsOpen] = useState(false);
   const safeHexVal = hexValue || '#ffffff';
@@ -135,28 +135,35 @@ export const FigmaColorPicker = ({ label, hexValue, onChange }) => {
     setHsl(newHsl); onChange(hslToHex(newHsl.h, newHsl.s, newHsl.l));
   };
   return (
-    <div className="mb-5 relative z-40">
-      <div className="flex justify-between items-center mb-2"><label className="text-[11px] sm:text-[12px] font-bold text-slate-300">{label}</label></div>
-      <div className="bg-[#0a0a0a] border border-[#2a2a2a] rounded-2xl transition-all duration-300 shadow-md relative">
-        <div className="flex items-center justify-between p-3.5 cursor-pointer hover:bg-[#141414] rounded-2xl" onClick={() => setIsOpen(!isOpen)}>
-          <div className="flex items-center gap-3">
-            <div className="w-7 h-7 rounded-lg border-2 border-white/20 shadow-sm" style={{backgroundColor: safeHexVal}}></div>
-            <div className="flex flex-col"><span className="text-[11px] font-black text-white">{label}</span><span className="text-[10px] font-mono text-cyan-500 uppercase mt-0.5">{safeHexVal}</span></div>
+    <div className="mb-5">
+      <div className="flex justify-between items-center mb-2">
+         <label className="text-[11px] sm:text-[12px] font-bold text-slate-300 truncate">{label}</label>
+      </div>
+      <div className="bg-[#0a0a0a] border border-[#2a2a2a] rounded-2xl transition-all duration-300 shadow-md overflow-hidden">
+        <div className="flex items-center justify-between p-3.5 cursor-pointer hover:bg-[#141414] transition-colors" onClick={() => setIsOpen(!isOpen)}>
+          <div className="flex items-center gap-3 overflow-hidden">
+            <div className="w-7 h-7 rounded-lg border-2 border-white/20 shadow-sm shrink-0" style={{backgroundColor: safeHexVal}}></div>
+            <div className="flex flex-col min-w-0">
+               <span className="text-[11px] font-black text-white truncate">{label}</span>
+               <span className="text-[10px] font-mono text-cyan-500 uppercase mt-0.5">{safeHexVal}</span>
+            </div>
           </div>
-          <div className={`text-slate-400 transition-transform ${isOpen ? 'rotate-180' : ''}`}><Icons.ChevronDown /></div>
+          <div className={`text-slate-400 shrink-0 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}><Icons.ChevronDown /></div>
         </div>
-        {isOpen && (
-          <div className="absolute top-full left-0 right-0 mt-2 bg-[#141414] border border-[#2a2a2a] rounded-2xl p-5 shadow-2xl z-50">
-            <div className="space-y-4">
-              <div><div className="flex justify-between mb-2"><span className="text-[10px] font-bold text-slate-400">HUE</span></div><input type="range" min="0" max="360" value={hsl.h || 0} onChange={(e) => handleHslChange('h', Number(e.target.value))} className="w-full h-3.5 rounded-full appearance-none cursor-pointer custom-color-slider" style={{background: 'linear-gradient(to right, #f00 0%, #ff0 17%, #0f0 33%, #0ff 50%, #00f 67%, #f0f 83%, #f00 100%)'}} /></div>
-              <div><div className="flex justify-between mb-2"><span className="text-[10px] font-bold text-slate-400">SATURATION</span></div><input type="range" min="0" max="100" value={hsl.s || 0} onChange={(e) => handleHslChange('s', Number(e.target.value))} className="w-full h-3.5 rounded-full appearance-none cursor-pointer custom-color-slider" style={{background: `linear-gradient(to right, #808080, ${hslToHex(hsl.h || 0, 100, 50)})`}} /></div>
-              <div><div className="flex justify-between mb-2"><span className="text-[10px] font-bold text-slate-400">LIGHTNESS</span></div><input type="range" min="0" max="100" value={hsl.l || 0} onChange={(e) => handleHslChange('l', Number(e.target.value))} className="w-full h-3.5 rounded-full appearance-none cursor-pointer custom-color-slider" style={{background: `linear-gradient(to right, #000, ${hslToHex(hsl.h || 0, hsl.s || 0, 50)}, #fff)`}} /></div>
-            </div>
-            <div className="flex flex-wrap gap-2.5 mt-6 pt-5 border-t border-[#2a2a2a]">
-              {COLOR_PRESETS.map((c) => (<button key={c} onClick={() => {onChange(c); setIsOpen(false);}} className={`w-8 h-8 rounded-lg border-2 hover:scale-110 transition-transform ${safeHexVal===c ? 'border-cyan-400 scale-110 shadow-[0_0_10px_rgba(6,182,212,0.4)]' : 'border-[#333]'}`} style={{ backgroundColor: c }} />))}
-            </div>
-          </div>
-        )}
+        
+        {/* Accordion Body: Tidak pakai absolute, jadi aman di-scroll! */}
+        <div className={`transition-all duration-300 ease-in-out bg-[#141414] ${isOpen ? 'max-h-[500px] border-t border-[#2a2a2a] p-4 sm:p-5 opacity-100' : 'max-h-0 opacity-0 overflow-hidden'}`}>
+           <div className={`${isOpen ? 'block' : 'hidden'}`}>
+              <div className="space-y-4">
+                <div><div className="flex justify-between mb-2"><span className="text-[10px] font-bold text-slate-400">HUE</span></div><input type="range" min="0" max="360" value={hsl.h || 0} onChange={(e) => handleHslChange('h', Number(e.target.value))} className="w-full h-3.5 rounded-full appearance-none cursor-pointer custom-color-slider" style={{background: 'linear-gradient(to right, #f00 0%, #ff0 17%, #0f0 33%, #0ff 50%, #00f 67%, #f0f 83%, #f00 100%)'}} /></div>
+                <div><div className="flex justify-between mb-2"><span className="text-[10px] font-bold text-slate-400">SATURATION</span></div><input type="range" min="0" max="100" value={hsl.s || 0} onChange={(e) => handleHslChange('s', Number(e.target.value))} className="w-full h-3.5 rounded-full appearance-none cursor-pointer custom-color-slider" style={{background: `linear-gradient(to right, #808080, ${hslToHex(hsl.h || 0, 100, 50)})`}} /></div>
+                <div><div className="flex justify-between mb-2"><span className="text-[10px] font-bold text-slate-400">LIGHTNESS</span></div><input type="range" min="0" max="100" value={hsl.l || 0} onChange={(e) => handleHslChange('l', Number(e.target.value))} className="w-full h-3.5 rounded-full appearance-none cursor-pointer custom-color-slider" style={{background: `linear-gradient(to right, #000, ${hslToHex(hsl.h || 0, hsl.s || 0, 50)}, #fff)`}} /></div>
+              </div>
+              <div className="flex flex-wrap gap-2.5 mt-6 pt-5 border-t border-[#2a2a2a]">
+                {COLOR_PRESETS.map((c) => (<button key={c} onClick={() => {onChange(c); setIsOpen(false);}} className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg border-2 hover:scale-110 transition-transform shrink-0 ${safeHexVal===c ? 'border-cyan-400 scale-110 shadow-[0_0_10px_rgba(6,182,212,0.4)]' : 'border-[#333]'}`} style={{ backgroundColor: c }} />))}
+              </div>
+           </div>
+        </div>
       </div>
     </div>
   );
@@ -164,7 +171,7 @@ export const FigmaColorPicker = ({ label, hexValue, onChange }) => {
 
 export const FigmaSelect = ({ label, options = [], value, onChange }) => (
   <div className="mb-5">
-     <label className="text-[11px] sm:text-[12px] font-bold text-slate-300 block mb-2">{label}</label>
+     <label className="text-[11px] sm:text-[12px] font-bold text-slate-300 block mb-2 truncate">{label}</label>
      <div className="flex bg-[#0a0a0a] p-1.5 rounded-2xl border border-[#2a2a2a] overflow-x-auto custom-scroll shadow-inner">
         {options.map(opt => (
            <button key={opt} onClick={() => onChange(opt)} className={`flex-1 min-w-[70px] py-2.5 px-2 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all whitespace-nowrap ${value === opt ? 'bg-[#1f1f1f] text-white border border-[#444] shadow-md' : 'text-slate-500 hover:text-slate-300'}`}>{opt}</button>
@@ -175,7 +182,7 @@ export const FigmaSelect = ({ label, options = [], value, onChange }) => (
 
 export const FigmaTextInput = ({ label, value, onChange, placeholder = "Ketik sesuatu...", isTextArea = false }) => (
   <div className="mb-5">
-     <label className="text-[11px] sm:text-[12px] font-bold text-slate-300 block mb-2">{label}</label>
+     <label className="text-[11px] sm:text-[12px] font-bold text-slate-300 block mb-2 truncate">{label}</label>
      {isTextArea ? (
        <textarea value={value || ''} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} className="w-full h-28 bg-[#0a0a0a] border border-[#2a2a2a] rounded-2xl px-5 py-4 text-[13px] text-white outline-none focus:border-cyan-500 transition-all resize-none shadow-inner" />
      ) : (
@@ -184,30 +191,30 @@ export const FigmaTextInput = ({ label, value, onChange, placeholder = "Ketik se
   </div>
 );
 
+// FIX BUG MUTLAK: Mengubah Absolute Dropdown menjadi Accordion (Mendorong Konten)
 export const FigmaCustomDropdown = ({ label, groups = {}, value, onChange }) => {
-  const [isOpen, setIsOpen] = useState(false); const dropdownRef = useRef(null);
+  const [isOpen, setIsOpen] = useState(false);
   let currentName = value || 'Select...';
   for (const group in groups) { const found = groups[group].find(opt => opt.val === value); if (found) { currentName = found.name; break; } }
-  useEffect(() => { const handleClickOutside = (e) => { if (dropdownRef.current && !dropdownRef.current.contains(e.target)) setIsOpen(false); }; document.addEventListener("mousedown", handleClickOutside); return () => document.removeEventListener("mousedown", handleClickOutside); }, []);
   return (
-    <div className="mb-5 relative z-40" ref={dropdownRef}>
-      <label className="text-[11px] sm:text-[12px] font-bold text-slate-300 block mb-2">{label}</label>
-      <div onClick={() => setIsOpen(!isOpen)} className="w-full bg-[#0a0a0a] border border-[#2a2a2a] rounded-2xl px-5 py-4 flex justify-between items-center cursor-pointer hover:border-[#555] transition-colors shadow-md">
-        <span className="text-[12px] text-white font-mono font-bold">{currentName}</span>
-        <div className={`text-slate-400 transition-transform ${isOpen ? 'rotate-180' : ''}`}><Icons.ChevronDown /></div>
-      </div>
-      {isOpen && (
-        <div className="absolute z-50 top-full left-0 right-0 mt-2 bg-[#141414] border border-[#2a2a2a] rounded-2xl shadow-2xl max-h-[300px] overflow-y-auto custom-scroll">
+    <div className="mb-5">
+      <label className="text-[11px] sm:text-[12px] font-bold text-slate-300 block mb-2 truncate">{label}</label>
+      <div className="bg-[#0a0a0a] border border-[#2a2a2a] rounded-2xl shadow-md transition-all duration-300 overflow-hidden">
+        <div onClick={() => setIsOpen(!isOpen)} className="w-full px-5 py-4 flex justify-between items-center cursor-pointer hover:bg-[#141414] transition-colors">
+          <span className="text-[12px] text-white font-mono font-bold truncate pr-4">{currentName}</span>
+          <div className={`text-slate-400 shrink-0 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}><Icons.ChevronDown /></div>
+        </div>
+        <div className={`transition-all duration-300 ease-in-out bg-[#141414] ${isOpen ? 'max-h-[300px] overflow-y-auto custom-scroll border-t border-[#2a2a2a] opacity-100' : 'max-h-0 opacity-0 overflow-hidden'}`}>
           {Object.entries(groups).map(([groupName, options]) => (
             <div key={groupName}>
-              <div className="px-5 py-3 bg-[#0a0a0a] text-[9px] font-black text-cyan-500 uppercase tracking-widest sticky top-0 border-b border-[#2a2a2a] z-10">{groupName}</div>
+              <div className="px-5 py-3 bg-[#050505] text-[9px] font-black text-cyan-500 uppercase tracking-widest sticky top-0 border-b border-[#2a2a2a] z-10">{groupName}</div>
               {options.map(opt => (
                 <div key={opt.val} onClick={() => { onChange(opt.val); setIsOpen(false); }} className={`px-6 py-4 text-[12px] cursor-pointer hover:bg-[#1f1f1f] font-mono transition-colors ${value === opt.val ? 'bg-cyan-500/10 text-cyan-400 border-l-4 border-cyan-500 font-bold' : 'text-slate-300 border-l-4 border-transparent'}`}>{opt.name}</div>
               ))}
             </div>
           ))}
         </div>
-      )}
+      </div>
     </div>
   );
 };
@@ -222,7 +229,7 @@ export const CodeOutput = ({ cssCode, htmlCode, jsxCode, isMobileTab }) => {
        <div className="flex justify-between items-center px-4 py-3 border-b border-[#1f1f1f] bg-[#141414] shrink-0 overflow-x-auto custom-scroll">
           <div className="flex gap-2">
              {['css', 'html', 'jsx'].map(l => (
-               <button key={l} onClick={() => setLang(l)} className={`px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all ${lang === l ? 'bg-[#2a2a2a] text-cyan-400 shadow-md border border-[#333]' : 'text-slate-500 hover:text-slate-300 hover:bg-[#1f1f1f]'}`}>{l === 'jsx' ? 'React' : l}</button>
+               <button key={l} onClick={() => setLang(l)} className={`px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all shrink-0 ${lang === l ? 'bg-[#2a2a2a] text-cyan-400 shadow-md border border-[#333]' : 'text-slate-500 hover:text-slate-300 hover:bg-[#1f1f1f]'}`}>{l === 'jsx' ? 'React' : l}</button>
              ))}
           </div>
           <button onClick={handleCopy} className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500 hover:text-black transition-all text-[10px] font-black uppercase shrink-0 shadow-sm">
@@ -246,11 +253,13 @@ export const WorkspaceLayout = ({ name, controls, preview, cssOutput, htmlOutput
   };
   return (
     <div className="flex flex-col lg:flex-row w-full h-full bg-[#050505] lg:bg-transparent overflow-hidden">
+       {/* KANVAS MOBILE */}
        <div className="h-[35vh] sm:h-[45vh] lg:hidden relative flex items-center justify-center overflow-hidden border-b border-[#1f1f1f] z-30 shadow-[0_10px_30px_rgba(0,0,0,0.5)] shrink-0" style={{backgroundColor: bgHex || '#050505'}}>
           {renderBackground()}
           <div className="relative z-10 w-full h-full flex items-center justify-center p-4 sm:p-6 overflow-hidden perspective-1000">{preview}</div>
        </div>
 
+       {/* KANVAS DESKTOP */}
        <div className="hidden lg:flex flex-1 flex-col min-w-0 lg:border-r border-[#1f1f1f]">
          <div className="flex-1 relative flex items-center justify-center overflow-hidden bg-[#050505] border-b border-[#1f1f1f] z-10 transition-colors duration-500" style={{backgroundColor: bgHex || '#050505'}}>
             {renderBackground()}
@@ -259,6 +268,7 @@ export const WorkspaceLayout = ({ name, controls, preview, cssOutput, htmlOutput
          <div className="h-[320px] shrink-0 p-5 bg-[#0a0a0a]"><CodeOutput cssCode={cssOutput} htmlCode={htmlOutput} jsxCode={jsxOutput} /></div>
        </div>
 
+       {/* KONTROL PANEL */}
        <div className="flex-1 lg:w-[450px] lg:flex-none bg-[#0a0a0a] flex flex-col z-20 overflow-hidden shadow-2xl relative">
          <div className="px-6 py-5 border-b border-[#1f1f1f] bg-[#0a0a0a] shrink-0 z-10 relative shadow-sm">
             <h2 className="text-[15px] font-black text-white uppercase tracking-widest hidden lg:flex items-center gap-3">
@@ -270,7 +280,8 @@ export const WorkspaceLayout = ({ name, controls, preview, cssOutput, htmlOutput
             </div>
          </div>
          <div className="flex-1 overflow-y-auto custom-scroll relative bg-[#0a0a0a]">
-            <div className={`p-6 lg:p-8 lg:block ${mobileTab === 'design' ? 'block animate-slide-up' : 'hidden'}`}>{controls}<div className="h-40 lg:h-12"></div></div>
+            {/* Ditambahkan pb-32 agar bisa di scroll ke paling bawah di HP */}
+            <div className={`p-6 lg:p-8 pb-32 lg:pb-12 ${mobileTab === 'design' ? 'block animate-slide-up' : 'hidden'}`}>{controls}</div>
             <div className={`h-full lg:hidden ${mobileTab === 'code' ? 'block animate-slide-up' : 'hidden'}`}><CodeOutput cssCode={cssOutput} htmlCode={htmlOutput} jsxCode={jsxOutput} isMobileTab={true} /></div>
          </div>
        </div>
