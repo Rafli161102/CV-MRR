@@ -32,25 +32,32 @@ const PLUGINS = [
   { id: 'transform', title: '3D Studio', Icon: Icons.Cube3D, Component: PluginTransform, cat: 'Advanced' },
   { id: 'animation', title: 'Keyframes', Icon: Icons.Animation, Component: PluginAnimation, cat: 'Advanced' },
   { id: 'transitions', title: 'Transitions', Icon: Icons.Transitions, Component: PluginTransitions, cat: 'Advanced' },
-  { id: 'pixelart', title: 'Pixel Draw', Icon: Icons.Brush, Component: PluginPixelDrawing, cat: 'Advanced' } // NAMA SESUAI PLUGINMAX
+  { id: 'pixelart', title: 'Pixel Draw', Icon: Icons.Brush, Component: PluginPixelDrawing, cat: 'Advanced' }
 ];
 
 export default function CssStudioPage() {
   const [activeCat, setActiveCat] = useState('Structure');
   const [activeId, setActiveId] = useState('layout');
-  const [animKey, setAnimKey] = useState(0); // Trigger Animasi Transisi
+  const [animKey, setAnimKey] = useState(0); 
   const router = useRouter();
 
+  // MENGUNCI SCROLL BROWSER AGAR TERASA SEPERTI NATIVE APP
   useEffect(() => {
     document.body.style.overflow = 'hidden';
+    document.documentElement.style.overscrollBehavior = 'none'; // Mencegah Pull-to-refresh
+    document.body.style.overscrollBehavior = 'none';
     window.scrollTo(0, 0);
-    return () => { document.body.style.overflow = 'auto'; };
+    return () => { 
+      document.body.style.overflow = 'auto'; 
+      document.documentElement.style.overscrollBehavior = 'auto';
+      document.body.style.overscrollBehavior = 'auto';
+    };
   }, []);
 
   const handlePluginChange = (id) => {
     if (activeId !== id) {
        setActiveId(id);
-       setAnimKey(prev => prev + 1); // Me-restart animasi fade-in
+       setAnimKey(prev => prev + 1); 
     }
   };
 
@@ -67,7 +74,6 @@ export default function CssStudioPage() {
   return (
     <div className="fixed inset-0 w-full h-[100dvh] flex flex-col font-sans bg-[#050505] text-[#d4d4d4] overflow-hidden z-[90]">
       
-      {/* APP BAR HEADER */}
       <div className="h-14 px-4 border-b border-[#1f1f1f] flex items-center justify-between bg-[#0a0a0a] shrink-0 shadow-md z-50">
         <div className="flex items-center gap-3">
           <button onClick={() => router.push('/toolkit')} className="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-white bg-[#141414] hover:bg-[#1f1f1f] rounded-full transition-all shadow-sm border border-[#2a2a2a]">
@@ -77,9 +83,9 @@ export default function CssStudioPage() {
         </div>
       </div>
 
-      {/* MOBILE NAV: HORIZONTAL SLIDER */}
-      <div className="flex lg:hidden flex-col bg-[#0a0a0a] border-b border-[#1f1f1f] shrink-0 z-40 shadow-xl">
-        <div className="flex overflow-x-auto custom-scroll px-3 pt-3 pb-2 gap-2 snap-x">
+      {/* MOBILE NAV */}
+      <div className="flex lg:hidden flex-col bg-[#0a0a0a] border-b border-[#1f1f1f] shrink-0 z-40 shadow-xl relative">
+        <div className="flex overflow-x-auto custom-scroll px-3 pt-3 pb-2 gap-2 snap-x touch-pan-x">
           {CATEGORIES.map(cat => (
               <button 
                 key={cat.id} onClick={() => handleCategoryChange(cat.id)} 
@@ -90,7 +96,7 @@ export default function CssStudioPage() {
               </button>
           ))}
         </div>
-        <div className="flex overflow-x-auto custom-scroll px-3 py-2 gap-2 bg-[#050505] shadow-inner border-t border-[#1a1a1a]">
+        <div className="flex overflow-x-auto custom-scroll px-3 py-2 gap-2 bg-[#050505] shadow-inner border-t border-[#1a1a1a] touch-pan-x">
           {currentPlugins.map(plugin => (
                <button 
                  key={plugin.id} onClick={() => handlePluginChange(plugin.id)} 
@@ -105,7 +111,7 @@ export default function CssStudioPage() {
 
       <div className="flex-1 flex flex-row overflow-hidden relative z-40 bg-[#050505]">
         
-        {/* DESKTOP NAV: SIDEBAR */}
+        {/* DESKTOP NAV */}
         <div className="hidden lg:flex w-[240px] bg-[#0a0a0a] border-r border-[#1f1f1f] shrink-0 flex-col overflow-y-auto custom-scroll z-30 shadow-md">
            {CATEGORIES.map(cat => (
               <div key={cat.id} className="flex flex-col w-full border-b border-[#1f1f1f] pb-3 mb-3 last:border-0">
@@ -125,7 +131,6 @@ export default function CssStudioPage() {
            ))}
         </div>
         
-        {/* KONTEN PLUGIN (Ditambah key untuk me-restart animasi saat ganti alat) */}
         <div key={animKey} className="flex-1 overflow-hidden bg-[#050505] flex flex-col relative z-10 animate-fade-in-fast">
            {PLUGINS.map(plugin => {
               if (plugin.id !== activeId) return null;
@@ -142,7 +147,7 @@ export default function CssStudioPage() {
         @keyframes fadeInFast { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
         @keyframes slideUpFade { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         
-        input[type="range"].custom-color-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 14px; height: 14px; background: white; border: 2px solid #111113; border-radius: 50%; box-shadow: 0 1px 4px rgba(0,0,0,0.3); cursor: pointer; }
+        input[type="range"].custom-color-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 16px; height: 16px; background: white; border: 2px solid #111113; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.5); cursor: pointer; }
         .custom-scroll::-webkit-scrollbar { height: 0px; width: 4px; display: none; }
         .custom-scroll { -ms-overflow-style: none; scrollbar-width: none; }
         .custom-scroll::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 10px; }
