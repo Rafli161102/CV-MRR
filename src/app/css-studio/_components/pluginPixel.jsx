@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { FigmaSlider, FigmaColorPicker, COLOR_PRESETS, useMultiTouch, FigmaToggle, CodeOutput } from './ui';
 
-// 1. IKON SVG KHUSUS PIXEL DRAW (Termasuk ikon Kode Baru)
+// 1. IKON SVG (Anti Hilang & Anti Crash)
 const PixIcons = {
   Brush: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-full h-full"><path strokeLinecap="round" strokeLinejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.813-3.814a1.151 1.151 0 00-1.628-1.628l-3.814 3.813a15.995 15.995 0 00-4.648 4.764z" /></svg>,
   Eraser: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-full h-full"><path strokeLinecap="round" strokeLinejoin="round" d="M12 9.75L14.25 12m0 0l2.25 2.25M14.25 12l2.25-2.25M14.25 12L12 14.25m-2.58 4.92l-6.375-6.375a1.125 1.125 0 010-1.59L9.42 4.83c.211-.211.498-.33.796-.33H19.5a2.25 2.25 0 012.25 2.25v10.5a2.25 2.25 0 01-2.25 2.25h-9.284c-.298 0-.585-.119-.796-.33z" /></svg>,
@@ -47,7 +47,7 @@ const floodFill = (pixels, startIndex, targetColor, replacementColor, gridSize) 
   return newPixels;
 };
 
-// Mengunci event bubbling agar UI tidak terganggu
+// Mencegah Bubbling agar interaksi UI tidak memicu scroll/refresh/gambar
 const stopProp = (e) => { 
    e.stopPropagation(); 
    if (e.nativeEvent && e.nativeEvent.stopImmediatePropagation) e.nativeEvent.stopImmediatePropagation(); 
@@ -64,7 +64,7 @@ export const PluginPixelDrawing = () => {
   const [palette, setPalette] = useState(['#ffffff', '#1e1e1e', '#0ea5e9', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#ef4444']);
   const [outputSize, setOutputSize] = useState(1080);
   
-  // NAVIGASI MOBILE: Ditambah tab 'code'
+  // NAVIGASI MOBILE: Tools, Colors, Layers, Settings, Code
   const [mobileTab, setMobileTab] = useState('tools'); 
   const [isFullscreen, setIsFullscreen] = useState(false);
   const containerRef = useRef(null);
@@ -73,8 +73,10 @@ export const PluginPixelDrawing = () => {
   const createEmptyLayer = (id, name) => ({ id, name, pixels: Array(gridSize * gridSize).fill('transparent'), visible: true, locked: false });
   const [layers, setLayers] = useState([]);
   const [activeLayerId, setActiveLayerId] = useState(1);
+  
+  // FIX CRASH: Menjadikan State History Lebih Aman
   const [history, setHistory] = useState([]);
-  const [step, setStep] = useState(-1);
+  const [step, setStep] = useState(0);
 
   // REFS UNTUK MENGHINDARI REACT RE-RENDER HELL & LAG
   const currentLayersRef = useRef([]);
@@ -110,13 +112,21 @@ export const PluginPixelDrawing = () => {
   const [baseScale, setBaseScale] = useState(1);
   useEffect(() => { if (typeof window !== 'undefined') setBaseScale(window.innerWidth < 768 ? 0.6 : 1); }, []);
 
-  // Inisialisasi Kanvas
+  // Inisialisasi Kanvas Awal
   useEffect(() => {
     const safeGrid = Math.min(Math.max(gridSize, 8), 32); 
-    const initialLayers = [createEmptyLayer(1, "Layer 1")];
-    setLayers(initialLayers); currentLayersRef.current = initialLayers;
-    setHistory([JSON.parse(JSON.stringify(initialLayers))]); setStep(0); setActiveLayerId(1);
-    setLocalGridInput(safeGrid.toString()); resetView();
+    const initialLayer = createEmptyLayer(1, "Layer 1");
+    
+    const initialLayersArray = [initialLayer];
+    setLayers(initialLayersArray); 
+    currentLayersRef.current = initialLayersArray;
+    
+    // Simpan ke history state dengan aman
+    setHistory([JSON.parse(JSON.stringify(initialLayersArray))]); 
+    setStep(0); 
+    setActiveLayerId(1);
+    setLocalGridInput(safeGrid.toString()); 
+    resetView();
   }, [gridSize]);
 
   useEffect(() => { currentLayersRef.current = layers; }, [layers]);
@@ -136,33 +146,39 @@ export const PluginPixelDrawing = () => {
   const htmlCode = `\n<div class="pixel-art"></div>`;
   const jsxCode = `<div className="pixel-art" />`;
 
-  const saveHistory = useCallback((stateToSave) => {
-    if (!stateToSave || stateToSave.length === 0) return;
-    const currentStr = JSON.stringify(stateToSave);
-    const lastStr = JSON.stringify(history[step]);
+  // FIX BUG UNDO/REDO Murni (Aman dari Exception Undefined)
+  const saveHistory = useCallback(() => {
+    const currentStr = JSON.stringify(currentLayersRef.current);
+    
+    // Proteksi saat history belum siap
+    if (!history || history.length === 0) return;
+    
+    const lastStr = JSON.stringify(history[step]) || "[]";
     
     if (currentStr !== lastStr) {
         const newHistory = history.slice(0, step + 1);
         newHistory.push(JSON.parse(currentStr));
-        if (newHistory.length > 20) newHistory.shift(); 
+        if (newHistory.length > 25) newHistory.shift(); 
         setHistory(newHistory); 
         setStep(newHistory.length - 1);
     }
   }, [history, step]);
 
   const handleUndo = () => { 
-     if (step <= 0) return;
+     if (step <= 0 || !history[step - 1]) return;
      const newStep = step - 1;
      setStep(newStep); 
+     
      const oldState = JSON.parse(JSON.stringify(history[newStep]));
      setLayers(oldState); 
      currentLayersRef.current = oldState;
   };
   
   const handleRedo = () => { 
-     if (step >= history.length - 1) return;
+     if (step >= history.length - 1 || !history[step + 1]) return;
      const newStep = step + 1;
      setStep(newStep); 
+     
      const newState = JSON.parse(JSON.stringify(history[newStep]));
      setLayers(newState); 
      currentLayersRef.current = newState;
@@ -203,7 +219,7 @@ export const PluginPixelDrawing = () => {
        
        if (activeTool === 'bucket') {
           setLayers(newLayers);
-          saveHistory(newLayers);
+          saveHistory();
        }
     }
   };
@@ -285,7 +301,7 @@ export const PluginPixelDrawing = () => {
         isDrawingRef.current = false; 
         lastDrawPosRef.current = null;
         setLayers([...currentLayersRef.current]);
-        saveHistory(currentLayersRef.current); 
+        saveHistory(); 
     }
   };
 
@@ -307,10 +323,10 @@ export const PluginPixelDrawing = () => {
     } catch (err) { setIsFullscreen(!isFullscreen); }
   };
 
-  const addLayer = () => { const newId = Date.now(); const newLayers = [...layers, createEmptyLayer(newId, `Layer ${layers.length + 1}`)]; setLayers(newLayers); setActiveLayerId(newId); setTimeout(()=>saveHistory(newLayers), 50); };
-  const duplicateLayer = (id) => { const layerToCopy = layers.find(l => l.id === id); if (!layerToCopy) return; const newId = Date.now(); const newLayers = [...layers, { ...layerToCopy, id: newId, name: `${layerToCopy.name} Copy` }]; setLayers(newLayers); setActiveLayerId(newId); setTimeout(()=>saveHistory(newLayers), 50); };
-  const deleteLayer = (id) => { if (layers.length <= 1) return; const newLayers = layers.filter(l => l.id !== id); setLayers(newLayers); if (activeLayerId === id) setActiveLayerId(newLayers[newLayers.length - 1].id); setTimeout(()=>saveHistory(newLayers), 50); };
-  const toggleLayerProp = (id, prop) => { const newLayers = layers.map(l => l.id === id ? { ...l, [prop]: !l[prop] } : l); setLayers(newLayers); setTimeout(()=>saveHistory(newLayers), 50); };
+  const addLayer = () => { const newId = Date.now(); const newLayers = [...layers, createEmptyLayer(newId, `Layer ${layers.length + 1}`)]; setLayers(newLayers); setActiveLayerId(newId); setTimeout(saveHistory, 50); };
+  const duplicateLayer = (id) => { const layerToCopy = layers.find(l => l.id === id); if (!layerToCopy) return; const newId = Date.now(); const newLayers = [...layers, { ...layerToCopy, id: newId, name: `${layerToCopy.name} Copy` }]; setLayers(newLayers); setActiveLayerId(newId); setTimeout(saveHistory, 50); };
+  const deleteLayer = (id) => { if (layers.length <= 1) return; const newLayers = layers.filter(l => l.id !== id); setLayers(newLayers); if (activeLayerId === id) setActiveLayerId(newLayers[newLayers.length - 1].id); setTimeout(saveHistory, 50); };
+  const toggleLayerProp = (id, prop) => { const newLayers = layers.map(l => l.id === id ? { ...l, [prop]: !l[prop] } : l); setLayers(newLayers); setTimeout(saveHistory, 50); };
 
   const downloadImage = () => {
     const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
@@ -400,7 +416,8 @@ export const PluginPixelDrawing = () => {
           <div className="absolute top-4 left-4 z-30 lg:hidden" onPointerDown={stopProp} onClick={stopProp}>
              <button onClick={toggleFullscreen} className={`px-4 py-2.5 flex items-center justify-center gap-2 rounded-xl transition-all font-black text-[10px] uppercase tracking-widest shadow-lg active:scale-95 ${isFullscreen ? 'bg-amber-500 text-black border border-amber-400' : 'bg-[#141414]/90 backdrop-blur border border-[#2a2a2a] text-cyan-400'}`}>
                 <div className="w-4 h-4 shrink-0">{isFullscreen ? <PixIcons.Close /> : <PixIcons.Expand />}</div> 
-                <span className="hidden sm:inline md:inline landscape:inline">{isFullscreen ? 'Keluar Layar Penuh' : 'Layar Penuh'}</span>
+                <span className="hidden sm:inline md:inline landscape:inline">{isFullscreen ? 'Keluar Layar Penuh' : 'Layar Penuh (Landscape)'}</span>
+                <span className="sm:hidden landscape:hidden">Layar Penuh</span>
              </button>
           </div>
           
@@ -419,7 +436,7 @@ export const PluginPixelDrawing = () => {
                    else if(isDrawingRef.current) paintByCoords(e.touches[0].clientX, e.touches[0].clientY, false); 
                }}
                onTouchEnd={() => { 
-                   if(isDrawingRef.current) { isDrawingRef.current = false; lastDrawPosRef.current = null; setLayers([...currentLayersRef.current]); saveHistory(currentLayersRef.current); } 
+                   if(isDrawingRef.current) { isDrawingRef.current = false; lastDrawPosRef.current = null; setLayers([...currentLayersRef.current]); saveHistory(); } 
                }}
           >
             <div className="absolute top-4 right-4 flex gap-2 z-30" onPointerDown={stopProp} onTouchStart={stopProp} onClick={stopProp}>
@@ -446,13 +463,18 @@ export const PluginPixelDrawing = () => {
           </div>
        </div>
 
-       {/* 2. BAGIAN ALAT & NAVIGASI MOBILE/DESKTOP */}
+       {/* 2. BAGIAN ALAT & NAVIGASI (RESPONSIVE KHUSUS MOBILE LANDSCAPE & PORTRAIT) */}
        <div className="flex-[45%] landscape:flex-none landscape:w-[320px] lg:flex-none flex flex-col bg-[#050505] z-40 shrink-0 lg:w-[400px] lg:h-full shadow-[0_-10px_30px_rgba(0,0,0,0.5)] landscape:shadow-[-10px_0_30px_rgba(0,0,0,0.5)] lg:shadow-2xl">
           
-          {/* SCROLLABLE KONTEN TAB MOBILE & DESKTOP (Di Mobile, KONTEN ADA DI ATAS MENU BAWAH) */}
+          <div className="hidden lg:flex px-6 py-5 border-b border-[#1f1f1f] bg-[#0a0a0a] shrink-0 items-center justify-between">
+             <h2 className="text-[13px] font-black text-white uppercase tracking-widest flex items-center gap-2">
+               <span className="w-2.5 h-2.5 rounded-full bg-cyan-500 inline-block animate-pulse shadow-[0_0_8px_rgba(6,182,212,0.8)]"></span> Pixel Studio Pro
+             </h2>
+          </div>
+
           <div className="flex-1 overflow-y-auto custom-scroll relative p-5 lg:p-7 bg-[#0a0a0a]">
              
-             {/* MODE MOBILE / LANDSCAPE (Pakai Sistem Tab) */}
+             {/* MODE MOBILE / LANDSCAPE */}
              <div className="lg:hidden h-full">
                 {mobileTab === 'tools' && <ToolsTab />}
                 {mobileTab === 'colors' && <ColorsTab />}
@@ -465,7 +487,7 @@ export const PluginPixelDrawing = () => {
                 )}
              </div>
 
-             {/* MODE DESKTOP NORMAL (Semua alat disusun menurun, tanpa menu tab bawah) */}
+             {/* MODE DESKTOP NORMAL */}
              <div className="hidden lg:block space-y-8">
                 <div><ControlHeader title="Alat Desain" /><ToolsTab /></div>
                 <div className="w-full h-px bg-[#1f1f1f]"></div>
@@ -478,12 +500,11 @@ export const PluginPixelDrawing = () => {
 
           </div>
 
-          {/* PANEL KODE OUTPUT KHUSUS DESKTOP (Tetap di bawah sidebar kanan) */}
           <div className="hidden lg:block h-[300px] border-t border-[#1f1f1f] shrink-0">
                <CodeOutput cssCode={cssCode} htmlCode={htmlCode} jsxCode={jsxCode} />
           </div>
 
-          {/* MENU NAVIGASI KHUSUS MOBILE/LANDSCAPE */}
+          {/* TAB NAVIGASI KHUSUS MOBILE */}
           <div className="lg:hidden h-[70px] landscape:h-full landscape:w-[70px] bg-[#050505] border-t landscape:border-t-0 landscape:border-l border-[#1a1a1a] flex flex-row landscape:flex-col shrink-0 pb-safe">
              <button onClick={() => setMobileTab('tools')} className={`flex-1 flex flex-col items-center justify-center gap-1 transition-all ${mobileTab === 'tools' ? 'text-cyan-400 border-t-2 landscape:border-t-0 landscape:border-l-2 border-cyan-500 bg-[#141414]' : 'text-slate-500 hover:text-slate-300 border-t-2 landscape:border-t-0 landscape:border-l-2 border-transparent'}`}><div className="w-5 h-5 shrink-0"><PixIcons.Brush /></div><span className="text-[9px] font-black uppercase tracking-wider">Alat</span></button>
              <button onClick={() => setMobileTab('colors')} className={`flex-1 flex flex-col items-center justify-center gap-1 transition-all ${mobileTab === 'colors' ? 'text-cyan-400 border-t-2 landscape:border-t-0 landscape:border-l-2 border-cyan-500 bg-[#141414]' : 'text-slate-500 hover:text-slate-300 border-t-2 landscape:border-t-0 landscape:border-l-2 border-transparent'}`}><div className="w-5 h-5 shrink-0"><PixIcons.Picker /></div><span className="text-[9px] font-black uppercase tracking-wider">Warna</span></button>
