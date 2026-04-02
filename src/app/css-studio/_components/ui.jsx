@@ -64,7 +64,7 @@ export const ControlHeader = ({ title, onReset }) => (
   </div>
 );
 
-// FIX MUTLAK TOGGLE: Menggunakan In-line Styles CSS agar 100% jalan dan tidak di block oleh Tailwind!
+// PENGAMANAN TOGGLE: Bypass Tailwind menggunakan atribut style
 export const FigmaToggle = ({ label, checked, onChange }) => (
   <div className="flex items-center justify-between py-3.5 border-b border-[#1f1f1f] last:border-0">
      <span className="text-[11px] sm:text-[12px] font-bold text-slate-300">{label}</span>
@@ -114,7 +114,7 @@ export const FigmaSlider = ({ label, min, max, step = 1, value, onChange, unit =
     <div className="flex flex-col sm:flex-row sm:items-center justify-between py-3.5 border-b border-[#1f1f1f] last:border-0 gap-3 sm:gap-0">
       <label className="text-[11px] sm:text-[12px] font-bold text-slate-300 w-full sm:w-1/3">{label}</label>
       <div className="w-full sm:w-2/3 flex items-center gap-3">
-        <input type="range" min={min} max={max} step={step} value={value || 0} onChange={(e) => onChange(Number(e.target.value) || 0)} className="w-full h-[6px] bg-[#333] rounded-lg appearance-none cursor-pointer outline-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:bg-cyan-400 [&::-webkit-slider-thumb]:rounded-full hover:[&::-webkit-slider-thumb]:scale-125 transition-all" />
+        <input type="range" min={min} max={max} step={step} value={value || 0} onChange={(e) => onChange(Number(e.target.value) || 0)} className="w-full h-[6px] bg-[#333] rounded-lg appearance-none cursor-pointer outline-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:bg-cyan-400 [&::-webkit-slider-thumb]:rounded-full hover:[&::-webkit-slider-thumb]:scale-125 transition-all" />
         <div className="bg-[#141414] px-2.5 py-2 rounded-xl border border-[#333] min-w-[75px] flex items-center justify-end shrink-0 cursor-text focus-within:border-cyan-500 transition-colors shadow-inner">
           <input type="number" value={localVal} onChange={(e) => setLocalVal(e.target.value)} onBlur={handleBlur} onKeyDown={(e) => {if(e.key==='Enter') e.currentTarget.blur()}} className="w-full bg-transparent text-right outline-none font-mono font-bold text-cyan-400 text-[11px] p-0 m-0" style={{ appearance: 'textfield', MozAppearance: 'textfield' }} />
           <span className="text-[10px] font-mono text-slate-500 ml-1.5">{unit}</span>
@@ -218,7 +218,7 @@ export const CodeOutput = ({ cssCode, htmlCode, jsxCode, isMobileTab }) => {
   const handleCopy = () => { navigator.clipboard.writeText(getActiveCode()); setCopied(true); setTimeout(() => setCopied(false), 2000); };
   const formattedCode = getActiveCode().replace(/</g, '&lt;').replace(/>/g, '&gt;');
   return (
-    <div className={`w-full h-full bg-[#0a0a0a] relative flex flex-col overflow-hidden ${isMobileTab ? '' : 'border-t lg:border border-[#1f1f1f] lg:rounded-3xl shadow-xl'}`}>
+    <div className={`w-full h-full bg-[#0a0a0a] relative flex flex-col overflow-hidden ${isMobileTab ? '' : 'border-t lg:border border-[#1f1f1f] lg:rounded-2xl shadow-xl'}`}>
        <div className="flex justify-between items-center px-4 py-3 border-b border-[#1f1f1f] bg-[#141414] shrink-0 overflow-x-auto custom-scroll">
           <div className="flex gap-2">
              {['css', 'html', 'jsx'].map(l => (
@@ -241,18 +241,16 @@ export const WorkspaceLayout = ({ name, controls, preview, cssOutput, htmlOutput
   const renderBackground = () => {
     if (bgType === 'grid') return <div className="absolute inset-0 opacity-[0.2]" style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '24px 24px'}}></div>;
     if (bgType === 'light') return <div className="absolute inset-0 transition-colors duration-500" style={{ backgroundColor: bgHex || '#f8fafc' }}></div>;
-    if (bgType === 'glass') return <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200')" }}></div>;
+    if (bgType === 'glass') return <div className="absolute inset-0 bg-cover bg-center opacity-100" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200')" }}></div>;
     return null;
   };
   return (
     <div className="flex flex-col lg:flex-row w-full h-full bg-[#050505] lg:bg-transparent overflow-hidden">
-       {/* KANVAS MOBILE (Atas) */}
        <div className="h-[35vh] sm:h-[45vh] lg:hidden relative flex items-center justify-center overflow-hidden border-b border-[#1f1f1f] z-30 shadow-[0_10px_30px_rgba(0,0,0,0.5)] shrink-0" style={{backgroundColor: bgHex || '#050505'}}>
           {renderBackground()}
           <div className="relative z-10 w-full h-full flex items-center justify-center p-4 sm:p-6 overflow-hidden perspective-1000">{preview}</div>
        </div>
 
-       {/* KANVAS DESKTOP (Kiri) */}
        <div className="hidden lg:flex flex-1 flex-col min-w-0 lg:border-r border-[#1f1f1f]">
          <div className="flex-1 relative flex items-center justify-center overflow-hidden bg-[#050505] border-b border-[#1f1f1f] z-10 transition-colors duration-500" style={{backgroundColor: bgHex || '#050505'}}>
             {renderBackground()}
@@ -261,7 +259,6 @@ export const WorkspaceLayout = ({ name, controls, preview, cssOutput, htmlOutput
          <div className="h-[320px] shrink-0 p-5 bg-[#0a0a0a]"><CodeOutput cssCode={cssOutput} htmlCode={htmlOutput} jsxCode={jsxOutput} /></div>
        </div>
 
-       {/* KONTROL PANEL */}
        <div className="flex-1 lg:w-[450px] lg:flex-none bg-[#0a0a0a] flex flex-col z-20 overflow-hidden shadow-2xl relative">
          <div className="px-6 py-5 border-b border-[#1f1f1f] bg-[#0a0a0a] shrink-0 z-10 relative shadow-sm">
             <h2 className="text-[15px] font-black text-white uppercase tracking-widest hidden lg:flex items-center gap-3">
