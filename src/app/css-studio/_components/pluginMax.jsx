@@ -18,7 +18,9 @@ export const PluginTransform = () => {
   const [isWireframe, setIsWireframe] = useState(false); 
   
   const [baseScale, setBaseScale] = useState(1);
-  useEffect(() => { if (window.innerWidth < 768) setBaseScale(0.7); }, []);
+  useEffect(() => { 
+    if (typeof window !== 'undefined') setBaseScale(window.innerWidth < 768 ? 0.7 : 1); 
+  }, []);
 
   const { scale: touchScale, pan, onTouchStart, onTouchMove, resetView } = useMultiTouch();
 
@@ -83,7 +85,9 @@ export const PluginShapes = () => {
   const [snapToGrid, setSnapToGrid] = useState(true); 
 
   const [baseScale, setBaseScale] = useState(1);
-  useEffect(() => { if (window.innerWidth < 768) setBaseScale(0.6); }, []);
+  useEffect(() => { 
+    if (typeof window !== 'undefined') setBaseScale(window.innerWidth < 768 ? 0.6 : 1); 
+  }, []);
 
   const { scale, pan, onTouchStart, onTouchMove, resetView } = useMultiTouch();
   const [activeTool, setActiveTool] = useState('pan');
