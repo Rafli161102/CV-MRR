@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { FigmaSlider, FigmaColorPicker, COLOR_PRESETS, useMultiTouch, FigmaToggle, ControlHeader, CodeOutput } from './ui';
 
-// IKON SVG MASTER
+// 1. IKON SVG KHUSUS PIXEL DRAW (Anti Hilang)
 const PixIcons = {
   Brush: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-full h-full"><path strokeLinecap="round" strokeLinejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.813-3.814a1.151 1.151 0 00-1.628-1.628l-3.814 3.813a15.995 15.995 0 00-4.648 4.764z" /></svg>,
   Eraser: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-full h-full"><path strokeLinecap="round" strokeLinejoin="round" d="M12 9.75L14.25 12m0 0l2.25 2.25M14.25 12l2.25-2.25M14.25 12L12 14.25m-2.58 4.92l-6.375-6.375a1.125 1.125 0 010-1.59L9.42 4.83c.211-.211.498-.33.796-.33H19.5a2.25 2.25 0 012.25 2.25v10.5a2.25 2.25 0 01-2.25 2.25h-9.284c-.298 0-.585-.119-.796-.33z" /></svg>,
@@ -16,7 +16,7 @@ const PixIcons = {
   Layers: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-full h-full"><path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" /></svg>,
   Expand: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-full h-full"><path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" /></svg>,
   Close: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-full h-full"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>,
-  Settings: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-full h-full"><path strokeLinecap="round" strokeLinejoin="round" d="M10.343 3.94c.09-.542.56-.94 1.11-.94h1.093c.55 0 1.02.398 1.11.94l.149.894c.07.424.384.764.78.93.398.164.855.142 1.205-.108l.737-.527a1.125 1.125 0 011.45.12l.773.774c.39.389.44 1.002.12 1.45l-.527.737c-.25.35-.272.806-.107 1.204.165.397.505.71.93.78l.893.15c.543.09.94.56.94 1.109v1.094c0 .55-.397 1.02-.94 1.11l-.893.149c-.425.07-.765.383-.93.78-.165.398-.143.854.107 1.204l.527.738c.32.447.269 1.06-.12 1.45l-.774.773a1.125 1.125 0 01-1.449.12l-.738-.527c-.35-.25-.806-.272-1.203-.107-.397.165-.71-.505-.781.929l-.149.894z" /></svg>,
+  Settings: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-full h-full"><path strokeLinecap="round" strokeLinejoin="round" d="M10.343 3.94c.09-.542.56-.94 1.11-.94h1.093c.55 0 1.02.398 1.11.94l.149.894c.07.424.384.764.78.93.398.164.855.142 1.205-.108l.737-.527a1.125 1.125 0 011.45.12l.773.774c.39.389.44 1.002.12 1.45l-.527.737c-.25.35-.272.806-.107 1.204.165.397.505.71.93.78l.893.15c.543.09.94.56.94 1.109v1.094c0 .55-.397 1.02-.94 1.11l-.893.149c-.425.07-.765.383-.93.78-.165.398-.143.854.107 1.204l.527.738c.32.447.269 1.06-.12 1.45l-.774.773a1.125 1.125 0 01-1.449.12l-.738-.527c-.35-.25-.806-.272-1.203-.107-.397.165-.71-.505-.781.929l-.149.894z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>,
   Eye: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-full h-full"><path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>,
   EyeOff: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-full h-full"><path strokeLinecap="round" strokeLinejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" /></svg>,
   Lock: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-full h-full"><path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg>,
@@ -26,7 +26,7 @@ const PixIcons = {
   Code: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-full h-full"><path strokeLinecap="round" strokeLinejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5" /></svg>,
 };
 
-// Algoritma Bucket Fill
+// Algoritma Ember Cat
 const floodFill = (pixels, startIndex, targetColor, replacementColor, gridSize) => {
   if (targetColor === replacementColor) return pixels;
   const newPixels = [...pixels];
@@ -46,13 +46,14 @@ const floodFill = (pixels, startIndex, targetColor, replacementColor, gridSize) 
   return newPixels;
 };
 
-// Pengunci Bubbling Event
+// Mengunci event bubbling agar UI tidak terganggu
 const stopProp = (e) => { 
    e.stopPropagation(); 
    if (e.nativeEvent && e.nativeEvent.stopImmediatePropagation) e.nativeEvent.stopImmediatePropagation(); 
 };
 
 export const PluginPixelDrawing = () => {
+  // SETTINGS & STATE DASAR
   const [gridSize, setGridSize] = useState(16);
   const [localGridInput, setLocalGridInput] = useState('16');
   const [canvasBgColor, setCanvasBgColor] = useState('#ffffff');
@@ -62,10 +63,12 @@ export const PluginPixelDrawing = () => {
   const [palette, setPalette] = useState(['#ffffff', '#1e1e1e', '#0ea5e9', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#ef4444']);
   const [outputSize, setOutputSize] = useState(1080);
   
+  // NAVIGASI MOBILE (Tab System & Fullscreen)
   const [mobileTab, setMobileTab] = useState('tools'); 
   const [isFullscreen, setIsFullscreen] = useState(false);
   const containerRef = useRef(null);
 
+  // LAYER, HISTORY & PERFORMANCE REFS
   const createEmptyLayer = (id, name) => ({ id, name, pixels: Array(gridSize * gridSize).fill('transparent'), visible: true, locked: false });
   const [layers, setLayers] = useState([]);
   const [activeLayerId, setActiveLayerId] = useState(1);
@@ -76,16 +79,18 @@ export const PluginPixelDrawing = () => {
   const isDrawingRef = useRef(false);
   const lastDrawPosRef = useRef(null);
 
+  // MULTI-TOUCH
   const { scale, pan, rotation, setScale, setPan, onTouchStart: onTouchStartMulti, onTouchMove: onTouchMoveMulti, resetView } = useMultiTouch();
   const [activeTool, setActiveTool] = useState('draw'); 
   
   const canvasAreaRef = useRef(null);
   const gridRef = useRef(null);
 
+  // 1. OVERSCROLL LOCK: Mematikan native behavior secara mutlak di kanvas
   useEffect(() => {
     const el = canvasAreaRef.current;
     const preventScroll = (e) => { 
-        if (e.touches && e.touches.length > 1) return; 
+        if (e.touches && e.touches.length > 1) return; // Allow 2 fingers
         e.preventDefault(); 
     };
     if (el) {
@@ -103,6 +108,7 @@ export const PluginPixelDrawing = () => {
   const [baseScale, setBaseScale] = useState(1);
   useEffect(() => { if (typeof window !== 'undefined') setBaseScale(window.innerWidth < 768 ? 0.6 : 1); }, []);
 
+  // Inisialisasi awal
   useEffect(() => {
     const safeGrid = Math.min(Math.max(gridSize, 8), 32); 
     const initialLayers = [createEmptyLayer(1, "Layer 1")];
@@ -121,12 +127,15 @@ export const PluginPixelDrawing = () => {
      });
   }
 
+  // GENERATOR CSS KODE OTOMATIS
   const pixelSizePx = gridSize <= 8 ? 20 : gridSize <= 16 ? 12 : gridSize <= 32 ? 6 : 4;
-  const boxShadowData = mergedPixels.map((p, i) => p !== 'transparent' ? `${(i % gridSize) * pixelSizePx}px ${Math.floor(i / gridSize) * pixelSizePx}px ${p}` : null).filter(Boolean).join(',\n  ');
+  const boxShadowData = mergedPixels.map((p, i) => p !== 'transparent' ? `${(i % gridSize) * pixelSizePx}px ${Math.floor(i / gridSize) * pixelSizePx}px ${p}` : null).filter(Boolean).join(',\n    ');
+  
   const cssCode = `.pixel-art {\n  width: ${pixelSizePx}px;\n  height: ${pixelSizePx}px;\n  background-color: ${isTransparent ? 'transparent' : canvasBgColor};\n  box-shadow: ${boxShadowData || 'none'};\n}`;
   const htmlCode = `\n<div class="pixel-art"></div>`;
   const jsxCode = `<div className="pixel-art" />`;
 
+  // 2. SISTEM UNDO/REDO MURNI
   const saveHistory = useCallback((stateToSave) => {
     if (!stateToSave || stateToSave.length === 0) return;
     const currentStr = JSON.stringify(stateToSave);
@@ -159,6 +168,7 @@ export const PluginPixelDrawing = () => {
      currentLayersRef.current = newState;
   };
 
+  // 3. ENGINE PENGGAMBAR BATCH BRESENHAM DENGAN BYPASS REACT
   const paintPixelsBatch = (indicesToPaint) => {
     if (activeTool === 'pan' || activeTool === 'picker' || indicesToPaint.length === 0) return;
     
@@ -180,6 +190,7 @@ export const PluginPixelDrawing = () => {
           const targetColor = activeTool === 'erase' ? 'transparent' : color;
           if (newPixels[index] !== targetColor) {
              newPixels[index] = targetColor;
+             // MANIPULASI DOM LANGSUNG UNTUK PERFORMA TINGGI DI HP
              if (gridRef.current && gridRef.current.children[index]) {
                  gridRef.current.children[index].style.backgroundColor = targetColor === 'transparent' ? '' : targetColor;
              }
@@ -190,7 +201,7 @@ export const PluginPixelDrawing = () => {
 
     if (changed) {
        newLayers[activeIdx] = { ...newLayers[activeIdx], pixels: newPixels };
-       currentLayersRef.current = newLayers;
+       currentLayersRef.current = newLayers; // Simpan di Ref saja saat digeser agar UI tidak kedap kedip
        
        if (activeTool === 'bucket') {
           setLayers(newLayers);
@@ -203,6 +214,7 @@ export const PluginPixelDrawing = () => {
     if (!gridRef.current || activeTool === 'pan') return;
     
     const rect = gridRef.current.getBoundingClientRect();
+    const pixelSizePx = gridSize <= 8 ? 20 : gridSize <= 16 ? 12 : gridSize <= 32 ? 6 : 4;
     
     const centerX = rect.left + rect.width / 2; const centerY = rect.top + rect.height / 2;
     const dx = clientX - centerX; const dy = clientY - centerY;
@@ -237,6 +249,7 @@ export const PluginPixelDrawing = () => {
 
     const indicesToPaint = [];
 
+    // BRESENHAM ALGORITHM UNTUK GARIS MULUS (Tidak putus-putus)
     if (isStart || !lastDrawPosRef.current || activeTool === 'bucket') {
         indicesToPaint.push(row * gridSize + col);
     } else {
@@ -274,11 +287,12 @@ export const PluginPixelDrawing = () => {
     if (isDrawingRef.current) { 
         isDrawingRef.current = false; 
         lastDrawPosRef.current = null;
-        setLayers([...currentLayersRef.current]);
+        setLayers([...currentLayersRef.current]); // Sinkronisasi UI React setelah selesai digambar
         saveHistory(currentLayersRef.current); 
     }
   };
 
+  // FULLSCREEN ENGINE: Bisa merotasi HP ke Landscape otomatis
   const toggleFullscreen = async () => {
     try {
       if (!document.fullscreenElement) {
@@ -382,7 +396,7 @@ export const PluginPixelDrawing = () => {
   );
 
   return (
-    // FIX LAYOUT: Pakai h-[100dvh] mutlak agar tidak tembus URL bar di HP
+    // MEMASTIKAN TINGGI LAYAR 100dvh AGAR PAS DI HP (TIDAK KEPOTONG URL BAR)
     <div ref={containerRef} className={`w-full h-[100dvh] flex flex-col landscape:flex-row lg:flex-row bg-[#050505] overflow-hidden font-sans select-none ${isFullscreen ? 'fixed inset-0 z-[100]' : 'absolute inset-0 z-10'}`}>
        
        {/* 1. TAB NAVIGASI MOBILE (Portrait = Bawah, Landscape = Kiri) */}
