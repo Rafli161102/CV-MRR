@@ -26,7 +26,7 @@ const PixIcons = {
   Download: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-full h-full"><path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>,
 };
 
-// Algoritma Ember Cat (Flood Fill)
+// Algoritma Ember Cat
 const floodFill = (pixels, startIndex, targetColor, replacementColor, gridSize) => {
   if (targetColor === replacementColor) return pixels;
   const newPixels = [...pixels];
@@ -46,13 +46,14 @@ const floodFill = (pixels, startIndex, targetColor, replacementColor, gridSize) 
   return newPixels;
 };
 
-// Pengunci Bubbling Event
+// Mengunci event bubbling agar UI tidak terganggu
 const stopProp = (e) => { 
    e.stopPropagation(); 
    if (e.nativeEvent && e.nativeEvent.stopImmediatePropagation) e.nativeEvent.stopImmediatePropagation(); 
 };
 
 export const PluginPixelDrawing = () => {
+  // SETTINGS
   const [gridSize, setGridSize] = useState(16);
   const [localGridInput, setLocalGridInput] = useState('16');
   const [canvasBgColor, setCanvasBgColor] = useState('#ffffff');
@@ -62,44 +63,36 @@ export const PluginPixelDrawing = () => {
   const [palette, setPalette] = useState(['#ffffff', '#1e1e1e', '#0ea5e9', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#ef4444']);
   const [outputSize, setOutputSize] = useState(1080);
   
-  // NAVIGASI MOBILE TAB TAMPILAN NATIVE
+  // NAVIGASI MOBILE & FULLSCREEN
   const [mobileTab, setMobileTab] = useState('tools'); 
   const [isFullscreen, setIsFullscreen] = useState(false);
-  
+  const containerRef = useRef(null);
+
+  // LAYER & HISTORY
   const createEmptyLayer = (id, name) => ({ id, name, pixels: Array(gridSize * gridSize).fill('transparent'), visible: true, locked: false });
   const [layers, setLayers] = useState([]);
   const [activeLayerId, setActiveLayerId] = useState(1);
-  
-  // STATE HISTORY UNDO/REDO ROBUST
   const [history, setHistory] = useState([]);
   const [step, setStep] = useState(-1);
-  const currentLayersRef = useRef([]);
+  const [renderKey, setRenderKey] = useState(0); // Trigger force render saat undo
 
-  // ENGINE MULTI-TOUCH & DRAWING
+  // REFS UNTUK MENGHINDARI REACT RE-RENDER HELL & LAG
+  const currentLayersRef = useRef([]);
+  // KUNCI UTAMA: isDrawingRef diganti ke useRef agar UI tidak berkedip!
+  const isDrawingRef = useRef(false);
+  const lastDrawPosRef = useRef(null);
+
+  // KANVAS & MULTI-TOUCH
   const { scale, pan, rotation, setScale, setPan, onTouchStart: onTouchStartMulti, onTouchMove: onTouchMoveMulti, resetView } = useMultiTouch();
   const [activeTool, setActiveTool] = useState('draw'); 
-  const [isDrawing, setIsDrawing] = useState(false);
-  
-  // REFERENSI DOM
-  const containerRef = useRef(null);
   const canvasAreaRef = useRef(null);
   const gridRef = useRef(null);
-  const scrollTabRef = useRef(null); // FIX MUTLAK 1: Ref untuk Reset Scroll posisi Tab
 
-  const lastPaintedIndex = useRef(-1);
-
-  // FIX MUTLAK 2: Reset Scroll saat Ganti Tab agar Layar Tidak Anjlok Kebawah!
-  useEffect(() => {
-      if (scrollTabRef.current) {
-          scrollTabRef.current.scrollTop = 0;
-      }
-  }, [mobileTab]);
-
-  // FIX PULL-TO-REFRESH & OVERSCROLL
+  // Mencegah Pull-To-Refresh Browser
   useEffect(() => {
     const el = canvasAreaRef.current;
     const preventScroll = (e) => { 
-        if (e.touches && e.touches.length > 1) return; 
+        if (e.touches && e.touches.length > 1) return; // Izinkan zoom 2 jari
         e.preventDefault(); 
     };
     if (el) {
@@ -117,7 +110,7 @@ export const PluginPixelDrawing = () => {
   const [baseScale, setBaseScale] = useState(1);
   useEffect(() => { if (typeof window !== 'undefined') setBaseScale(window.innerWidth < 768 ? 0.6 : 1); }, []);
 
-  // Inisialisasi Kanvas Awal
+  // Inisialisasi
   useEffect(() => {
     const safeGrid = Math.min(Math.max(gridSize, 8), 32); 
     const initialLayers = [createEmptyLayer(1, "Layer 1")];
@@ -129,9 +122,8 @@ export const PluginPixelDrawing = () => {
   useEffect(() => { currentLayersRef.current = layers; }, [layers]);
 
   // SISTEM UNDO/REDO SOLID
-  const saveHistory = useCallback((stateToSave) => {
-    if (!stateToSave || stateToSave.length === 0) return;
-    const currentStr = JSON.stringify(stateToSave);
+  const saveHistory = useCallback(() => {
+    const currentStr = JSON.stringify(currentLayersRef.current);
     const lastStr = JSON.stringify(history[step]);
     
     if (currentStr !== lastStr) {
@@ -150,7 +142,7 @@ export const PluginPixelDrawing = () => {
      const oldState = JSON.parse(JSON.stringify(history[newStep]));
      setLayers(oldState); 
      currentLayersRef.current = oldState;
-     lastPaintedIndex.current = -1;
+     setRenderKey(k => k + 1); // Paksa DOM update
   };
   
   const handleRedo = () => { 
@@ -160,9 +152,10 @@ export const PluginPixelDrawing = () => {
      const newState = JSON.parse(JSON.stringify(history[newStep]));
      setLayers(newState); 
      currentLayersRef.current = newState;
-     lastPaintedIndex.current = -1;
+     setRenderKey(k => k + 1);
   };
 
+  // ENGINE PENGGAMBAR BATCH (Bresenham) Murni Bypass React
   const paintPixelsBatch = (indicesToPaint) => {
     if (activeTool === 'pan' || activeTool === 'picker' || indicesToPaint.length === 0) return;
     
@@ -184,6 +177,7 @@ export const PluginPixelDrawing = () => {
           const targetColor = activeTool === 'erase' ? 'transparent' : color;
           if (newPixels[index] !== targetColor) {
              newPixels[index] = targetColor;
+             // MANIPULASI DOM LANGSUNG AGAR SUPER CEPAT & MULUS
              if (gridRef.current && gridRef.current.children[index]) {
                  gridRef.current.children[index].style.backgroundColor = targetColor === 'transparent' ? '' : targetColor;
              }
@@ -194,9 +188,11 @@ export const PluginPixelDrawing = () => {
 
     if (changed) {
        newLayers[activeIdx] = { ...newLayers[activeIdx], pixels: newPixels };
-       currentLayersRef.current = newLayers;
+       currentLayersRef.current = newLayers; // Simpan di Ref saja saat digeser agar UI tidak kedap kedip
+       
        if (activeTool === 'bucket') {
-          setLayers(newLayers); saveHistory(newLayers);
+          setLayers(newLayers);
+          saveHistory();
        }
     }
   };
@@ -240,6 +236,7 @@ export const PluginPixelDrawing = () => {
 
     const indicesToPaint = [];
 
+    // BRESENHAM ALGORITHM (Garis tidak akan putus-putus meski digeser super cepat)
     if (isStart || !lastDrawPosRef.current || activeTool === 'bucket') {
         indicesToPaint.push(row * gridSize + col);
     } else {
@@ -263,22 +260,22 @@ export const PluginPixelDrawing = () => {
     lastDrawPosRef.current = { col, row };
   };
 
-  const lastDrawPosRef = useRef(null);
-
   const handlePointerDown = (e) => {
     if (e.pointerType === 'touch' && activeTool === 'pan') return; 
-    setIsDrawing(true); lastDrawPosRef.current = null;
+    isDrawingRef.current = true; 
     paintByCoords(e.clientX, e.clientY, true);
   };
   const handlePointerMove = (e) => {
     if (e.pointerType === 'touch' && activeTool === 'pan') return;
-    if (!isDrawing) return;
+    if (!isDrawingRef.current) return;
     paintByCoords(e.clientX, e.clientY, false);
   };
   const handlePointerUp = () => {
-    if (isDrawing) { 
-        setIsDrawing(false); lastDrawPosRef.current = null;
-        setLayers([...currentLayersRef.current]); saveHistory(currentLayersRef.current); 
+    if (isDrawingRef.current) { 
+        isDrawingRef.current = false; 
+        lastDrawPosRef.current = null;
+        setLayers([...currentLayersRef.current]); // Sinkronisasi UI React setelah selesai digambar
+        saveHistory(); 
     }
   };
 
@@ -300,10 +297,10 @@ export const PluginPixelDrawing = () => {
     } catch (err) { setIsFullscreen(!isFullscreen); }
   };
 
-  const addLayer = () => { const newId = Date.now(); const newLayers = [...layers, createEmptyLayer(newId, `Layer ${layers.length + 1}`)]; setLayers(newLayers); setActiveLayerId(newId); setTimeout(()=>saveHistory(newLayers), 50); };
-  const duplicateLayer = (id) => { const layerToCopy = layers.find(l => l.id === id); if (!layerToCopy) return; const newId = Date.now(); const newLayers = [...layers, { ...layerToCopy, id: newId, name: `${layerToCopy.name} Copy` }]; setLayers(newLayers); setActiveLayerId(newId); setTimeout(()=>saveHistory(newLayers), 50); };
-  const deleteLayer = (id) => { if (layers.length <= 1) return; const newLayers = layers.filter(l => l.id !== id); setLayers(newLayers); if (activeLayerId === id) setActiveLayerId(newLayers[newLayers.length - 1].id); setTimeout(()=>saveHistory(newLayers), 50); };
-  const toggleLayerProp = (id, prop) => { const newLayers = layers.map(l => l.id === id ? { ...l, [prop]: !l[prop] } : l); setLayers(newLayers); setTimeout(()=>saveHistory(newLayers), 50); };
+  const addLayer = () => { const newId = Date.now(); const newLayers = [...layers, createEmptyLayer(newId, `Layer ${layers.length + 1}`)]; setLayers(newLayers); setActiveLayerId(newId); setTimeout(saveHistory, 50); };
+  const duplicateLayer = (id) => { const layerToCopy = layers.find(l => l.id === id); if (!layerToCopy) return; const newId = Date.now(); const newLayers = [...layers, { ...layerToCopy, id: newId, name: `${layerToCopy.name} Copy` }]; setLayers(newLayers); setActiveLayerId(newId); setTimeout(saveHistory, 50); };
+  const deleteLayer = (id) => { if (layers.length <= 1) return; const newLayers = layers.filter(l => l.id !== id); setLayers(newLayers); if (activeLayerId === id) setActiveLayerId(newLayers[newLayers.length - 1].id); setTimeout(saveHistory, 50); };
+  const toggleLayerProp = (id, prop) => { const newLayers = layers.map(l => l.id === id ? { ...l, [prop]: !l[prop] } : l); setLayers(newLayers); setTimeout(saveHistory, 50); };
 
   const downloadImage = () => {
     const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
@@ -322,78 +319,10 @@ export const PluginPixelDrawing = () => {
   };
 
   const pixelSizePx = gridSize <= 8 ? 20 : gridSize <= 16 ? 12 : gridSize <= 32 ? 6 : 4;
+  
+  // FIX WARNA GRID: #e8e8e8
   const gridStyle = showGrid ? 'inset 0 0 0 1px #e8e8e8' : 'none';
 
-  const ToolsTab = () => (
-    <div className="grid grid-cols-3 sm:grid-cols-6 landscape:grid-cols-6 lg:grid-cols-3 gap-3 animate-fade-in-fast h-full items-start">
-      <button onClick={() => setActiveTool('draw')} className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl transition-all border ${activeTool === 'draw' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500 shadow-[0_0_15px_rgba(6,182,212,0.2)]' : 'bg-[#141414] text-slate-400 border-transparent hover:bg-[#1f1f1f]'}`}><div className="w-6 h-6 shrink-0"><PixIcons.Brush /></div><span className="text-[10px] font-black tracking-widest uppercase">Kuas</span></button>
-      <button onClick={() => setActiveTool('erase')} className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl transition-all border ${activeTool === 'erase' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500 shadow-[0_0_15px_rgba(6,182,212,0.2)]' : 'bg-[#141414] text-slate-400 border-transparent hover:bg-[#1f1f1f]'}`}><div className="w-6 h-6 shrink-0"><PixIcons.Eraser /></div><span className="text-[10px] font-black tracking-widest uppercase">Hapus</span></button>
-      <button onClick={() => {setActiveTool('bucket');}} className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl transition-all border ${activeTool === 'bucket' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500 shadow-[0_0_15px_rgba(6,182,212,0.2)]' : 'bg-[#141414] text-slate-400 border-transparent hover:bg-[#1f1f1f]'}`}><div className="w-6 h-6 shrink-0"><PixIcons.Bucket /></div><span className="text-[10px] font-black tracking-widest uppercase">Isi</span></button>
-      <button onClick={() => setActiveTool('picker')} className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl transition-all border ${activeTool === 'picker' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500 shadow-[0_0_15px_rgba(6,182,212,0.2)]' : 'bg-[#141414] text-slate-400 border-transparent hover:bg-[#1f1f1f]'}`}><div className="w-6 h-6 shrink-0"><PixIcons.Picker /></div><span className="text-[10px] font-black tracking-widest uppercase">Ambil</span></button>
-      <button onClick={() => setActiveTool('pan')} className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl transition-all border ${activeTool === 'pan' ? 'bg-amber-500/10 text-amber-500 border-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.2)]' : 'bg-[#141414] text-slate-400 border-transparent hover:bg-[#1f1f1f]'}`}><div className="w-6 h-6 shrink-0"><PixIcons.HandPan /></div><span className="text-[10px] font-black tracking-widest uppercase">Geser</span></button>
-      <button onClick={() => { setScale(1); setPan({x:0, y:0}); rotation!==0&&window.location.reload(); }} className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl transition-all border bg-[#141414] border-transparent text-slate-400 hover:bg-[#1f1f1f] hover:text-white active:scale-95`}><div className="w-6 h-6 shrink-0"><PixIcons.Focus /></div><span className="text-[10px] font-black tracking-widest uppercase">Fokus</span></button>
-    </div>
-  );
-
-  const ColorsTab = () => (
-    <div className="space-y-4 animate-fade-in-fast">
-      <FigmaColorPicker label="Warna Kuas Aktif" hexValue={color} onChange={setColor} />
-      <div className="flex flex-wrap gap-3 mt-4">
-        {palette.map((c, i) => (
-          <button key={i} onClick={() => {setColor(c); setActiveTool('draw');}} className={`w-10 h-10 rounded-xl border-2 transition-transform shadow-sm shrink-0 ${color === c ? 'border-cyan-400 scale-110 shadow-[0_0_15px_rgba(6,182,212,0.4)]' : 'border-[#333] hover:scale-105'}`} style={{backgroundColor: c}} />
-        ))}
-      </div>
-    </div>
-  );
-
-  const LayersTab = () => (
-    <div className="animate-fade-in-fast flex flex-col h-full pb-8">
-      <div className="flex items-center justify-between mb-4 shrink-0">
-        <span className="text-[12px] font-black text-cyan-400 uppercase tracking-widest flex items-center gap-2"><div className="w-4 h-4 shrink-0"><PixIcons.Layers /></div> Layers Panel</span>
-        <button onClick={addLayer} className="text-[9px] text-cyan-400 bg-cyan-500/10 border border-cyan-500/30 px-3 py-1.5 rounded-lg uppercase tracking-wider hover:bg-cyan-500/20 transition-all">+ Layer Baru</button>
-      </div>
-      <div className="space-y-3 flex-1 overflow-y-auto custom-scroll pr-2">
-        {[...layers].reverse().map(l => (
-          <div key={l.id} onClick={() => setActiveLayerId(l.id)} className={`flex items-center justify-between p-3.5 rounded-xl border cursor-pointer transition-all ${activeLayerId === l.id ? 'bg-[#1a1a1a] border-cyan-500 shadow-md' : 'bg-[#141414] border-[#2a2a2a] hover:border-[#444]'}`}>
-            <div className="flex items-center gap-3 flex-1 min-w-0 pr-2">
-              <button onClick={(e) => {e.stopPropagation(); toggleLayerProp(l.id, 'visible')}} className={`w-6 h-6 p-1 shrink-0 flex items-center justify-center transition-colors ${l.visible ? 'text-cyan-400' : 'text-slate-600'}`}>{l.visible ? <PixIcons.Eye /> : <PixIcons.EyeOff />}</button>
-              <button onClick={(e) => {e.stopPropagation(); toggleLayerProp(l.id, 'locked')}} className={`w-6 h-6 p-1 shrink-0 flex items-center justify-center transition-colors ${l.locked ? 'text-red-400' : 'text-slate-500'}`}>{l.locked ? <PixIcons.Lock /> : <PixIcons.Unlock />}</button>
-              <span className={`text-[11px] font-bold uppercase tracking-wider truncate ${activeLayerId === l.id ? 'text-white' : 'text-slate-400'}`}>{l.name} {activeLayerId === l.id && '(Aktif)'}</span>
-            </div>
-            <div className="flex items-center gap-2 shrink-0">
-              <button onClick={(e) => {e.stopPropagation(); duplicateLayer(l.id)}} className="w-6 h-6 p-1 flex items-center justify-center shrink-0 text-slate-400 hover:text-white transition-colors" title="Gandakan"><PixIcons.Copy /></button>
-              <button onClick={(e) => {e.stopPropagation(); deleteLayer(l.id)}} disabled={layers.length <= 1} className="w-6 h-6 p-1 flex items-center justify-center shrink-0 text-slate-400 hover:text-red-400 disabled:opacity-30 transition-colors"><PixIcons.Trash /></button>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-
-  const SettingsTab = () => (
-    <div className="space-y-6 animate-fade-in-fast pb-10">
-      <div className="flex gap-3">
-        <input type="number" value={localGridInput} onChange={(e) => setLocalGridInput(e.target.value)} className="flex-1 bg-[#141414] border border-[#2a2a2a] rounded-xl px-5 py-4 text-white font-mono text-[14px] shadow-inner outline-none focus:border-cyan-500 transition-colors" />
-        <button onClick={() => setGridSize(Math.min(32, Math.max(8, parseInt(localGridInput))))} className="px-6 py-4 bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 rounded-xl text-[12px] font-black uppercase tracking-wider hover:bg-cyan-500/20 active:scale-95 transition-all">Set Grid</button>
-      </div>
-      <FigmaToggle label="Tampilkan Garis Grid" checked={showGrid} onChange={setShowGrid} />
-      <FigmaColorPicker label="Warna Background Kanvas" hexValue={canvasBgColor} onChange={setCanvasBgColor} />
-      <FigmaToggle label="Background Transparan (PNG)" checked={isTransparent} onChange={setIsTransparent} />
-      <FigmaSlider label="HD Export Size" min={gridSize} max={1920} step={gridSize} value={outputSize} onChange={setOutputSize} unit="px" />
-      <button onClick={downloadImage} className="w-full py-4 mt-4 bg-gradient-to-r from-cyan-600 to-blue-600 rounded-xl text-[12px] font-black uppercase tracking-widest text-white shadow-[0_0_20px_rgba(6,182,212,0.3)] hover:shadow-[0_0_30px_rgba(6,182,212,0.5)] active:scale-95 transition-all flex items-center justify-center gap-2"><div className="w-5 h-5 shrink-0"><PixIcons.Download /></div> Download Gambar HD</button>
-    </div>
-  );
-
-  // GABUNGKAN MERGED PIXELS UNTUK INITIAL RENDER SAAT TIDAK SEDANG DRAWING
-  const initialMergedPixels = Array(gridSize * gridSize).fill('transparent');
-  if (layers && layers.length > 0) {
-     layers.forEach(layer => {
-       if (!layer.visible) return;
-       layer.pixels.forEach((p, j) => { if (p !== 'transparent') initialMergedPixels[j] = p; });
-     });
-  }
-
-  // 4. FIX LAYOUT ENTERPRISE: STRUKTUR DOM FLEXBOX UNTUK LANDSCAPE (ALAT & KANVAS MUNCUL BERSAMAAN)
   return (
     <div ref={containerRef} className={`w-full h-full flex flex-col landscape:flex-row lg:flex-row bg-[#050505] overflow-hidden font-sans ${isFullscreen ? 'fixed inset-0 z-[100]' : 'absolute inset-0 z-10'}`}>
        
@@ -415,14 +344,14 @@ export const PluginPixelDrawing = () => {
                onPointerCancel={handlePointerUp}
                onTouchStart={(e) => { 
                    if(activeTool === 'pan' || e.touches.length > 1) onTouchStartMulti(e); 
-                   else { setIsDrawing(true); lastDrawPosRef.current = null; paintByCoords(e.touches[0].clientX, e.touches[0].clientY, true); } 
+                   else { isDrawingRef.current = true; lastDrawPosRef.current = null; paintByCoords(e.touches[0].clientX, e.touches[0].clientY, true); } 
                }}
                onTouchMove={(e) => { 
                    if(activeTool === 'pan' || e.touches.length > 1) onTouchMoveMulti(e); 
-                   else if(isDrawing) paintByCoords(e.touches[0].clientX, e.touches[0].clientY, false); 
+                   else if(isDrawingRef.current) paintByCoords(e.touches[0].clientX, e.touches[0].clientY, false); 
                }}
                onTouchEnd={() => { 
-                   if(isDrawing) { setIsDrawing(false); lastDrawPosRef.current = null; setLayers([...currentLayersRef.current]); saveHistory(currentLayersRef.current); } 
+                   if(isDrawingRef.current) { isDrawingRef.current = false; lastDrawPosRef.current = null; setLayers([...currentLayersRef.current]); saveHistory(); } 
                }}
           >
             <div className="absolute top-4 right-4 flex gap-2 z-30" onPointerDown={stopProp} onTouchStart={stopProp} onClick={stopProp}>
@@ -430,49 +359,110 @@ export const PluginPixelDrawing = () => {
               <button onPointerDown={(e) => { stopProp(e); handleRedo(); }} disabled={step >= history.length - 1} className="w-11 h-11 flex items-center justify-center rounded-xl border border-[#2a2a2a] bg-[#141414]/90 backdrop-blur text-slate-300 disabled:opacity-30 shadow-lg hover:text-white transition-colors active:scale-95"><div className="w-5 h-5 shrink-0"><PixIcons.Redo /></div></button>
             </div>
 
-            <div style={{ transform: `translate(${pan.x}px, ${pan.y}px) scale(${scale * baseScale}) rotate(${rotation}deg)`, transition: isDrawing ? 'none' : 'transform 0.1s ease-out' }} className="absolute pointer-events-none">
+            <div style={{ transform: `translate(${pan.x}px, ${pan.y}px) scale(${scale * baseScale}) rotate(${rotation}deg)`, transition: isDrawingRef.current ? 'none' : 'transform 0.1s ease-out' }} className="absolute pointer-events-none">
               <div className="absolute -top-7 left-0 w-full flex justify-center"><span className="bg-red-500 text-white text-[9px] font-black px-4 py-1.5 rounded-t-lg shadow-lg uppercase tracking-widest">SISI ATAS</span></div>
               
-              <div ref={gridRef} className="grid shadow-[0_0_50px_rgba(0,0,0,0.8)] border-t-[4px] border-t-red-500" 
+              {/* MERGED PIXELS RENDERER */}
+              <div ref={gridRef} key={`grid-${renderKey}`} className="grid shadow-[0_0_50px_rgba(0,0,0,0.8)] border-t-[4px] border-t-red-500" 
                    style={{ 
                      gridTemplateColumns: `repeat(${gridSize}, 1fr)`, width: gridSize * pixelSizePx, height: gridSize * pixelSizePx,
                      backgroundColor: isTransparent ? 'transparent' : canvasBgColor,
                      backgroundImage: isTransparent ? 'linear-gradient(45deg, #1a1a1a 25%, transparent 25%), linear-gradient(-45deg, #1a1a1a 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #1a1a1a 75%), linear-gradient(-45deg, transparent 75%, #1a1a1a 75%)' : 'none',
                      backgroundSize: '12px 12px'
                    }}>
-                {initialMergedPixels.map((bg, i) => (
-                  <div key={i} data-pixel-index={i} className={`w-full h-full transition-colors duration-75`} 
-                       style={{ backgroundColor: bg !== 'transparent' ? bg : undefined, boxShadow: gridStyle }} />
-                ))}
+                {Array(gridSize * gridSize).fill('transparent').map((_, i) => {
+                  let bg = 'transparent';
+                  for(let k = currentLayersRef.current.length -1; k >=0; k--){
+                      if(currentLayersRef.current[k].visible && currentLayersRef.current[k].pixels[i] !== 'transparent'){
+                          bg = currentLayersRef.current[k].pixels[i]; break;
+                      }
+                  }
+                  return (
+                    <div key={i} data-pixel-index={i} className={`w-full h-full transition-colors duration-75`} 
+                         style={{ backgroundColor: bg !== 'transparent' ? bg : undefined, boxShadow: gridStyle }} />
+                  )
+                })}
               </div>
             </div>
           </div>
        </div>
 
-       {/* 2. BAGIAN PANEL KANAN / BAWAH (Navigasi + Alat Desain Bersamaan untuk Fullscreen Landscape) */}
-       <div className="flex-[45%] landscape:flex-none landscape:w-[320px] lg:flex-none flex flex-col landscape:flex-row bg-[#050505] z-40 shrink-0 lg:w-[400px] lg:h-full shadow-[0_-10px_30px_rgba(0,0,0,0.5)] landscape:shadow-[-10px_0_30px_rgba(0,0,0,0.5)] lg:shadow-2xl">
+       {/* 2. BAGIAN PANEL KANAN / BAWAH (LANDSCAPE FLEX-ROW-REVERSE AGAR LACI DI KANAN) */}
+       <div className="flex-[45%] landscape:flex-none landscape:w-[350px] lg:flex-none flex flex-col landscape:flex-row-reverse bg-[#050505] z-40 shrink-0 lg:w-[400px] lg:h-full shadow-[0_-10px_30px_rgba(0,0,0,0.5)] landscape:shadow-[-10px_0_30px_rgba(0,0,0,0.5)] lg:shadow-2xl">
           
-          {/* TAB NAVIGASI KHUSUS MOBILE (Diletakkan sebelum konten di DOM agar pada landscape flex-row dia di kiri) */}
-          <div className="lg:hidden h-[70px] landscape:h-full landscape:w-[70px] bg-[#050505] border-t landscape:border-t-0 landscape:border-r border-[#1a1a1a] flex flex-row landscape:flex-col shrink-0 pb-safe order-last landscape:order-first z-50">
-             <button onClick={() => setMobileTab('tools')} className={`flex-1 flex flex-col items-center justify-center gap-1.5 transition-all ${mobileTab === 'tools' ? 'text-cyan-400 border-t-2 landscape:border-t-0 landscape:border-l-2 border-cyan-500 bg-[#141414]' : 'text-slate-500 hover:text-slate-300 border-t-2 landscape:border-t-0 landscape:border-l-2 border-transparent'}`}><div className="w-5 h-5 sm:w-6 sm:h-6 shrink-0"><PixIcons.Brush /></div><span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider">Alat</span></button>
-             <button onClick={() => setMobileTab('colors')} className={`flex-1 flex flex-col items-center justify-center gap-1.5 transition-all ${mobileTab === 'colors' ? 'text-cyan-400 border-t-2 landscape:border-t-0 landscape:border-l-2 border-cyan-500 bg-[#141414]' : 'text-slate-500 hover:text-slate-300 border-t-2 landscape:border-t-0 landscape:border-l-2 border-transparent'}`}><div className="w-5 h-5 sm:w-6 sm:h-6 shrink-0"><PixIcons.Picker /></div><span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider">Warna</span></button>
-             <button onClick={() => setMobileTab('layers')} className={`flex-1 flex flex-col items-center justify-center gap-1.5 transition-all ${mobileTab === 'layers' ? 'text-cyan-400 border-t-2 landscape:border-t-0 landscape:border-l-2 border-cyan-500 bg-[#141414]' : 'text-slate-500 hover:text-slate-300 border-t-2 landscape:border-t-0 landscape:border-l-2 border-transparent'}`}><div className="w-5 h-5 sm:w-6 sm:h-6 shrink-0"><PixIcons.Layers /></div><span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider">Layers</span></button>
-             <button onClick={() => setMobileTab('settings')} className={`flex-1 flex flex-col items-center justify-center gap-1.5 transition-all ${mobileTab === 'settings' ? 'text-cyan-400 border-t-2 landscape:border-t-0 landscape:border-l-2 border-cyan-500 bg-[#141414]' : 'text-slate-500 hover:text-slate-300 border-t-2 landscape:border-t-0 landscape:border-l-2 border-transparent'}`}><div className="w-5 h-5 sm:w-6 sm:h-6 shrink-0"><PixIcons.Settings /></div><span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider">Seting</span></button>
+          <div className="hidden lg:flex px-6 py-5 border-b border-[#1f1f1f] bg-[#0a0a0a] shrink-0 items-center justify-between">
+             <h2 className="text-[13px] font-black text-white uppercase tracking-widest flex items-center gap-2">
+               <span className="w-2.5 h-2.5 rounded-full bg-cyan-500 inline-block animate-pulse shadow-[0_0_8px_rgba(6,182,212,0.8)]"></span> Pixel Studio Pro
+             </h2>
           </div>
 
           <div className="flex-1 flex flex-col min-w-0 h-full bg-[#0a0a0a]">
-            <div className="hidden lg:flex px-6 py-5 border-b border-[#1f1f1f] bg-[#0a0a0a] shrink-0 items-center justify-between">
-               <h2 className="text-[13px] font-black text-white uppercase tracking-widest flex items-center gap-2">
-                 <span className="w-2.5 h-2.5 rounded-full bg-cyan-500 inline-block animate-pulse shadow-[0_0_8px_rgba(6,182,212,0.8)]"></span> Pixel Studio Pro
-               </h2>
-            </div>
+             <div className="flex-1 overflow-y-auto custom-scroll relative p-5 lg:p-7 pb-10">
+                {mobileTab === 'tools' && (
+                  <div className="grid grid-cols-3 sm:grid-cols-6 landscape:grid-cols-3 lg:grid-cols-3 gap-3 animate-fade-in-fast h-full items-start">
+                    <button onClick={() => setActiveTool('draw')} className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl transition-all border ${activeTool === 'draw' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500 shadow-[0_0_15px_rgba(6,182,212,0.2)]' : 'bg-[#141414] text-slate-400 border-transparent hover:bg-[#1f1f1f]'}`}><div className="w-6 h-6 shrink-0"><PixIcons.Brush /></div><span className="text-[10px] font-black tracking-widest uppercase">Kuas</span></button>
+                    <button onClick={() => setActiveTool('erase')} className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl transition-all border ${activeTool === 'erase' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500 shadow-[0_0_15px_rgba(6,182,212,0.2)]' : 'bg-[#141414] text-slate-400 border-transparent hover:bg-[#1f1f1f]'}`}><div className="w-6 h-6 shrink-0"><PixIcons.Eraser /></div><span className="text-[10px] font-black tracking-widest uppercase">Hapus</span></button>
+                    <button onClick={() => {setActiveTool('bucket');}} className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl transition-all border ${activeTool === 'bucket' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500 shadow-[0_0_15px_rgba(6,182,212,0.2)]' : 'bg-[#141414] text-slate-400 border-transparent hover:bg-[#1f1f1f]'}`}><div className="w-6 h-6 shrink-0"><PixIcons.Bucket /></div><span className="text-[10px] font-black tracking-widest uppercase">Isi</span></button>
+                    <button onClick={() => setActiveTool('picker')} className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl transition-all border ${activeTool === 'picker' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500 shadow-[0_0_15px_rgba(6,182,212,0.2)]' : 'bg-[#141414] text-slate-400 border-transparent hover:bg-[#1f1f1f]'}`}><div className="w-6 h-6 shrink-0"><PixIcons.Picker /></div><span className="text-[10px] font-black tracking-widest uppercase">Ambil</span></button>
+                    <button onClick={() => setActiveTool('pan')} className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl transition-all border ${activeTool === 'pan' ? 'bg-amber-500/10 text-amber-500 border-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.2)]' : 'bg-[#141414] text-slate-400 border-transparent hover:bg-[#1f1f1f]'}`}><div className="w-6 h-6 shrink-0"><PixIcons.HandPan /></div><span className="text-[10px] font-black tracking-widest uppercase">Geser</span></button>
+                    <button onClick={() => { setScale(1); setPan({x:0, y:0}); rotation!==0&&window.location.reload(); }} className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl transition-all border bg-[#141414] border-transparent text-slate-400 hover:bg-[#1f1f1f] hover:text-white active:scale-95`}><div className="w-6 h-6 shrink-0"><PixIcons.Focus /></div><span className="text-[10px] font-black tracking-widest uppercase">Fokus</span></button>
+                  </div>
+                )}
+                {mobileTab === 'colors' && (
+                  <div className="space-y-4 animate-fade-in-fast">
+                    <FigmaColorPicker label="Warna Kuas Aktif" hexValue={color} onChange={setColor} />
+                    <div className="flex flex-wrap gap-3 mt-4">
+                      {palette.map((c, i) => (
+                        <button key={i} onClick={() => {setColor(c); setActiveTool('draw');}} className={`w-10 h-10 rounded-xl border-2 transition-transform shadow-sm shrink-0 ${color === c ? 'border-cyan-400 scale-110 shadow-[0_0_15px_rgba(6,182,212,0.4)]' : 'border-[#333] hover:scale-105'}`} style={{backgroundColor: c}} />
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {mobileTab === 'layers' && (
+                  <div className="animate-fade-in-fast flex flex-col h-full pb-8">
+                    <div className="flex items-center justify-between mb-4 shrink-0">
+                      <span className="text-[12px] font-black text-cyan-400 uppercase tracking-widest flex items-center gap-2"><div className="w-4 h-4 shrink-0"><PixIcons.Layers /></div> Layers Panel</span>
+                      <button onClick={addLayer} className="text-[9px] text-cyan-400 bg-cyan-500/10 border border-cyan-500/30 px-3 py-1.5 rounded-lg uppercase tracking-wider hover:bg-cyan-500/20 transition-all">+ Baru</button>
+                    </div>
+                    <div className="space-y-3 flex-1 overflow-y-auto custom-scroll pr-2">
+                      {[...layers].reverse().map(l => (
+                        <div key={l.id} onClick={() => setActiveLayerId(l.id)} className={`flex items-center justify-between p-3.5 rounded-xl border cursor-pointer transition-all ${activeLayerId === l.id ? 'bg-[#1a1a1a] border-cyan-500 shadow-md' : 'bg-[#141414] border-[#2a2a2a] hover:border-[#444]'}`}>
+                          <div className="flex items-center gap-3 flex-1 min-w-0 pr-2">
+                            <button onClick={(e) => {e.stopPropagation(); toggleLayerProp(l.id, 'visible')}} className={`w-6 h-6 p-1 shrink-0 flex items-center justify-center transition-colors ${l.visible ? 'text-cyan-400' : 'text-slate-600'}`}>{l.visible ? <PixIcons.Eye /> : <PixIcons.EyeOff />}</button>
+                            <button onClick={(e) => {e.stopPropagation(); toggleLayerProp(l.id, 'locked')}} className={`w-6 h-6 p-1 shrink-0 flex items-center justify-center transition-colors ${l.locked ? 'text-red-400' : 'text-slate-500'}`}>{l.locked ? <PixIcons.Lock /> : <PixIcons.Unlock />}</button>
+                            <span className={`text-[11px] font-bold uppercase tracking-wider truncate ${activeLayerId === l.id ? 'text-white' : 'text-slate-400'}`}>{l.name} {activeLayerId === l.id && '(Aktif)'}</span>
+                          </div>
+                          <div className="flex items-center gap-2 shrink-0">
+                            <button onClick={(e) => {e.stopPropagation(); duplicateLayer(l.id)}} className="w-6 h-6 p-1 flex items-center justify-center shrink-0 text-slate-400 hover:text-white transition-colors" title="Gandakan"><PixIcons.Copy /></button>
+                            <button onClick={(e) => {e.stopPropagation(); deleteLayer(l.id)}} disabled={layers.length <= 1} className="w-6 h-6 p-1 flex items-center justify-center shrink-0 text-slate-400 hover:text-red-400 disabled:opacity-30 transition-colors"><PixIcons.Trash /></button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {mobileTab === 'settings' && (
+                  <div className="space-y-6 animate-fade-in-fast pb-10">
+                    <div className="flex gap-3">
+                      <input type="number" value={localGridInput} onChange={(e) => setLocalGridInput(e.target.value)} className="flex-1 bg-[#141414] border border-[#2a2a2a] rounded-xl px-5 py-4 text-white font-mono text-[14px] shadow-inner outline-none focus:border-cyan-500 transition-colors" />
+                      <button onClick={() => setGridSize(Math.min(32, Math.max(8, parseInt(localGridInput))))} className="px-6 py-4 bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 rounded-xl text-[12px] font-black uppercase tracking-wider hover:bg-cyan-500/20 active:scale-95 transition-all">Set Grid</button>
+                    </div>
+                    <FigmaToggle label="Tampilkan Garis Grid" checked={showGrid} onChange={setShowGrid} />
+                    <FigmaColorPicker label="Warna Background Kanvas" hexValue={canvasBgColor} onChange={setCanvasBgColor} />
+                    <FigmaToggle label="Background Transparan (PNG)" checked={isTransparent} onChange={setIsTransparent} />
+                    <FigmaSlider label="HD Export Size" min={gridSize} max={1920} step={gridSize} value={outputSize} onChange={setOutputSize} unit="px" />
+                    <button onClick={downloadImage} className="w-full py-4 mt-4 bg-gradient-to-r from-cyan-600 to-blue-600 rounded-xl text-[12px] font-black uppercase tracking-widest text-white shadow-[0_0_20px_rgba(6,182,212,0.3)] hover:shadow-[0_0_30px_rgba(6,182,212,0.5)] active:scale-95 transition-all flex items-center justify-center gap-2"><div className="w-5 h-5 shrink-0"><PixIcons.Download /></div> Download Gambar HD</button>
+                  </div>
+                )}
+             </div>
+          </div>
 
-            <div ref={scrollTabRef} className="flex-1 overflow-y-auto custom-scroll relative p-5 lg:p-7 pb-10">
-               {mobileTab === 'tools' && <ToolsTab />}
-               {mobileTab === 'colors' && <ColorsTab />}
-               {mobileTab === 'layers' && <LayersTab />}
-               {mobileTab === 'settings' && <SettingsTab />}
-            </div>
+          {/* TAB NAVIGASI KHUSUS MOBILE (Akan Berbaris Secara Vertikal di Samping saat Miring) */}
+          <div className="lg:hidden h-[70px] landscape:h-full landscape:w-[70px] bg-[#050505] border-t landscape:border-t-0 landscape:border-l border-[#1a1a1a] flex flex-row landscape:flex-col shrink-0 pb-safe z-50">
+             <button onClick={() => setMobileTab('tools')} className={`flex-1 flex flex-col items-center justify-center gap-1.5 transition-all ${mobileTab === 'tools' ? 'text-cyan-400 border-t-2 landscape:border-t-0 landscape:border-r-2 border-cyan-500 bg-[#141414]' : 'text-slate-500 hover:text-slate-300 border-t-2 landscape:border-t-0 landscape:border-r-2 border-transparent'}`}><div className="w-5 h-5 sm:w-6 sm:h-6 shrink-0"><PixIcons.Brush /></div><span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider">Alat</span></button>
+             <button onClick={() => setMobileTab('colors')} className={`flex-1 flex flex-col items-center justify-center gap-1.5 transition-all ${mobileTab === 'colors' ? 'text-cyan-400 border-t-2 landscape:border-t-0 landscape:border-r-2 border-cyan-500 bg-[#141414]' : 'text-slate-500 hover:text-slate-300 border-t-2 landscape:border-t-0 landscape:border-r-2 border-transparent'}`}><div className="w-5 h-5 sm:w-6 sm:h-6 shrink-0"><PixIcons.Picker /></div><span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider">Warna</span></button>
+             <button onClick={() => setMobileTab('layers')} className={`flex-1 flex flex-col items-center justify-center gap-1.5 transition-all ${mobileTab === 'layers' ? 'text-cyan-400 border-t-2 landscape:border-t-0 landscape:border-r-2 border-cyan-500 bg-[#141414]' : 'text-slate-500 hover:text-slate-300 border-t-2 landscape:border-t-0 landscape:border-r-2 border-transparent'}`}><div className="w-5 h-5 sm:w-6 sm:h-6 shrink-0"><PixIcons.Layers /></div><span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider">Layers</span></button>
+             <button onClick={() => setMobileTab('settings')} className={`flex-1 flex flex-col items-center justify-center gap-1.5 transition-all ${mobileTab === 'settings' ? 'text-cyan-400 border-t-2 landscape:border-t-0 landscape:border-r-2 border-cyan-500 bg-[#141414]' : 'text-slate-500 hover:text-slate-300 border-t-2 landscape:border-t-0 landscape:border-r-2 border-transparent'}`}><div className="w-5 h-5 sm:w-6 sm:h-6 shrink-0"><PixIcons.Settings /></div><span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider">Seting</span></button>
           </div>
        </div>
 
