@@ -43,8 +43,8 @@ export const PROJECT_LIST = [
     company: "Bella Terra Lifestyle Center",
     category: "Social Media Design",
     description: "Desain pamflet promosi digital yang atraktif untuk event komunitas Kumpul Wibu di Bella Terra Lifestyle Center.",
-    image: "/projects/kumpul-wibu.jpg",
-    images: ["/projects/kumpul-wibu.jpg"]
+    image: "/projects/kumpul-wibu/1.jpg",
+    images: ["/projects/kumpul-wibu/1.jpg"]
   },
   {
     id: "anime-carnival",
