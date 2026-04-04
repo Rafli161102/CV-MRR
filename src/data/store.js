@@ -85,7 +85,18 @@ export const PROJECT_LIST = [
       "/projects/case-batch-1/7.jpg",
       "/projects/case-batch-1/8.jpg", 
     ] 
-  }
+  }, 
+{
+    id: "aquanime",
+    title: "AquaNime Community",
+    company: "Community Founder",
+    category: "Community Design",
+    description: "Desain Banner serta cetak dengan ukuran 3m x 1m atau 300cm x 100cm.",
+    image: "/projects/aquanime/4.jpg",
+    images: [
+      "/projects/aquanime/4.jpg", 
+    ] 
+  },
 ];
 
 export const WORK_EXPERIENCE = [
