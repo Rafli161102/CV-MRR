@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { PROJECT_LIST, PHOTO_GALLERY } from '../data/store';
+import { PROJECT_LIST, PHOTO_GALLERY } from '../data/store'; // Memanggil PHOTO_GALLERY
 
 // =========================================================================
 // KOMPONEN IKON SVG MINIMALIS & PROFESIONAL
@@ -32,7 +32,7 @@ const ToolsIcon = () => (
 );
 
 const CameraIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-indigo-400 shrink-0">
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 shrink-0">
     <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
     <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z" />
   </svg>
@@ -43,42 +43,42 @@ export default function Home() {
   const waMessage = "Halo Rafli, saya telah melihat portofolio Anda dan tertarik untuk berdiskusi mengenai proyek desain.";
 
   // =========================================================================
-  // SISTEM ROTASI KARYA OTOMATIS (TanPA Progress Bar, Transisi Halus)
+  // SISTEM ROTASI KARYA OTOMATIS (MENGGANTI 1 PER 1 SECARA MODERN)
   // =========================================================================
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isAnimating, setIsAnimating] = useState(false);
-  const projectsToShow = 3; 
+  // Kita membuat array state independen untuk menyimpan index dari 3 posisi grid
+  const [gridIndices, setGridIndices] = useState([0, 1, 2]);
+  const [fadingIndex, setFadingIndex] = useState(null); // Melacak kotak mana yang sedang animasi
 
   useEffect(() => {
-    if (!PROJECT_LIST || PROJECT_LIST.length <= projectsToShow) return;
+    if (!PROJECT_LIST || PROJECT_LIST.length <= 3) return;
+
+    let updateSlot = 0; // Mulai dari kotak pertama (0)
 
     const intervalId = setInterval(() => {
-      // 1. Trigger animasi keluar (blur + fade out ringan)
-      setIsAnimating(true);
+      // 1. Picu efek pudar (Fade out) pada kotak tertentu
+      setFadingIndex(updateSlot);
       
-      // 2. Ganti data saat animasi tertutup penuh (800ms)
+      // 2. Ubah data gambar secara instan saat gambarnya buram/menghilang
       setTimeout(() => {
-        setCurrentIndex((prevIndex) => {
-          const nextIndex = prevIndex + projectsToShow;
-          return nextIndex >= PROJECT_LIST.length ? 0 : nextIndex;
+        setGridIndices(prevIndices => {
+          const newIndices = [...prevIndices];
+          // Cari ID tertinggi saat ini, lalu tambah 1 (Looping jika mentok)
+          const maxCurrentId = Math.max(...newIndices);
+          newIndices[updateSlot] = maxCurrentId + 1 >= PROJECT_LIST.length ? 0 : maxCurrentId + 1;
+          return newIndices;
         });
         
-        // 3. Tarik kembali animasi ke posisi semula (fade in)
-        setIsAnimating(false);
-      }, 800);
+        // 3. Munculkan kembali gambarnya (Fade in)
+        setFadingIndex(null);
 
-    }, 6000); // Durasi tampil lebih lama (6 detik)
+        // Pindah giliran kotak mana yang akan diubah selanjutnya (0 -> 1 -> 2 -> 0)
+        updateSlot = (updateSlot + 1) % 3;
+      }, 500); // Waktu transisi CSS
+
+    }, 4000); // Berganti otomatis setiap 4 detik
 
     return () => clearInterval(intervalId);
   }, []);
-
-  const activeProjects = PROJECT_LIST.slice(currentIndex, currentIndex + projectsToShow);
-  const displayProjects = activeProjects.length === projectsToShow 
-    ? activeProjects 
-    : [...activeProjects, ...PROJECT_LIST.slice(0, projectsToShow - activeProjects.length)];
-
-  // Batasi foto yang tampil di landing page agar tidak kepanjangan
-  const previewPhotos = PHOTO_GALLERY.slice(0, 6);
 
   return (
     <div className="min-h-screen bg-[#030712] text-slate-300 font-sans selection:bg-cyan-500 selection:text-white relative w-full overflow-x-hidden">
@@ -88,21 +88,24 @@ export default function Home() {
         <div className="absolute top-[-10%] left-[-10%] w-[120vw] md:w-[50rem] h-[120vw] md:h-[50rem] bg-cyan-600/10 rounded-full blur-[100px] md:blur-[120px]"></div>
         <div className="absolute bottom-[-20%] right-[-10%] w-[100vw] md:w-[40rem] h-[100vw] md:h-[40rem] bg-indigo-600/10 rounded-full blur-[100px] md:blur-[150px]"></div>
         
-        {/* Garis Vertikal Halus */}
         <div className="hidden md:block absolute left-[10%] top-0 bottom-0 w-[1px] bg-white/[0.02]"></div>
         <div className="hidden md:block absolute left-[50%] top-0 bottom-0 w-[1px] bg-white/[0.02]"></div>
         <div className="hidden md:block absolute right-[10%] top-0 bottom-0 w-[1px] bg-white/[0.02]"></div>
       </div>
 
       {/* KONTEN UTAMA */}
-      <div className="relative z-10 pt-28 md:pt-36 pb-24 w-full">
+      <div className="relative z-10 pt-24 md:pt-36 pb-24 w-full">
         <div className="max-w-[1400px] mx-auto px-5 sm:px-8 lg:px-12 w-full">
           
-          {/* HERO SECTION */}
-          <div className="flex flex-col lg:flex-row items-center justify-between gap-16 lg:gap-0 min-h-[75vh] w-full">
-            {/* KIRI: 61.8% */}
-            <div className="w-full lg:w-[61.8%] flex flex-col justify-center text-center lg:text-left pr-0 lg:pr-12 z-20">
-              <div className="anim-fade-in-up inline-flex items-center justify-center lg:justify-start gap-3 mb-6">
+          {/* ========================================================= */}
+          {/* HERO SECTION (IMPROVED: justify-center agar tidak jauh di desktop) */}
+          {/* ========================================================= */}
+          <div className="flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-16 min-h-[auto] lg:min-h-[70vh] w-full py-10">
+            
+            {/* KIRI */}
+            <div className="w-full lg:w-[61.8%] flex flex-col justify-center text-center lg:text-left z-20">
+              
+              <div className="anim-fade-in-up inline-flex items-center justify-center lg:justify-start gap-3 mb-6 mx-auto lg:mx-0">
                 <div className="flex items-center justify-center w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-emerald-500/20 border border-emerald-500/50 shrink-0">
                   <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
                 </div>
@@ -111,7 +114,7 @@ export default function Home() {
                 </span>
               </div>
               
-              <h1 className="anim-fade-in-up anim-delay-100 text-4xl sm:text-5xl md:text-6xl lg:text-[5rem] font-black tracking-tighter text-white mb-6 leading-[1.1] drop-shadow-lg break-words">
+              <h1 className="anim-fade-in-up anim-delay-100 text-[2.5rem] sm:text-5xl md:text-6xl lg:text-[4.5rem] font-black tracking-tighter text-white mb-6 leading-[1.1] drop-shadow-lg break-words">
                 Menerjemahkan <span className="text-transparent bg-clip-text bg-gradient-to-br from-cyan-300 via-blue-500 to-indigo-600">Imajinasi</span> <br className="hidden lg:block" />
                 Menjadi Realitas Visual.
               </h1>
@@ -128,6 +131,7 @@ export default function Home() {
                   <span className="group-hover:-translate-y-1 transition-transform duration-300"><DocumentIcon /></span>
                   Lihat CV Saya
                 </Link>
+
                 <a 
                   href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(waMessage)}`}
                   target="_blank" 
@@ -140,9 +144,10 @@ export default function Home() {
               </div>
             </div>
 
-            {/* KANAN: 38.2% */}
-            <div className="w-full lg:w-[38.2%] flex justify-center lg:justify-end relative mt-6 lg:mt-0 z-10">
+            {/* KANAN */}
+            <div className="w-full lg:w-[38.2%] flex justify-center lg:justify-end relative z-10">
               <div className="relative w-full max-w-[260px] sm:max-w-[320px] lg:max-w-[360px] aspect-[4/5] group anim-float mx-auto lg:mx-0">
+                
                 <div className="absolute inset-0 bg-gradient-to-tr from-cyan-500 to-indigo-500 rounded-[2rem] rotate-6 group-hover:rotate-12 transition-all duration-700 opacity-30 blur-xl"></div>
                 <div className="absolute inset-0 border border-cyan-500/50 rounded-[2rem] -rotate-3 group-hover:-rotate-6 transition-all duration-700 z-0"></div>
                 
@@ -167,120 +172,15 @@ export default function Home() {
                   <div className="text-xl sm:text-3xl font-black text-white">3+</div>
                   <div className="text-[8px] sm:text-[10px] font-bold text-cyan-100 uppercase tracking-wider leading-tight">Years<br/>Experience</div>
                 </div>
+
               </div>
             </div>
           </div>
 
           {/* ========================================================= */}
-          {/* BENTO GRID: KARYA TERPILIH (Desain Elegan)                */}
-          {/* PERBAIKAN: Margin-top dikurangi agar tidak ada ruang kosong lebar */}
+          {/* PROMO TOOLKIT ECOSYSTEM                                   */}
           {/* ========================================================= */}
-          <div className="mt-16 md:mt-24 pt-8 md:pt-16 border-t border-white/5">
-            <div className="flex flex-col sm:flex-row justify-between items-end mb-10 gap-6 w-full">
-              <div className="w-full sm:w-auto">
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="w-3 h-3 sm:w-4 sm:h-4 bg-cyan-500 rounded-sm rotate-45 shrink-0"></span>
-                  <span className="text-cyan-400 font-bold uppercase tracking-widest text-[10px] sm:text-xs">Portofolio Utama</span>
-                </div>
-                <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight">Pilihan <span className="text-cyan-500">Mahakarya</span></h2>
-              </div>
-              <Link href="/projects" className="w-full sm:w-auto text-cyan-400 hover:text-cyan-300 font-bold tracking-widest uppercase text-[10px] sm:text-sm group flex items-center justify-between sm:justify-start gap-2 transition-all pb-1 border-b border-transparent hover:border-cyan-500/30">
-                <span>Jelajahi Seluruh Galeri</span>
-                <span className="bg-white/10 p-1.5 rounded-full group-hover:bg-cyan-500 group-hover:text-white transition-colors shrink-0">
-                  <ArrowRightIcon />
-                </span>
-              </Link>
-            </div>
-
-            {/* Grid Container Terlindungi (Tetap Statis) */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 auto-rows-[320px] sm:auto-rows-[350px] lg:auto-rows-[450px]">
-              {displayProjects.map((project, index) => (
-                <Link 
-                  href={`/projects/${project.id}`} 
-                  key={`${project.id}-${index}`}
-                  // Animasi Modern Murni: Memudar dan Blur Ringan (Tidak ada garis progress bar)
-                  className={`group relative rounded-[2rem] overflow-hidden bg-[#0A1329] border border-white/5 hover:border-cyan-500/40 shadow-lg hover:shadow-[0_20px_50px_rgba(6,182,212,0.15)]
-                  ${index === 0 ? 'md:col-span-2 lg:col-span-2' : 'col-span-1'}
-                  transition-all duration-[800ms] ease-[cubic-bezier(0.4, 0, 0.2, 1)]
-                  ${isAnimating ? 'opacity-0 scale-[0.98] blur-sm' : 'opacity-100 scale-100 blur-0'}
-                  `}
-                  style={{ transitionDelay: `${index * 50}ms` }} 
-                >
-                  <img 
-                    src={project.image} 
-                    alt={project.title} 
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[1.5s] ease-out opacity-70 group-hover:opacity-100"
-                    onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop'; }} 
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#030712] via-[#030712]/50 to-transparent opacity-90 group-hover:opacity-100 transition-opacity duration-500"></div>
-                  
-                  <div className="absolute bottom-0 left-0 w-full p-6 sm:p-8 lg:p-10 flex flex-col justify-end transform translate-y-2 sm:translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                    <div className="inline-flex items-center gap-2 text-[9px] sm:text-[10px] font-bold tracking-[0.2em] text-cyan-400 uppercase mb-2 sm:mb-3 bg-cyan-900/40 backdrop-blur-md border border-cyan-500/30 px-3 py-1.5 rounded-full w-fit">
-                      <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shrink-0"></span>
-                      {project.category}
-                    </div>
-                    <h3 className={`font-bold text-white group-hover:text-cyan-300 transition-colors tracking-tight line-clamp-2 ${index === 0 ? 'text-2xl sm:text-3xl md:text-4xl lg:text-5xl' : 'text-xl sm:text-2xl lg:text-3xl'}`}>
-                      {project.title}
-                    </h3>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </div>
-
-          {/* ========================================================= */}
-          {/* GALERI FOTOGRAFI (New Section)                            */}
-          {/* ========================================================= */}
-          <div className="mt-20 md:mt-32 pt-8 md:pt-16 border-t border-white/5">
-            <div className="flex flex-col sm:flex-row justify-between items-end mb-10 gap-6 w-full">
-              <div className="w-full sm:w-auto">
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="w-3 h-3 sm:w-4 sm:h-4 bg-indigo-500 rounded-sm shrink-0"></span>
-                  <span className="text-indigo-400 font-bold uppercase tracking-widest text-[10px] sm:text-xs">Lensa Kamera</span>
-                </div>
-                <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight">Koleksi <span className="text-indigo-400">Fotografi</span></h2>
-              </div>
-              <Link href="/fotografi" className="w-full sm:w-auto text-indigo-400 hover:text-indigo-300 font-bold tracking-widest uppercase text-[10px] sm:text-sm group flex items-center justify-between sm:justify-start gap-2 transition-all pb-1 border-b border-transparent hover:border-indigo-500/30">
-                <span>Lihat Semua Foto</span>
-                <span className="bg-white/10 p-1.5 rounded-full group-hover:bg-indigo-500 group-hover:text-white transition-colors shrink-0">
-                  <ArrowRightIcon />
-                </span>
-              </Link>
-            </div>
-
-            {/* Fotografi Grid (Masonry Style Layout) */}
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-5">
-              {previewPhotos.map((photo, index) => (
-                <div 
-                  key={photo.id} 
-                  className={`group relative rounded-2xl overflow-hidden bg-[#0A1329] border border-white/5 hover:border-indigo-500/40 transition-all duration-500
-                  ${index === 0 || index === 3 ? 'row-span-2 aspect-[3/4]' : 'aspect-square'}
-                  `}
-                >
-                  <img 
-                    src={photo.url} 
-                    alt={photo.title} 
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[2s] ease-out opacity-80 group-hover:opacity-100"
-                    loading="lazy"
-                  />
-                  {/* Overlay Hitam saat Hover */}
-                  <div className="absolute inset-0 bg-[#030712]/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                    <div className="text-center transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                      <span className="bg-indigo-500/20 text-indigo-400 p-3 rounded-full inline-block mb-3 border border-indigo-500/30">
-                         <CameraIcon />
-                      </span>
-                      <h4 className="text-white font-bold tracking-wider text-sm sm:text-base px-2">{photo.title}</h4>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* ========================================================= */}
-          {/* PROMO TOOLKIT ECOSYSTEM  (Dipindah ke bawah)              */}
-          {/* ========================================================= */}
-          <div className="mt-20 md:mt-32 w-full anim-fade-in-up">
+          <div className="mt-20 lg:mt-32 w-full anim-fade-in-up anim-delay-300">
             <div className="relative rounded-3xl overflow-hidden border border-white/10 bg-gradient-to-r from-[#0a152e] to-[#050b1a] p-6 sm:p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-8 shadow-2xl group">
               <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/10 rounded-full blur-[80px] -z-10 group-hover:bg-cyan-500/20 transition-all duration-700"></div>
               <div className="absolute bottom-0 left-0 w-40 h-40 bg-blue-500/10 rounded-full blur-[60px] -z-10"></div>
@@ -302,6 +202,108 @@ export default function Home() {
                 Eksplorasi Toolkit
                 <ArrowRightIcon />
               </Link>
+            </div>
+          </div>
+
+          {/* ========================================================= */}
+          {/* BENTO GRID: KARYA TERPILIH (TRANSISI MODERN 1 PER 1)      */}
+          {/* ========================================================= */}
+          <div className="mt-20 lg:mt-32 pt-16 border-t border-white/5">
+            <div className="flex flex-col sm:flex-row justify-between items-end mb-12 gap-6 w-full">
+              <div className="w-full sm:w-auto">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="w-3 h-3 sm:w-4 sm:h-4 bg-cyan-500 rounded-sm rotate-45 shrink-0"></span>
+                  <span className="text-cyan-400 font-bold uppercase tracking-widest text-[10px] sm:text-xs">Portofolio Desain</span>
+                </div>
+                <h2 className="text-3xl sm:text-4xl font-black text-white">Karya <span className="text-cyan-500">Unggulan</span></h2>
+              </div>
+              <Link href="/projects" className="w-full sm:w-auto text-cyan-400 hover:text-cyan-300 font-bold tracking-widest uppercase text-[10px] sm:text-sm group flex items-center justify-between sm:justify-start gap-2 transition-all pb-1 border-b border-transparent hover:border-cyan-500/30">
+                <span>Lihat Seluruh Karya</span>
+                <span className="bg-white/10 p-1.5 rounded-full group-hover:bg-cyan-500 group-hover:text-white transition-colors shrink-0">
+                  <ArrowRightIcon />
+                </span>
+              </Link>
+            </div>
+
+            {/* Grid Container Utama */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 auto-rows-[300px] sm:auto-rows-[350px] lg:auto-rows-[450px]">
+              {gridIndices.map((projectIndex, slotIndex) => {
+                // Memastikan data aman dan tidak error
+                const project = PROJECT_LIST[projectIndex] || PROJECT_LIST[0]; 
+                if (!project) return null;
+
+                return (
+                  <Link 
+                    href={`/projects/${project.id}`} 
+                    key={slotIndex} // Key berupa posisi grid (0, 1, 2) agar layout tak hancur
+                    className={`group relative rounded-3xl sm:rounded-[2rem] overflow-hidden bg-[#0A1329] border border-white/5 hover:border-cyan-500/40 shadow-lg hover:shadow-[0_20px_50px_rgba(6,182,212,0.15)]
+                    ${slotIndex === 0 ? 'md:col-span-2 lg:col-span-2' : 'col-span-1'}
+                    transition-opacity duration-700 ease-in-out
+                    ${fadingIndex === slotIndex ? 'opacity-0' : 'opacity-100'}
+                    `}
+                  >
+                    <img 
+                      src={project.image} 
+                      alt={project.title} 
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[1.5s] ease-out opacity-60 group-hover:opacity-100"
+                      onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop'; }} 
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#030712] via-[#030712]/60 to-transparent opacity-90 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    
+                    <div className="absolute bottom-0 left-0 w-full p-6 sm:p-8 lg:p-10 flex flex-col justify-end transform translate-y-2 sm:translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                      <div className="inline-flex items-center gap-2 text-[9px] sm:text-[10px] font-bold tracking-[0.2em] text-cyan-400 uppercase mb-2 sm:mb-3 bg-cyan-900/40 backdrop-blur-md border border-cyan-500/30 px-3 py-1.5 rounded-full w-fit">
+                        <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shrink-0"></span>
+                        {project.category}
+                      </div>
+                      <h3 className={`font-bold text-white group-hover:text-cyan-300 transition-colors tracking-tight line-clamp-2 ${slotIndex === 0 ? 'text-2xl sm:text-3xl md:text-4xl lg:text-5xl' : 'text-xl sm:text-2xl lg:text-3xl'}`}>
+                        {project.title}
+                      </h3>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+            {/* Indikator Bar Dihilangkan sesuai request */}
+          </div>
+
+          {/* ========================================================= */}
+          {/* GALERI FOTOGRAFI (TAMBAHAN BARU DI DEPAN)                   */}
+          {/* ========================================================= */}
+          <div className="mt-20 lg:mt-32 pt-16 border-t border-white/5">
+            <div className="flex flex-col sm:flex-row justify-between items-end mb-12 gap-6 w-full">
+              <div className="w-full sm:w-auto">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-cyan-400 shrink-0"><CameraIcon /></span>
+                  <span className="text-cyan-400 font-bold uppercase tracking-widest text-[10px] sm:text-xs">Lensa Kamera</span>
+                </div>
+                <h2 className="text-3xl sm:text-4xl font-black text-white">Sudut <span className="text-cyan-500">Pandang</span></h2>
+              </div>
+              <Link href="/fotografi" className="w-full sm:w-auto text-cyan-400 hover:text-cyan-300 font-bold tracking-widest uppercase text-[10px] sm:text-sm group flex items-center justify-between sm:justify-start gap-2 transition-all pb-1 border-b border-transparent hover:border-cyan-500/30">
+                <span>Lihat Seluruh Foto</span>
+                <span className="bg-white/10 p-1.5 rounded-full group-hover:bg-cyan-500 group-hover:text-white transition-colors shrink-0">
+                  <ArrowRightIcon />
+                </span>
+              </Link>
+            </div>
+
+            {/* Layout Masonry Sederhana (Hanya Menampilkan 4 Foto Pertama) */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 md:gap-5">
+               {PHOTO_GALLERY && PHOTO_GALLERY.slice(0, 4).map((photo, i) => (
+                  <div 
+                     key={photo.id || i} 
+                     className={`group relative overflow-hidden rounded-2xl bg-[#0A1329] border border-white/5 hover:border-cyan-500/30 transition-all ${i === 0 || i === 3 ? 'aspect-[4/5]' : 'aspect-square'}`}
+                  >
+                     <img 
+                        src={photo.url} 
+                        alt={photo.title || 'Fotografi'} 
+                        className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700" 
+                        onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1542038784456-1ea8e935640e?q=80&w=800&auto=format&fit=crop'; }} 
+                     />
+                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-4">
+                        <span className="text-white text-xs font-bold translate-y-4 group-hover:translate-y-0 transition-transform duration-300">{photo.title}</span>
+                     </div>
+                  </div>
+               ))}
             </div>
           </div>
 
