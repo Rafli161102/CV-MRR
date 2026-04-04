@@ -96,8 +96,8 @@ export const toolkits = [
     title: "Freelance Rate & Invoice",
     description: "Kalkulator pintar untuk menentukan harga per-jam, sekaligus generator dokumen Invoice (Tagihan) PDF untuk dikirim ke klien.",
     icon: <Icons.Receipt />,
-    link: "/freelance-invoice",
-    status: "coming_soon",
+    link: "toolkit/freelance-invoice",
+    status: "active",
     category: "Career & Freelance",
     tags: ["Invoice", "Pricing", "PDF"]
   },
