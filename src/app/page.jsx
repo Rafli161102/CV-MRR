@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { useInView } from 'react-intersection-observer'; // Memanggil pustaka untuk transisi scroll
 import { PROJECT_LIST, PHOTO_GALLERY } from '../data/store'; 
 
 // =========================================================================
@@ -43,8 +44,9 @@ export default function Home() {
   const waMessage = "Halo Rafli, saya telah melihat portofolio Anda dan tertarik untuk berdiskusi mengenai proyek desain.";
 
   // =========================================================================
-  // FIX BUG MUTLAK: SISTEM ROTASI KARYA OTOMATIS (MENGGANTI 1 PER 1 SECARA MODERN)
+  // IMPROVEMENT MUTLAK: SISTEM ROTASI KARYA OTOMATIS (MENGGANTI 1 PER 1 SECARA MODERN)
   // =========================================================================
+  // FIX INISIALISASI: Langsung ambil 3 proyek pertama yang berbeda untuk inisialisasi awal
   const [gridIndices, setGridIndices] = useState([0, 1, 2]); // Kotak 1, 2, 3 berawal dari index 0, 1, 2
   const [fadingIndex, setFadingIndex] = useState(null); // Melacak kotak mana yang sedang fade-out
   
@@ -84,6 +86,14 @@ export default function Home() {
 
     return () => clearInterval(intervalId);
   }, []);
+
+  // =========================================================================
+  // TRANSISI SCROLL MUTLAK (Clean & Minimalist Scroll Reveal)
+  // =========================================================================
+  // Terapkan InView pada setiap section utama
+  const [refToolkit, inViewToolkit] = useInView({ threshold: 0.1, triggerOnce: true });
+  const [refPortfolio, inViewPortfolio] = useInView({ threshold: 0.1, triggerOnce: true });
+  const [refCamera, inViewCamera] = useInView({ threshold: 0.1, triggerOnce: true });
 
   return (
     <div className="min-h-screen bg-[#030712] text-slate-300 font-sans selection:bg-cyan-500 selection:text-white relative w-full overflow-x-hidden">
@@ -183,9 +193,9 @@ export default function Home() {
           </div>
 
           {/* ========================================================= */}
-          {/* PROMO TOOLKIT ECOSYSTEM                                   */}
+          {/* PROMO TOOLKIT ECOSYSTEM (Scroll Reveal)                     */}
           {/* ========================================================= */}
-          <div className="mt-20 lg:mt-32 w-full anim-fade-in-up anim-delay-300">
+          <div ref={refToolkit} className={`mt-20 lg:mt-32 w-full transition-all duration-1000 transform ease-in-out ${inViewToolkit ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
             <div className="relative rounded-3xl overflow-hidden border border-white/10 bg-gradient-to-r from-[#0a152e] to-[#050b1a] p-6 sm:p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-8 shadow-2xl group">
               <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/10 rounded-full blur-[80px] -z-10 group-hover:bg-cyan-500/20 transition-all duration-700"></div>
               <div className="absolute bottom-0 left-0 w-40 h-40 bg-blue-500/10 rounded-full blur-[60px] -z-10"></div>
@@ -211,9 +221,9 @@ export default function Home() {
           </div>
 
           {/* ========================================================= */}
-          {/* BENTO GRID: KARYA TERPILIH (TRANSISI MODERN 1 PER 1)      */}
+          {/* BENTO GRID: KARYA TERPILIH (TRANSISI SCROLL & FIX DUPLIKAT) */}
           {/* ========================================================= */}
-          <div className="mt-20 lg:mt-32 pt-16 border-t border-white/5">
+          <div ref={refPortfolio} className={`mt-20 lg:mt-32 pt-16 border-t border-white/5 transition-all duration-1000 transform ease-in-out ${inViewPortfolio ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
             <div className="flex flex-col sm:flex-row justify-between items-end mb-12 gap-6 w-full">
               <div className="w-full sm:w-auto">
                 <div className="flex items-center gap-2 mb-3">
@@ -224,13 +234,13 @@ export default function Home() {
               </div>
               <Link href="/projects" className="w-full sm:w-auto text-cyan-400 hover:text-cyan-300 font-bold tracking-widest uppercase text-[10px] sm:text-sm group flex items-center justify-between sm:justify-start gap-2 transition-all pb-1 border-b border-transparent hover:border-cyan-500/30">
                 <span>Lihat Seluruh Karya</span>
-                <span className="bg-white/10 p-1.5 rounded-full group-hover:bg-cyan-500 group-hover:text-white transition-colors shrink-0">
+                <span className="bg-white/10 p-1.5 rounded-full group-hover:bg-cyan-50 group-hover:text-white transition-colors shrink-0">
                   <ArrowRightIcon />
                 </span>
               </Link>
             </div>
 
-            {/* Grid Container Utama */}
+            {/* Grid Container Utama: Peletakan Bento Grid Modern */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 auto-rows-[300px] sm:auto-rows-[350px] lg:auto-rows-[450px]">
               {gridIndices.map((projectIndex, slotIndex) => {
                 // Memastikan data aman dan tidak error
@@ -241,9 +251,9 @@ export default function Home() {
                   <Link 
                     href={`/projects/${project.id}`} 
                     key={slotIndex} // Key berupa posisi grid (0, 1, 2) agar layout tak hancur
-                    className={`group relative rounded-3xl sm:rounded-[2rem] overflow-hidden bg-[#0A1329] border border-white/5 hover:border-cyan-500/40 shadow-lg hover:shadow-[0_20px_50px_rgba(6,182,212,0.15)]
+                    className={`group relative rounded-3xl sm:rounded-[2rem] overflow-hidden bg-[#0A1329] border border-white/5 hover:border-cyan-500/40 Shadow-2xl hover:shadow-[0_10px_40px_rgba(6,182,212,0.1)]
                     ${slotIndex === 0 ? 'md:col-span-2 lg:col-span-2' : 'col-span-1'}
-                    transition-opacity duration-500 ease-in-out
+                    transition-opacity duration-700 ease-in-out
                     ${fadingIndex === slotIndex ? 'opacity-0' : 'opacity-100'}
                     `}
                   >
@@ -252,12 +262,13 @@ export default function Home() {
                       alt={project.title} 
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[1.5s] ease-out opacity-60 group-hover:opacity-100"
                       onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop'; }} 
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#030712] via-[#030712]/60 to-transparent opacity-90 group-hover:opacity-100 transition-opacity duration-500"></div>
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#030712] via-[#030712]/60 to-transparent opacity-90 group-hover:opacity-100 transition-opacity duration-500"></div>
                     
-                    <div className="absolute bottom-0 left-0 w-full p-6 sm:p-8 lg:p-10 flex flex-col justify-end transform translate-y-2 sm:translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                      <div className="inline-flex items-center gap-2 text-[9px] sm:text-[10px] font-bold tracking-[0.2em] text-cyan-400 uppercase mb-2 sm:mb-3 bg-cyan-900/40 backdrop-blur-md border border-cyan-500/30 px-3 py-1.5 rounded-full w-fit">
-                        <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shrink-0"></span>
+                    <div className={`absolute bottom-0 left-0 w-full flex flex-col justify-end transform translate-y-2 sm:translate-y-4 group-hover:translate-y-0 transition-transform duration-500 ${slotIndex === 0 ? 'p-8 sm:p-10' : 'p-6 sm:p-8'}`}>
+                      {/* IMPROVEMENT: Peletakan badge Montserrat lebih clean */}
+                      <div className="inline-flex items-center gap-2 text-[9px] sm:text-[10px] font-bold tracking-[0.2em] text-cyan-400 uppercase mb-3 bg-cyan-900/40 backdrop-blur-md border border-cyan-500/30 px-3.5 py-1.5 rounded-full w-fit">
+                        <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shrink-0 animate-pulse"></span>
                         {project.category}
                       </div>
                       <h3 className={`font-bold text-white group-hover:text-cyan-300 transition-colors tracking-tight line-clamp-2 ${slotIndex === 0 ? 'text-2xl sm:text-3xl md:text-4xl lg:text-5xl' : 'text-xl sm:text-2xl lg:text-3xl'}`}>
@@ -271,9 +282,9 @@ export default function Home() {
           </div>
 
           {/* ========================================================= */}
-          {/* GALERI FOTOGRAFI (TAMBAHAN BARU DI DEPAN)                   */}
+          {/* GALERI FOTOGRAFI (TAMBAHAN BARU DI DEPAN + Scroll Reveal) */}
           {/* ========================================================= */}
-          <div className="mt-20 lg:mt-32 pt-16 border-t border-white/5">
+          <div ref={refCamera} className={`mt-20 lg:mt-32 pt-16 border-t border-white/5 transition-all duration-1000 transform ease-in-out ${inViewCamera ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
             <div className="flex flex-col sm:flex-row justify-between items-end mb-12 gap-6 w-full">
               <div className="w-full sm:w-auto">
                 <div className="flex items-center gap-2 mb-3">
@@ -284,7 +295,7 @@ export default function Home() {
               </div>
               <Link href="/fotografi" className="w-full sm:w-auto text-cyan-400 hover:text-cyan-300 font-bold tracking-widest uppercase text-[10px] sm:text-sm group flex items-center justify-between sm:justify-start gap-2 transition-all pb-1 border-b border-transparent hover:border-cyan-500/30">
                 <span>Lihat Seluruh Foto</span>
-                <span className="bg-white/10 p-1.5 rounded-full group-hover:bg-cyan-500 group-hover:text-white transition-colors shrink-0">
+                <span className="bg-white/10 p-1.5 rounded-full group-hover:bg-cyan-50 group-hover:text-white transition-colors shrink-0">
                   <ArrowRightIcon />
                 </span>
               </Link>
@@ -303,8 +314,8 @@ export default function Home() {
                         className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700" 
                         onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1542038784456-1ea8e935640e?q=80&w=800&auto=format&fit=crop'; }} 
                      />
-                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-4">
-                        <span className="text-white text-xs font-bold translate-y-4 group-hover:translate-y-0 transition-transform duration-300">{photo.title}</span>
+                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-4 z-10">
+                        <span className="text-white text-xs font-bold translate-y-4 group-hover:translate-y-0 transition-transform duration-300 tracking-wide line-clamp-1">{photo.title}</span>
                      </div>
                   </div>
                ))}
