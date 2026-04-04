@@ -1,5 +1,6 @@
 "use client";
 
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { PROJECT_LIST } from '../data/store';
 
@@ -31,16 +32,53 @@ const ToolsIcon = () => (
 );
 
 export default function Home() {
-  const featuredProjects = PROJECT_LIST.slice(0, 3);
   const whatsappNumber = "6285155020363"; 
   const waMessage = "Halo Rafli, saya telah melihat portofolio Anda dan tertarik untuk berdiskusi mengenai proyek desain.";
+
+  // =========================================================================
+  // SISTEM ROTASI KARYA OTOMATIS (BENTO GRID STATIC, DATA DINAMIS)
+  // =========================================================================
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const projectsToShow = 3; // Menampilkan 3 project di Bento Grid (1 Besar, 2 Kecil)
+
+  useEffect(() => {
+    // Jika jumlah project kurang dari atau sama dengan 3, tidak perlu rotasi
+    if (!PROJECT_LIST || PROJECT_LIST.length <= projectsToShow) return;
+
+    const intervalId = setInterval(() => {
+      // 1. Mulai animasi fade-out
+      setIsAnimating(true);
+      
+      // 2. Ganti data setelah gambar menghilang (delay 400ms)
+      setTimeout(() => {
+        setCurrentIndex((prevIndex) => {
+          const nextIndex = prevIndex + projectsToShow;
+          // Jika sudah mentok, kembali ke indeks 0
+          return nextIndex >= PROJECT_LIST.length ? 0 : nextIndex;
+        });
+        
+        // 3. Matikan animasi (fade-in kembali dengan data baru)
+        setIsAnimating(false);
+      }, 400);
+
+    }, 5000); // Berganti otomatis setiap 5 detik
+
+    return () => clearInterval(intervalId);
+  }, []);
+
+  // Mengambil 3 proyek aktif berdasarkan index saat ini
+  const activeProjects = PROJECT_LIST.slice(currentIndex, currentIndex + projectsToShow);
+  
+  // Jika karena suatu alasan array sisa di ujung kurang dari 3, ambil dari awal lagi untuk melengkapi
+  const displayProjects = activeProjects.length === projectsToShow 
+    ? activeProjects 
+    : [...activeProjects, ...PROJECT_LIST.slice(0, projectsToShow - activeProjects.length)];
 
   return (
     <div className="min-h-screen bg-[#030712] text-slate-300 font-sans selection:bg-cyan-500 selection:text-white relative w-full overflow-x-hidden">
       
-      {/* ========================================================= */}
-      {/* BACKGROUND EFFECTS (Aman dari Overflow)                   */}
-      {/* ========================================================= */}
+      {/* BACKGROUND EFFECTS */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
         <div className="absolute top-[-10%] left-[-10%] w-[120vw] md:w-[50rem] h-[120vw] md:h-[50rem] bg-cyan-600/10 rounded-full blur-[100px] md:blur-[120px]"></div>
         <div className="absolute bottom-[-20%] right-[-10%] w-[100vw] md:w-[40rem] h-[100vw] md:h-[40rem] bg-indigo-600/10 rounded-full blur-[100px] md:blur-[150px]"></div>
@@ -51,15 +89,11 @@ export default function Home() {
         <div className="hidden md:block absolute right-[10%] top-0 bottom-0 w-[1px] bg-white/[0.02]"></div>
       </div>
 
-      {/* ========================================================= */}
-      {/* KONTEN UTAMA                                              */}
-      {/* ========================================================= */}
+      {/* KONTEN UTAMA */}
       <div className="relative z-10 pt-28 md:pt-36 pb-24 w-full">
         <div className="max-w-[1400px] mx-auto px-5 sm:px-8 lg:px-12 w-full">
           
-          {/* ========================================================= */}
-          {/* HERO SECTION (GOLDEN RATIO: 61.8% & 38.2%)                */}
-          {/* ========================================================= */}
+          {/* HERO SECTION */}
           <div className="flex flex-col lg:flex-row items-center justify-between gap-16 lg:gap-0 min-h-[75vh] w-full">
             
             {/* KIRI: 61.8% */}
@@ -166,7 +200,7 @@ export default function Home() {
           </div>
 
           {/* ========================================================= */}
-          {/* BENTO GRID: KARYA TERPILIH                                */}
+          {/* BENTO GRID: KARYA TERPILIH (AUTO-UPDATE DATA)             */}
           {/* ========================================================= */}
           <div className="mt-32 pt-16 border-t border-white/5">
             <div className="flex flex-col sm:flex-row justify-between items-end mb-12 gap-6 w-full">
@@ -178,20 +212,24 @@ export default function Home() {
                 <h2 className="text-3xl sm:text-4xl font-black text-white">Pilihan <span className="text-cyan-500">Mahakarya</span></h2>
               </div>
               <Link href="/projects" className="w-full sm:w-auto text-cyan-400 hover:text-cyan-300 font-bold tracking-widest uppercase text-[10px] sm:text-sm group flex items-center justify-between sm:justify-start gap-2 transition-all pb-1 border-b border-transparent hover:border-cyan-500/30">
-                <span>Jelajahi Galeri</span>
+                <span>Jelajahi Seluruh Galeri</span>
                 <span className="bg-white/10 p-1.5 rounded-full group-hover:bg-cyan-500 group-hover:text-white transition-colors shrink-0">
                   <ArrowRightIcon />
                 </span>
               </Link>
             </div>
 
+            {/* Grid Container Tetap Statis */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 auto-rows-[300px] sm:auto-rows-[350px] lg:auto-rows-[450px]">
-              {featuredProjects.map((project, index) => (
+              {displayProjects.map((project, index) => (
                 <Link 
                   href={`/projects/${project.id}`} 
-                  key={project.id} 
-                  className={`group relative rounded-3xl sm:rounded-[2rem] overflow-hidden bg-[#0A1329] border border-white/5 hover:border-cyan-500/40 transition-all duration-500 shadow-lg hover:shadow-[0_20px_50px_rgba(6,182,212,0.15)] 
-                  ${index === 0 ? 'md:col-span-2 lg:col-span-2' : 'col-span-1'}`}
+                  key={`${project.id}-${index}`} // Key unik agar re-render aman
+                  className={`group relative rounded-3xl sm:rounded-[2rem] overflow-hidden bg-[#0A1329] border border-white/5 hover:border-cyan-500/40 shadow-lg hover:shadow-[0_20px_50px_rgba(6,182,212,0.15)]
+                  ${index === 0 ? 'md:col-span-2 lg:col-span-2' : 'col-span-1'}
+                  transition-all duration-500 transform ${isAnimating ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}
+                  `}
+                  style={{ transitionDelay: `${index * 100}ms` }} // Efek muncul bergantian
                 >
                   <img 
                     src={project.image} 
@@ -213,9 +251,26 @@ export default function Home() {
                 </Link>
               ))}
             </div>
+            
+            {/* Indikator Animasi Progress (Opsional: Memberitahu user bahwa konten berputar) */}
+            <div className="w-full h-1 bg-white/5 rounded-full mt-8 overflow-hidden">
+               <div className="h-full bg-cyan-500/50 w-full animate-progress-bar origin-left"></div>
+            </div>
+
           </div>
         </div>
       </div>
+      
+      {/* CSS Animasi Progress Bar */}
+      <style dangerouslySetInnerHTML={{__html: `
+        @keyframes progress {
+          0% { transform: scaleX(0); }
+          100% { transform: scaleX(1); }
+        }
+        .animate-progress-bar {
+          animation: progress 5s linear infinite;
+        }
+      `}} />
     </div>
   );
 }
