@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import Link from 'next/link';
 
 // =========================================================================
@@ -14,7 +14,8 @@ const Icons = {
   Trash: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4"><path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" /></svg>,
   ArrowLeft: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4"><path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" /></svg>,
   Image: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" /></svg>,
-  Palette: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M4.098 19.902a3.75 3.75 0 005.304 0l6.401-6.402M6.75 21A3.75 3.75 0 013 17.25V4.125C3 3.504 3.504 3 4.125 3h5.25c.621 0 1.125.504 1.125 1.125v4.072M6.75 21a3.75 3.75 0 003.75-3.75V8.197M6.75 21h13.125c.621 0 1.125-.504 1.125-1.125v-5.25c0-.621-.504-1.125-1.125-1.125h-4.072" /></svg>
+  Palette: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M4.098 19.902a3.75 3.75 0 005.304 0l6.401-6.402M6.75 21A3.75 3.75 0 013 17.25V4.125C3 3.504 3.504 3 4.125 3h5.25c.621 0 1.125.504 1.125 1.125v4.072M6.75 21a3.75 3.75 0 003.75-3.75V8.197M6.75 21h13.125c.621 0 1.125-.504 1.125-1.125v-5.25c0-.621-.504-1.125-1.125-1.125h-4.072" /></svg>,
+  Layout: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 7.125C2.25 6.504 2.754 6 3.375 6h6c.621 0 1.125.504 1.125 1.125v3.75c0 .621-.504 1.125-1.125 1.125h-6A1.125 1.125 0 012.25 10.875v-3.75zM14.25 8.625c0-.621.504-1.125 1.125-1.125h5.25c.621 0 1.125.504 1.125 1.125v8.25c0 .621-.504 1.125-1.125 1.125h-5.25a1.125 1.125 0 01-1.125-1.125v-8.25zM3.375 14.25c-.621 0-1.125.504-1.125 1.125v3.75c0 .621.504 1.125 1.125 1.125h6c.621 0 1.125-.504 1.125-1.125v-3.75c0-.621-.504-1.125-1.125-1.125h-6z" /></svg>
 };
 
 // FORMATTER MATA UANG DINAMIS
@@ -26,8 +27,7 @@ const formatCurrency = (number, currencyCode) => {
 };
 
 // =========================================================================
-// PERBAIKAN MUTLAK: Pindah Komponen CleanInput ke luar dari InvoiceStudio 
-// agar tidak me-render ulang dan menghilangkan fokus keyboard saat mengetik!
+// PERBAIKAN MUTLAK: Komponen Input & Select DI LUAR Fungsi Utama (Anti-Hilang Keyboard)
 // =========================================================================
 const CleanInput = ({ label, name, type = "text", value, onChange, placeholder = "", prefix = "" }) => (
   <div className="relative group w-full">
@@ -42,28 +42,51 @@ const CleanInput = ({ label, name, type = "text", value, onChange, placeholder =
   </div>
 );
 
-export default function InvoiceStudio() {
-  const [activeTab, setActiveTab] = useState('invoice');
+const CleanSelect = ({ label, name, value, onChange, options }) => (
+  <div className="relative group w-full">
+    <label className="block text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-1.5">{label}</label>
+    <div className="flex items-center bg-[#0d1424]/40 border-b border-slate-700/50 group-hover:border-cyan-500/50 transition-colors focus-within:border-cyan-400 focus-within:bg-[#0d1424]/80 px-4 py-2.5 rounded-t-xl">
+      <select name={name} value={value} onChange={onChange} className="w-full bg-transparent text-sm text-white outline-none cursor-pointer appearance-none font-medium">
+        {options.map((opt, i) => <option key={i} value={opt.value} className="bg-slate-900 text-white">{opt.label}</option>)}
+      </select>
+    </div>
+  </div>
+);
 
-  // STATE: RATE CALCULATOR
+// =========================================================================
+// KOMPONEN UTAMA INVOICE STUDIO
+// =========================================================================
+export default function InvoiceStudio() {
+  const [activeTab, setActiveTab] = useState('invoice'); 
+
+  // ==========================================
+  // STATE: RATE CALCULATOR (ENTERPRISE)
+  // ==========================================
   const [monthlyTarget, setMonthlyTarget] = useState("");
   const [monthlyExpenses, setMonthlyExpenses] = useState("");
   const [workDays, setWorkDays] = useState("");
   const [workHours, setWorkHours] = useState("");
   const [profitMargin, setProfitMargin] = useState(20);
+  const [experienceLevel, setExperienceLevel] = useState("1"); // Multiplier
 
   const numMonthlyTarget = Number(monthlyTarget) || 0;
   const numMonthlyExpenses = Number(monthlyExpenses) || 0;
   const numWorkDays = Number(workDays) || 0;
   const numWorkHours = Number(workHours) || 0;
+  const multiplier = Number(experienceLevel) || 1;
 
   const totalMonthlyNeed = numMonthlyTarget + numMonthlyExpenses;
   const totalBillableHours = numWorkDays * numWorkHours;
   const baseHourlyRate = totalBillableHours > 0 ? totalMonthlyNeed / totalBillableHours : 0;
-  const finalHourlyRate = baseHourlyRate + (baseHourlyRate * (profitMargin / 100));
+  const marginHourlyRate = baseHourlyRate + (baseHourlyRate * (profitMargin / 100));
+  
+  // Final Rate dipengaruhi Level Pengalaman
+  const finalHourlyRate = marginHourlyRate * multiplier;
   const dailyRate = finalHourlyRate * numWorkHours;
 
-  // STATE: INVOICE GENERATOR
+  // ==========================================
+  // STATE: INVOICE GENERATOR (NO DB, FULL CLIENT)
+  // ==========================================
   const [invoiceData, setInvoiceData] = useState({
     invoiceNo: "",
     date: new Date().toISOString().split('T')[0],
@@ -80,35 +103,23 @@ export default function InvoiceStudio() {
     taxRate: "",
     discount: "",
     notes: "",
+    status: "UNPAID", // Status Premium
   });
 
   const [currency, setCurrency] = useState("IDR");
-  const [themeColor, setThemeColor] = useState("#0891b2"); // Default Cyan-600
+  const [themeColor, setThemeColor] = useState("#0891b2"); // Custom Color Picker Active
+  const [template, setTemplate] = useState(1); // 5 Layout Themes
   const [logo, setLogo] = useState(null);
   const fileInputRef = useRef(null);
-
-  const themeOptions = [
-    { name: "Cyan", hex: "#0891b2" },
-    { name: "Blue", hex: "#2563eb" },
-    { name: "Indigo", hex: "#4f46e5" },
-    { name: "Emerald", hex: "#059669" },
-    { name: "Rose", hex: "#e11d48" },
-    { name: "Dark", hex: "#1e293b" },
-  ];
 
   const [items, setItems] = useState([
     { id: 1, description: "", qty: 1, price: "" },
   ]);
 
-  const handleInvoiceChange = (e) => {
-    const { name, value } = e.target;
-    setInvoiceData({ ...invoiceData, [name]: value });
-  };
-
-  const handleItemChange = (id, field, value) => {
-    setItems(items.map(item => item.id === id ? { ...item, [field]: field === 'description' ? value : value } : item));
-  };
-
+  const presetColors = ["#0891b2", "#2563eb", "#4f46e5", "#059669", "#e11d48", "#1e293b"];
+  
+  const handleInvoiceChange = (e) => setInvoiceData({ ...invoiceData, [e.target.name]: e.target.value });
+  const handleItemChange = (id, field, value) => setItems(items.map(item => item.id === id ? { ...item, [field]: field === 'description' ? value : value } : item));
   const addItem = () => setItems([...items, { id: Date.now(), description: "", qty: 1, price: "" }]);
   const removeItem = (id) => setItems(items.filter(item => item.id !== id));
 
@@ -128,15 +139,13 @@ export default function InvoiceStudio() {
   const discountAmount = Number(invoiceData.discount) || 0;
   const grandTotal = subTotal + taxAmount - discountAmount;
 
-  const handlePrint = () => {
-    window.print();
-  };
+  const handlePrint = () => window.print();
 
   return (
     <div className="min-h-screen bg-[#030712] text-slate-300 font-sans selection:bg-cyan-500 selection:text-white pb-32">
       
       {/* HEADER NAVIGASI */}
-      <div className="print:hidden relative pt-24 md:pt-32 pb-8 border-b border-white/5">
+      <div className="print:hidden relative pt-24 md:pt-32 pb-8 border-b border-white/5 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
           
           <div className="flex items-center gap-4 w-full sm:w-auto">
@@ -145,21 +154,15 @@ export default function InvoiceStudio() {
             </Link>
             <div className="min-w-0">
               <h1 className="text-xl sm:text-2xl font-black text-white leading-tight truncate tracking-tight">Invoice <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Studio</span></h1>
-              <p className="text-[10px] sm:text-xs text-slate-400 font-medium tracking-wide truncate">Rate Calculator & Professional Invoice Builder</p>
+              <p className="text-[10px] sm:text-xs text-slate-400 font-medium tracking-wide truncate">Rate Calculator & Professional Builder</p>
             </div>
           </div>
 
           <div className="flex bg-[#0a0a0a] p-1.5 rounded-full border border-white/5 w-full sm:w-auto shadow-inner">
-            <button 
-              onClick={() => setActiveTab('invoice')} 
-              className={`flex-1 sm:flex-none px-6 py-2.5 rounded-full text-xs font-bold transition-all duration-300 tracking-wide ${activeTab === 'invoice' ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-lg' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
-            >
+            <button onClick={() => setActiveTab('invoice')} className={`flex-1 sm:flex-none px-6 py-2.5 rounded-full text-xs font-bold transition-all duration-300 tracking-wide ${activeTab === 'invoice' ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-lg' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}>
               Invoice Builder
             </button>
-            <button 
-              onClick={() => setActiveTab('rate')} 
-              className={`flex-1 sm:flex-none px-6 py-2.5 rounded-full text-xs font-bold transition-all duration-300 tracking-wide ${activeTab === 'rate' ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-lg' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
-            >
+            <button onClick={() => setActiveTab('rate')} className={`flex-1 sm:flex-none px-6 py-2.5 rounded-full text-xs font-bold transition-all duration-300 tracking-wide ${activeTab === 'rate' ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-lg' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}>
               Rate Calculator
             </button>
           </div>
@@ -169,12 +172,11 @@ export default function InvoiceStudio() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10">
         
         {/* ========================================================================= */}
-        {/* TAB 1: RATE CALCULATOR */}
+        {/* TAB 1: RATE CALCULATOR (ENTERPRISE EDITION) */}
         {/* ========================================================================= */}
         {activeTab === 'rate' && (
           <div className="print:hidden grid grid-cols-1 lg:grid-cols-12 gap-8 anim-fade-in-up">
             
-            {/* PANEL INPUT */}
             <div className="lg:col-span-7 space-y-6">
               <div className="bg-gradient-to-b from-[#0a0a0a] to-[#050505] border border-white/5 rounded-[2rem] p-6 sm:p-10 shadow-2xl relative overflow-hidden">
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-500 to-blue-600"></div>
@@ -183,13 +185,21 @@ export default function InvoiceStudio() {
                   <div className="p-4 bg-cyan-500/10 text-cyan-400 rounded-2xl border border-cyan-500/20"><Icons.Calculator /></div>
                   <div>
                     <h2 className="text-2xl font-black text-white tracking-tight">Kalkulator Rate Ideal</h2>
-                    <p className="text-xs text-slate-400 mt-1">Tentukan harga jasamu secara rasional dan profesional.</p>
+                    <p className="text-xs text-slate-400 mt-1">Tentukan harga jasamu secara rasional berdasarkan pengalaman.</p>
                   </div>
                 </div>
 
                 <div className="space-y-8">
+                  <CleanSelect 
+                    label="Level Pengalaman (Multiplier)" name="experienceLevel" value={experienceLevel} onChange={e => setExperienceLevel(e.target.value)}
+                    options={[
+                      { value: "1", label: "Junior / Entry Level (1x)" },
+                      { value: "1.5", label: "Mid-Level Professional (1.5x)" },
+                      { value: "2.5", label: "Senior / Expert (2.5x)" },
+                    ]}
+                  />
                   <CleanInput label="Target Penghasilan Bersih (Per Bulan)" name="monthlyTarget" type="number" value={monthlyTarget} onChange={e => setMonthlyTarget(e.target.value)} prefix="Rp" placeholder="10000000" />
-                  <CleanInput label="Pengeluaran Operasional (Internet, Software, Listrik)" name="monthlyExpenses" type="number" value={monthlyExpenses} onChange={e => setMonthlyExpenses(e.target.value)} prefix="Rp" placeholder="2000000" />
+                  <CleanInput label="Pengeluaran Operasional (Internet, Software, dll)" name="monthlyExpenses" type="number" value={monthlyExpenses} onChange={e => setMonthlyExpenses(e.target.value)} prefix="Rp" placeholder="2000000" />
                   
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <CleanInput label="Hari Kerja / Bulan" name="workDays" type="number" value={workDays} onChange={e => setWorkDays(e.target.value)} placeholder="20" />
@@ -207,7 +217,6 @@ export default function InvoiceStudio() {
               </div>
             </div>
 
-            {/* PANEL HASIL */}
             <div className="lg:col-span-5">
               <div className="sticky top-10 bg-gradient-to-b from-cyan-950/20 to-[#0a0a0a] border border-cyan-500/20 rounded-[2rem] p-6 sm:p-10 shadow-[0_20px_40px_rgba(6,182,212,0.1)]">
                 <h3 className="text-xs font-black text-cyan-400 uppercase tracking-[0.2em] mb-8 flex items-center gap-2">
@@ -241,7 +250,7 @@ export default function InvoiceStudio() {
         )}
 
         {/* ========================================================================= */}
-        {/* TAB 2: INVOICE BUILDER */}
+        {/* TAB 2: INVOICE STUDIO (ENTERPRISE BUILDER) */}
         {/* ========================================================================= */}
         <div className={`${activeTab === 'invoice' ? 'block' : 'hidden'} anim-fade-in-up`}>
           
@@ -251,7 +260,7 @@ export default function InvoiceStudio() {
               <h2 className="text-2xl font-black text-white tracking-tight flex items-center gap-3">
                 <Icons.Document /> Invoice Studio
               </h2>
-              <p className="text-sm text-slate-400 mt-2 max-w-xl">Rakit tagihan digital profesional tanpa *watermark*. Data 100% aman (No Database).</p>
+              <p className="text-sm text-slate-400 mt-2 max-w-xl">Rakit tagihan digital profesional. Pilih 5 Tema, Custom Warna, & Export PDF.</p>
             </div>
             <button onClick={handlePrint} className="w-full sm:w-auto bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold py-3.5 px-8 rounded-xl flex items-center justify-center gap-3 shadow-[0_0_20px_rgba(6,182,212,0.3)] transition-all hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(6,182,212,0.5)] shrink-0 z-10">
               <Icons.Print /> Simpan PDF / Print
@@ -260,9 +269,9 @@ export default function InvoiceStudio() {
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 print:block print:w-full">
             
+            {/* EDITOR KIRI */}
             <div className="lg:col-span-5 space-y-6 print:hidden">
               
-              {/* SECTION: BRANDING & INFO DIRI */}
               <div className="bg-[#0a0a0a] border border-white/5 rounded-[2rem] p-6 sm:p-8 shadow-xl">
                 <h3 className="text-[10px] font-black text-cyan-500 uppercase tracking-[0.2em] mb-6 flex items-center gap-2"><span className="w-4 h-px bg-cyan-500"></span> Identitas Pengirim</h3>
                 
@@ -293,13 +302,12 @@ export default function InvoiceStudio() {
                 </div>
               </div>
 
-              {/* SECTION: INFO KLIEN */}
               <div className="bg-[#0a0a0a] border border-white/5 rounded-[2rem] p-6 sm:p-8 shadow-xl">
                  <h3 className="text-[10px] font-black text-cyan-500 uppercase tracking-[0.2em] mb-6 flex items-center gap-2"><span className="w-4 h-px bg-cyan-500"></span> Detail Klien & Dokumen</h3>
                  <div className="space-y-4">
                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                      <CleanInput label="No. Invoice" name="invoiceNo" value={invoiceData.invoiceNo} onChange={handleInvoiceChange} placeholder="INV-2026-001" />
-                     <CleanInput label="Tenggat Waktu (Due Date)" name="dueDate" type="date" value={invoiceData.dueDate} onChange={handleInvoiceChange} />
+                     <CleanInput label="Tanggal Terbit" name="date" type="date" value={invoiceData.date} onChange={handleInvoiceChange} />
                    </div>
                    <div className="h-px bg-white/5 my-2"></div>
                    <CleanInput label="Ditagihkan Kepada (Klien)" name="clientName" value={invoiceData.clientName} onChange={handleInvoiceChange} placeholder="Nama Perusahaan Klien" />
@@ -310,7 +318,6 @@ export default function InvoiceStudio() {
                  </div>
               </div>
 
-              {/* SECTION: ITEM PEKERJAAN */}
               <div className="bg-[#0a0a0a] border border-white/5 rounded-[2rem] p-6 sm:p-8 shadow-xl">
                 <div className="flex justify-between items-center mb-6">
                    <h3 className="text-[10px] font-black text-cyan-500 uppercase tracking-[0.2em] flex items-center gap-2"><span className="w-4 h-px bg-cyan-500"></span> Daftar Pekerjaan</h3>
@@ -339,33 +346,53 @@ export default function InvoiceStudio() {
                       </div>
                     </div>
                   ))}
-                  <button onClick={addItem} className="w-full py-3 border-2 border-dashed border-slate-700 hover:border-cyan-500 text-slate-500 hover:text-cyan-400 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all mt-4">
-                    <Icons.Plus /> Tambah Baris
+                  <button onClick={addItem} className="w-full py-4 border-2 border-dashed border-slate-800 hover:border-cyan-500 text-slate-500 hover:text-cyan-400 rounded-2xl text-xs font-bold flex items-center justify-center gap-2 transition-all mt-4">
+                    <Icons.Plus /> Tambahkan Baris Pekerjaan
                   </button>
                 </div>
               </div>
 
-              {/* SECTION: PENGATURAN TEMA & KEUANGAN */}
+              {/* SECTION: TEMA & FINALISASI */}
               <div className="bg-[#0a0a0a] border border-white/5 rounded-[2rem] p-6 sm:p-8 shadow-xl">
-                <h3 className="text-[10px] font-black text-cyan-500 uppercase tracking-[0.2em] mb-6 flex items-center gap-2"><span className="w-4 h-px bg-cyan-500"></span> Finalisasi & Tema</h3>
+                <h3 className="text-[10px] font-black text-cyan-500 uppercase tracking-[0.2em] mb-6 flex items-center gap-2"><span className="w-4 h-px bg-cyan-500"></span> Finalisasi & Tema Layout</h3>
                 
-                <div className="grid grid-cols-2 gap-4 mb-8">
+                {/* Opsi 5 Template Layout & Custom Color */}
+                <div className="space-y-6 mb-8 bg-[#0d1424]/30 p-5 rounded-2xl border border-white/5">
                    <div>
-                      <label className="block text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-2">Mata Uang</label>
-                      <select value={currency} onChange={(e) => setCurrency(e.target.value)} className="w-full bg-[#0d1424]/40 border-b border-slate-700/50 focus:border-cyan-400 rounded-t-xl px-4 py-3 text-sm text-white outline-none appearance-none cursor-pointer">
-                        <option value="IDR">IDR - Rupiah</option>
-                        <option value="USD">USD - Dollar</option>
-                        <option value="EUR">EUR - Euro</option>
-                      </select>
-                   </div>
-                   <div>
-                      <label className="block text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-2 flex items-center gap-1"><Icons.Palette /> Warna Aksen</label>
-                      <div className="flex flex-wrap gap-2 pt-1">
-                        {themeOptions.map((theme) => (
-                           <button key={theme.name} onClick={() => setThemeColor(theme.hex)} className={`w-6 h-6 rounded-full border-2 transition-all ${themeColor === theme.hex ? 'scale-125 border-white shadow-lg' : 'border-transparent hover:scale-110'}`} style={{ backgroundColor: theme.hex }} title={theme.name} />
-                        ))}
+                      <label className="block text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-1"><Icons.Layout /> Pilih Template Style</label>
+                      <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+                         {[
+                           { id: 1, name: "Classic" }, { id: 2, name: "Bold" }, { id: 3, name: "Elegant" }, { id: 4, name: "Accent" }, { id: 5, name: "Dark" }
+                         ].map(t => (
+                           <button key={t.id} onClick={() => setTemplate(t.id)} className={`py-2 px-1 text-[10px] font-bold rounded-lg transition-all ${template === t.id ? 'bg-cyan-500 text-white' : 'bg-[#141414] text-slate-400 hover:bg-white/10'}`}>
+                             {t.name}
+                           </button>
+                         ))}
                       </div>
                    </div>
+
+                   <div className="flex flex-col sm:flex-row gap-4 pt-4 border-t border-white/5">
+                     <div className="flex-1">
+                        <label className="block text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-2 flex items-center gap-1"><Icons.Palette /> Warna Aksen Custom</label>
+                        <div className="flex items-center gap-3">
+                          <input type="color" value={themeColor} onChange={(e) => setThemeColor(e.target.value)} className="w-10 h-10 rounded-lg cursor-pointer bg-transparent border-0 p-0" />
+                          <span className="text-xs font-mono text-slate-400">{themeColor.toUpperCase()}</span>
+                        </div>
+                     </div>
+                     <div className="flex-1">
+                        <label className="block text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-2">Preset Warna</label>
+                        <div className="flex flex-wrap gap-2 pt-1">
+                          {presetColors.map((hex) => (
+                             <button key={hex} onClick={() => setThemeColor(hex)} className={`w-6 h-6 rounded-full border-2 transition-all ${themeColor === hex ? 'scale-125 border-white shadow-lg' : 'border-transparent hover:scale-110'}`} style={{ backgroundColor: hex }} />
+                          ))}
+                        </div>
+                     </div>
+                   </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4 mb-6">
+                   <CleanSelect label="Mata Uang" name="currency" value={currency} onChange={e => setCurrency(e.target.value)} options={[{value:"IDR", label:"IDR - Rupiah"}, {value:"USD", label:"USD - Dollar"}, {value:"EUR", label:"EUR - Euro"}]} />
+                   <CleanSelect label="Status Tagihan" name="status" value={invoiceData.status} onChange={handleInvoiceChange} options={[{value:"UNPAID", label:"Belum Lunas"}, {value:"PAID", label:"Lunas (Paid)"}, {value:"DRAFT", label:"Draft Penawaran"}]} />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4 mb-8 border-t border-white/5 pt-6">
@@ -377,136 +404,170 @@ export default function InvoiceStudio() {
                 <div className="space-y-4 mb-6">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                      <CleanInput label="Nama Bank" name="bankName" value={invoiceData.bankName} onChange={handleInvoiceChange} placeholder="BCA / Mandiri / Jago" />
-                     <CleanInput label="Nama Pemilik Rekening" name="accName" value={invoiceData.accName} onChange={handleInvoiceChange} placeholder="A.n Nama Anda" />
+                     <CleanInput label="Nama Pemilik" name="accName" value={invoiceData.accName} onChange={handleInvoiceChange} placeholder="A.n Nama Anda" />
                   </div>
                   <CleanInput label="Nomor Rekening Tujuan" name="accNumber" value={invoiceData.accNumber} onChange={handleInvoiceChange} placeholder="1234567890" />
                 </div>
 
                 <div className="mt-4">
-                  <label className="block text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-2">Catatan Kaki (Pesan Klien)</label>
-                  <textarea name="notes" value={invoiceData.notes} onChange={handleInvoiceChange} rows={2} placeholder="Terima kasih atas kerjasamanya..." className="w-full bg-[#0d1424]/40 border-b border-slate-700/50 focus:border-cyan-400 rounded-t-xl px-4 py-3 text-xs text-slate-300 outline-none resize-none transition-all placeholder:text-slate-600"></textarea>
+                  <label className="block text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-2">Tenggat Waktu & Catatan (Bawah)</label>
+                  <div className="space-y-3">
+                    <input type="date" name="dueDate" value={invoiceData.dueDate} onChange={handleInvoiceChange} className="w-full bg-[#0d1424]/40 border border-slate-700/50 focus:border-cyan-400 rounded-xl px-4 py-2.5 text-sm text-slate-300 outline-none transition-all" />
+                    <textarea name="notes" value={invoiceData.notes} onChange={handleInvoiceChange} rows={2} placeholder="Terima kasih atas kerjasamanya..." className="w-full bg-[#0d1424]/40 border border-slate-700/50 focus:border-cyan-400 rounded-xl px-4 py-3 text-xs text-slate-300 outline-none resize-none transition-all placeholder:text-slate-600"></textarea>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* PREVIEW INVOICE A4 STRICT */}
-            <div className="lg:col-span-7 print:col-span-12 overflow-x-auto custom-scroll pb-10 print:pb-0 print:overflow-visible">
-              
-              <div className="w-[794px] mx-auto min-h-[1123px] bg-white print:bg-white text-slate-900 p-12 sm:p-16 rounded-[2rem] print:rounded-none shadow-2xl print:shadow-none relative flex flex-col scale-[0.6] sm:scale-[0.8] lg:scale-100 origin-top-left lg:origin-top">
+            {/* ========================================================================= */}
+            {/* AREA PREVIEW INVOICE (A4 STRICT NO-SCROLL BUG) */}
+            {/* ========================================================================= */}
+            <div className="lg:col-span-7 print:col-span-12 w-full">
+              {/* Pembungkus luar ini mengunci layout agar overflow horizontalnya terkontrol rapi */}
+              <div className="w-full overflow-x-auto bg-[#0a0a0a] rounded-[2rem] p-4 md:p-8 custom-scroll border border-white/5 print:border-none print:p-0 print:bg-white">
                 
-                <div className="flex justify-between items-start mb-16 w-full">
-                  <div className="flex flex-col text-left max-w-[55%]">
-                    {logo ? (
-                      <img src={logo} alt="Brand Logo" className="h-16 w-auto object-contain object-left mb-6 print:max-h-16" />
-                    ) : (
-                      <h2 className="text-3xl font-black uppercase tracking-tighter mb-4" style={{ color: themeColor }}>
-                        {invoiceData.myName || "NAMA BRAND"}
-                      </h2>
-                    )}
-                    {logo && invoiceData.myName && <h2 className="text-xl font-bold text-slate-800">{invoiceData.myName}</h2>}
-                    {invoiceData.myRole && <p className="text-sm font-semibold text-slate-500 mt-1">{invoiceData.myRole}</p>}
-                    {invoiceData.myEmail && <p className="text-sm text-slate-500 mt-2">{invoiceData.myEmail}</p>}
-                    {invoiceData.myPhone && <p className="text-sm text-slate-500">{invoiceData.myPhone}</p>}
-                  </div>
-
-                  <div className="text-right flex flex-col items-end">
-                    <h1 className="text-5xl font-black uppercase tracking-tighter mb-3" style={{ color: themeColor }}>Invoice</h1>
-                    <div className="bg-slate-50 px-4 py-2 rounded-lg border border-slate-200">
-                       <p className="text-slate-800 font-bold text-lg tracking-wide">{invoiceData.invoiceNo || "INV-000"}</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex justify-between items-end mb-10 pb-6 border-b-2" style={{ borderColor: themeColor }}>
-                  <div className="max-w-[60%]">
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Ditagihkan Kepada:</p>
-                    <h3 className="text-xl font-black text-slate-800">{invoiceData.clientName || "Nama Klien"}</h3>
-                    <p className="text-sm font-medium text-slate-500 whitespace-pre-wrap mt-1 leading-relaxed">{invoiceData.clientAddress || "Alamat Klien Lengkap"}</p>
-                  </div>
-                  <div className="text-right space-y-3">
-                    <div>
-                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Tanggal Terbit:</p>
-                      <p className="text-sm font-black text-slate-800">{invoiceData.date ? new Date(invoiceData.date).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' }) : "-"}</p>
-                    </div>
-                    {invoiceData.dueDate && (
-                       <div>
-                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Jatuh Tempo:</p>
-                         <p className="text-sm font-black text-red-600">{new Date(invoiceData.dueDate).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
-                       </div>
-                    )}
-                  </div>
-                </div>
-
-                <div className="flex-1 w-full">
-                  <table className="w-full text-left mb-8 border-collapse">
-                    <thead>
-                      <tr className="border-b-2 text-xs font-bold uppercase tracking-wider text-slate-600" style={{ borderColor: themeColor }}>
-                        <th className="py-4 px-2">Deskripsi Layanan</th>
-                        <th className="py-4 px-2 text-center w-20">Qty</th>
-                        <th className="py-4 px-2 text-right w-36">Harga Satuan</th>
-                        <th className="py-4 px-2 text-right w-44 text-slate-900">Total Harga</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {items.map((item, idx) => (
-                        <tr key={item.id} className={`${idx !== items.length - 1 ? 'border-b border-slate-100' : ''} text-sm text-slate-700`}>
-                          <td className="py-5 px-2 font-bold text-slate-800">{item.description || "-"}</td>
-                          <td className="py-5 px-2 text-center font-medium">{item.qty || 0}</td>
-                          <td className="py-5 px-2 text-right font-mono text-slate-500">{formatCurrency(item.price, currency)}</td>
-                          <td className="py-5 px-2 text-right font-mono font-black text-slate-900">{formatCurrency((item.qty || 0) * (item.price || 0), currency)}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-
-                <div className="flex justify-between items-start mt-8 mb-12 page-break-inside-avoid w-full">
+                {/* KERTAS A4: Fix Mutlak Lebar 794px */}
+                <div className="w-[794px] min-h-[1123px] mx-auto bg-white text-slate-900 shadow-2xl print:w-full print:min-h-0 print:shadow-none flex flex-col relative overflow-hidden transition-all duration-500">
                   
-                  <div className="w-1/2 pr-12">
-                    <div className="bg-slate-50/80 rounded-2xl p-6 border border-slate-200">
-                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Informasi Transfer Bank</p>
-                      <p className="text-sm text-slate-800 font-bold mb-1">{invoiceData.bankName || "Nama Bank"}</p>
-                      <p className="text-sm text-slate-500 mb-3">a.n {invoiceData.accName || "Nama Pemilik"}</p>
-                      <p className="text-xl font-mono font-black tracking-wider" style={{ color: themeColor }}>{invoiceData.accNumber || "0000000000"}</p>
-                    </div>
-                  </div>
+                  {/* STYLE 4: BORDER ACCENT KIRI */}
+                  {template === 4 && <div className="absolute left-0 top-0 h-full w-4" style={{ backgroundColor: themeColor }}></div>}
 
-                  <div className="w-[45%] space-y-4 pt-2">
-                    <div className="flex justify-between text-sm font-medium text-slate-500 px-2">
-                      <span>Subtotal</span>
-                      <span className="font-mono">{formatCurrency(subTotal, currency)}</span>
+                  <div className={`flex-1 flex flex-col ${template === 4 ? 'pl-10' : ''}`}>
+                    
+                    {/* DYNAMIC HEADER THEMES */}
+                    <div className={`
+                      ${template === 1 ? 'p-12 pb-8 flex justify-between items-start' : ''}
+                      ${template === 2 ? 'p-12 text-white flex justify-between items-start' : ''}
+                      ${template === 3 ? 'p-12 pb-8 flex flex-col items-center text-center' : ''}
+                      ${template === 4 ? 'p-12 pb-8 flex justify-between items-start' : ''}
+                      ${template === 5 ? 'p-10 m-12 mb-8 rounded-2xl flex justify-between items-center text-white bg-slate-900' : ''}
+                    `} style={template === 2 ? { backgroundColor: themeColor } : {}}>
+                      
+                      <div className={`flex flex-col ${template === 3 ? 'items-center' : 'max-w-[55%]'}`}>
+                        {logo ? (
+                          <img src={logo} alt="Brand Logo" className={`h-16 w-auto object-contain mb-6 print:max-h-16 ${template === 3 ? 'object-center' : 'object-left'}`} />
+                        ) : (
+                          <h2 className="text-3xl font-black uppercase tracking-tighter mb-4" style={{ color: (template === 2 || template === 5) ? 'white' : themeColor }}>
+                            {invoiceData.myName || "NAMA BRAND"}
+                          </h2>
+                        )}
+                        {logo && invoiceData.myName && <h2 className={`text-xl font-bold ${template === 2 || template === 5 ? 'text-white' : 'text-slate-800'}`}>{invoiceData.myName}</h2>}
+                        {invoiceData.myRole && <p className={`text-sm font-semibold mt-1 ${template === 2 || template === 5 ? 'text-slate-200' : 'text-slate-500'}`}>{invoiceData.myRole}</p>}
+                        {invoiceData.myEmail && <p className={`text-sm mt-2 ${template === 2 || template === 5 ? 'text-slate-200' : 'text-slate-500'}`}>{invoiceData.myEmail}</p>}
+                        {invoiceData.myPhone && <p className={`text-sm ${template === 2 || template === 5 ? 'text-slate-200' : 'text-slate-500'}`}>{invoiceData.myPhone}</p>}
+                      </div>
+
+                      <div className={`flex flex-col ${template === 3 ? 'items-center mt-8 border-t-2 pt-6 w-full' : 'items-end'}`} style={template === 3 ? { borderColor: themeColor } : {}}>
+                        <h1 className={`text-5xl font-black uppercase tracking-tighter mb-3 ${template === 3 ? '' : 'text-right'}`} style={{ color: (template === 2 || template === 5) ? 'white' : themeColor }}>Invoice</h1>
+                        <div className={`px-4 py-2 rounded-lg font-bold tracking-wide ${template === 2 ? 'bg-white/20 text-white' : template === 5 ? 'bg-white/10 text-white' : 'bg-slate-50 text-slate-800 border border-slate-200'}`}>
+                           {invoiceData.invoiceNo || "INV-000"}
+                        </div>
+                      </div>
                     </div>
-                    {invoiceData.taxRate > 0 && (
-                      <div className="flex justify-between text-sm font-medium text-slate-500 px-2">
-                        <span>Pajak ({invoiceData.taxRate}%)</span>
-                        <span className="font-mono">{formatCurrency(taxAmount, currency)}</span>
+
+                    <div className="px-12 flex-1 flex flex-col">
+                      
+                      {/* Info Klien & Tanggal */}
+                      <div className={`flex justify-between items-end mb-10 pb-6 border-b-2`} style={{ borderColor: themeColor }}>
+                        <div className="max-w-[60%]">
+                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Ditagihkan Kepada:</p>
+                          <h3 className="text-xl font-black text-slate-800">{invoiceData.clientName || "Nama Klien"}</h3>
+                          <p className="text-sm font-medium text-slate-500 whitespace-pre-wrap mt-1 leading-relaxed">{invoiceData.clientAddress || "Alamat Klien Lengkap"}</p>
+                        </div>
+                        <div className="text-right space-y-3">
+                          <div>
+                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Tanggal Terbit:</p>
+                            <p className="text-sm font-black text-slate-800">{invoiceData.date ? new Date(invoiceData.date).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' }) : "-"}</p>
+                          </div>
+                          {invoiceData.dueDate && (
+                             <div>
+                               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Jatuh Tempo:</p>
+                               <p className="text-sm font-black text-red-600">{new Date(invoiceData.dueDate).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                             </div>
+                          )}
+                        </div>
                       </div>
-                    )}
-                    {invoiceData.discount > 0 && (
-                      <div className="flex justify-between text-sm font-bold text-red-500 px-2">
-                        <span>Diskon Khusus</span>
-                        <span className="font-mono">-{formatCurrency(invoiceData.discount, currency)}</span>
+
+                      {/* Tabel Item Pekerjaan (Disesuaikan Temanya) */}
+                      <div className="flex-1 w-full mb-8">
+                        <table className="w-full text-left border-collapse">
+                          <thead>
+                            <tr className={`text-xs font-bold uppercase tracking-wider ${template === 5 ? 'text-white' : 'text-slate-600 border-b-2'}`} style={template === 5 ? { backgroundColor: themeColor } : { borderColor: themeColor }}>
+                              <th className={`py-4 px-3 ${template === 5 ? 'rounded-tl-lg' : ''}`}>Deskripsi Layanan</th>
+                              <th className="py-4 px-2 text-center w-20">Qty</th>
+                              <th className="py-4 px-2 text-right w-36">Harga Satuan</th>
+                              <th className={`py-4 px-3 text-right w-44 ${template === 5 ? 'text-white rounded-tr-lg' : 'text-slate-900'}`}>Total Harga</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {items.map((item, idx) => (
+                              <tr key={item.id} className={`${idx !== items.length - 1 ? 'border-b border-slate-100' : ''} text-sm text-slate-700`}>
+                                <td className="py-5 px-3 font-bold text-slate-800">{item.description || "-"}</td>
+                                <td className="py-5 px-2 text-center font-medium">{item.qty || 0}</td>
+                                <td className="py-5 px-2 text-right font-mono text-slate-500">{formatCurrency(item.price, currency)}</td>
+                                <td className="py-5 px-3 text-right font-mono font-black text-slate-900">{formatCurrency((item.qty || 0) * (item.price || 0), currency)}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
                       </div>
-                    )}
-                    <div className="flex justify-between items-center border-t-4 pt-5 mt-5 px-2" style={{ borderColor: themeColor }}>
-                      <span className="text-base font-black text-slate-900 uppercase tracking-widest">Total Bayar</span>
-                      <span className="text-3xl font-black font-mono tracking-tighter" style={{ color: themeColor }}>{formatCurrency(grandTotal, currency)}</span>
+
+                      {/* Total & Kalkulasi */}
+                      <div className="flex justify-between items-start mb-12 page-break-inside-avoid w-full">
+                        
+                        <div className="w-1/2 pr-12">
+                          <div className={`rounded-2xl p-6 ${template === 5 ? 'bg-slate-800 text-white' : 'bg-slate-50 border border-slate-200'}`}>
+                            <p className={`text-[10px] font-black uppercase tracking-widest mb-4 ${template === 5 ? 'text-slate-400' : 'text-slate-400'}`}>Informasi Transfer Bank</p>
+                            <p className={`text-sm font-bold mb-1 ${template === 5 ? 'text-white' : 'text-slate-800'}`}>{invoiceData.bankName || "Nama Bank"}</p>
+                            <p className={`text-sm mb-3 ${template === 5 ? 'text-slate-300' : 'text-slate-500'}`}>a.n {invoiceData.accName || "Nama Pemilik"}</p>
+                            <p className="text-xl font-mono font-black tracking-wider" style={{ color: template === 5 ? '#fff' : themeColor }}>{invoiceData.accNumber || "0000000000"}</p>
+                          </div>
+                        </div>
+
+                        <div className="w-[45%] space-y-4 pt-2">
+                          <div className="flex justify-between text-sm font-medium text-slate-500 px-2">
+                            <span>Subtotal</span>
+                            <span className="font-mono">{formatCurrency(subTotal, currency)}</span>
+                          </div>
+                          {invoiceData.taxRate > 0 && (
+                            <div className="flex justify-between text-sm font-medium text-slate-500 px-2">
+                              <span>Pajak ({invoiceData.taxRate}%)</span>
+                              <span className="font-mono">{formatCurrency(taxAmount, currency)}</span>
+                            </div>
+                          )}
+                          {invoiceData.discount > 0 && (
+                            <div className="flex justify-between text-sm font-bold text-red-500 px-2">
+                              <span>Diskon Khusus</span>
+                              <span className="font-mono">-{formatCurrency(invoiceData.discount, currency)}</span>
+                            </div>
+                          )}
+                          <div className="flex justify-between items-center border-t-4 pt-5 mt-5 px-2" style={{ borderColor: themeColor }}>
+                            <span className="text-base font-black text-slate-900 uppercase tracking-widest">Total Bayar</span>
+                            <span className="text-3xl font-black font-mono tracking-tighter" style={{ color: themeColor }}>{formatCurrency(grandTotal, currency)}</span>
+                          </div>
+                          {/* Label Status Paid/Unpaid Premium */}
+                          {invoiceData.status !== 'DRAFT' && (
+                             <div className="flex justify-end px-2 mt-4">
+                                <div className={`px-4 py-1.5 rounded-md font-black text-xs tracking-widest uppercase border-2 ${invoiceData.status === 'PAID' ? 'text-emerald-500 border-emerald-500' : 'text-red-500 border-red-500'}`}>
+                                  {invoiceData.status === 'PAID' ? 'LUNAS / PAID' : 'BELUM LUNAS'}
+                                </div>
+                             </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Catatan Kaki / Footer Dokumen */}
+                      <div className="mt-auto border-t border-slate-200 pt-6 pb-12 page-break-inside-avoid w-full">
+                        {invoiceData.notes && (
+                          <div className="mb-6 max-w-[80%]">
+                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Catatan Tambahan:</p>
+                            <p className="text-xs text-slate-500 font-medium whitespace-pre-wrap leading-relaxed">{invoiceData.notes}</p>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
-
-                <div className="mt-auto border-t border-slate-200 pt-6 page-break-inside-avoid w-full">
-                  {invoiceData.notes && (
-                    <div className="mb-6 max-w-[80%]">
-                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Catatan Tambahan:</p>
-                      <p className="text-xs text-slate-500 font-medium whitespace-pre-wrap leading-relaxed">{invoiceData.notes}</p>
-                    </div>
-                  )}
-                  <div className="text-center text-slate-300 text-[10px] font-bold tracking-widest uppercase mt-8 border-t border-slate-100 pt-4">
-                    <p>— Dibuat Secara Otomatis Melalui MRR Toolkit Ecosystem —</p>
-                  </div>
-                </div>
-
               </div>
             </div>
 
