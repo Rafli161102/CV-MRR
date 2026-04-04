@@ -62,9 +62,11 @@ export const PROJECT_LIST = [
     category: "Community Design",
     description: "Pengembangan identitas visual menyeluruh, perancangan maskot, dan tata letak media sosial untuk komunitas AquaNime.",
     image: "/projects/aquanime/1.jpg",
-    images: "/projects/aquanime/1.jpg", 
-    images: "/projects/aquanime/2.jpg", 
-    images: "/projects/aquanime/3.jpg", 
+    images: [
+      "/projects/aquanime/1.jpg", 
+      "/projects/aquanime/2.jpg", 
+      "/projects/aquanime/3.jpg"
+    ] 
   }
 ];
 
@@ -77,7 +79,7 @@ export const WORK_EXPERIENCE = [
   },
   {
     year: "Feb 2024 - Agt 2024",
-    role: "Bussiness Development Officer",
+    role: "Business Development Officer",
     company: "PT Megatama Jaya Makmur",
     description: "Menganalisis kebutuhan klien korporat (B2B) dan menerjemahkannya menjadi solusi kreatif terukur. Berperan dalam penyusunan proposal bisnis, presentasi komersial, dan perancangan mockup visual. Mengelola koordinasi lintas divisi antara tim desain dan produksi serta mengeksekusi analisis efisiensi biaya."
   },
