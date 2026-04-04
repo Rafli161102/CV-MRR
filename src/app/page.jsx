@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { PROJECT_LIST, PHOTO_GALLERY } from '../data/store'; // Memanggil PHOTO_GALLERY
+import { PROJECT_LIST, PHOTO_GALLERY } from '../data/store'; 
 
 // =========================================================================
 // KOMPONEN IKON SVG MINIMALIS & PROFESIONAL
@@ -43,37 +43,42 @@ export default function Home() {
   const waMessage = "Halo Rafli, saya telah melihat portofolio Anda dan tertarik untuk berdiskusi mengenai proyek desain.";
 
   // =========================================================================
-  // SISTEM ROTASI KARYA OTOMATIS (MENGGANTI 1 PER 1 SECARA MODERN)
+  // FIX BUG MUTLAK: SISTEM ROTASI KARYA OTOMATIS (MENGGANTI 1 PER 1 SECARA MODERN)
   // =========================================================================
-  // Kita membuat array state independen untuk menyimpan index dari 3 posisi grid
-  const [gridIndices, setGridIndices] = useState([0, 1, 2]);
-  const [fadingIndex, setFadingIndex] = useState(null); // Melacak kotak mana yang sedang animasi
+  const [gridIndices, setGridIndices] = useState([0, 1, 2]); // Kotak 1, 2, 3 berawal dari index 0, 1, 2
+  const [fadingIndex, setFadingIndex] = useState(null); // Melacak kotak mana yang sedang fade-out
+  
+  // Menggunakan useRef agar perhitungan nomor proyek selanjutnya tidak terganggu oleh render ulang (Anti Duplikat!)
+  const nextItemIndexRef = useRef(3); 
 
   useEffect(() => {
     if (!PROJECT_LIST || PROJECT_LIST.length <= 3) return;
 
-    let updateSlot = 0; // Mulai dari kotak pertama (0)
+    let updateSlot = 0; // Menentukan kotak mana yang mau diganti (0, 1, atau 2)
 
     const intervalId = setInterval(() => {
-      // 1. Picu efek pudar (Fade out) pada kotak tertentu
+      // 1. Picu efek pudar (Fade out) pada kotak yang mendapat giliran
       setFadingIndex(updateSlot);
       
-      // 2. Ubah data gambar secara instan saat gambarnya buram/menghilang
+      // 2. Ganti data SECARA INSTAN setelah gambar memudar (delay 500ms mengikuti durasi CSS)
       setTimeout(() => {
         setGridIndices(prevIndices => {
           const newIndices = [...prevIndices];
-          // Cari ID tertinggi saat ini, lalu tambah 1 (Looping jika mentok)
-          const maxCurrentId = Math.max(...newIndices);
-          newIndices[updateSlot] = maxCurrentId + 1 >= PROJECT_LIST.length ? 0 : maxCurrentId + 1;
+          
+          // Masukkan proyek selanjutnya ke dalam kotak ini
+          newIndices[updateSlot] = nextItemIndexRef.current;
           return newIndices;
         });
+
+        // 3. Pindahkan memori "Proyek Selanjutnya" ke urutan berikutnya. Jika habis, kembali ke 0.
+        nextItemIndexRef.current = (nextItemIndexRef.current + 1) % PROJECT_LIST.length;
         
-        // 3. Munculkan kembali gambarnya (Fade in)
+        // 4. Munculkan kembali gambarnya (Fade in)
         setFadingIndex(null);
 
-        // Pindah giliran kotak mana yang akan diubah selanjutnya (0 -> 1 -> 2 -> 0)
+        // Pindah giliran kotak mana yang akan diubah di putaran detik selanjutnya (0 -> 1 -> 2 -> 0)
         updateSlot = (updateSlot + 1) % 3;
-      }, 500); // Waktu transisi CSS
+      }, 500);
 
     }, 4000); // Berganti otomatis setiap 4 detik
 
@@ -98,7 +103,7 @@ export default function Home() {
         <div className="max-w-[1400px] mx-auto px-5 sm:px-8 lg:px-12 w-full">
           
           {/* ========================================================= */}
-          {/* HERO SECTION (IMPROVED: justify-center agar tidak jauh di desktop) */}
+          {/* HERO SECTION (justify-center di desktop)                    */}
           {/* ========================================================= */}
           <div className="flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-16 min-h-[auto] lg:min-h-[70vh] w-full py-10">
             
@@ -238,7 +243,7 @@ export default function Home() {
                     key={slotIndex} // Key berupa posisi grid (0, 1, 2) agar layout tak hancur
                     className={`group relative rounded-3xl sm:rounded-[2rem] overflow-hidden bg-[#0A1329] border border-white/5 hover:border-cyan-500/40 shadow-lg hover:shadow-[0_20px_50px_rgba(6,182,212,0.15)]
                     ${slotIndex === 0 ? 'md:col-span-2 lg:col-span-2' : 'col-span-1'}
-                    transition-opacity duration-700 ease-in-out
+                    transition-opacity duration-500 ease-in-out
                     ${fadingIndex === slotIndex ? 'opacity-0' : 'opacity-100'}
                     `}
                   >
@@ -263,7 +268,6 @@ export default function Home() {
                 );
               })}
             </div>
-            {/* Indikator Bar Dihilangkan sesuai request */}
           </div>
 
           {/* ========================================================= */}
