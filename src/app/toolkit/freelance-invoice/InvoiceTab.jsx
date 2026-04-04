@@ -5,23 +5,8 @@ import { Icons, CleanInput, CleanSelect, CustomColorSlider, formatCurrency } fro
 
 export default function InvoiceTab() {
   const [invoiceData, setInvoiceData] = useState({
-    invoiceNo: "",
-    date: "", 
-    dueDate: "",
-    myName: "",
-    myRole: "",
-    myEmail: "",
-    myPhone: "",
-    clientName: "",
-    clientAddress: "",
-    bankName: "",
-    accName: "",
-    accNumber: "",
-    taxRate: "",
-    discount: "",
-    notes: "",
-    signatureName: "",
-    status: "UNPAID", 
+    invoiceNo: "", date: "", dueDate: "", myName: "", myRole: "", myEmail: "", myPhone: "",
+    clientName: "", clientAddress: "", bankName: "", accName: "", accNumber: "", taxRate: "", discount: "", notes: "", signatureName: "", status: "UNPAID", 
   });
 
   useEffect(() => {
@@ -33,7 +18,6 @@ export default function InvoiceTab() {
   const [template, setTemplate] = useState(1); 
   const [logo, setLogo] = useState(null);
   const fileInputRef = useRef(null);
-
   const [items, setItems] = useState([{ id: 1, description: "", qty: 1, price: "" }]);
   const presetColors = ["#0891b2", "#2563eb", "#4f46e5", "#059669", "#e11d48", "#1e293b", "#f59e0b", "#9333ea"];
   
@@ -52,7 +36,6 @@ export default function InvoiceTab() {
   };
 
   const removeLogo = () => setLogo(null);
-
   const subTotal = items.reduce((sum, item) => sum + (Number(item.qty) * Number(item.price)), 0);
   const taxAmount = subTotal * (Number(invoiceData.taxRate) / 100);
   const discountAmount = Number(invoiceData.discount) || 0;
@@ -74,10 +57,7 @@ export default function InvoiceTab() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 print:block print:w-full">
-        
-        {/* ===================== EDITOR KIRI ===================== */}
         <div className="lg:col-span-5 space-y-6 print:hidden">
-          
           <div className="bg-[#0a0a0a] border border-white/5 rounded-[2rem] p-6 sm:p-8 shadow-xl">
             <h3 className="text-[10px] font-black text-cyan-500 uppercase tracking-[0.2em] mb-6 flex items-center gap-2"><span className="w-4 h-px bg-cyan-500"></span> Identitas Pengirim</h3>
             <div className="mb-6">
@@ -113,10 +93,7 @@ export default function InvoiceTab() {
                </div>
                <div className="h-px bg-white/5 my-2"></div>
                <CleanInput label="Ditagihkan Kepada (Klien)" name="clientName" value={invoiceData.clientName} onChange={handleInvoiceChange} placeholder="Nama Perusahaan Klien" />
-               <div>
-                 <label className="block text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-1.5">Alamat Klien Lengkap</label>
-                 <textarea name="clientAddress" value={invoiceData.clientAddress} onChange={handleInvoiceChange} rows={2} placeholder="Jl. Sudirman No. 1, Jakarta" className="w-full bg-[#0d1424]/40 border-b border-slate-700/50 focus:border-cyan-400 rounded-t-xl px-4 py-2.5 text-sm text-white outline-none resize-none transition-colors placeholder:text-slate-600"></textarea>
-               </div>
+               <CleanInput label="Alamat Klien Lengkap" name="clientAddress" value={invoiceData.clientAddress} onChange={handleInvoiceChange} placeholder="Jl. Sudirman No. 1, Jakarta" isTextarea={true} />
              </div>
           </div>
 
@@ -194,10 +171,7 @@ export default function InvoiceTab() {
             <h4 className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-3 border-b border-slate-800 pb-2 mt-8">Penutup & Tanda Tangan</h4>
             <div className="space-y-4 mt-4">
               <CleanInput label="Nama Penanda Tangan" name="signatureName" value={invoiceData.signatureName} onChange={handleInvoiceChange} placeholder="Nama Tanda Tangan Anda" prefix={<Icons.Signature />} />
-              <div>
-                <label className="block text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-2">Syarat & Ketentuan (Catatan Kaki)</label>
-                <textarea name="notes" value={invoiceData.notes} onChange={handleInvoiceChange} rows={3} placeholder="Misal: Tagihan harap dilunasi dalam waktu 7 hari kerja..." className="w-full bg-[#0d1424]/40 border-b border-slate-700/50 focus:border-cyan-400 rounded-t-xl px-4 py-3 text-xs text-slate-300 outline-none resize-none transition-all placeholder:text-slate-600"></textarea>
-              </div>
+              <CleanInput label="Syarat & Ketentuan (Catatan Kaki)" name="notes" value={invoiceData.notes} onChange={handleInvoiceChange} placeholder="Misal: Tagihan harap dilunasi dalam waktu 7 hari kerja..." isTextarea={true} />
             </div>
           </div>
         </div>
@@ -352,6 +326,7 @@ export default function InvoiceTab() {
                 </div>
               </div>
             </div>
+
           </div>
         </div>
       </div>
