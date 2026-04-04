@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef } from 'react';
 import Link from 'next/link';
-import { FigmaSlider, FigmaColorPicker, FigmaToggle, ControlHeader, CodeOutput } from './ui'; // Pastikan path ini sesuai dengan file ui.js kamu
 
 // =========================================================================
 // IKON SVG MINIMALIS & PREMIUM
@@ -15,16 +14,29 @@ const Icons = {
   Trash: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4"><path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" /></svg>,
   ArrowLeft: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4"><path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" /></svg>,
   Image: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" /></svg>,
-  Palette: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M4.098 19.902a3.75 3.75 0 005.304 0l6.401-6.402M6.75 21A3.75 3.75 0 013 17.25V4.125C3 3.504 3.504 3 4.125 3h5.25c.621 0 1.125.504 1.125 1.125v4.072M6.75 21a3.75 3.75 0 003.75-3.75V8.197M6.75 21h13.125c.621 0 1.125-.504 1.125-1.125v-5.25c0-.621-.504-1.125-1.125-1.125h-4.072" /></svg>,
   Layout: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 7.125C2.25 6.504 2.754 6 3.375 6h6c.621 0 1.125.504 1.125 1.125v3.75c0 .621-.504 1.125-1.125 1.125h-6A1.125 1.125 0 012.25 10.875v-3.75zM14.25 8.625c0-.621.504-1.125 1.125-1.125h5.25c.621 0 1.125.504 1.125 1.125v8.25c0 .621-.504 1.125-1.125 1.125h-5.25a1.125 1.125 0 01-1.125-1.125v-8.25zM3.375 14.25c-.621 0-1.125.504-1.125 1.125v3.75c0 .621.504 1.125 1.125 1.125h6c.621 0 1.125-.504 1.125-1.125v-3.75c0-.621-.504-1.125-1.125-1.125h-6z" /></svg>
 };
 
-// FORMATTER MATA UANG DINAMIS
+// =========================================================================
+// ALGORITMA WARNA & FORMATTER
+// =========================================================================
 const formatCurrency = (number, currencyCode) => {
   if (!number) return "0";
   if (currencyCode === "USD") return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(number);
   if (currencyCode === "EUR") return new Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(number);
   return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(number);
+};
+
+// Konversi nilai slider (0-360) menjadi warna Hex yang presisi
+const hslToHex = (h, s, l) => {
+  l /= 100;
+  const a = s * Math.min(l, 1 - l) / 100;
+  const f = n => {
+    const k = (n + h / 30) % 12;
+    const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+    return Math.round(255 * color).toString(16).padStart(2, '0');
+  };
+  return `#${f(0)}${f(8)}${f(4)}`;
 };
 
 // =========================================================================
@@ -54,20 +66,43 @@ const CleanSelect = ({ label, name, value, onChange, options }) => (
   </div>
 );
 
+// Fitur Custom Slider Warna Anti Popup
+const CustomColorSlider = ({ color, onChange }) => {
+  return (
+    <div className="w-full flex flex-col gap-3">
+      <div className="relative w-full h-6 rounded-lg overflow-hidden border border-white/10" style={{ background: 'linear-gradient(to right, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000)' }}>
+        <input 
+          type="range" min="0" max="360" defaultValue="190"
+          onChange={(e) => onChange(hslToHex(e.target.value, 100, 50))} 
+          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" 
+        />
+      </div>
+      <div className="flex justify-between items-center bg-[#141414] rounded-lg px-3 py-1.5 border border-white/5">
+        <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">Geser & Pilih Warna</span>
+        <span className="text-xs font-mono font-black" style={{ color: color }}>{color.toUpperCase()}</span>
+      </div>
+    </div>
+  );
+};
+
+
+// =========================================================================
+// KOMPONEN UTAMA INVOICE STUDIO
+// =========================================================================
 export default function InvoiceStudio() {
   const [activeTab, setActiveTab] = useState('invoice'); 
 
   // ==========================================
-  // STATE: RATE CALCULATOR (ENTERPRISE EDITION)
+  // STATE: RATE CALCULATOR
   // ==========================================
-  const [calcMode, setCalcMode] = useState('monthly'); // 'monthly' atau 'project'
+  const [calcMode, setCalcMode] = useState('monthly'); 
   
   const [targetAmount, setTargetAmount] = useState("");
   const [expenses, setExpenses] = useState("");
   const [workDays, setWorkDays] = useState("");
   const [workHours, setWorkHours] = useState("");
   const [profitMargin, setProfitMargin] = useState(20);
-  const [experienceLevel, setExperienceLevel] = useState("1"); // Multiplier
+  const [experienceLevel, setExperienceLevel] = useState("1"); 
 
   const numTarget = Number(targetAmount) || 0;
   const numExpenses = Number(expenses) || 0;
@@ -81,7 +116,6 @@ export default function InvoiceStudio() {
   const baseHourlyRate = totalHours > 0 ? totalNeed / totalHours : 0;
   const marginHourlyRate = baseHourlyRate + (baseHourlyRate * (profitMargin / 100));
   
-  // Hasil Final Kalkulasi
   const finalHourlyRate = marginHourlyRate * multiplier;
   const finalDailyRate = calcMode === 'monthly' ? (finalHourlyRate * numWorkHours) : 0;
   const finalProjectTotal = calcMode === 'project' ? (finalHourlyRate * totalHours) : 0;
@@ -109,7 +143,7 @@ export default function InvoiceStudio() {
   });
 
   const [currency, setCurrency] = useState("IDR");
-  const [themeColor, setThemeColor] = useState("#0891b2"); // Default Cyan-600
+  const [themeColor, setThemeColor] = useState("#0891b2"); 
   const [template, setTemplate] = useState(1); 
   const [logo, setLogo] = useState(null);
   const fileInputRef = useRef(null);
@@ -174,7 +208,7 @@ export default function InvoiceStudio() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10">
         
         {/* ========================================================================= */}
-        {/* TAB 1: RATE CALCULATOR (BULANAN VS PROJEK) */}
+        {/* TAB 1: RATE CALCULATOR (ENTERPRISE EDITION) */}
         {/* ========================================================================= */}
         {activeTab === 'rate' && (
           <div className="print:hidden grid grid-cols-1 lg:grid-cols-12 gap-8 anim-fade-in-up">
@@ -232,7 +266,7 @@ export default function InvoiceStudio() {
             <div className="lg:col-span-5">
               <div className="sticky top-10 bg-gradient-to-b from-cyan-950/20 to-[#0a0a0a] border border-cyan-500/20 rounded-[2rem] p-6 sm:p-10 shadow-[0_20px_40px_rgba(6,182,212,0.1)]">
                 <h3 className="text-xs font-black text-cyan-400 uppercase tracking-[0.2em] mb-8 flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span> Hasil Kalkulasi
+                  <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span> Hasil Final
                 </h3>
                 
                 <div className="space-y-8">
@@ -276,7 +310,7 @@ export default function InvoiceStudio() {
         )}
 
         {/* ========================================================================= */}
-        {/* TAB 2: INVOICE STUDIO */}
+        {/* TAB 2: INVOICE STUDIO (BUILDER) */}
         {/* ========================================================================= */}
         <div className={`${activeTab === 'invoice' ? 'block' : 'hidden'} anim-fade-in-up`}>
           
@@ -286,7 +320,7 @@ export default function InvoiceStudio() {
               <h2 className="text-2xl font-black text-white tracking-tight flex items-center gap-3">
                 <Icons.Document /> Invoice Builder
               </h2>
-              <p className="text-sm text-slate-400 mt-2 max-w-xl">Rakit tagihan digital profesional. Pilih Tema, Custom Warna Real-time, & Export PDF.</p>
+              <p className="text-sm text-slate-400 mt-2 max-w-xl">Rakit tagihan digital profesional. Pilih Tema, Custom Warna, & Export PDF.</p>
             </div>
             <button onClick={handlePrint} className="w-full sm:w-auto bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold py-3.5 px-8 rounded-xl flex items-center justify-center gap-3 shadow-[0_0_20px_rgba(6,182,212,0.3)] transition-all hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(6,182,212,0.5)] shrink-0 z-10">
               <Icons.Print /> Simpan PDF / Print
@@ -295,6 +329,7 @@ export default function InvoiceStudio() {
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 print:block print:w-full">
             
+            {/* EDITOR KIRI */}
             <div className="lg:col-span-5 space-y-6 print:hidden">
               
               <div className="bg-[#0a0a0a] border border-white/5 rounded-[2rem] p-6 sm:p-8 shadow-xl">
@@ -377,10 +412,11 @@ export default function InvoiceStudio() {
                 </div>
               </div>
 
-              {/* SECTION: PENGATURAN TEMA & KEUANGAN */}
+              {/* SECTION: TEMA & FINALISASI */}
               <div className="bg-[#0a0a0a] border border-white/5 rounded-[2rem] p-6 sm:p-8 shadow-xl">
-                <h3 className="text-[10px] font-black text-cyan-500 uppercase tracking-[0.2em] mb-6 flex items-center gap-2"><span className="w-4 h-px bg-cyan-500"></span> Tema & Keuangan</h3>
+                <h3 className="text-[10px] font-black text-cyan-500 uppercase tracking-[0.2em] mb-6 flex items-center gap-2"><span className="w-4 h-px bg-cyan-500"></span> Finalisasi & Tema Layout</h3>
                 
+                {/* Opsi 5 Template Layout & Custom Color */}
                 <div className="space-y-6 mb-8 bg-[#0d1424]/30 p-5 rounded-2xl border border-white/5">
                    <div>
                       <label className="block text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-1"><Icons.Layout /> Pilih Template Style</label>
@@ -398,12 +434,10 @@ export default function InvoiceStudio() {
                    <div className="flex flex-col sm:flex-row gap-4 pt-4 border-t border-white/5">
                      <div className="flex-1">
                         <label className="block text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-3 flex items-center gap-1"><Icons.Palette /> Warna Aksen Custom</label>
-                        {/* COLOR PICKER REALTIME INLINE */}
-                        <div className="w-full">
-                           <FigmaColorPicker hexValue={themeColor} onChange={setThemeColor} />
-                        </div>
+                        {/* CUSTOM COLOR SLIDER ANTI POPUP */}
+                        <CustomColorSlider color={themeColor} onChange={setThemeColor} />
                      </div>
-                     <div className="w-[80px] shrink-0">
+                     <div className="w-full sm:w-[80px] shrink-0 pt-2 sm:pt-0">
                         <label className="block text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-3">Preset</label>
                         <div className="flex flex-wrap gap-2 pt-1">
                           {presetColors.map((hex) => (
@@ -443,9 +477,10 @@ export default function InvoiceStudio() {
               </div>
             </div>
 
-            {/* PREVIEW INVOICE A4 STRICT */}
+            {/* ========================================================================= */}
+            {/* AREA PREVIEW INVOICE (FIX MUTLAK LAYOUT & LOGO A4) */}
+            {/* ========================================================================= */}
             <div className="lg:col-span-7 print:col-span-12 w-full">
-              {/* Pembungkus luar mengunci layout horizontal */}
               <div className="w-full overflow-x-auto bg-[#0a0a0a] rounded-[2rem] p-4 md:p-8 custom-scroll border border-white/5 print:border-none print:p-0 print:bg-white">
                 
                 {/* KERTAS A4 STRICT WIDTH 794px */}
@@ -463,11 +498,12 @@ export default function InvoiceStudio() {
                       ${template === 5 ? 'p-10 m-12 mb-8 rounded-2xl flex justify-between items-center text-white bg-slate-900' : ''}
                     `} style={template === 2 ? { backgroundColor: themeColor } : {}}>
                       
-                      <div className={`flex flex-col ${template === 3 ? 'items-center' : 'max-w-[55%]'}`}>
+                      <div className={`flex flex-col ${template === 3 ? 'items-center w-full' : 'max-w-[55%]'}`}>
                         {logo ? (
-                          <img src={logo} alt="Brand Logo" className={`h-16 w-auto object-contain mb-6 print:max-h-16 ${template === 3 ? 'object-center' : 'object-left'}`} />
+                          // FIX LOGO: Memastikan logo tidak akan membengkak, maksimal tinggi 80px, proporsional
+                          <img src={logo} alt="Brand Logo" className={`max-w-[160px] max-h-[80px] w-auto h-auto object-contain mb-6 print:max-h-[80px] ${template === 3 ? 'mx-auto' : 'object-left'}`} />
                         ) : (
-                          <h2 className="text-3xl font-black uppercase tracking-tighter mb-4" style={{ color: (template === 2 || template === 5) ? 'white' : themeColor }}>
+                          <h2 className={`text-3xl font-black uppercase tracking-tighter mb-4 ${template === 3 ? 'text-center w-full' : ''}`} style={{ color: (template === 2 || template === 5) ? 'white' : themeColor }}>
                             {invoiceData.myName || "NAMA BRAND"}
                           </h2>
                         )}
@@ -477,7 +513,7 @@ export default function InvoiceStudio() {
                         {invoiceData.myPhone && <p className={`text-sm ${template === 2 || template === 5 ? 'text-slate-200' : 'text-slate-500'}`}>{invoiceData.myPhone}</p>}
                       </div>
 
-                      <div className={`flex flex-col ${template === 3 ? 'items-center mt-8 border-t-2 pt-6 w-full' : 'items-end'}`} style={template === 3 ? { borderColor: themeColor } : {}}>
+                      <div className={`flex flex-col ${template === 3 ? 'items-center mt-8 border-t-2 pt-6 w-full' : 'items-end shrink-0'}`} style={template === 3 ? { borderColor: themeColor } : {}}>
                         <h1 className={`text-5xl font-black uppercase tracking-tighter mb-3 ${template === 3 ? '' : 'text-right'}`} style={{ color: (template === 2 || template === 5) ? 'white' : themeColor }}>Invoice</h1>
                         <div className={`px-4 py-2 rounded-lg font-bold tracking-wide ${template === 2 ? 'bg-white/20 text-white' : template === 5 ? 'bg-white/10 text-white' : 'bg-slate-50 text-slate-800 border border-slate-200'}`}>
                            {invoiceData.invoiceNo || "INV-000"}
@@ -580,7 +616,7 @@ export default function InvoiceStudio() {
                           </div>
                         )}
                         <div className="text-center text-slate-300 text-[10px] font-bold tracking-widest uppercase border-t border-slate-100 pt-4">
-                            <p>— Dibuat Secara Profesional Melalui MRR Toolkit Ecosystem —</p>
+                          <p>— Dibuat Secara Profesional Melalui MRR Toolkit Ecosystem —</p>
                         </div>
                       </div>
                     </div>
