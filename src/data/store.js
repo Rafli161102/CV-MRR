@@ -69,11 +69,11 @@ export const PROJECT_LIST = [
     ] 
   }
 {
-    id: "aquanime",
-    title: "AquaNime Community",
-    company: "Community Founder",
-    category: "Community Design",
-    description: "Pengembangan identitas visual menyeluruh, perancangan maskot, dan tata letak media sosial untuk komunitas AquaNime.",
+    id: "Case Anime PrintNgab",
+    title: "Anime Case",
+    company: "PrintNgab",
+    category: "Print Design",
+    description: "Pembuatan desain Case Smartphone dengan pakaian Anime.",
     image: "/projects/case-batch-1/1.jpg",
     images: [
       "/projects/case-batch-1/1.jpg", 
