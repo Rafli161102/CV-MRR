@@ -67,8 +67,8 @@ export const PROJECT_LIST = [
       "/projects/aquanime/2.jpg", 
       "/projects/aquanime/3.jpg", 
     ] 
-  }
-{
+  }, // <--- FIX: Di sini kemarin kurang tanda koma
+  {
     id: "Case Anime PrintNgab",
     title: "Anime Case",
     company: "PrintNgab",
