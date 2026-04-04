@@ -62,9 +62,9 @@ export const PROJECT_LIST = [
     category: "Community Design",
     description: "Pengembangan identitas visual menyeluruh, perancangan maskot, dan tata letak media sosial untuk komunitas AquaNime.",
     image: "/projects/aquanime/1.jpg",
-    images: ["/projects/aquanime/1.jpg"]
-    images: ["/projects/aquanime/2.jpg"]
-    images: ["/projects/aquanime/3.jpg"]
+    images: "/projects/aquanime/1.jpg", 
+    images: "/projects/aquanime/2.jpg", 
+    images: "/projects/aquanime/3.jpg", 
   }
 ];
 
