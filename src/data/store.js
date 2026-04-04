@@ -61,8 +61,10 @@ export const PROJECT_LIST = [
     company: "Community Founder",
     category: "Community Design",
     description: "Pengembangan identitas visual menyeluruh, perancangan maskot, dan tata letak media sosial untuk komunitas AquaNime.",
-    image: "/projects/aquanime.jpg",
-    images: ["/projects/aquanime.jpg"]
+    image: "/projects/aquanime/1.jpg",
+    images: ["/projects/aquanime/1.jpg"]
+    images: ["/projects/aquanime/2.jpg"]
+    images: ["/projects/aquanime/3.jpg"]
   }
 ];
 
