@@ -65,7 +65,25 @@ export const PROJECT_LIST = [
     images: [
       "/projects/aquanime/1.jpg", 
       "/projects/aquanime/2.jpg", 
-      "/projects/aquanime/3.jpg"
+      "/projects/aquanime/3.jpg", 
+    ] 
+  }
+{
+    id: "aquanime",
+    title: "AquaNime Community",
+    company: "Community Founder",
+    category: "Community Design",
+    description: "Pengembangan identitas visual menyeluruh, perancangan maskot, dan tata letak media sosial untuk komunitas AquaNime.",
+    image: "/projects/case-batch-1/1.jpg",
+    images: [
+      "/projects/case-batch-1/1.jpg", 
+      "/projects/case-batch-1/2.jpg", 
+      "/projects/case-batch-1/3.jpg", 
+      "/projects/case-batch-1/4.jpg", 
+      "/projects/case-batch-1/5.jpg",
+      "/projects/case-batch-1/6.jpg", 
+      "/projects/case-batch-1/7.jpg",
+      "/projects/case-batch-1/8.jpg", 
     ] 
   }
 ];
