@@ -2,8 +2,40 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { useInView } from 'react-intersection-observer'; // Memanggil pustaka untuk transisi scroll
 import { PROJECT_LIST, PHOTO_GALLERY } from '../data/store'; 
+
+// =========================================================================
+// HOOK CUSTOM UNTUK ANIMASI SCROLL (Tanpa perlu install library luar)
+// =========================================================================
+const useScrollReveal = () => {
+  const [isVisible, setIsVisible] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.unobserve(entry.target); // Trigger hanya 1 kali agar ringan
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    const currentRef = ref.current;
+    if (currentRef) {
+      observer.observe(currentRef);
+    }
+
+    return () => {
+      if (currentRef) {
+        observer.unobserve(currentRef);
+      }
+    };
+  }, []);
+
+  return [ref, isVisible];
+};
 
 // =========================================================================
 // KOMPONEN IKON SVG MINIMALIS & PROFESIONAL
@@ -46,54 +78,43 @@ export default function Home() {
   // =========================================================================
   // IMPROVEMENT MUTLAK: SISTEM ROTASI KARYA OTOMATIS (MENGGANTI 1 PER 1 SECARA MODERN)
   // =========================================================================
-  // FIX INISIALISASI: Langsung ambil 3 proyek pertama yang berbeda untuk inisialisasi awal
   const [gridIndices, setGridIndices] = useState([0, 1, 2]); // Kotak 1, 2, 3 berawal dari index 0, 1, 2
   const [fadingIndex, setFadingIndex] = useState(null); // Melacak kotak mana yang sedang fade-out
   
-  // Menggunakan useRef agar perhitungan nomor proyek selanjutnya tidak terganggu oleh render ulang (Anti Duplikat!)
   const nextItemIndexRef = useRef(3); 
 
   useEffect(() => {
     if (!PROJECT_LIST || PROJECT_LIST.length <= 3) return;
 
-    let updateSlot = 0; // Menentukan kotak mana yang mau diganti (0, 1, atau 2)
+    let updateSlot = 0;
 
     const intervalId = setInterval(() => {
-      // 1. Picu efek pudar (Fade out) pada kotak yang mendapat giliran
       setFadingIndex(updateSlot);
       
-      // 2. Ganti data SECARA INSTAN setelah gambar memudar (delay 500ms mengikuti durasi CSS)
       setTimeout(() => {
         setGridIndices(prevIndices => {
           const newIndices = [...prevIndices];
-          
-          // Masukkan proyek selanjutnya ke dalam kotak ini
           newIndices[updateSlot] = nextItemIndexRef.current;
           return newIndices;
         });
 
-        // 3. Pindahkan memori "Proyek Selanjutnya" ke urutan berikutnya. Jika habis, kembali ke 0.
         nextItemIndexRef.current = (nextItemIndexRef.current + 1) % PROJECT_LIST.length;
-        
-        // 4. Munculkan kembali gambarnya (Fade in)
         setFadingIndex(null);
-
-        // Pindah giliran kotak mana yang akan diubah di putaran detik selanjutnya (0 -> 1 -> 2 -> 0)
         updateSlot = (updateSlot + 1) % 3;
       }, 500);
 
-    }, 4000); // Berganti otomatis setiap 4 detik
+    }, 4000); 
 
     return () => clearInterval(intervalId);
   }, []);
 
   // =========================================================================
   // TRANSISI SCROLL MUTLAK (Clean & Minimalist Scroll Reveal)
+  // Menggunakan Custom Hook tanpa library eksternal!
   // =========================================================================
-  // Terapkan InView pada setiap section utama
-  const [refToolkit, inViewToolkit] = useInView({ threshold: 0.1, triggerOnce: true });
-  const [refPortfolio, inViewPortfolio] = useInView({ threshold: 0.1, triggerOnce: true });
-  const [refCamera, inViewCamera] = useInView({ threshold: 0.1, triggerOnce: true });
+  const [refToolkit, inViewToolkit] = useScrollReveal();
+  const [refPortfolio, inViewPortfolio] = useScrollReveal();
+  const [refCamera, inViewCamera] = useScrollReveal();
 
   return (
     <div className="min-h-screen bg-[#030712] text-slate-300 font-sans selection:bg-cyan-500 selection:text-white relative w-full overflow-x-hidden">
@@ -112,9 +133,7 @@ export default function Home() {
       <div className="relative z-10 pt-24 md:pt-36 pb-24 w-full">
         <div className="max-w-[1400px] mx-auto px-5 sm:px-8 lg:px-12 w-full">
           
-          {/* ========================================================= */}
-          {/* HERO SECTION (justify-center di desktop)                    */}
-          {/* ========================================================= */}
+          {/* HERO SECTION */}
           <div className="flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-16 min-h-[auto] lg:min-h-[70vh] w-full py-10">
             
             {/* KIRI */}
