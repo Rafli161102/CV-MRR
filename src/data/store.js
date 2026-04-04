@@ -69,7 +69,7 @@ export const PROJECT_LIST = [
     ] 
   }, // <--- FIX: Di sini kemarin kurang tanda koma
   {
-    id: "Case Anime PrintNgab",
+    id: "case-batch-1",
     title: "Anime Case",
     company: "PrintNgab",
     category: "Print Design",
