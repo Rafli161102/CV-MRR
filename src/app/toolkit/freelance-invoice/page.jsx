@@ -25,12 +25,27 @@ const formatCurrency = (number, currencyCode) => {
   return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(number);
 };
 
-export default function InvoiceStudio() {
-  const [activeTab, setActiveTab] = useState('invoice'); // Default tab langsung ke Invoice
+// =========================================================================
+// PERBAIKAN MUTLAK: Pindah Komponen CleanInput ke luar dari InvoiceStudio 
+// agar tidak me-render ulang dan menghilangkan fokus keyboard saat mengetik!
+// =========================================================================
+const CleanInput = ({ label, name, type = "text", value, onChange, placeholder = "", prefix = "" }) => (
+  <div className="relative group w-full">
+    <label className="block text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-1.5">{label}</label>
+    <div className="flex items-center bg-[#0d1424]/40 border-b border-slate-700/50 group-hover:border-cyan-500/50 transition-colors focus-within:border-cyan-400 focus-within:bg-[#0d1424]/80 px-4 py-2.5 rounded-t-xl">
+      {prefix && <span className="text-slate-500 font-bold mr-2 text-sm">{prefix}</span>}
+      <input 
+        type={type} name={name} value={value} onChange={onChange} placeholder={placeholder}
+        className="w-full bg-transparent text-sm text-white outline-none placeholder:text-slate-600 transition-all font-medium" 
+      />
+    </div>
+  </div>
+);
 
-  // ==========================================
+export default function InvoiceStudio() {
+  const [activeTab, setActiveTab] = useState('invoice');
+
   // STATE: RATE CALCULATOR
-  // ==========================================
   const [monthlyTarget, setMonthlyTarget] = useState("");
   const [monthlyExpenses, setMonthlyExpenses] = useState("");
   const [workDays, setWorkDays] = useState("");
@@ -48,9 +63,7 @@ export default function InvoiceStudio() {
   const finalHourlyRate = baseHourlyRate + (baseHourlyRate * (profitMargin / 100));
   const dailyRate = finalHourlyRate * numWorkHours;
 
-  // ==========================================
-  // STATE: INVOICE GENERATOR (Dikosongkan sesuai request)
-  // ==========================================
+  // STATE: INVOICE GENERATOR
   const [invoiceData, setInvoiceData] = useState({
     invoiceNo: "",
     date: new Date().toISOString().split('T')[0],
@@ -119,24 +132,10 @@ export default function InvoiceStudio() {
     window.print();
   };
 
-  // Komponen Input Minimalis (Kaca/Glassmorphism borderless)
-  const CleanInput = ({ label, name, type = "text", value, onChange, placeholder = "", prefix = "" }) => (
-    <div className="relative group w-full">
-      <label className="block text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-1.5">{label}</label>
-      <div className="flex items-center bg-[#0d1424]/40 border-b border-slate-700/50 group-hover:border-cyan-500/50 transition-colors focus-within:border-cyan-400 focus-within:bg-[#0d1424]/80 px-4 py-2.5 rounded-t-xl">
-        {prefix && <span className="text-slate-500 font-bold mr-2 text-sm">{prefix}</span>}
-        <input 
-          type={type} name={name} value={value} onChange={onChange} placeholder={placeholder}
-          className="w-full bg-transparent text-sm text-white outline-none placeholder:text-slate-600 transition-all font-medium" 
-        />
-      </div>
-    </div>
-  );
-
   return (
     <div className="min-h-screen bg-[#030712] text-slate-300 font-sans selection:bg-cyan-500 selection:text-white pb-32">
       
-      {/* HEADER NAVIGASI (Perbaikan Margin Agar Tidak Nabrak Global Header) */}
+      {/* HEADER NAVIGASI */}
       <div className="print:hidden relative pt-24 md:pt-32 pb-8 border-b border-white/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
           
@@ -150,7 +149,6 @@ export default function InvoiceStudio() {
             </div>
           </div>
 
-          {/* Navigasi Kapsul Modern */}
           <div className="flex bg-[#0a0a0a] p-1.5 rounded-full border border-white/5 w-full sm:w-auto shadow-inner">
             <button 
               onClick={() => setActiveTab('invoice')} 
@@ -243,7 +241,7 @@ export default function InvoiceStudio() {
         )}
 
         {/* ========================================================================= */}
-        {/* TAB 2: INVOICE STUDIO GENERATOR */}
+        {/* TAB 2: INVOICE BUILDER */}
         {/* ========================================================================= */}
         <div className={`${activeTab === 'invoice' ? 'block' : 'hidden'} anim-fade-in-up`}>
           
@@ -262,14 +260,12 @@ export default function InvoiceStudio() {
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 print:block print:w-full">
             
-            {/* EDITOR INVOICE (Disembunyikan saat print) */}
             <div className="lg:col-span-5 space-y-6 print:hidden">
               
               {/* SECTION: BRANDING & INFO DIRI */}
               <div className="bg-[#0a0a0a] border border-white/5 rounded-[2rem] p-6 sm:p-8 shadow-xl">
                 <h3 className="text-[10px] font-black text-cyan-500 uppercase tracking-[0.2em] mb-6 flex items-center gap-2"><span className="w-4 h-px bg-cyan-500"></span> Identitas Pengirim</h3>
                 
-                {/* Upload Logo Minimalis */}
                 <div className="mb-6">
                   <label className="block text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-3">Logo Brand / Perusahaan</label>
                   <div className="flex items-center gap-4">
@@ -353,7 +349,6 @@ export default function InvoiceStudio() {
               <div className="bg-[#0a0a0a] border border-white/5 rounded-[2rem] p-6 sm:p-8 shadow-xl">
                 <h3 className="text-[10px] font-black text-cyan-500 uppercase tracking-[0.2em] mb-6 flex items-center gap-2"><span className="w-4 h-px bg-cyan-500"></span> Finalisasi & Tema</h3>
                 
-                {/* Opsi Mata Uang & Tema Warna */}
                 <div className="grid grid-cols-2 gap-4 mb-8">
                    <div>
                       <label className="block text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-2">Mata Uang</label>
@@ -394,15 +389,11 @@ export default function InvoiceStudio() {
               </div>
             </div>
 
-            {/* ========================================================================= */}
-            {/* AREA PREVIEW INVOICE (KUNCI STRICT A4 LAYOUT) */}
-            {/* Area ini tidak akan bisa terlipat/hancur berkat w-[794px] mutlak */}
-            {/* ========================================================================= */}
+            {/* PREVIEW INVOICE A4 STRICT */}
             <div className="lg:col-span-7 print:col-span-12 overflow-x-auto custom-scroll pb-10 print:pb-0 print:overflow-visible">
               
               <div className="w-[794px] mx-auto min-h-[1123px] bg-white print:bg-white text-slate-900 p-12 sm:p-16 rounded-[2rem] print:rounded-none shadow-2xl print:shadow-none relative flex flex-col scale-[0.6] sm:scale-[0.8] lg:scale-100 origin-top-left lg:origin-top">
                 
-                {/* Header Dokumen (Logo di Kiri, INVOICE di Kanan) */}
                 <div className="flex justify-between items-start mb-16 w-full">
                   <div className="flex flex-col text-left max-w-[55%]">
                     {logo ? (
@@ -426,7 +417,6 @@ export default function InvoiceStudio() {
                   </div>
                 </div>
 
-                {/* Info Klien & Tanggal */}
                 <div className="flex justify-between items-end mb-10 pb-6 border-b-2" style={{ borderColor: themeColor }}>
                   <div className="max-w-[60%]">
                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Ditagihkan Kepada:</p>
@@ -447,7 +437,6 @@ export default function InvoiceStudio() {
                   </div>
                 </div>
 
-                {/* Tabel Item Pekerjaan */}
                 <div className="flex-1 w-full">
                   <table className="w-full text-left mb-8 border-collapse">
                     <thead>
@@ -471,10 +460,8 @@ export default function InvoiceStudio() {
                   </table>
                 </div>
 
-                {/* Total & Kalkulasi */}
                 <div className="flex justify-between items-start mt-8 mb-12 page-break-inside-avoid w-full">
                   
-                  {/* Info Rekening (Kiri Bawah) */}
                   <div className="w-1/2 pr-12">
                     <div className="bg-slate-50/80 rounded-2xl p-6 border border-slate-200">
                       <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Informasi Transfer Bank</p>
@@ -484,7 +471,6 @@ export default function InvoiceStudio() {
                     </div>
                   </div>
 
-                  {/* Ringkasan Biaya (Kanan Bawah) */}
                   <div className="w-[45%] space-y-4 pt-2">
                     <div className="flex justify-between text-sm font-medium text-slate-500 px-2">
                       <span>Subtotal</span>
@@ -509,7 +495,6 @@ export default function InvoiceStudio() {
                   </div>
                 </div>
 
-                {/* Catatan Kaki / Footer Dokumen */}
                 <div className="mt-auto border-t border-slate-200 pt-6 page-break-inside-avoid w-full">
                   {invoiceData.notes && (
                     <div className="mb-6 max-w-[80%]">
