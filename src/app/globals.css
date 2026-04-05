@@ -53,16 +53,23 @@
 /* ========================================================= */
 /* PWA NATIVE APP DETECTOR (ILMU HITAM CSS) */
 /* ========================================================= */
+
+/* Secara bawaan (di Browser), sembunyikan semua elemen khusus PWA */
 .show-in-pwa {
   display: none !important;
 }
 
-/* Jika dibuka dari ikon Aplikasi di Layar HP (Standalone) */
+/* Jika dibuka dari ikon Aplikasi di Layar HP (Mode Standalone) */
 @media (display-mode: standalone) {
+  
+  /* Sembunyikan elemen bawaan web (seperti Navbar Atas & Footer) */
   .hide-in-pwa {
     display: none !important;
   }
+  
+  /* Munculkan elemen khusus aplikasi (seperti Bottom Navigasi) */
   .show-in-pwa {
     display: flex !important;
   }
+
 }
