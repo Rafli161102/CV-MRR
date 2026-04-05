@@ -18,6 +18,12 @@ export const PluginTypography = () => {
   const [h2, setH2] = useState(defaultH2); 
   const [p, setP] = useState(defaultP);
 
+  // ==========================================
+  // STATE TAMBAHAN UNTUK FITUR AI
+  // ==========================================
+  const [aiPrompt, setAiPrompt] = useState('');
+  const [isLoadingAI, setIsLoadingAI] = useState(false);
+
   useEffect(() => {
     const allFonts = []; 
     Object.values(FONTS_DATA).forEach(g => g.forEach(f => allFonts.push(f.val.replace(/\s+/g, '+'))));
@@ -50,6 +56,36 @@ export const PluginTypography = () => {
   
   const handlePointerUp = (e) => { if (dragging) { e.currentTarget.releasePointerCapture(e.pointerId); setDragging(null); } };
   const handleReset = () => { if(tab==='Heading') setH1(defaultH1); if(tab==='Subheading') setH2(defaultH2); if(tab==='Paragraph') setP(defaultP); };
+
+  // ==========================================
+  // FUNGSI LOGIKA AI UNTUK MANIPULASI STATE
+  // ==========================================
+  const handleAIGenerate = async (e) => {
+    e.preventDefault();
+    if (!aiPrompt.trim()) return;
+    setIsLoadingAI(true);
+    try {
+      const sysPrompt = `Kamu adalah Expert UI/UX Designer. Balas HANYA dengan JSON murni untuk Hero Section. Struktur: {"h1": {"text": "...", "font": "...", "color": "..."}, "h2": {...}, "p": {...}}. Aturan: Pilihan font WAJIB: Inter, Roboto, Montserrat, Poppins, Playfair Display, Merriweather, Lora.`;
+      const res = await fetch('/api/ai', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: aiPrompt, systemPrompt: sysPrompt })
+      });
+      const data = await res.json();
+      if (data.result) {
+        const cleanJSON = data.result.replace(/```json/g, '').replace(/```/g, '').trim();
+        const parsed = JSON.parse(cleanJSON);
+        if (parsed.h1) setH1(prev => ({ ...prev, ...parsed.h1 }));
+        if (parsed.h2) setH2(prev => ({ ...prev, ...parsed.h2 }));
+        if (parsed.p) setP(prev => ({ ...prev, ...parsed.p }));
+        setAiPrompt('');
+      }
+    } catch (err) {
+      alert("AI Gagal merespons. Pastikan API Route & Key sudah siap.");
+    } finally {
+      setIsLoadingAI(false);
+    }
+  };
 
   const getCssClass = (state, tag) => `.${tag} {\n  position: absolute;\n  left: 50%; top: 50%;\n  width: 100%; max-width: 400px;\n  transform: translate(calc(-50% + ${Math.round(state.x)}px), calc(-50% + ${Math.round(state.y)}px)) rotate(${state.rot}deg);\n  font-family: '${state.font}', sans-serif;\n  font-size: ${state.size}px;\n  color: ${state.color};\n  text-align: ${state.align};\n}`;
   const css = `.canvas-container {\n  position: relative; width: 100%; height: 300px; overflow: hidden;\n}\n\n${getCssClass(h1, 'heading')}\n\n${getCssClass(h2, 'subheading')}\n\n${getCssClass(p, 'paragraph')}`;
@@ -91,6 +127,17 @@ export const PluginTypography = () => {
 
   const controls = (
     <div className="space-y-1">
+      {/* BOX INPUT AI BARU */}
+      <div className="bg-cyan-950/20 border border-cyan-500/30 rounded-3xl p-5 mb-6">
+        <h3 className="text-[10px] font-black text-cyan-400 uppercase tracking-widest mb-3 flex items-center gap-2">✨ AI Designer</h3>
+        <form onSubmit={handleAIGenerate} className="flex gap-2">
+          <input type="text" value={aiPrompt} onChange={(e) => setAiPrompt(e.target.value)} placeholder="Tulis tema desain..." className="flex-1 bg-black/40 border border-slate-700/50 rounded-xl px-4 text-xs text-white outline-none focus:border-cyan-500 transition-all" />
+          <button type="submit" disabled={isLoadingAI || !aiPrompt} className="bg-cyan-600 hover:bg-cyan-500 disabled:bg-slate-800 text-white px-4 py-2.5 rounded-xl font-bold text-[10px] uppercase transition-all shrink-0">
+            {isLoadingAI ? "..." : "Generate"}
+          </button>
+        </form>
+      </div>
+
       <PluginTip title="TUTORIAL: INTERACTIVE TYPO" text="1. Sentuh dan geser (Drag & Drop) teks apa saja di kanvas hitam di atas untuk mengatur tata letaknya secara presisi. Koordinat geseran akan otomatis ditulis ke dalam kode CSS! 2. Gunakan Hierarki: Heading harus besar & tebal, Subheading sedang, dan Paragraf kecil & tipis. Tambahkan jarak huruf (Letter Spacing) jika menggunakan efek Uppercase agar teks terlihat mewah." />
       <div className="flex bg-[#050505] p-1.5 rounded-2xl border border-[#1f1f1f] w-full mb-6 shadow-inner">
         {['Heading', 'Subheading', 'Paragraph'].map(t => (
