@@ -2,28 +2,64 @@
 
 import React from 'react';
 import Link from 'next/link';
+// Kita pakai usePathname untuk mendeteksi halaman mana yang sedang dibuka
+import { usePathname } from 'next/navigation';
 
 export default function BottomNav() {
+  const pathname = usePathname();
+
+  // Helper function untuk menentukan class icon aktif atau tidak aktif
+  const getIconClass = (href) => {
+    const isActive = pathname === href;
+    return isActive
+      ? "text-cyan-400 group-hover:scale-110 group-active:scale-95 transition-transform duration-200" // Aktif (Biru/Cyan)
+      : "text-slate-500 hover:text-white transition-all duration-200"; // Tidak Aktif (Abu-abu)
+  };
+
+  const getLabelClass = (href) => {
+    const isActive = pathname === href;
+    return isActive
+      ? "text-[9px] font-extrabold tracking-widest uppercase text-cyan-400 opacity-100 transition-opacity" // Label aktif
+      : "text-[9px] font-medium tracking-widest uppercase text-slate-600 opacity-0 group-hover:opacity-100 transition-all"; // Label tidak aktif, muncul saat di-hover (di PC)
+  };
+
   return (
-    <div className="show-in-pwa fixed bottom-0 left-0 w-full bg-[#060D1F]/90 backdrop-blur-xl border-t border-white/10 pb-[env(safe-area-inset-bottom)] z-50 justify-around items-center h-16 px-4 shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
-      
-      <Link href="/toolkit" className="flex flex-col items-center gap-1.5 text-slate-400 hover:text-cyan-400 transition-colors">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 16.875h3.375m0 0h3.375m-3.375 0V13.5m0 3.375v3.375M6 10.5h2.25a2.25 2.25 0 002.25-2.25V6a2.25 2.25 0 00-2.25-2.25H6A2.25 2.25 0 003.75 6v2.25A2.25 2.25 0 006 10.5zm0 9.75h2.25A2.25 2.25 0 0010.5 18v-2.25a2.25 2.25 0 00-2.25-2.25H6a2.25 2.25 0 00-2.25 2.25V18A2.25 2.25 0 006 20.25zm9.75-9.75H18a2.25 2.25 0 002.25-2.25V6A2.25 2.25 0 0018 3.75h-2.25A2.25 2.25 0 0013.5 6v2.25a2.25 2.25 0 002.25 2.25z" /></svg>
-        <span className="text-[9px] font-bold tracking-widest uppercase">Explore</span>
-      </Link>
+    // Gunakan class gaib .show-in-pwa. Navigasi ini hanya muncul saat MRR dibuka dari ikon aplikasi di HP.
+    <div className="show-in-pwa fixed bottom-0 left-0 w-full z-50 animate-nav-slide-up">
+      {/* Background Glassmorphism dengan Shadow besar */}
+      <div className="bg-[#0a1228]/80 backdrop-blur-xl border-t border-white/5 pb-[env(safe-area-inset-bottom)] shadow-[0_-15px_60px_rgba(0,0,0,0.6)] rounded-t-3xl overflow-visible">
+        
+        {/* Kontainer Bar Menu */}
+        <div className="flex justify-between items-center h-20 px-8">
+          
+          {/* MENU EXPLORE (Kalkulator/Rate) */}
+          <Link href="/toolkit" className="group flex flex-col items-center justify-center gap-1.5 flex-1 relative">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className={getIconClass("/toolkit")}><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 16.875h3.375m0 0h3.375m-3.375 0V13.5m0 3.375v3.375M6 10.5h2.25a2.25 2.25 0 002.25-2.25V6a2.25 2.25 0 00-2.25-2.25H6A2.25 2.25 0 003.75 6v2.25A2.25 2.25 0 006 10.5zm0 9.75h2.25A2.25 2.25 0 0010.5 18v-2.25a2.25 2.25 0 00-2.25-2.25H6a2.25 2.25 0 00-2.25 2.25V18A2.25 2.25 0 006 20.25zm9.75-9.75H18a2.25 2.25 0 002.25-2.25V6A2.25 2.25 0 0018 3.75h-2.25A2.25 2.25 0 0013.5 6v2.25a2.25 2.25 0 002.25 2.25z" /></svg>
+            <span className={getLabelClass("/toolkit")}>Explore</span>
+          </Link>
 
-      <Link href="/toolkit/freelance-invoice" className="flex flex-col items-center gap-1.5 text-cyan-400">
-        <div className="bg-gradient-to-r from-cyan-500 to-blue-600 p-2.5 rounded-full text-white shadow-[0_0_15px_rgba(6,182,212,0.4)] -mt-6 border-[4px] border-[#060D1F]">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" /></svg>
+          {/* MENU TENGAH: INVOICE STUDIO (Menonjol/Flooded CTA dengan Animasi Denyut) */}
+          <Link href="/toolkit/freelance-invoice" className="group flex-1 flex flex-col items-center justify-center relative scale-110 active:scale-95 transition-transform">
+            {/* Animasi Denyut (Pulse Glow) di belakang tombol */}
+            <div className="absolute inset-0 bg-cyan-500 rounded-full blur-[20px] opacity-20 animate-nav-pulse z-0 scale-75"></div>
+            
+            {/* Tombol Menonjol Utama */}
+            <div className="bg-gradient-to-r from-cyan-500 to-blue-600 p-4 rounded-full text-white shadow-[0_5px_30px_rgba(6,182,212,0.5)] -mt-10 border-[5px] border-[#0a1228] z-10 hover:shadow-[0_10px_40px_rgba(6,182,212,0.8)] transition-all">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" /></svg>
+            </div>
+            
+            {/* Label Invoice (Hanya muncul jika aktif) */}
+            <span className={pathname === "/toolkit/freelance-invoice" ? "text-[9px] font-extrabold tracking-widest uppercase text-cyan-400 mt-2 z-10" : "text-[9px] font-medium tracking-widest uppercase text-slate-600 mt-2 z-10 group-hover:text-cyan-400 transition-colors"}>Invoice</span>
+          </Link>
+
+          {/* MENU PROFILE (Pengaturan Lokal/Tentang) */}
+          <Link href="/tentang" className="group flex-1 flex flex-col items-center justify-center gap-1.5 relative">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className={getIconClass("/tentang")}><path strokeLinecap="round" strokeLinejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+            <span className={getLabelClass("/tentang")}>Profile</span>
+          </Link>
+
         </div>
-        <span className="text-[9px] font-bold tracking-widest uppercase">Invoice</span>
-      </Link>
-
-      <Link href="/tentang" className="flex flex-col items-center gap-1.5 text-slate-400 hover:text-cyan-400 transition-colors">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-        <span className="text-[9px] font-bold tracking-widest uppercase">Profile</span>
-      </Link>
-
+      </div>
     </div>
   );
 }
