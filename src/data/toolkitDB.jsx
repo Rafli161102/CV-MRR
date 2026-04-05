@@ -37,17 +37,18 @@ export const toolkits = [
   },
   
   // --- CSS VISUAL STUDIO (Ubah dari Glassmorphism ke Studio) ---
+  export const toolkits = [
+  // ... data yang sudah ada (Invoice, dll)
   {
-    id: "css-studio",
-    title: "CSS Visual Studio",
-    description: "Generator visual All-in-One untuk efek Glassmorphism, Neumorphism, CSS Animations, dan UI premium lainnya. Atur tuas visual dan salin kodenya.",
-    icon: <Icons.Layers />, // Menambahkan ikon yang hilang
-    link: "/css-studio", // Menyiapkan URL routingnya
-    status: "active", // Harus "active" agar tombolnya berwarna Cyan terang
-    category: "Web Developer",
-    tags: ["CSS", "Generator", "UI Effects"] // Menambahkan tag yang hilang
+    id: 'css-studio',
+    title: 'Dev Visual Studio',
+    description: 'Laboratorium desain berbasis AI untuk membangun komponen UI, tipografi interaktif, dan pixel art secara instan tanpa koding manual.',
+    category: 'Design Utility', // Akan otomatis masuk ke kategori ini
+    link: '/css-studio', // Rute menuju "Monster" kita
+    isNew: true,
+    isPremium: true,
+    badge: 'AI Hybrid'
   },
-
   // --- FASE 2: QUICK WINS & KOMUNITAS ---
   {
     id: "wa-generator",
