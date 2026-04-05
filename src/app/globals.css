@@ -50,3 +50,19 @@
 @keyframes shimmer {
   100% { left: 100%; }
 }
+/* ========================================================= */
+/* PWA NATIVE APP DETECTOR (ILMU HITAM CSS) */
+/* ========================================================= */
+.show-in-pwa {
+  display: none !important;
+}
+
+/* Jika dibuka dari ikon Aplikasi di Layar HP (Standalone) */
+@media (display-mode: standalone) {
+  .hide-in-pwa {
+    display: none !important;
+  }
+  .show-in-pwa {
+    display: flex !important;
+  }
+}
