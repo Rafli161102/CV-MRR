@@ -34,10 +34,7 @@ const UnifiedCard = ({ tool }) => {
           : 'bg-[#050505] border border-white/5 opacity-50 grayscale cursor-not-allowed'
       }`}
     >
-      {/* KOTAK IKON YANG SERAGAM (GRADASI PENUH) 
-        - Flagship: Gradasi Terang (Cyan-Biru)
-        - Standar: Gradasi Gelap (Abu-abu-Hitam)
-      */}
+      {/* KOTAK IKON YANG SERAGAM (GRADASI PENUH) */}
       <div className={`w-12 h-12 sm:w-14 sm:h-14 shrink-0 rounded-xl flex items-center justify-center transition-all duration-300 shadow-inner ${
         isActive 
           ? isFlagship 
@@ -45,7 +42,6 @@ const UnifiedCard = ({ tool }) => {
             : 'bg-gradient-to-tr from-slate-800 to-slate-900 text-cyan-400 border border-white/5 group-hover:text-cyan-300 group-hover:border-white/10'
           : 'bg-[#111] text-slate-500 border border-white/5'
       }`}>
-         {/* CSS Sihir untuk menyeragamkan ketebalan dan ukuran SEMUA ikon SVG */}
          <div className="flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 z-10 [&>svg]:w-full [&>svg]:h-full [&>svg]:stroke-[1.5] [&>svg]:fill-none [&>path]:stroke-current">
             {tool.icon}
          </div>
@@ -99,7 +95,9 @@ export default function ToolkitPage() {
     : toolkits.filter(tool => tool.category === activeCat);
 
   return (
-    <div className="min-h-screen bg-[#030712] text-slate-200 font-sans pb-32 pt-4 relative selection:bg-cyan-500/30 selection:text-cyan-300" style={{ overscrollBehavior: 'none' }}>
+    // FIX PWA 1: min-h-screen diubah jadi min-h-[100dvh]
+    // FIX PWA 2: Padding bawah super lega dengan kalkulasi env safe-area
+    <div className="min-h-[100dvh] bg-[#030712] text-slate-200 font-sans pb-[calc(10rem+env(safe-area-inset-bottom))] pt-4 relative selection:bg-cyan-500/30 selection:text-cyan-300">
       
       {/* Background Radial Glow */}
       <div className="fixed top-[-10%] right-[-10%] w-[70vw] h-[70vw] bg-cyan-600/10 rounded-full blur-[120px] pointer-events-none z-0"></div>
@@ -107,7 +105,7 @@ export default function ToolkitPage() {
       <div className="max-w-2xl mx-auto px-6 relative z-10">
         
         {/* ========================================================= */}
-        {/* HERO TERMINAL TEXT + SYS.ONLINE BADGE (TIDAK TABRAKAN)    */}
+        {/* HERO TERMINAL TEXT + SYS.ONLINE BADGE                     */}
         {/* ========================================================= */}
         <div className="mb-6 mt-4 animate-fade-in relative border-l-[3px] border-cyan-400 pl-4">
           
@@ -116,7 +114,6 @@ export default function ToolkitPage() {
               <span>//</span> TERMINAL INIT
             </div>
             
-            {/* SECURE BADGE - Dipindah ke sini agar aman dari Navbar Atas */}
             <button 
               onClick={() => setIsSecurityModalOpen(true)}
               className="group flex items-center gap-2 bg-emerald-950/60 hover:bg-emerald-900 border border-emerald-500/50 px-3 py-1.5 rounded shadow-[0_0_15px_rgba(16,185,129,0.15)] active:scale-95 transition-all"
@@ -135,7 +132,7 @@ export default function ToolkitPage() {
         </div>
 
         {/* ========================================================= */}
-        {/* TACTICAL TABS (MONOSPACE / UNDERLINE)                     */}
+        {/* TACTICAL TABS                                             */}
         {/* ========================================================= */}
         <div className="flex overflow-x-auto no-scrollbar gap-6 py-4 -mx-6 px-6 snap-x sticky top-[60px] md:top-[70px] z-30 bg-[#030712]/95 backdrop-blur-md border-b border-white/5 animate-fade-in" style={{ animationDelay: '0.1s' }}>
           {categories.map(cat => (
@@ -154,7 +151,7 @@ export default function ToolkitPage() {
         </div>
 
         {/* ========================================================= */}
-        {/* MODULE LIST (UNIFIED CARDS)                               */}
+        {/* MODULE LIST                                               */}
         {/* ========================================================= */}
         <div className="animate-fade-in" style={{ animationDelay: '0.2s' }}>
           <div className="space-y-3 pt-6 pb-10">
@@ -173,7 +170,7 @@ export default function ToolkitPage() {
       </div>
 
       {/* ========================================================= */}
-      {/* MODAL SECURITY LOGIC (ZERO DATA STORAGE)                    */}
+      {/* MODAL SECURITY LOGIC                                      */}
       {/* ========================================================= */}
       {isSecurityModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/80 backdrop-blur-sm animate-fade-in touch-none">
@@ -220,9 +217,7 @@ export default function ToolkitPage() {
         </div>
       )}
 
-      {/* ========================================================= */}
-      {/* CSS UTILITIES & ANIMATIONS                                  */}
-      {/* ========================================================= */}
+      {/* FIX PWA 3: Hapus overscroll-behavior: none dari tag style */}
       <style>{`
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
