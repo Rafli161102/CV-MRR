@@ -133,7 +133,7 @@ export default function ToolkitPage() {
                </p>
                
                <Link href={flagshipTool.link} className="flex-1 flex items-center justify-center gap-2.5 w-full py-4 bg-gradient-to-tr from-cyan-600 to-blue-600 rounded-xl text-white font-black text-xs uppercase tracking-widest active:scale-95 transition-all shadow-[0_10px_20px_rgba(6,182,212,0.2)]">
-                  Buka Workspace <Icons.ArrowLeft className="rotate-180 w-3.5 h-3.5" />
+                  Buka Workspace <AppIcons.ArrowRight />
                </Link>
             </div>
           </div>
@@ -146,7 +146,7 @@ export default function ToolkitPage() {
           
           <MobileTabs categories={categories} activeCat={activeCat} setActiveCat={setActiveCat} />
           
-          <div className="space-y-3.5 pt-2pb-10 min-h-[50vh]">
+          <div className="space-y-3.5 pt-2 pb-10 min-h-[50vh]">
             <span className="text-[10px] font-black text-slate-600 uppercase tracking-[0.3em] block mb-4">
               {activeCat === 'All' ? 'Semua Peralatan' : `Kategori: ${activeCat}`}
             </span>
