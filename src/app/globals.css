@@ -73,3 +73,52 @@
   }
 
 }
+/* ========================================================= */
+/* MRR ENTERPRISE NATIVE UI DETECTOR (CLIENT-SIDE) */
+/* ========================================================= */
+
+/* Secara bawaan (di Browser), sembunyikan semua elemen khusus PWA/Aplikasi */
+.show-in-pwa {
+  display: none !important;
+}
+
+/* Jika dibuka dari ikon Aplikasi di Layar HP (Mode Standalone) */
+@media (display-mode: standalone) {
+  
+  /* Sembunyikan elemen bawaan web (seperti Navbar Atas & Footer Portofolio Besar) */
+  .hide-in-pwa {
+    display: none !important;
+  }
+  
+  /* Munculkan elemen khusus aplikasi (seperti Bottom Navigasi Mobile) */
+  .show-in-pwa {
+    display: flex !important;
+  }
+
+}
+
+/* ========================================================= */
+/* ANIMASI ESTETIK ALA APLIKASI NATIVE (CUSTOM TAILWIND) */
+/* ========================================================= */
+
+/* 1. Animasi Slide Up saat Navigasi Terbuka (Slide dari Bawah) */
+@keyframes navSlideUp {
+  0% { transform: translateY(100%); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+/* 2. Animasi Pulse Glow (Denyut) untuk Tombol Tengah Utama */
+@keyframes navPulseGlow {
+  0% { transform: scale(1); opacity: 0.15; blur: 20px; }
+  50% { transform: scale(1.1); opacity: 0.25; blur: 25px; }
+  100% { transform: scale(1); opacity: 0.15; blur: 20px; }
+}
+
+/* Terapkan animasi di Tailwind utilities */
+.animate-nav-slide-up {
+  animation: navSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-nav-pulse {
+  animation: navPulseGlow 2.5s ease-in-out infinite;
+}
