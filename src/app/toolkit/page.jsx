@@ -15,7 +15,7 @@ const AppIcons = {
 };
 
 // =========================================================================
-// COMPONENT: UNIFIED MODULE CARD (KONSISTEN & TIDAK BELANG)
+// COMPONENT: UNIFIED MODULE CARD 
 // =========================================================================
 const UnifiedCard = ({ tool }) => {
   const isActive = tool.status === 'active';
@@ -34,7 +34,6 @@ const UnifiedCard = ({ tool }) => {
           : 'bg-[#050505] border border-white/5 opacity-50 grayscale cursor-not-allowed'
       }`}
     >
-      {/* KOTAK IKON YANG SERAGAM (GRADASI PENUH) */}
       <div className={`w-12 h-12 sm:w-14 sm:h-14 shrink-0 rounded-xl flex items-center justify-center transition-all duration-300 shadow-inner ${
         isActive 
           ? isFlagship 
@@ -47,7 +46,6 @@ const UnifiedCard = ({ tool }) => {
          </div>
       </div>
       
-      {/* Data Content */}
       <div className="flex-1 min-w-0 pr-2">
         <div className="flex items-center gap-2 mb-1">
           <h3 className={`text-sm sm:text-base font-bold tracking-tight truncate ${isActive ? 'text-white' : 'text-slate-500'}`}>
@@ -64,7 +62,6 @@ const UnifiedCard = ({ tool }) => {
         </p>
       </div>
 
-      {/* Status Output */}
       <div className="shrink-0">
         {isActive ? (
           <div className={`flex items-center justify-center w-8 h-8 rounded-full transition-all duration-300 ${
@@ -95,20 +92,14 @@ export default function ToolkitPage() {
     : toolkits.filter(tool => tool.category === activeCat);
 
   return (
-    // FIX PWA 1: min-h-screen diubah jadi min-h-[100dvh]
-    // FIX PWA 2: Padding bawah super lega dengan kalkulasi env safe-area
-    <div className="min-h-[100dvh] bg-[#030712] text-slate-200 font-sans pb-[calc(10rem+env(safe-area-inset-bottom))] pt-4 relative selection:bg-cyan-500/30 selection:text-cyan-300">
+    // FIX PWA: Hapus pb-[calc(...)] yang rawan gagal compile, gunakan tinggi standar
+    <div className="min-h-screen bg-[#030712] text-slate-200 font-sans pt-4 relative selection:bg-cyan-500/30 selection:text-cyan-300">
       
-      {/* Background Radial Glow */}
       <div className="fixed top-[-10%] right-[-10%] w-[70vw] h-[70vw] bg-cyan-600/10 rounded-full blur-[120px] pointer-events-none z-0"></div>
 
       <div className="max-w-2xl mx-auto px-6 relative z-10">
         
-        {/* ========================================================= */}
-        {/* HERO TERMINAL TEXT + SYS.ONLINE BADGE                     */}
-        {/* ========================================================= */}
         <div className="mb-6 mt-4 animate-fade-in relative border-l-[3px] border-cyan-400 pl-4">
-          
           <div className="flex items-center justify-between mb-3">
             <div className="text-[10px] text-cyan-400 font-black tracking-[0.3em] uppercase flex items-center gap-2">
               <span>//</span> TERMINAL INIT
@@ -131,9 +122,6 @@ export default function ToolkitPage() {
           </p>
         </div>
 
-        {/* ========================================================= */}
-        {/* TACTICAL TABS                                             */}
-        {/* ========================================================= */}
         <div className="flex overflow-x-auto no-scrollbar gap-6 py-4 -mx-6 px-6 snap-x sticky top-[60px] md:top-[70px] z-30 bg-[#030712]/95 backdrop-blur-md border-b border-white/5 animate-fade-in" style={{ animationDelay: '0.1s' }}>
           {categories.map(cat => (
             <button 
@@ -150,11 +138,8 @@ export default function ToolkitPage() {
           ))}
         </div>
 
-        {/* ========================================================= */}
-        {/* MODULE LIST                                               */}
-        {/* ========================================================= */}
         <div className="animate-fade-in" style={{ animationDelay: '0.2s' }}>
-          <div className="space-y-3 pt-6 pb-10">
+          <div className="space-y-3 pt-6">
             {filteredTools.map(tool => (
               <UnifiedCard key={tool.id} tool={tool} />
             ))}
@@ -167,15 +152,16 @@ export default function ToolkitPage() {
           </div>
         </div>
 
+        {/* ========================================================= */}
+        {/* BULLETPROOF PWA SPACER - Ini solusi mutlaknya             */}
+        {/* ========================================================= */}
+        <div className="h-36 sm:h-44 w-full shrink-0 pointer-events-none"></div>
+
       </div>
 
-      {/* ========================================================= */}
-      {/* MODAL SECURITY LOGIC                                      */}
-      {/* ========================================================= */}
       {isSecurityModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/80 backdrop-blur-sm animate-fade-in touch-none">
            <div className="absolute inset-0" onClick={() => setIsSecurityModalOpen(false)}></div>
-           
            <div className="relative w-full max-w-sm bg-[#050b14] border border-emerald-500/50 shadow-[0_0_40px_rgba(16,185,129,0.15)] rounded-2xl overflow-hidden z-10">
               <div className="bg-emerald-950/50 border-b border-emerald-500/30 px-5 py-4 flex items-center justify-between">
                  <div className="flex items-center gap-3">
@@ -197,7 +183,7 @@ export default function ToolkitPage() {
                  <div className="space-y-1.5 border-l-2 border-emerald-500/30 pl-3">
                     <h4 className="text-white text-[10px] font-black tracking-widest uppercase">2. Local Environment</h4>
                     <p className="text-slate-400 text-[11px] leading-relaxed">
-                      Render PDF, kalkulasi, dan manipulasi kanvas diproses langsung oleh RAM/CPU <em>browser</em> perangkat Anda sendiri. Privasi 100% terkunci.
+                      Render PDF, kalkulasi, dan manipulasi kanvas diproses langsung oleh RAM/CPU <em>browser</em> perangkat Anda sendiri.
                     </p>
                  </div>
                  <div className="space-y-1.5 border-l-2 border-emerald-500/30 pl-3">
@@ -217,7 +203,6 @@ export default function ToolkitPage() {
         </div>
       )}
 
-      {/* FIX PWA 3: Hapus overscroll-behavior: none dari tag style */}
       <style>{`
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
