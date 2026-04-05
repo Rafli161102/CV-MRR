@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { toolkits } from '../../data/toolkitDB';
 
 // =========================================================================
-// TACTICAL HUD ICONS (ZZZ / ARKNIGHTS VIBE)
+// TACTICAL HUD ICONS
 // =========================================================================
 const AppIcons = {
   Sparkles: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-3.5 h-3.5 text-cyan-400 animate-pulse"><path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" /></svg>,
@@ -15,7 +15,7 @@ const AppIcons = {
 };
 
 // =========================================================================
-// COMPONENT: TACTICAL MODULE CARD (CHAMFERED EDGES)
+// COMPONENT: TACTICAL MODULE CARD (BUG FIX: ICON HARMONY)
 // =========================================================================
 const TacticalCard = ({ tool }) => {
   const isActive = tool.status === 'active';
@@ -31,28 +31,31 @@ const TacticalCard = ({ tool }) => {
           ? isFlagship 
             ? 'bg-[#0a101a] border-l-[3px] border-l-cyan-400 border-t border-r border-b border-cyan-500/20 hover:border-cyan-400 hover:shadow-[0_0_20px_rgba(6,182,212,0.15)] active:scale-[0.98]' 
             : 'bg-[#080808] border border-white/10 hover:bg-[#111] hover:border-white/30 active:scale-[0.98]'
-          : 'bg-[#050505] border border-dashed border-white/10 opacity-60 grayscale cursor-not-allowed'
+          : 'bg-[#050505] border border-dashed border-white/10 opacity-50 grayscale cursor-not-allowed'
       }`}
       style={{ clipPath: isFlagship ? 'polygon(0 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%)' : 'none' }}
     >
-      {/* Background Accent Lines */}
+      {/* Background Accent Lines (Khusus Flagship) */}
       {isFlagship && (
         <div className="absolute right-2 top-2 opacity-20 pointer-events-none">
           <svg width="30" height="30" viewBox="0 0 40 40"><path d="M0 40L40 0H20L0 20V40Z" fill="#22d3ee"/></svg>
         </div>
       )}
 
-      {/* Technical Icon Box */}
+      {/* Technical Icon Box - MEMAKSA SEMUA IKON JADI SERAGAM */}
       <div className={`w-12 h-12 shrink-0 flex items-center justify-center transition-all duration-300 relative ${
         isActive 
           ? isFlagship 
             ? 'bg-cyan-950/50 text-cyan-400 border border-cyan-500/50 group-hover:bg-cyan-400 group-hover:text-black' 
-            : 'bg-black border border-white/20 text-slate-300 group-hover:text-white'
-          : 'bg-transparent border border-white/10 text-slate-600'
+            : 'bg-[#111] text-white border border-white/20 group-hover:text-cyan-400 group-hover:border-cyan-500/30'
+          : 'bg-[#0a0a0a] border border-white/10 text-slate-600'
       }`}
       style={{ clipPath: 'polygon(0 6px, 6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%)' }}
       >
-         <div className="w-5 h-5 z-10">{tool.icon}</div>
+         {/* CSS Child Selector [&>svg] memaksa ikon SVG memiliki ketebalan (stroke) dan ukuran yang sama persis */}
+         <div className="flex items-center justify-center w-6 h-6 z-10 [&>svg]:w-full [&>svg]:h-full [&>svg]:stroke-[1.75] [&>svg]:fill-none [&>path]:stroke-current">
+            {tool.icon}
+         </div>
       </div>
       
       {/* Data Content */}
@@ -78,13 +81,13 @@ const TacticalCard = ({ tool }) => {
           <div className={`flex items-center justify-center w-8 h-8 transition-all duration-300 ${
             isFlagship 
             ? 'text-cyan-400 group-hover:translate-x-1.5' 
-            : 'text-slate-500 group-hover:text-white group-hover:translate-x-1.5'
+            : 'text-slate-500 group-hover:text-cyan-400 group-hover:translate-x-1.5'
           }`}>
             <AppIcons.ArrowRight />
           </div>
         ) : (
           <div className="flex items-center gap-1.5 px-2 py-1 bg-white/5 border border-white/10">
-             <span className="text-[8px] font-black tracking-[0.2em] text-slate-600">LOCK</span>
+             <span className="text-[8px] font-black tracking-[0.2em] text-slate-500">LOCK</span>
           </div>
         )}
       </div>
@@ -95,53 +98,42 @@ const TacticalCard = ({ tool }) => {
 export default function ToolkitPage() {
   const categories = ['All', ...new Set(toolkits.map(tool => tool.category))];
   const [activeCat, setActiveCat] = useState('All');
-  const [isSecurityModalOpen, setIsSecurityModalOpen] = useState(false); // STATE UNTUK MODAL
+  const [isSecurityModalOpen, setIsSecurityModalOpen] = useState(false);
   
   const filteredTools = activeCat === 'All' 
     ? [...toolkits].sort((a, b) => (a.id === 'css-studio' ? -1 : b.id === 'css-studio' ? 1 : 0))
     : toolkits.filter(tool => tool.category === activeCat);
 
   return (
-    <div className="min-h-screen bg-[#030712] text-slate-200 font-sans pb-32 relative selection:bg-cyan-500/30 selection:text-cyan-300" style={{ overscrollBehavior: 'none' }}>
+    <div className="min-h-screen bg-[#030712] text-slate-200 font-sans pb-32 pt-6 relative selection:bg-cyan-500/30 selection:text-cyan-300" style={{ overscrollBehavior: 'none' }}>
       
       {/* Background Grid Pattern (Sci-Fi) */}
       <div className="fixed inset-0 tactical-grid opacity-[0.05] pointer-events-none z-0"></div>
       
-      {/* ========================================================= */}
-      {/* TACTICAL HEADER                                           */}
-      {/* ========================================================= */}
-      <div className="sticky top-0 z-40 bg-[#030712]/95 backdrop-blur-xl px-6 py-5 border-b border-white/5 shadow-md">
-        <div className="max-w-2xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
-             <div className="flex flex-col gap-[3px]">
-               <div className="w-4 h-[3px] bg-white"></div>
-               <div className="w-2.5 h-[3px] bg-cyan-400"></div>
-             </div>
-             <h1 className="text-xl font-black text-white tracking-[0.1em] uppercase">
-               MRR<span className="text-cyan-400 ml-1">OS</span>
-             </h1>
-          </div>
-          
-          {/* SECURE BADGE - BISA DIKLIK */}
-          <button 
-            onClick={() => setIsSecurityModalOpen(true)}
-            className="group flex items-center gap-2 bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-500 px-3 py-1.5 shadow-[0_0_15px_rgba(16,185,129,0.2)] active:scale-95 transition-all"
-          >
-             <div className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse group-hover:scale-125 transition-transform"></div>
-             <span className="text-[9px] font-black text-emerald-400 tracking-[0.2em] uppercase">SYS.ONLINE</span>
-          </button>
-        </div>
-      </div>
+      {/* Header lama DIHAPUS agar tidak bentrok dengan Navbar Global */}
 
       <div className="max-w-2xl mx-auto px-6 relative z-10">
         
         {/* ========================================================= */}
-        {/* HERO TERMINAL TEXT                                        */}
+        {/* HERO TERMINAL TEXT + SYS.ONLINE BADGE                     */}
         {/* ========================================================= */}
-        <div className="mb-6 mt-8 animate-fade-in relative border-l-2 border-cyan-400 pl-4">
-          <div className="text-[9px] text-cyan-400 font-black tracking-[0.3em] uppercase mb-2 flex items-center gap-2">
-            <span>//</span> TERMINAL INIT
+        <div className="mb-6 mt-4 animate-fade-in relative border-l-2 border-cyan-400 pl-4">
+          
+          <div className="flex items-center justify-between mb-3">
+            <div className="text-[9px] text-cyan-400 font-black tracking-[0.3em] uppercase flex items-center gap-2">
+              <span>//</span> TERMINAL INIT
+            </div>
+            
+            {/* SECURE BADGE - Dipindah ke sini agar tidak bentrok dengan navbar atas */}
+            <button 
+              onClick={() => setIsSecurityModalOpen(true)}
+              className="group flex items-center gap-2 bg-emerald-950/60 hover:bg-emerald-900 border border-emerald-500/50 px-2.5 py-1 rounded shadow-[0_0_15px_rgba(16,185,129,0.15)] active:scale-95 transition-all"
+            >
+               <div className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse group-hover:scale-125 transition-transform"></div>
+               <span className="text-[8px] font-black text-emerald-400 tracking-[0.2em] uppercase">SYS.ONLINE</span>
+            </button>
           </div>
+
           <h2 className="text-[32px] sm:text-[40px] font-black text-white tracking-tighter mb-2 leading-[1.05] uppercase">
             Creative <br/> <span className="text-cyan-400">Override.</span>
           </h2>
@@ -153,7 +145,8 @@ export default function ToolkitPage() {
         {/* ========================================================= */}
         {/* TACTICAL TABS                                             */}
         {/* ========================================================= */}
-        <div className="flex overflow-x-auto no-scrollbar gap-6 py-4 -mx-6 px-6 snap-x sticky top-[68px] z-30 bg-[#030712]/95 backdrop-blur-md border-b border-white/5 animate-fade-in" style={{ animationDelay: '0.1s' }}>
+        {/* Top di-adjust ke 60px/70px agar menyangkut pas di bawah Global Navbar saat discroll */}
+        <div className="flex overflow-x-auto no-scrollbar gap-6 py-4 -mx-6 px-6 snap-x sticky top-[60px] md:top-[70px] z-30 bg-[#030712]/95 backdrop-blur-md border-b border-white/5 animate-fade-in" style={{ animationDelay: '0.1s' }}>
           {categories.map(cat => (
             <button 
               key={cat} onClick={() => setActiveCat(cat)}
@@ -179,7 +172,7 @@ export default function ToolkitPage() {
             ))}
             
             {filteredTools.length === 0 && (
-                <div className="flex flex-col items-center justify-center text-center py-16 px-6 bg-black border border-dashed border-white/20">
+                <div className="flex flex-col items-center justify-center text-center py-16 px-6 bg-[#050505] border border-dashed border-white/10 rounded-xl">
                    <span className="text-[10px] uppercase tracking-[0.3em] text-slate-500 font-bold">ERR: MODULE NOT FOUND</span>
                 </div>
             )}
@@ -193,41 +186,37 @@ export default function ToolkitPage() {
       {/* ========================================================= */}
       {isSecurityModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/80 backdrop-blur-sm animate-fade-in touch-none">
-           {/* Background Click untuk Close */}
            <div className="absolute inset-0" onClick={() => setIsSecurityModalOpen(false)}></div>
            
-           {/* Modal Box */}
            <div className="relative w-full max-w-sm bg-[#050b14] border border-emerald-500/50 shadow-[0_0_40px_rgba(16,185,129,0.15)] rounded-2xl overflow-hidden z-10" style={{ clipPath: 'polygon(0 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%)' }}>
               
-              {/* Header Modal */}
               <div className="bg-emerald-950/50 border-b border-emerald-500/30 px-5 py-4 flex items-center justify-between">
                  <div className="flex items-center gap-3">
                     <AppIcons.Shield />
                     <span className="text-emerald-400 text-[10px] font-black tracking-[0.2em] uppercase">Security Protocol</span>
                  </div>
-                 <button onClick={() => setIsSecurityModalOpen(false)} className="text-emerald-500 hover:text-white transition-colors text-xs font-black">
+                 <button onClick={() => setIsSecurityModalOpen(false)} className="text-emerald-500 hover:text-white transition-colors text-xs font-black px-2">
                     [ X ]
                  </button>
               </div>
 
-              {/* Isi Konten Modal */}
               <div className="p-5 sm:p-6 space-y-5">
-                 <div className="space-y-1.5">
-                    <h4 className="text-white text-xs font-black tracking-widest uppercase">1. Zero Data Storage</h4>
+                 <div className="space-y-1.5 border-l-2 border-emerald-500/30 pl-3">
+                    <h4 className="text-white text-[10px] font-black tracking-widest uppercase">1. Zero Data Storage</h4>
                     <p className="text-slate-400 text-[11px] leading-relaxed">
-                      Aplikasi ini beroperasi menggunakan <strong>Client-Side Logic</strong>. Artinya, seluruh data yang Anda masukkan (Nama, Invoice, Desain Canvas) <strong>TIDAK PERNAH</strong> dikirim atau disimpan di server kami.
+                      Sistem beroperasi via <strong>Client-Side Logic</strong>. Seluruh data (Nama, CV, Invoice, Desain) <strong>TIDAK PERNAH</strong> dikirim atau disimpan di server kami.
                     </p>
                  </div>
-                 <div className="space-y-1.5">
-                    <h4 className="text-white text-xs font-black tracking-widest uppercase">2. Local Environment</h4>
+                 <div className="space-y-1.5 border-l-2 border-emerald-500/30 pl-3">
+                    <h4 className="text-white text-[10px] font-black tracking-widest uppercase">2. Local Environment</h4>
                     <p className="text-slate-400 text-[11px] leading-relaxed">
-                      Semua proses *render*, kalkulasi, dan manipulasi AI dilakukan secara langsung di dalam *browser* HP/Laptop Anda. Privasi karya Anda 100% aman.
+                      Render PDF, kalkulasi, dan manipulasi kanvas diproses langsung oleh RAM/CPU <em>browser</em> perangkat Anda sendiri. Privasi 100% terkunci.
                     </p>
                  </div>
-                 <div className="space-y-1.5">
-                    <h4 className="text-white text-xs font-black tracking-widest uppercase">3. Cache Memory</h4>
+                 <div className="space-y-1.5 border-l-2 border-emerald-500/30 pl-3">
+                    <h4 className="text-white text-[10px] font-black tracking-widest uppercase">3. Cache Memory</h4>
                     <p className="text-slate-400 text-[11px] leading-relaxed">
-                      Data preferensi (seperti pengaturan Profil Global) hanya disimpan secara sementara di dalam <span className="text-emerald-400 font-mono">localStorage</span> perangkat Anda sendiri.
+                      Data profil hanya disimpan sementara sebagai <span className="text-emerald-400 font-mono bg-emerald-950/50 px-1 rounded">localStorage</span> di HP Anda agar sinkron otomatis saat membuka modul lain.
                     </p>
                  </div>
               </div>
