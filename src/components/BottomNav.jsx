@@ -52,10 +52,10 @@ export default function BottomNav() {
             <span className={pathname === "/toolkit/freelance-invoice" ? "text-[9px] font-extrabold tracking-widest uppercase text-cyan-400 mt-2 z-10" : "text-[9px] font-medium tracking-widest uppercase text-slate-600 mt-2 z-10 group-hover:text-cyan-400 transition-colors"}>Invoice</span>
           </Link>
 
-          {/* MENU PROFILE (Pengaturan Lokal/Tentang) */}
-          <Link href="/tentang" className="group flex-1 flex flex-col items-center justify-center gap-1.5 relative">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className={getIconClass("/tentang")}><path strokeLinecap="round" strokeLinejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-            <span className={getLabelClass("/tentang")}>Profile</span>
+          {/* MENU PROFILE (Pengaturan Lokal Toolkit) - LINK SUDAH DIPERBAIKI */}
+          <Link href="/toolkit/profile" className="group flex-1 flex flex-col items-center justify-center gap-1.5 relative">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className={getIconClass("/toolkit/profile")}><path strokeLinecap="round" strokeLinejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+            <span className={getLabelClass("/toolkit/profile")}>Profile</span>
           </Link>
 
         </div>
