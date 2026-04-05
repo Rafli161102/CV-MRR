@@ -1,5 +1,6 @@
 import { toolkits } from '../../data/toolkitDB';
 import ToolCard from '../../components/ToolCard';
+import Link from 'next/link';
 
 export const metadata = {
   title: 'Toolkit Ekosistem | MRR Digital Tools',
@@ -32,135 +33,61 @@ export default function ToolkitPage() {
 
   return (
     <div className="min-h-screen pt-32 pb-24 px-6 md:px-12 relative overflow-hidden">
-      
-      {/* Decorative Background */}
-      <div className="fixed top-0 right-0 w-[60vw] h-[60vw] bg-cyan-950/20 rounded-full blur-[140px] pointer-events-none -z-10"></div>
-      <div className="fixed bottom-0 left-0 w-[50vw] h-[50vw] bg-indigo-950/20 rounded-full blur-[140px] pointer-events-none -z-10"></div>
 
       <div className="max-w-[1400px] mx-auto relative z-10">
-        
-        {/* ========================================================= */}
-        {/* HEADER SECTION (GOLDEN RATIO: 61.8% & 38.2%)              */}
-        {/* ========================================================= */}
-        <div className="flex flex-col lg:flex-row gap-12 lg:gap-16 mb-32 items-start">
-          
-          {/* BAGIAN KIRI: 61.8% (Informasi Utama) */}
-          <div className="w-full lg:w-[61.8%] reveal stagger-1">
-            <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-[10px] font-bold tracking-widest uppercase mb-8">
-              <span className="w-2 h-2 rounded-full bg-cyan-500 animate-pulse"></span>
-              The Ecosystem
-            </div>
-            <h1 className="text-4xl sm:text-5xl md:text-7xl font-black text-white tracking-tighter mb-8 leading-[1.05]">
-              Senjata Rahasia <br/> 
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500">Pekerja Kreatif.</span>
-            </h1>
-            <p className="text-slate-400 text-lg md:text-xl leading-relaxed max-w-2xl font-medium">
-              Eksplorasi kumpulan <span className="text-white">Micro-SaaS & Utilitas Digital</span> yang dirancang untuk menyederhanakan alur kerja desain, branding, dan manajemen komunitas Anda.
-            </p>
-          </div>
 
-          {/* BAGIAN KANAN: 38.2% (Panel Keamanan & Panduan) */}
-          <div className="w-full lg:w-[38.2%] reveal stagger-2">
-            <div className="bg-gradient-to-br from-[#0A1329] to-[#030712] border border-white/10 rounded-[2.5rem] p-8 md:p-10 shadow-2xl relative overflow-hidden group">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-[60px] group-hover:bg-emerald-500/20 transition-all duration-700"></div>
-              
-              <div className="flex items-center gap-4 mb-8">
-                <div className="p-3 bg-emerald-500/10 rounded-2xl border border-emerald-500/20 shadow-lg shadow-emerald-500/5">
-                  <ShieldCheckIcon />
-                </div>
-                <div>
-                  <h3 className="text-white font-black text-xl tracking-tight">Privasi Mutlak</h3>
-                  <p className="text-emerald-400 text-[10px] font-bold uppercase tracking-widest">Client-Side Logic</p>
-                </div>
-              </div>
-
-              <div className="space-y-6">
-                <div className="flex gap-4">
-                  <div className="shrink-0 mt-1"><EyeSlashIcon /></div>
-                  <p className="text-sm text-slate-400 leading-relaxed">
-                    <strong className="text-slate-200">Zero Data Storage:</strong> Kami tidak menyediakan database. Seluruh informasi yang Anda input tetap berada di memori lokal browser Anda.
-                  </p>
-                </div>
-                <div className="flex gap-4">
-                  <div className="shrink-0 mt-1"><LockIcon /></div>
-                  <p className="text-sm text-slate-400 leading-relaxed">
-                    <strong className="text-slate-200">Keamanan Enkripsi:</strong> Tidak ada transmisi data pribadi ke server manapun. Privasi Anda adalah prioritas utama arsitektur kami.
-                  </p>
-                </div>
-              </div>
-
-              <div className="mt-8 pt-6 border-t border-white/5">
-                <p className="text-[11px] text-slate-500 italic leading-relaxed">
-                  *Gunakan browser Chrome, Safari, atau Edge versi terbaru untuk performa PDF dan visual yang optimal.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* ========================================================= */}
-        {/* TOOLKIT CATEGORIES (STAGGERED RENDERING)                  */}
-        {/* ========================================================= */}
+        {/* TOOLKIT */}
         <div className="space-y-32">
           {categories.map((category, catIndex) => {
             const categoryTools = toolkits.filter(tool => tool.category === category);
             return (
-              <div key={category} className={`reveal stagger-${catIndex + 3}`}>
-                
-                {/* Visual Category Header */}
-                <div className="flex items-center gap-6 mb-12">
-                  <div className="flex items-center gap-3">
-                    <div className="w-1 h-8 bg-gradient-to-b from-cyan-500 to-blue-600 rounded-full shadow-[0_0_15px_rgba(6,182,212,0.5)]"></div>
-                    <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tighter uppercase italic">
-                      {category}
-                    </h2>
-                  </div>
-                  <div className="h-[1px] flex-grow bg-gradient-to-r from-white/10 via-white/5 to-transparent"></div>
-                  <span className="text-[10px] font-bold text-slate-600 tracking-[0.3em] uppercase hidden sm:block">
-                    {categoryTools.length} Tools Available
-                  </span>
+              <div key={category}>
+
+                <div className="mb-12">
+                  <h2 className="text-2xl font-black text-white">{category}</h2>
                 </div>
 
-                {/* Toolkit Grid */}
+                {/* GRID */}
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+
+                  {/* TOOL DARI DATABASE */}
                   {categoryTools.map((tool) => (
                     <ToolCard key={tool.id} tool={tool} />
                   ))}
-                </div>
 
+                  {/* DEV VISUAL STUDIO CARD */}
+                  {category === categories[0] && (
+                    <Link href="/css-studio" className="group relative flex flex-col p-6 bg-gradient-to-br from-[#0a0f1c] to-[#050505] border border-cyan-500/30 hover:border-cyan-400 rounded-3xl transition-all duration-500 hover:-translate-y-2 shadow-xl">
+                      
+                      <div className="flex justify-between items-start mb-6">
+                        <div className="w-14 h-14 bg-gradient-to-tr from-cyan-600 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-7 h-7 text-white">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M14.25 9.75L16.5 12l-2.25 2.25m-4.5 0L7.5 12l2.25-2.25M6 20.25h12A2.25 2.25 0 0020.25 18V6A2.25 2.25 0 0018 3.75H6A2.25 2.25 0 003.75 6v12A2.25 2.25 0 006 20.25z" />
+                          </svg>
+                        </div>
+
+                        <div className="flex flex-col items-end gap-1">
+                          <span className="px-3 py-1 bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-[9px] font-black rounded-full">AI Hybrid</span>
+                          <span className="px-3 py-1 bg-amber-500/10 border border-amber-500/30 text-amber-500 text-[9px] font-black rounded-full">Enterprise</span>
+                        </div>
+                      </div>
+
+                      <h3 className="text-xl font-black text-white mb-2 group-hover:text-cyan-400">Dev Visual Studio</h3>
+                      <p className="text-xs text-slate-400">
+                        Laboratorium desain berbasis AI untuk UI, tipografi, dan pixel art.
+                      </p>
+
+                      <div className="mt-6 text-[10px] font-black text-cyan-500 uppercase">
+                        Buka Workspace →
+                      </div>
+
+                    </Link>
+                  )}
+
+                </div>
               </div>
             );
           })}
-        </div>
-
-        {/* ========================================================= */}
-        {/* REKOMENDASI & PANDUAN BAWAH                               */}
-        {/* ========================================================= */}
-        <div className="mt-40 pt-20 border-t border-white/5 reveal stagger-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center bg-[#050B18] rounded-[3rem] p-8 md:p-10 border border-white/5 shadow-2xl">
-            <div>
-              <h3 className="text-2xl font-black text-white mb-4">Punya Ide Toolkit Baru?</h3>
-              <p className="text-slate-400 text-sm leading-relaxed mb-6">
-                Ekosistem ini terus tumbuh berdasarkan kebutuhan komunitas. Jika Anda memiliki saran aplikasi atau utilitas desain yang dapat mempermudah pekerjaan Anda, mari diskusikan melalui WhatsApp.
-              </p>
-              <a href="https://wa.me/6285155020363" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-cyan-400 font-bold hover:text-cyan-300 transition-colors group">
-                Ajukan Ide Toolkit
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4 group-hover:translate-x-1 transition-transform">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                </svg>
-              </a>
-            </div>
-            
-            <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
-              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Pro Tips & Guide</h4>
-              <ul className="space-y-3 text-xs text-slate-400 list-disc pl-4">
-                <li>Klik tombol <span className="text-cyan-500 font-bold">Akses Gratis</span> untuk membuka tools secara instan.</li>
-                <li>Gunakan mode Desktop pada browser HP Anda jika tampilan form dirasa terlalu sempit.</li>
-                <li>Bookmark (Simpan) halaman ini agar bisa diakses cepat setiap hari.</li>
-                <li>Ikuti Instagram <span className="text-white">@img_ischeznut.jpg</span> untuk bocoran rilis tools berikutnya.</li>
-              </ul>
-            </div>
-          </div>
         </div>
 
       </div>
