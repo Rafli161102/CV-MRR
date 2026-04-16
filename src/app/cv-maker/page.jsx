@@ -46,6 +46,9 @@ export default function CVMaker() {
   const [lang, setLang] = useState('id'); 
   const [isTranslating, setIsTranslating] = useState(false);
   const [docMode, setDocMode] = useState('cv');
+  
+  // STATE BARU: FRESH GRADUATE VS EXPERIENCED
+  const [careerLevel, setCareerLevel] = useState('experienced');
 
   const getTodayDate = () => {
     const today = new Date();
@@ -67,14 +70,14 @@ export default function CVMaker() {
   // =========================================================================
   const t = {
     id: {
-      personal: "Informasi Dasar", exp: "PENGALAMAN KERJA", edu: "PENDIDIKAN", proj: "PROYEK", cert: "SERTIFIKASI", summary: "PROFIL SINGKAT", skills: "KEAHLIAN DAN KOMPETENSI", links: "TAUTAN PROFIL",
+      personal: "Informasi Dasar", exp: "PENGALAMAN KERJA", edu: "PENDIDIKAN", proj: "PROYEK", cert: "SERTIFIKASI", summary: "PROFIL SINGKAT", skills: "KEAHLIAN DAN KOMPETENSI", links: "TAUTAN PROFIL DIGITAL",
       add: "+ Tambah", del: "Hapus", print: "Cetak / Simpan PDF",
       cvMode: "Data CV", clMode: "Surat Lamaran", clTarget: "Perusahaan Tujuan", clHr: "Nama HRD / Penerima", clDate: "Pilih Tanggal", clBody: "Isi Surat Lamaran", clAuto: "Auto-Generate Isi Surat",
       placeholders: { 
         name: "Nama Lengkap", role: "Posisi Dilamar", loc: "Kota, Provinsi", phone: "Nomor Telepon", email: "Alamat Email",
-        linkPlatform: "Label (Cth: LinkedIn/Portofolio)", linkUrl: "URL (linkedin.com/in/nama)",
+        linkPlatform: "Label (Cth: LinkedIn/GitHub)", linkUrl: "URL (Cth: linkedin.com/in/nama)",
         summary: "Tuliskan ringkasan profil Anda secara profesional...", 
-        skills: "Keahlian 1, Keahlian 2, Keahlian 3 (Pisahkan koma)", 
+        skills: "Keahlian 1, Keahlian 2, Keahlian 3 (Pisahkan dengan koma)", 
         expRole: "Nama Jabatan", expComp: "Nama Perusahaan", expDate: "Bulan Tahun - Bulan Tahun", 
         eduInst: "Nama Kampus / Sekolah", eduMaj: "Jurusan / Gelar", eduDate: "Bulan Tahun Lulus",
         projName: "Nama Proyek", projDate: "Bulan Tahun", certName: "Nama Sertifikasi", certDate: "Bulan Tahun",
@@ -82,12 +85,12 @@ export default function CVMaker() {
       }
     },
     en: {
-      personal: "Basic Information", exp: "EXPERIENCE", edu: "EDUCATION", proj: "PROJECTS", cert: "CERTIFICATION", summary: "PROFESSIONAL SUMMARY", skills: "SKILLS AND COMPETENCIES", links: "PROFILE LINKS",
+      personal: "Basic Information", exp: "EXPERIENCE", edu: "EDUCATION", proj: "PROJECTS", cert: "CERTIFICATION", summary: "PROFESSIONAL SUMMARY", skills: "SKILLS AND COMPETENCIES", links: "DIGITAL PROFILES",
       add: "+ Add New", del: "Remove", print: "Print / Save as PDF",
       cvMode: "CV Data", clMode: "Cover Letter", clTarget: "Target Company", clHr: "Hiring Manager", clDate: "Select Date", clBody: "Cover Letter Body", clAuto: "Auto-Generate Content",
       placeholders: { 
         name: "Full Name", role: "Targeted Role", loc: "City, Country", phone: "Phone Number", email: "Email Address",
-        linkPlatform: "Label (e.g., LinkedIn/GitHub)", linkUrl: "URL (github.com/username)",
+        linkPlatform: "Label (e.g., LinkedIn/Behance)", linkUrl: "URL (github.com/username)",
         summary: "Write your professional summary here...", skills: "Core Skills (e.g. HTML, CSS, Figma)", 
         expRole: "Job Title", expComp: "Company Name", expDate: "Month Year - Month Year", 
         eduInst: "University Name", eduMaj: "Major / Degree", eduDate: "Graduation Date",
@@ -101,7 +104,7 @@ export default function CVMaker() {
       cvMode: "履歴書 (CV)", clMode: "送付状 (Cover Letter)", clTarget: "応募先企業名", clHr: "採用担当者名", clDate: "日付を選択", clBody: "本文", clAuto: "AI 自動生成",
       placeholders: { 
         name: "氏名", role: "希望職種", loc: "住所", phone: "電話番号", email: "メールアドレス",
-        linkPlatform: "ラベル (例: ポートフォリオ)", linkUrl: "URL",
+        linkPlatform: "ラベル (例: リンクドイン)", linkUrl: "URL",
         summary: "自己PRを入力してください...", skills: "スキル (HTML, CSS...)", 
         expRole: "役職", expComp: "会社名", expDate: "YYYY/MM", 
         eduInst: "学校名", eduMaj: "学部・学科", eduDate: "YYYY/MM", 
@@ -119,7 +122,6 @@ export default function CVMaker() {
     birthdate: "", age: "", gender: "男", nationality: "", visa: "", commuteTime: "", commuteMinute: "", dependents: "", spouse: "", spouseSupport: ""
   });
   
-  // Perubahan: Mengganti linkedin tunggal menjadi array profil
   const [profiles, setProfiles] = useState([{ id: 1, platform: "", url: "" }]);
   const [experiences, setExperiences] = useState([{ id: 1, role: "", company: "", period: "", description: "" }]);
   const [educations, setEducations] = useState([{ id: 1, institution: "", major: "", period: "", gpa: "" }]);
@@ -165,10 +167,17 @@ export default function CVMaker() {
         const data = await res.json(); return data[0].map(item => item[0]).join(''); 
       } catch (err) { return text; }
     };
+    
+    // Translate Basics
     const tRole = await translateText(basics.role); const tSummary = await translateText(basics.summary); const tSkills = await translateText(basics.skills); const tLocation = await translateText(basics.location); const tNationality = await translateText(basics.nationality); const tVisa = await translateText(basics.visa);
     setBasics(prev => ({ ...prev, role: tRole, summary: tSummary, skills: tSkills, location: tLocation, nationality: tNationality, visa: tVisa }));
+    
+    // Translate Cover Letter
     const tClHr = await translateText(clData.hr); const tClBody = await translateText(clData.body); const tClLoc = await translateText(clData.senderLocation); const tClTargetRole = await translateText(clData.targetRole); const tClRelSkills = await translateText(clData.relevantSkills);
     setClData(prev => ({ ...prev, hr: tClHr, body: tClBody, senderLocation: tClLoc, targetRole: tClTargetRole, relevantSkills: tClRelSkills }));
+    
+    // Translate Arrays
+    const translatedProfiles = await Promise.all(profiles.map(async (prof) => ({ ...prof, platform: await translateText(prof.platform) }))); setProfiles(translatedProfiles);
     const translatedEdu = await Promise.all(educations.map(async (edu) => ({ ...edu, institution: await translateText(edu.institution), major: await translateText(edu.major) }))); setEducations(translatedEdu);
     const translatedExp = await Promise.all(experiences.map(async (exp) => ({ ...exp, company: await translateText(exp.company), role: await translateText(exp.role), description: await translateText(exp.description) }))); setExperiences(translatedExp);
     const translatedProj = await Promise.all(projects.map(async (proj) => ({ ...proj, name: await translateText(proj.name), description: await translateText(proj.description) }))); setProjects(translatedProj);
@@ -258,60 +267,20 @@ export default function CVMaker() {
       {/* ======================================================================= */}
       <style dangerouslySetInnerHTML={{__html: `
         @media print {
-          /* 1. Reset Ukuran Kertas & Body Default */
           @page { size: A4; margin: 10mm; }
           html, body { 
-            background: white !important; 
-            color: black !important; 
-            margin: 0 !important; 
-            padding: 0 !important;
-            height: auto !important;
-            overflow: visible !important;
+            background: white !important; color: black !important; margin: 0 !important; padding: 0 !important; height: auto !important; overflow: visible !important;
           }
-
-          /* 2. Sembunyikan elemen Navigasi & Footer Global (MRR Navbar, dll) */
-          header, nav, footer, aside, iframe, .show-in-pwa, .mrr-navbar, .mrr-footer, button, a {
-            display: none !important;
-          }
-
-          /* 3. Sembunyikan form kontrol pembuat CV */
+          header, nav, footer, aside, iframe, .show-in-pwa, .mrr-navbar, .mrr-footer, button, a { display: none !important; }
           .no-print { display: none !important; }
-
-          /* 4. Lepaskan kertas dari jeratan Layout Flexbox bawaan agar bisa multi-halaman */
           .min-h-screen, .max-w-\\[1400px\\], .xl\\:flex-row, .xl\\:w-7\\/12, #preview-container, .w-fit {
-            display: block !important;
-            width: 100% !important;
-            max-width: 100% !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            position: static !important;
-            background: transparent !important;
-            border: none !important;
-            box-shadow: none !important;
-            transform: none !important;
-            overflow: visible !important;
+            display: block !important; width: 100% !important; max-width: 100% !important; margin: 0 !important; padding: 0 !important; position: static !important; background: transparent !important; border: none !important; box-shadow: none !important; transform: none !important; overflow: visible !important;
           }
-
-          /* 5. Format Khusus Kanvas Kertas CV */
           #cv-preview {
-            display: block !important;
-            width: 100% !important;
-            max-width: 100% !important;
-            min-width: 100% !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            box-shadow: none !important;
-            border: none !important;
-            page-break-after: auto;
+            display: block !important; width: 100% !important; max-width: 100% !important; min-width: 100% !important; margin: 0 !important; padding: 0 !important; box-shadow: none !important; border: none !important; page-break-after: auto;
           }
-
-          /* 6. Cegah elemen teks terpotong di tengah-tengah pergantian halaman */
-          .break-inside-avoid, h2, h3, tr {
-            break-inside: avoid !important;
-            page-break-inside: avoid !important;
-          }
+          .break-inside-avoid, h2, h3, tr { break-inside: avoid !important; page-break-inside: avoid !important; }
         }
-        
         input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; opacity: 0.7; }
         input[type="date"]::-webkit-calendar-picker-indicator:hover { opacity: 1; }
       `}} />
@@ -352,7 +321,7 @@ export default function CVMaker() {
                   </h3>
                   <p className="text-slate-400 text-[11px] leading-relaxed">
                     {docMode === 'cv' 
-                      ? 'CV ATS (Applicant Tracking System) adalah format CV yang dirancang khusus agar data Anda mudah dibaca oleh sistem robot (scanner) HRD perusahaan.'
+                      ? 'CV ATS (Applicant Tracking System) dirancang khusus agar mudah dibaca oleh sistem robot (scanner) HRD perusahaan.'
                       : 'Cover Letter (Surat Lamaran) adalah dokumen pengantar mandiri. Anda tidak perlu repot mengisi tab CV untuk bisa membuat surat lamaran di sini.'}
                   </p>
                 </div>
@@ -363,33 +332,21 @@ export default function CVMaker() {
                   <>
                     <li className="flex gap-2">
                       <span className="text-cyan-400 font-bold">1.</span>
-                      <span><b>Mulai dari Bahasa Indonesia:</b> Isi seluruh form di bawah dengan bahasa ibu agar lebih mudah menyusun kalimatnya.</span>
-                    </li>
-                    <li className="flex gap-2">
-                      <span className="text-cyan-400 font-bold">2.</span>
                       <span><b>Fitur Bullet Point:</b> Gunakan tanda strip (-) di kotak Deskripsi untuk membuat poin otomatis di kertas.</span>
                     </li>
                     <li className="flex gap-2">
-                      <span className="text-cyan-400 font-bold">3.</span>
-                      <span><b>Sistem Translate Instan:</b> Tekan tombol <b>EN</b> atau <b>JP</b> di panel "Magic Translate" bawah. AI otomatis menerjemahkan CV Anda.</span>
+                      <span className="text-cyan-400 font-bold">2.</span>
+                      <span><b>Sistem Translate Instan:</b> Tekan tombol EN atau JP di panel bawah. AI otomatis menerjemahkan CV Anda.</span>
                     </li>
                     <li className="flex gap-2">
-                      <span className="text-cyan-400 font-bold">4.</span>
-                      <span><b>Sembunyikan Kategori:</b> Jika Anda tidak memiliki Proyek atau Sertifikasi (atau Anda <i>Fresh Graduate</i> tanpa Pengalaman), cukup biarkan kosong atau tekan tombol <span className="text-red-400 font-bold">Hapus</span>. Kategori akan hilang bersih dari kertas tanpa merusak desain!</span>
+                      <span className="text-cyan-400 font-bold">3.</span>
+                      <span><b>Sembunyikan Kategori:</b> Jika tidak memiliki Proyek/Sertifikasi (Atau Anda <i>Fresh Graduate</i>), tekan tombol <span className="text-red-400 font-bold">Hapus</span>. Kategori akan hilang bersih!</span>
                     </li>
                   </>
                 ) : (
                   <>
                     <li className="flex gap-2">
                       <span className="text-cyan-400 font-bold">1.</span>
-                      <span><b>Langkah Pertama:</b> Isi kotak Data Pengirim. Kertas di sebelah kanan otomatis menyusunnya rata kiri layaknya surat resmi internasional.</span>
-                    </li>
-                    <li className="flex gap-2">
-                      <span className="text-cyan-400 font-bold">2.</span>
-                      <span><b>Tentukan Tanggal:</b> Klik <i>Ikon Kalender</i>. Sistem otomatis memformat penulisan tanggal sesuai bahasa.</span>
-                    </li>
-                    <li className="flex gap-2">
-                      <span className="text-cyan-400 font-bold">3.</span>
                       <span><b>Senjata AI Auto-Generate:</b> Ketik spesifik posisi incaran dan keahlian andalan Anda. Lalu klik tombol biru <b>"Auto-Generate"</b>.</span>
                     </li>
                   </>
@@ -415,8 +372,9 @@ export default function CVMaker() {
                   <button onClick={() => { handleMagicTranslate('jp'); setTemplate('jp-umum'); }} disabled={isTranslating} className={`px-4 py-1.5 text-xs font-bold transition-colors ${lang === 'jp' ? 'bg-cyan-600 text-white' : 'text-slate-500 hover:bg-white/5 hover:text-white'}`}>JP</button>
                 </div>
               </div>
+              
               <h2 className="text-xs font-bold text-cyan-400 uppercase tracking-wider mb-3">Pilih Template {docMode === 'cv' ? 'Kertas CV' : 'Font Surat'}</h2>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-2 mb-4">
                 <button onClick={() => {setTemplate('normal'); if(lang==='jp') setLang('id');}} className={`py-2 px-2 text-[11px] font-bold rounded border transition-all ${template === 'normal' ? 'bg-cyan-600 border-cyan-400 text-white shadow-lg' : 'border-white/10 text-slate-400 hover:bg-white/5 hover:border-cyan-500/30'}`}>1. Normal (Standar ATS)</button>
                 <button onClick={() => {setTemplate('modern'); if(lang==='jp') setLang('id');}} className={`py-2 px-2 text-[11px] font-bold rounded border transition-all ${template === 'modern' ? 'bg-cyan-600 border-cyan-400 text-white shadow-lg' : 'border-white/10 text-slate-400 hover:bg-white/5 hover:border-cyan-500/30'}`}>2. Modern Pro</button>
                 <button onClick={() => {setTemplate('harvard'); if(lang==='jp') setLang('id');}} className={`py-2 px-2 text-[11px] font-bold rounded border transition-all ${template === 'harvard' ? 'bg-cyan-600 border-cyan-400 text-white shadow-lg' : 'border-white/10 text-slate-400 hover:bg-white/5 hover:border-cyan-500/30'}`}>3. Harvard (Serif)</button>
@@ -424,6 +382,20 @@ export default function CVMaker() {
                 <button onClick={() => {setTemplate('jp-umum'); setLang('jp');}} className={`py-2 px-2 text-[11px] font-bold rounded border transition-all ${template === 'jp-umum' ? 'bg-red-600/90 border-red-400 text-white shadow-lg' : 'border-white/10 text-slate-400 hover:bg-white/5 hover:border-red-500/30'}`}>5a. JP Rirekisho (Umum)</button>
                 <button onClick={() => {setTemplate('jp-asing'); setLang('jp');}} className={`py-2 px-2 text-[11px] font-bold rounded border transition-all ${template === 'jp-asing' ? 'bg-red-600/90 border-red-400 text-white shadow-lg' : 'border-white/10 text-slate-400 hover:bg-white/5 hover:border-red-500/30'}`}>5b. JP Tokutei (Asing)</button>
               </div>
+
+              {/* FITUR BARU: LEVEL KARIR (Fresh Grad vs Experienced) */}
+              {!isJapanese && docMode === 'cv' && (
+                <>
+                  <h2 className="text-xs font-bold text-cyan-400 uppercase tracking-wider mb-2 mt-4 border-t border-white/10 pt-4">Tipe Pelamar (Urutan Kertas)</h2>
+                  <div className="flex bg-[#0A1329] rounded border border-white/10 overflow-hidden shadow-inner">
+                    <button onClick={() => setCareerLevel('fresh')} className={`flex-1 px-4 py-2.5 text-[11px] font-bold transition-colors ${careerLevel === 'fresh' ? 'bg-cyan-600 text-white' : 'text-slate-500 hover:bg-white/5 hover:text-white'}`}>Fresh Graduate</button>
+                    <button onClick={() => setCareerLevel('experienced')} className={`flex-1 px-4 py-2.5 text-[11px] font-bold transition-colors ${careerLevel === 'experienced' ? 'bg-cyan-600 text-white' : 'text-slate-500 hover:bg-white/5 hover:text-white'}`}>Berpengalaman</button>
+                  </div>
+                  <p className="text-[10px] text-slate-500 mt-2 italic">
+                    {careerLevel === 'fresh' ? '*Pendidikan akan diletakkan di atas Pengalaman.' : '*Pengalaman Kerja akan diletakkan paling atas.'}
+                  </p>
+                </>
+              )}
             </div>
 
             {isTranslating && (
@@ -876,11 +848,12 @@ export default function CVMaker() {
                               {contactItems.map((item, i) => (
                                 <span key={i} className="whitespace-nowrap">
                                   {item.val ? <span className="text-black">{item.val}</span> : <span className="text-gray-400">{item.ph}</span>}
-                                  {i < contactItems.length - 1 && <span className="mx-1.5 text-black font-bold">{separator}</span>}
+                                  {/* Jika ini item kontak terakhir, cek apakah ada profil dinamis. Jika ada, beri pemisah. Jika tidak ada profil, pemisah dihilangkan. */}
+                                  {(i < contactItems.length - 1 || (i === contactItems.length - 1 && activeProfiles.length > 0)) && <span className="mx-1.5 text-black font-bold">{separator}</span>}
                                 </span>
                               ))}
-                              {/* RENDER LINK DINAMIS */}
-                              {activeProfiles.length > 0 && <span className="mx-1.5 text-black font-bold">{separator}</span>}
+                              
+                              {/* RENDER LINK PROFIL DINAMIS */}
                               {activeProfiles.map((prof, i) => (
                                  <span key={`prof-${i}`} className="whitespace-nowrap">
                                     {prof.url ? (
@@ -969,10 +942,18 @@ export default function CVMaker() {
                           
                           const R_Crt = () => activeCerts.length > 0 ? <div className="mb-3"><SecTitle t={t.cert} />{activeCerts.map((c, i) => <div key={i} className="mb-3.5 break-inside-avoid"><div className="flex justify-between"><h3 className={`text-[10.5pt] font-bold ${c.isPlaceholder ? 'text-gray-400' : 'text-black'}`}>{c.name}</h3><span className={`text-[10.5pt] whitespace-nowrap ${c.isPlaceholder ? 'text-gray-400' : 'text-black'}`}>{c.period}</span></div><div className={`text-[10.5pt] italic mb-1 ${c.isPlaceholder ? 'text-gray-400' : 'text-black'}`}>{c.issuer}</div><div className={`${template === 'normal' ? 'ml-0' : 'pl-3'}`}>{formatDesc(c.description, template === 'normal', c.isPlaceholder)}</div></div>)}</div> : null;
 
-                          // SUSUNAN MODE FRESH GRADUATE (Pendidikan diutamakan)
-                          if (template === 'normal') return <><R_Edu/><R_Skl/><R_Exp/><R_Prj/><R_Crt/></>;
-                          if (template === 'modern') return <><R_Exp/><R_Edu/><R_Skl/><R_Prj/><R_Crt/></>;
-                          return <><R_Edu/><R_Exp/><R_Prj/><R_Crt/><R_Skl/></>;
+                          // MESIN SUSUNAN (ORDER) OTOMATIS: FRESH GRAD VS EXPERIENCED
+                          const RenderCVOrder = () => {
+                             if (careerLevel === 'fresh') {
+                               // Fresh Grad: Pendidikan paling atas
+                               return <><R_Edu/><R_Exp/><R_Prj/><R_Skl/><R_Crt/></>;
+                             } else {
+                               // Berpengalaman: Pengalaman paling atas
+                               return <><R_Exp/><R_Edu/><R_Skl/><R_Prj/><R_Crt/></>;
+                             }
+                          };
+
+                          return <RenderCVOrder />;
                         })()}
                       </>
                     )}
