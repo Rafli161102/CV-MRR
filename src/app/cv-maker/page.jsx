@@ -1,20 +1,17 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 // =========================================================================
-// 1. ICONS (ARROW FUNCTIONS)
+// 1. ICONS & UI ATOMS (MODULAR ARROW FUNCTIONS)
 // =========================================================================
 const SparklesIcon = () => <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4"><path fillRule="evenodd" d="M9 4.5a.75.75 0 01.721.544l.813 2.846a3.75 3.75 0 002.576 2.576l2.846.813a.75.75 0 010 1.442l-2.846.813a3.75 3.75 0 00-2.576 2.576l-.813 2.846a.75.75 0 01-1.442 0l-.813-2.846a3.75 3.75 0 00-2.576-2.576l-2.846-.813a.75.75 0 010-1.442l2.846-.813A3.75 3.75 0 007.466 7.89l.813-2.846A.75.75 0 019 4.5zM18 1.5a.75.75 0 01.728.568l.258 1.036c.236.94.97 1.674 1.91 1.91l1.036.258a.75.75 0 010 1.456l-1.036.258c-.94.236-1.674.97-1.91 1.91l-.258 1.036a.75.75 0 01-1.456 0l-.258-1.036a2.625 2.625 0 00-1.91-1.91l-1.036-.258a.75.75 0 010-1.456l1.036-.258a2.625 2.625 0 001.91-1.91l.258-1.036A.75.75 0 0118 1.5zM16.5 15a.75.75 0 01.712.513l.394 1.183c.15.447.5.799.948.948l1.183.395a.75.75 0 010 1.422l-1.183.395c-.447.15-.799.5-.948.948l-.395 1.183a.75.75 0 01-1.422 0l-.395-1.183a1.5 1.5 0 00-.948-.948l-1.183-.395a.75.75 0 010-1.422l1.183-.395c.447-.15.799-.5.948-.948l.395-1.183A.75.75 0 0116.5 15z" clipRule="evenodd" /></svg>;
 const PrintIcon = () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M6.72 13.829c-.24.03-.48.062-.724.092m6.524-4.31a1.125 1.125 0 11-2.25 0 1.125 1.125 0 012.25 0zm-1.895-3.32a.5.5 0 00-.5.5v2.25c0 .276.224.5.5.5h2.25a.5.5 0 00.5-.5v-2.25a.5.5 0 00-.5-.5h-2.25zM12 21.75c3.55 0 6.544-2.185 7.91-5.326m-15.82 0A8.966 8.966 0 0112 2.25a8.964 8.964 0 017.91 5.326m-15.82 0a8.964 8.964 0 00-7.91 5.326M12 21.75a8.965 8.965 0 007.91-5.326m0 0H21m-9 0v-4.5" /></svg>;
 const DocIcon = () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4"><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" /></svg>;
-const MailIcon = () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4"><path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" /></svg>;
+const MagicPenIcon = () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4"><path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" /></svg>;
 const ZoomInIcon = () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4"><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607zM10.5 7.5v6m3-3h-6" /></svg>;
 const ShieldIcon = () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4"><path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" /></svg>;
 
-// =========================================================================
-// 2. UTILITY COMPONENTS & FUNCTIONS
-// =========================================================================
 const LabeledInput = ({ label, helper, children }) => (
   <div className="space-y-1.5 mb-4">
     <label className="text-[10px] font-bold text-cyan-400 uppercase tracking-widest pl-1">{label}</label>
@@ -27,35 +24,27 @@ const SectionHeader = ({ title, onAdd, tips }) => (
   <div className="mb-4">
     <div className="flex justify-between items-center border-b border-white/10 pb-2">
       <h2 className="text-base font-bold text-white uppercase tracking-wider">{title}</h2>
-      {onAdd && <button onClick={onAdd} className="text-[10px] font-bold bg-cyan-600/20 hover:bg-cyan-600 text-cyan-400 hover:text-white px-3 py-1.5 rounded transition-colors">+ Tambah Data</button>}
+      {onAdd && <button onClick={onAdd} className="text-[10px] font-bold bg-cyan-600/20 hover:bg-cyan-600 text-cyan-400 hover:text-white px-3 py-1.5 rounded transition-colors shadow-sm">+ Tambah Baru</button>}
     </div>
-    {tips && <p className="text-[10px] text-emerald-400 mt-2 bg-emerald-500/10 px-2 py-1.5 rounded inline-block">💡 Tips: {tips}</p>}
+    {tips && <p className="text-[10px] text-emerald-400 mt-2 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1.5 rounded inline-block">💡 <b>TIPS:</b> {tips}</p>}
   </div>
 );
 
-const formatDate = (dateStr, lang) => {
-  if (!dateStr) return "";
-  const d = new Date(dateStr);
-  if (isNaN(d)) return dateStr;
-  if (lang === 'en') return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-  if (lang === 'jp') return `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`;
-  return d.toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' });
-};
-
 // =========================================================================
-// 3. MAIN APPLICATION COMPONENT
+// 2. MAIN APPLICATION COMPONENT
 // =========================================================================
 export default function AdvancedCVMaker() {
   // Global States
-  const [docMode, setDocMode] = useState('cv'); // cv | cl
+  const [docMode, setDocMode] = useState('cv'); 
   const [template, setTemplate] = useState('normal'); 
   const [lang, setLang] = useState('id'); 
-  const [careerLevel, setCareerLevel] = useState('fresh'); // fresh | experienced
+  const [careerLevel, setCareerLevel] = useState('experienced'); 
   const [activeTab, setActiveTab] = useState('personal'); 
   const [scale, setScale] = useState(0.85);
+  const [isTranslating, setIsTranslating] = useState(false);
 
   // Form States (CV)
-  const [basics, setBasics] = useState({ name: "", role: "", location: "", phone: "", email: "", summary: "", skills: "" });
+  const [basics, setBasics] = useState({ name: "", role: "", location: "", phone: "", email: "", summary: "", skills: "", furigana: "", birthdate: "", age: "", gender: "男", nationality: "", visa: "", commuteTime: "", commuteMinute: "", dependents: "", spouse: "", spouseSupport: "" });
   const [profiles, setProfiles] = useState([{ id: 1, platform: "", url: "" }]);
   const [educations, setEducations] = useState([{ id: 1, institution: "", major: "", period: "", gpa: "" }]);
   const [experiences, setExperiences] = useState([{ id: 1, role: "", company: "", period: "", description: "" }]);
@@ -72,41 +61,76 @@ export default function AdvancedCVMaker() {
   const addArr = (setter, state, obj) => setter([...state, { id: Date.now(), ...obj }]);
   const remArr = (setter, state, idx) => setter(state.filter((_, i) => i !== idx));
 
-  // Placeholder Data Generator (Tampil visual saat data kosong)
+  // =========================================================================
+  // DYNAMIC PLACEHOLDERS & LOGIC
+  // =========================================================================
   const dBasics = {
-    name: lang === 'en' ? 'JOHN DOE' : 'NAMA LENGKAP ANDA',
-    role: lang === 'en' ? 'Graphic Designer' : 'Posisi Pekerjaan',
-    location: lang === 'en' ? 'New York, USA' : 'Kota, Indonesia',
-    phone: lang === 'en' ? '+1 234 567 890' : '0812-3456-7890',
-    email: lang === 'en' ? 'johndoe@email.com' : 'email@anda.com',
-    summary: lang === 'en' ? 'A highly motivated professional ready to contribute to your company.' : 'Saya adalah individu yang disiplin dan bertanggung jawab. Mampu bekerja sama dalam tim maupun individu. Cepat belajar dan siap berkontribusi maksimal untuk perusahaan.',
-    skills: lang === 'en' ? 'Microsoft Office, Communication, Teamwork' : 'Microsoft Word, Komunikasi, Disiplin Waktu',
+    name: lang === 'en' ? 'JOHN DOE' : (lang === 'jp' ? '山田 太郎' : 'NAMA LENGKAP ANDA'),
+    role: lang === 'en' ? 'Graphic Designer' : (lang === 'jp' ? 'グラフィックデザイナー' : 'Posisi Pekerjaan'),
+    location: lang === 'en' ? 'New York, USA' : (lang === 'jp' ? '東京都渋谷区' : 'Kota, Provinsi'),
+    phone: lang === 'en' ? '+1 234 567 890' : (lang === 'jp' ? '090-1234-5678' : '0812-3456-7890'),
+    email: lang === 'en' ? 'johndoe@email.com' : (lang === 'jp' ? 'yamada@email.com' : 'email@anda.com'),
+    summary: lang === 'en' ? 'A highly motivated professional ready to contribute to your company with a proven track record of excellence.' : (lang === 'jp' ? '3年以上のデザイン経験を持つグラフィックデザイナー。ブランドアイデンティティやUIデザインに強みがあり、ユーザーの心を動かすビジュアル制作を得意としています。' : 'Saya adalah individu yang disiplin dan bertanggung jawab. Mampu bekerja sama dalam tim maupun individu. Cepat belajar dan siap berkontribusi maksimal untuk perusahaan.'),
+    skills: lang === 'en' ? 'Microsoft Office, Communication, Teamwork' : (lang === 'jp' ? 'Microsoft Office, コミュニケーション' : 'Microsoft Word, Komunikasi, Disiplin Waktu'),
   };
 
   const getActive = (arr, fields) => {
     const isEmpty = arr.length === 1 && fields.every(f => !arr[0][f]);
-    if (isEmpty) return null; // Jika form kosong total, return null agar section di kertas hilang.
-    return arr.filter(item => fields.some(f => item[f].trim() !== '')); // Hanya tampilkan baris yang diisi.
+    return isEmpty ? null : arr.filter(item => fields.some(f => item[f].trim() !== '')); 
   };
 
-  const aProf = getActive(profiles, ['platform', 'url']) || [{ platform: lang==='en'?'LinkedIn':'LinkedIn', url: 'linkedin.com/in/namaanda', isPh: true }];
-  const aEdu = getActive(educations, ['institution', 'major']) || [{ institution: 'Nama Kampus atau Sekolah', major: 'Nama Jurusan', period: 'Tahun Mulai - Lulus', gpa: 'Nilai/IPK', isPh: true }];
-  const aExp = getActive(experiences, ['company', 'role']) || [{ company: 'Nama Perusahaan', role: 'Nama Jabatan', period: 'Tahun Mulai - Selesai', description: '- Tulis tugas harian Anda di sini.\n- Sebutkan pencapaian Anda.', isPh: true }];
-  const aProj = getActive(projects, ['name', 'description']) || [{ name: 'Nama Kegiatan / Proyek', period: 'Tahun', description: '- Ceritakan singkat tentang proyek ini.', isPh: true }];
-  const aCert = getActive(certs, ['name', 'issuer']) || [{ name: 'Nama Sertifikasi / Pelatihan', issuer: 'Lembaga Penyelenggara', period: 'Tahun', description: '- Ilmu yang didapat dari pelatihan.', isPh: true }];
+  // Dinamis berdasarkan Career Level
+  const expPlaceholderDesc = careerLevel === 'fresh' 
+    ? (lang === 'en' ? '- Describe your internship or organizational experience.\n- Highlight the soft skills you developed.' : '- Tulis pengalaman magang, kepanitiaan, atau freelance (jika ada).\n- Fokus pada kemampuan beradaptasi dan kerjasama tim yang Anda pelajari.')
+    : (lang === 'en' ? '- Describe your responsibilities here.\n- Focus on what you achieved using numbers/metrics.' : '- Tulis tugas utama dan tanggung jawab Anda di sini.\n- Fokus pada pencapaian, gunakan persentase atau angka jika memungkinkan.');
 
-  // Dictionaries
+  const aProf = getActive(profiles, ['platform', 'url']) || [{ platform: lang==='en'?'LinkedIn':(lang==='jp'?'リンク':'LinkedIn'), url: 'linkedin.com/in/namaanda', isPh: true }];
+  const aEdu = getActive(educations, ['institution', 'major']) || [{ institution: lang==='en'?'University Name':(lang==='jp'?'〇〇大学':'Nama Kampus atau Sekolah'), major: lang==='en'?'Degree/Major':(lang==='jp'?'〇〇学部':'Jurusan (Cth: Ilmu Komunikasi)'), period: lang==='en'?'2018 - 2022':(lang==='jp'?'2022/03':'Tahun Masuk - Lulus'), gpa: lang==='en'?'GPA: 3.8/4.0':'IPK: 3.80 / 4.00', isPh: true }];
+  const aExp = getActive(experiences, ['company', 'role']) || [{ company: lang==='en'?'Company Name Inc.':(lang==='jp'?'〇〇株式会社':'PT Nama Perusahaan'), role: lang==='en'?'Job Title':(lang==='jp'?'役職名':'Nama Jabatan'), period: lang==='en'?'2021 - Present':(lang==='jp'?'2021/04':'Tahun Mulai - Selesai'), description: expPlaceholderDesc, isPh: true }];
+  const aProj = getActive(projects, ['name', 'description']) || [{ name: lang==='en'?'Project Title':(lang==='jp'?'〇〇プロジェクト':'Nama Kegiatan / Proyek / Tugas Akhir'), period: lang==='en'?'2023':(lang==='jp'?'2023/08':'Tahun'), description: lang==='en'?'- Briefly describe the project goal and your role.':(lang==='jp'?'〇〇の開発を担当\n〇〇を達成':'- Ceritakan singkat tentang proyek ini dan kontribusi utama Anda.'), isPh: true }];
+  const aCert = getActive(certs, ['name', 'issuer']) || [{ name: lang==='en'?'Certificate Name':(lang==='jp'?'日本語能力試験 N2':'Nama Sertifikasi / Pelatihan'), issuer: lang==='en'?'Issuing Organization':(lang==='jp'?'発行機関':'Lembaga Penyelenggara (Cth: Google)'), period: lang==='en'?'2023':(lang==='jp'?'2023/12':'Tahun'), description: lang==='en'?'- What skills did you acquire?':'- Ilmu praktis apa yang didapat dari pelatihan ini?', isPh: true }];
+
   const isEn = lang === 'en';
   const txt = {
-    personal: isEn ? "Personal Info" : "Info Dasar", edu: isEn ? "Education" : "Pendidikan", exp: isEn ? "Experience" : "Pengalaman", proj: isEn ? "Projects" : "Proyek", cert: isEn ? "Certificates" : "Sertifikasi",
-    summary: isEn ? "Summary" : "Profil", skills: isEn ? "Skills" : "Keahlian",
+    personal: isEn ? "Personal Info" : "Info Dasar", edu: isEn ? "Education" : "Pendidikan", exp: isEn ? "Experience" : "Pengalaman Kerja", proj: isEn ? "Projects" : "Proyek & Organisasi", cert: isEn ? "Certificates" : "Sertifikasi",
+    summary: isEn ? "Summary" : "Profil Singkat", skills: isEn ? "Skills" : "Keahlian / Kompetensi",
+  };
+
+  const handleMagicTranslate = async (targetLang) => {
+    setIsTranslating(true); setLang(targetLang); const apiLang = targetLang === 'jp' ? 'ja' : targetLang;
+    const tl = async (text) => {
+      if (!text || text.trim() === "") return text;
+      try { const res = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${apiLang}&dt=t&q=${encodeURIComponent(text)}`); const data = await res.json(); return data[0].map(item => item[0]).join(''); } catch (err) { return text; }
+    };
+    
+    setBasics(p => ({ ...p, role: tRole, summary: tSummary, skills: tSkills, location: tLocation }));
+    setClData(p => ({ ...p, hr: tClHr, body: tClBody, targetRole: tClTargetRole }));
+    
+    // Auto translate fields (Simulation for smooth UX, ideally use a real robust service)
+    const tRole = await tl(basics.role); const tSummary = await tl(basics.summary); const tSkills = await tl(basics.skills); const tLocation = await tl(basics.location);
+    const tClHr = await tl(clData.hr); const tClBody = await tl(clData.body); const tClTargetRole = await tl(clData.targetRole);
+    
+    setBasics({ ...basics, role: tRole, summary: tSummary, skills: tSkills, location: tLocation });
+    setClData({ ...clData, hr: tClHr, body: tClBody, targetRole: tClTargetRole });
+    
+    const translatedProfiles = await Promise.all(profiles.map(async (prof) => ({ ...prof, platform: await tl(prof.platform) }))); setProfiles(translatedProfiles);
+    const translatedEdu = await Promise.all(educations.map(async (edu) => ({ ...edu, institution: await tl(edu.institution), major: await tl(edu.major) }))); setEducations(translatedEdu);
+    const translatedExp = await Promise.all(experiences.map(async (exp) => ({ ...exp, company: await tl(exp.company), role: await tl(exp.role), description: await tl(exp.description) }))); setExperiences(translatedExp);
+    const translatedProj = await Promise.all(projects.map(async (proj) => ({ ...proj, name: await tl(proj.name), description: await tl(proj.description) }))); setProjects(translatedProj);
+    const translatedCerts = await Promise.all(certs.map(async (cert) => ({ ...cert, name: await tl(cert.name), issuer: await tl(cert.issuer) }))); setCerts(translatedCerts);
+    setIsTranslating(false);
+  };
+
+  const formatVisualDate = (dateStr, l) => {
+    if (!dateStr) return ""; const d = new Date(dateStr); if (isNaN(d)) return dateStr;
+    return l === 'en' ? d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : (l === 'jp' ? `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日` : d.toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' }));
   };
 
   // =========================================================================
-  // RENDERER KERTAS CV (ARROW FUNCTIONS MURNI & MODULAR)
+  // PAPER RENDERERS (ARROW FUNCTIONS)
   // =========================================================================
   const SectionTitle = ({ title }) => {
-    if (template === 'normal') return <h2 className="text-[11pt] font-bold uppercase border-b-[1.5px] border-black mb-2.5 pb-0.5 text-black mt-5">{title}</h2>;
+    if (template === 'normal') return <h2 className="text-[11pt] font-bold uppercase border-b-[1.5px] border-black mb-2.5 pb-0.5 text-black mt-5 tracking-wide">{title}</h2>;
     if (template === 'executive') return <h2 className="text-[12px] font-bold uppercase border-b border-gray-300 mb-2 pb-1 text-gray-900 tracking-widest mt-4">{title}</h2>;
     if (template === 'modern') return <h2 className="text-[15px] font-black uppercase text-gray-900 border-b-2 border-gray-800 mb-3 pb-1 mt-5">{title}</h2>;
     return <h2 className="text-[12pt] font-bold uppercase text-center border-b border-black mb-3 pb-1 tracking-widest mt-5">{title}</h2>;
@@ -119,7 +143,7 @@ export default function AdvancedCVMaker() {
       return (
         <div key={i} className={`flex ${isBullet ? 'mt-1' : ''} ${isPh ? 'text-gray-400' : 'text-black'}`}>
           {isBullet && <span className="mr-2 font-bold">•</span>}
-          <span className={`${isBullet ? 'flex-1' : ''} ${template === 'normal' ? 'text-[10.5pt] leading-[1.5]' : 'text-[13px] leading-relaxed'} text-justify`}>
+          <span className={`${isBullet ? 'flex-1' : ''} ${template === 'normal' ? 'text-[10.5pt] leading-[1.6]' : 'text-[13px] leading-relaxed'} text-justify`}>
             {isBullet ? line.replace(/^-/, '').trim() : line}
           </span>
         </div>
@@ -128,20 +152,20 @@ export default function AdvancedCVMaker() {
   };
 
   const RenderEdu = () => {
-    const data = getActive(educations, ['institution', 'major']);
-    if (!data && !aEdu[0].isPh) return null; // Sembunyikan section total jika user klik hapus semua
-    const mapData = data || aEdu;
+    if (!getActive(educations, ['institution', 'major']) && !aEdu[0].isPh) return null; 
     return (
       <div className="mb-3">
         <SectionTitle title={txt.edu} />
-        {mapData.map((e, i) => (
-          <div key={i} className="mb-2.5 break-inside-avoid">
-            <div className="flex justify-between">
+        {(getActive(educations, ['institution', 'major']) || aEdu).map((e, i) => (
+          <div key={i} className="mb-3 break-inside-avoid">
+            <div className="flex justify-between items-end">
               <h3 className={`text-[10.5pt] font-bold ${e.isPh ? 'text-gray-400' : 'text-black'}`}>{e.institution}</h3>
               <span className={`text-[10.5pt] whitespace-nowrap ${e.isPh ? 'text-gray-400' : 'text-black'}`}>{e.period}</span>
             </div>
-            <div className={`text-[10.5pt] ${e.isPh ? 'text-gray-400' : 'text-black'}`}>{e.major}</div>
-            {e.gpa && <div className={`text-[10.5pt] ${e.isPh ? 'text-gray-400' : 'text-black'}`}>{e.gpa}</div>}
+            <div className="flex justify-between items-start mt-0.5">
+              <div className={`text-[10.5pt] ${e.isPh ? 'text-gray-400' : 'text-black'}`}>{e.major}</div>
+              {e.gpa && <div className={`text-[10.5pt] font-medium ${e.isPh ? 'text-gray-400' : 'text-black'}`}>{e.gpa}</div>}
+            </div>
           </div>
         ))}
       </div>
@@ -149,19 +173,17 @@ export default function AdvancedCVMaker() {
   };
 
   const RenderExp = () => {
-    const data = getActive(experiences, ['company', 'role']);
-    if (!data && !aExp[0].isPh) return null; 
-    const mapData = data || aExp;
+    if (!getActive(experiences, ['company', 'role']) && !aExp[0].isPh) return null; 
     return (
       <div className="mb-3">
         <SectionTitle title={txt.exp} />
-        {mapData.map((e, i) => (
-          <div key={i} className="mb-3.5 break-inside-avoid">
-            <div className="flex justify-between">
-              <h3 className={`text-[10.5pt] font-bold ${e.isPh ? 'text-gray-400' : 'text-black'}`}>{e.company}</h3>
+        {(getActive(experiences, ['company', 'role']) || aExp).map((e, i) => (
+          <div key={i} className="mb-4 break-inside-avoid">
+            <div className="flex justify-between items-end mb-0.5">
+              <h3 className={`text-[10.5pt] font-bold uppercase ${e.isPh ? 'text-gray-400' : 'text-black'}`}>{e.company}</h3>
               <span className={`text-[10.5pt] whitespace-nowrap ${e.isPh ? 'text-gray-400' : 'text-black'}`}>{e.period}</span>
             </div>
-            <div className={`text-[10.5pt] mb-1 ${template === 'modern' ? 'font-bold' : 'font-medium'} ${e.isPh ? 'text-gray-400' : (template === 'modern' ? 'text-gray-800' : 'text-black')}`}>{e.role}</div>
+            <div className={`text-[10.5pt] mb-1.5 ${template === 'modern' ? 'font-bold' : 'font-medium italic'} ${e.isPh ? 'text-gray-400' : (template === 'modern' ? 'text-gray-800' : 'text-black')}`}>{e.role}</div>
             <div className={`${template === 'normal' ? 'ml-0' : 'pl-3'}`}>{renderBullet(e.description, e.isPh)}</div>
           </div>
         ))}
@@ -170,15 +192,13 @@ export default function AdvancedCVMaker() {
   };
 
   const RenderProj = () => {
-    const data = getActive(projects, ['name', 'description']);
-    if (!data && !aProj[0].isPh) return null;
-    const mapData = data || aProj;
+    if (!getActive(projects, ['name', 'description']) && !aProj[0].isPh) return null;
     return (
       <div className="mb-3">
         <SectionTitle title={txt.proj} />
-        {mapData.map((p, i) => (
-          <div key={i} className="mb-3.5 break-inside-avoid">
-            <div className="flex justify-between">
+        {(getActive(projects, ['name', 'description']) || aProj).map((p, i) => (
+          <div key={i} className="mb-4 break-inside-avoid">
+            <div className="flex justify-between items-end mb-0.5">
               <h3 className={`text-[10.5pt] font-bold ${p.isPh ? 'text-gray-400' : 'text-black'}`}>{p.name}</h3>
               <span className={`text-[10.5pt] whitespace-nowrap ${p.isPh ? 'text-gray-400' : 'text-black'}`}>{p.period}</span>
             </div>
@@ -190,15 +210,13 @@ export default function AdvancedCVMaker() {
   };
 
   const RenderCert = () => {
-    const data = getActive(certs, ['name', 'issuer']);
-    if (!data && !aCert[0].isPh) return null;
-    const mapData = data || aCert;
+    if (!getActive(certs, ['name', 'issuer']) && !aCert[0].isPh) return null;
     return (
       <div className="mb-3">
         <SectionTitle title={txt.cert} />
-        {mapData.map((c, i) => (
-          <div key={i} className="mb-3.5 break-inside-avoid">
-            <div className="flex justify-between">
+        {(getActive(certs, ['name', 'issuer']) || aCert).map((c, i) => (
+          <div key={i} className="mb-3 break-inside-avoid">
+            <div className="flex justify-between items-end">
               <h3 className={`text-[10.5pt] font-bold ${c.isPh ? 'text-gray-400' : 'text-black'}`}>{c.name}</h3>
               <span className={`text-[10.5pt] whitespace-nowrap ${c.isPh ? 'text-gray-400' : 'text-black'}`}>{c.period}</span>
             </div>
@@ -212,21 +230,20 @@ export default function AdvancedCVMaker() {
 
   const RenderSkills = () => {
     if (!basics.skills && !dBasics.skills) return null;
-    const skillsText = basics.skills || dBasics.skills;
     const isPh = !basics.skills;
     return (
       <div className="mb-3 break-inside-avoid">
         <SectionTitle title={txt.skills} />
         {template === 'normal' ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-1 mt-1 text-[10.5pt] text-black">
-            {skillsText.split(',').map((s, i) => (
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-4 gap-y-1.5 mt-2 text-[10.5pt] text-black">
+            {(basics.skills || dBasics.skills).split(',').map((s, i) => (
               <div key={i} className={`flex items-start ${isPh ? 'text-gray-400' : 'text-black'}`}>
                 <span className="mr-2 font-bold">•</span><span>{s.trim()}</span>
               </div>
             ))}
           </div>
         ) : (
-          <p className={`text-[10.5pt] leading-relaxed whitespace-pre-wrap break-words ${isPh ? 'text-gray-400' : 'text-black'}`}>{skillsText}</p>
+          <p className={`text-[10.5pt] leading-relaxed whitespace-pre-wrap break-words mt-1 ${isPh ? 'text-gray-400' : 'text-black'}`}>{basics.skills || dBasics.skills}</p>
         )}
       </div>
     );
@@ -236,70 +253,98 @@ export default function AdvancedCVMaker() {
   // UI RENDER START
   // =========================================================================
   return (
-    <div className="flex flex-col h-screen bg-[#060D1F] text-slate-200 font-sans overflow-hidden">
+    <div className="flex flex-col h-[100dvh] bg-[#040914] text-slate-200 font-sans overflow-hidden">
       
       {/* ------------------------------------------------------------- */}
-      {/* GLOBAL CSS PRINT FIX: Menghapus Semua Layout Browser di Kertas*/}
+      {/* GLOBAL CSS PRINT FIX: Menghapus Secara Paksa Area UI Website  */}
+      {/* Memastikan kertas tidak melengkung dan tidak nembus ke lembar 2 */}
       {/* ------------------------------------------------------------- */}
       <style dangerouslySetInnerHTML={{__html: `
         @media print {
-          @page { size: A4; margin: 10mm; }
-          * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-          html, body { background: white !important; color: black !important; margin: 0 !important; padding: 0 !important; height: auto !important; overflow: visible !important; }
-          header, nav, footer, aside, .no-print { display: none !important; }
+          @page { size: A4; margin: 0; }
+          body { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; background: white !important; margin: 0; padding: 0; }
           
-          /* RESET LAYOUT FLEXBOX AGAR KERTAS BISA MULTI-PAGE */
-          .flex-col.h-screen, .lg\\:flex-row, .lg\\:w-\\[40\\%\\], .lg\\:w-\\[60\\%\\], #preview-area {
+          /* Hapus Semua UI Website */
+          .no-print, header, nav, footer, aside, button, .show-in-pwa { display: none !important; }
+          
+          /* Runtuhkan (Flatten) hirarki flexbox agar ukuran mutlak milik kertas saja */
+          #__next, main, div.flex-col, div.lg\\:flex-row, #preview-area {
             display: block !important; width: 100% !important; height: auto !important; max-width: 100% !important; margin: 0 !important; padding: 0 !important; overflow: visible !important; position: static !important; background: transparent !important;
           }
           
+          /* Lepas Kertas dari Efek Zoom & Radius */
+          #preview-area > div { transform: none !important; margin: 0 !important; padding: 0 !important; width: 100% !important; height: auto !important; display: block !important; }
+          
           #cv-paper {
-            display: block !important; width: 100% !important; max-width: 100% !important; min-width: 100% !important; margin: 0 !important; padding: 0 !important; box-shadow: none !important; border: none !important; border-radius: 0 !important; transform: none !important; page-break-after: auto;
+            width: 100% !important; max-width: 21cm !important; min-height: auto !important; margin: 0 auto !important; padding: 1.5cm !important; box-shadow: none !important; border: none !important; border-radius: 0 !important; page-break-after: auto; transform: none !important;
           }
           
-          .break-inside-avoid { break-inside: avoid !important; page-break-inside: avoid !important; }
+          .break-inside-avoid, h2, h3, tr { break-inside: avoid !important; page-break-inside: avoid !important; }
         }
+        
+        /* Custom Scrollbar Modern untuk Panel Kiri/Kanan */
+        .panel-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
+        .panel-scroll::-webkit-scrollbar-track { background: transparent; }
+        .panel-scroll::-webkit-scrollbar-thumb { background: rgba(6, 182, 212, 0.3); border-radius: 10px; }
+        .panel-scroll::-webkit-scrollbar-thumb:hover { background: rgba(6, 182, 212, 0.6); }
       `}} />
 
       {/* HEADER NAV (NO PRINT) */}
-      <div className="h-[60px] bg-[#0A1329] border-b border-white/10 flex items-center justify-between px-6 shrink-0 no-print z-50">
+      <div className="h-[65px] bg-[#0A1329] border-b border-white/10 flex items-center justify-between px-6 shrink-0 no-print z-50">
         <div className="flex items-center gap-3">
           <ShieldIcon className="w-5 h-5 text-emerald-400" />
           <h1 className="text-lg font-black tracking-widest uppercase">ATS <span className="text-cyan-500">CV Maker</span></h1>
         </div>
         <div className="flex gap-2">
-          <button onClick={() => setDocMode('cv')} className={`px-4 py-1.5 rounded text-xs font-bold transition-all ${docMode === 'cv' ? 'bg-cyan-600 text-white' : 'bg-white/5 text-slate-400 hover:bg-white/10'}`}>Mode CV</button>
-          <button onClick={() => setDocMode('cl')} className={`px-4 py-1.5 rounded text-xs font-bold transition-all ${docMode === 'cl' ? 'bg-cyan-600 text-white' : 'bg-white/5 text-slate-400 hover:bg-white/10'}`}>Surat Lamaran</button>
+          <button onClick={() => setDocMode('cv')} className={`px-4 py-2 rounded text-[11px] font-bold uppercase tracking-wider transition-all ${docMode === 'cv' ? 'bg-cyan-600 text-white shadow-md' : 'bg-white/5 text-slate-400 hover:bg-white/10'}`}>Mode CV</button>
+          <button onClick={() => setDocMode('cl')} className={`px-4 py-2 rounded text-[11px] font-bold uppercase tracking-wider transition-all ${docMode === 'cl' ? 'bg-cyan-600 text-white shadow-md' : 'bg-white/5 text-slate-400 hover:bg-white/10'}`}>Surat Lamaran</button>
         </div>
       </div>
 
-      {/* MAIN WORKSPACE */}
+      {/* MAIN WORKSPACE (INDEPENDENT SCROLL LAYOUT) */}
       <div className="flex flex-1 overflow-hidden flex-col lg:flex-row">
         
         {/* ========================================================= */}
-        {/* PANEL KIRI: FORMULIR INPUT (SCROLL MANDIRI)                 */}
+        {/* PANEL KIRI: FORMULIR INPUT                                  */}
         {/* ========================================================= */}
-        <div className="w-full lg:w-[40%] h-full overflow-y-auto bg-[#060D1F] p-6 no-print border-r border-white/10 custom-scrollbar pb-32">
+        <div className="w-full lg:w-[45%] xl:w-[40%] h-full overflow-y-auto panel-scroll bg-[#060D1F] p-5 sm:p-8 no-print border-r border-white/10 relative z-10 pb-32">
           
           {docMode === 'cv' ? (
             <>
-              {/* TABS & SETTINGS CV */}
-              <div className="mb-6 bg-[#0A1329] p-4 rounded-xl border border-white/5">
-                <h3 className="text-[10px] font-bold text-cyan-400 uppercase tracking-widest mb-3">Pilih Bahasa Template</h3>
-                <div className="flex bg-[#060D1F] rounded border border-white/10 overflow-hidden mb-4">
-                  <button onClick={() => {setLang('id'); setTemplate('normal');}} className={`flex-1 py-2 text-xs font-bold ${lang === 'id' ? 'bg-cyan-600' : 'text-slate-500 hover:bg-white/5'}`}>Indonesia</button>
-                  <button onClick={() => {setLang('en'); setTemplate('modern');}} className={`flex-1 py-2 text-xs font-bold ${lang === 'en' ? 'bg-cyan-600' : 'text-slate-500 hover:bg-white/5'}`}>English</button>
+              {/* TABS KONTROL GLOBAL (TEMPLATE, TRANSLATE, KARIR) */}
+              <div className="mb-6 bg-[#0A1329] p-5 rounded-xl border border-white/5 shadow-md">
+                
+                <h3 className="text-[10px] font-bold text-cyan-400 uppercase tracking-widest mb-3">1. Pilih Bahasa Terjemahan Otomatis</h3>
+                <div className="flex bg-[#060D1F] rounded border border-white/10 overflow-hidden mb-5 shadow-inner">
+                  <button onClick={() => handleMagicTranslate('id')} disabled={isTranslating} className={`flex-1 py-2 text-[11px] font-bold tracking-wider transition-colors ${lang === 'id' ? 'bg-cyan-600 text-white' : 'text-slate-500 hover:bg-white/5 hover:text-white'}`}>Indonesia</button>
+                  <button onClick={() => handleMagicTranslate('en')} disabled={isTranslating} className={`flex-1 py-2 text-[11px] font-bold tracking-wider transition-colors ${lang === 'en' ? 'bg-cyan-600 text-white' : 'text-slate-500 hover:bg-white/5 hover:text-white'}`}>English</button>
+                  <button onClick={() => { handleMagicTranslate('jp'); setTemplate('jp-umum'); }} disabled={isTranslating} className={`flex-1 py-2 text-[11px] font-bold tracking-wider transition-colors ${lang === 'jp' ? 'bg-cyan-600 text-white' : 'text-slate-500 hover:bg-white/5 hover:text-white'}`}>Jepang (JIS)</button>
                 </div>
                 
-                <h3 className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest mb-3">Tingkat Karir (Standardisasi Urutan)</h3>
-                <div className="flex bg-[#060D1F] rounded border border-white/10 overflow-hidden mb-2">
-                  <button onClick={() => setCareerLevel('fresh')} className={`flex-1 py-2 text-xs font-bold ${careerLevel === 'fresh' ? 'bg-emerald-600 text-white' : 'text-slate-500 hover:bg-white/5'}`}>Pemula (Pendidikan Di Atas)</button>
-                  <button onClick={() => setCareerLevel('experienced')} className={`flex-1 py-2 text-xs font-bold ${careerLevel === 'experienced' ? 'bg-emerald-600 text-white' : 'text-slate-500 hover:bg-white/5'}`}>Berpengalaman (Kerja Di Atas)</button>
+                <h3 className="text-[10px] font-bold text-cyan-400 uppercase tracking-widest mb-3">2. Pilih Desain Kertas</h3>
+                <div className="grid grid-cols-2 gap-2 mb-5">
+                  <button onClick={() => {setTemplate('normal'); if(lang==='jp') setLang('id');}} className={`py-2 px-2 text-[11px] font-bold rounded border transition-all ${template === 'normal' ? 'bg-cyan-600 border-cyan-400 text-white shadow-lg' : 'border-white/10 text-slate-400 hover:bg-white/5 hover:border-cyan-500/30'}`}>Standar ATS</button>
+                  <button onClick={() => {setTemplate('modern'); if(lang==='jp') setLang('id');}} className={`py-2 px-2 text-[11px] font-bold rounded border transition-all ${template === 'modern' ? 'bg-cyan-600 border-cyan-400 text-white shadow-lg' : 'border-white/10 text-slate-400 hover:bg-white/5 hover:border-cyan-500/30'}`}>Modern Pro</button>
+                  <button onClick={() => {setTemplate('harvard'); if(lang==='jp') setLang('id');}} className={`py-2 px-2 text-[11px] font-bold rounded border transition-all ${template === 'harvard' ? 'bg-cyan-600 border-cyan-400 text-white shadow-lg' : 'border-white/10 text-slate-400 hover:bg-white/5 hover:border-cyan-500/30'}`}>Harvard (Serif)</button>
+                  <button onClick={() => {setTemplate('executive'); if(lang==='jp') setLang('id');}} className={`py-2 px-2 text-[11px] font-bold rounded border transition-all ${template === 'executive' ? 'bg-cyan-600 border-cyan-400 text-white shadow-lg' : 'border-white/10 text-slate-400 hover:bg-white/5 hover:border-cyan-500/30'}`}>Tech Executive</button>
                 </div>
+
+                {!isJapanese && (
+                  <>
+                    <h3 className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest mb-3 border-t border-white/10 pt-5">3. Tipe Pelamar (Standardisasi Urutan Kertas)</h3>
+                    <div className="flex bg-[#060D1F] rounded border border-white/10 overflow-hidden mb-2 shadow-inner">
+                      <button onClick={() => { setCareerLevel('fresh'); setActiveTab('edu'); }} className={`flex-1 px-4 py-2.5 text-[11px] font-bold tracking-wider transition-colors ${careerLevel === 'fresh' ? 'bg-emerald-600 text-white shadow-md' : 'text-slate-500 hover:bg-white/5 hover:text-white'}`}>Fresh Graduate</button>
+                      <button onClick={() => { setCareerLevel('experienced'); setActiveTab('exp'); }} className={`flex-1 px-4 py-2.5 text-[11px] font-bold tracking-wider transition-colors ${careerLevel === 'experienced' ? 'bg-emerald-600 text-white shadow-md' : 'text-slate-500 hover:bg-white/5 hover:text-white'}`}>Berpengalaman</button>
+                    </div>
+                    <p className="text-[10px] text-slate-400 mt-2 leading-relaxed">
+                      {careerLevel === 'fresh' ? '💡 Mode Fresh Grad: Pendidikan & Proyek (Tugas Akhir) diletakkan di urutan atas agar HRD fokus pada pencapaian akademik.' : '💡 Mode Profesional: Pengalaman Kerja diletakkan di urutan pertama agar HRD langsung melihat riwayat karir Anda.'}
+                    </p>
+                  </>
+                )}
               </div>
 
               {/* NAVIGASI TAB FORM */}
-              <div className="flex overflow-x-auto gap-2 mb-6 pb-2 border-b border-white/10 custom-scrollbar sticky top-0 bg-[#060D1F] z-10 pt-2">
+              <div className="flex overflow-x-auto panel-scroll gap-2 mb-6 pb-2 border-b border-white/10 sticky top-0 bg-[#060D1F] z-20 pt-2">
                 {[
                   { id: 'personal', label: '1. Personal' },
                   ...(careerLevel === 'fresh' 
@@ -320,44 +365,48 @@ export default function AdvancedCVMaker() {
                 {/* TAB: PERSONAL */}
                 {activeTab === 'personal' && (
                   <div className="space-y-6">
-                    <div className="bg-[#0A1329] p-5 rounded-xl border border-white/5">
+                    <div className="bg-[#0A1329] p-5 rounded-xl border border-white/5 shadow-md">
                       <SectionHeader title="Informasi Dasar" tips="HRD hanya butuh data relevan. Hindari mengisi alamat terlalu detail (cukup Kota, Provinsi)." />
-                      <LabeledInput label="Nama Lengkap" helper="Sesuai KTP atau Nama Profesional."><input type="text" name="name" value={basics.name} onChange={handleBasics} className="w-full bg-[#060D1F] border border-white/10 p-3 rounded-lg text-white text-sm focus:border-cyan-500 outline-none" placeholder={t.placeholders.name}/></LabeledInput>
-                      <LabeledInput label="Posisi yang Dilamar"><input type="text" name="role" value={basics.role} onChange={handleBasics} className="w-full bg-[#060D1F] border border-white/10 p-3 rounded-lg text-white text-sm focus:border-cyan-500 outline-none" placeholder={t.placeholders.role}/></LabeledInput>
+                      <LabeledInput label="Nama Lengkap" helper="Sesuai KTP atau Nama Profesional."><input type="text" name="name" value={basics.name} onChange={handleBasics} className="w-full bg-[#060D1F] border border-white/10 p-3 rounded-lg text-white text-sm focus:border-cyan-500 outline-none" placeholder={lang==='en'?'John Doe':'Contoh: Budi Santoso'}/></LabeledInput>
+                      <LabeledInput label="Posisi yang Dilamar" helper="Akan dicetak tebal di bawah nama."><input type="text" name="role" value={basics.role} onChange={handleBasics} className="w-full bg-[#060D1F] border border-white/10 p-3 rounded-lg text-white text-sm focus:border-cyan-500 outline-none" placeholder={lang==='en'?'Data Analyst':'Contoh: Admin Staff'}/></LabeledInput>
                       <div className="grid grid-cols-2 gap-4">
-                        <LabeledInput label="Lokasi / Kota"><input type="text" name="location" value={basics.location} onChange={handleBasics} className="w-full bg-[#060D1F] border border-white/10 p-3 rounded-lg text-white text-sm focus:border-cyan-500 outline-none" placeholder={t.placeholders.loc}/></LabeledInput>
-                        <LabeledInput label="Nomor WA Aktif"><input type="text" name="phone" value={basics.phone} onChange={handleBasics} className="w-full bg-[#060D1F] border border-white/10 p-3 rounded-lg text-white text-sm focus:border-cyan-500 outline-none" placeholder={t.placeholders.phone}/></LabeledInput>
+                        <LabeledInput label="Lokasi / Kota"><input type="text" name="location" value={basics.location} onChange={handleBasics} className="w-full bg-[#060D1F] border border-white/10 p-3 rounded-lg text-white text-sm focus:border-cyan-500 outline-none" placeholder={lang==='en'?'Jakarta, ID':'Contoh: Jakarta Selatan'}/></LabeledInput>
+                        <LabeledInput label="Nomor WA Aktif"><input type="text" name="phone" value={basics.phone} onChange={handleBasics} className="w-full bg-[#060D1F] border border-white/10 p-3 rounded-lg text-white text-sm focus:border-cyan-500 outline-none" placeholder="0812-xxxx-xxxx"/></LabeledInput>
                       </div>
-                      <LabeledInput label="Email Profesional"><input type="email" name="email" value={basics.email} onChange={handleBasics} className="w-full bg-[#060D1F] border border-white/10 p-3 rounded-lg text-white text-sm focus:border-cyan-500 outline-none" placeholder={t.placeholders.email}/></LabeledInput>
-                      <LabeledInput label="Profil Singkat (Summary)" helper="Tulis 3-4 kalimat ringkasan tentang kekuatan dan visi karir Anda."><textarea name="summary" value={basics.summary} onChange={handleBasics} rows="4" className="w-full bg-[#060D1F] border border-white/10 p-3 rounded-lg text-white text-sm focus:border-cyan-500 outline-none leading-relaxed" placeholder={t.placeholders.summary}></textarea></LabeledInput>
-                      <LabeledInput label="Keahlian Utama (Skills)" helper="Pisahkan dengan koma (,). Contoh: Kepemimpinan, Desain Grafis, MS Excel."><textarea name="skills" value={basics.skills} onChange={handleBasics} rows="3" className="w-full bg-[#060D1F] border border-white/10 p-3 rounded-lg text-white text-sm focus:border-cyan-500 outline-none leading-relaxed" placeholder={t.placeholders.skills}></textarea></LabeledInput>
+                      <LabeledInput label="Email Profesional"><input type="email" name="email" value={basics.email} onChange={handleBasics} className="w-full bg-[#060D1F] border border-white/10 p-3 rounded-lg text-white text-sm focus:border-cyan-500 outline-none" placeholder="email@anda.com"/></LabeledInput>
+                      <LabeledInput label="Profil Singkat (Summary)" helper="Tulis 3-4 kalimat ringkasan tentang kekuatan dan visi karir Anda. Ini adalah kesan pertama HRD."><textarea name="summary" value={basics.summary} onChange={handleBasics} rows="4" className="w-full bg-[#060D1F] border border-white/10 p-3 rounded-lg text-white text-sm focus:border-cyan-500 outline-none leading-relaxed" placeholder="Ceritakan sedikit tentang diri Anda..."></textarea></LabeledInput>
+                      {!isJapanese && (
+                        <LabeledInput label="Keahlian Utama (Skills)" helper="Wajib dipisahkan dengan koma (,). Contoh: Public Speaking, MS Excel, Desain."><textarea name="skills" value={basics.skills} onChange={handleBasics} rows="3" className="w-full bg-[#060D1F] border border-white/10 p-3 rounded-lg text-white text-sm focus:border-cyan-500 outline-none leading-relaxed" placeholder="Keahlian 1, Keahlian 2, Keahlian 3"></textarea></LabeledInput>
+                      )}
                     </div>
 
-                    <div className="bg-[#0A1329] p-5 rounded-xl border border-white/5">
-                      <SectionHeader title="Tautan Profil Digital" onAdd={() => addArr(setProfiles, profiles, {platform:"", url:""})} tips="LinkedIn sangat disarankan. Kosongkan URL jika tidak ada." />
+                    {!isJapanese && (
+                    <div className="bg-[#0A1329] p-5 rounded-xl border border-white/5 shadow-md">
+                      <SectionHeader title="Tautan Profil Digital" onAdd={() => addArr(setProfiles, profiles, {platform:"", url:""})} tips="LinkedIn sangat disarankan. Kosongkan URL jika tidak ada agar otomatis hilang di kertas." />
                       {profiles.map((prof, i) => (
-                        <div key={prof.id} className="flex gap-3 mb-3 relative bg-[#060D1F] p-3 rounded-lg border border-white/5">
-                          <button onClick={() => remArr(setProfiles, profiles, i)} className="absolute -top-2 -right-2 bg-red-500/20 text-red-400 text-[10px] font-bold px-2 py-1 rounded-full">Hapus</button>
-                          <div className="w-1/3"><LabeledInput label="Nama Situs"><input type="text" value={prof.platform} onChange={(e) => handleArr(setProfiles, profiles, i, 'platform', e.target.value)} className="w-full bg-transparent border-b border-white/20 p-2 text-white text-sm outline-none" placeholder="Cth: LinkedIn" /></LabeledInput></div>
-                          <div className="w-2/3"><LabeledInput label="URL Tautan"><input type="text" value={prof.url} onChange={(e) => handleArr(setProfiles, profiles, i, 'url', e.target.value)} className="w-full bg-transparent border-b border-white/20 p-2 text-white text-sm outline-none" placeholder="linkedin.com/in/nama" /></LabeledInput></div>
+                        <div key={prof.id} className="flex flex-col sm:flex-row gap-3 mb-3 relative bg-[#060D1F] p-4 sm:p-3 rounded-lg border border-white/10 shadow-inner">
+                          <button onClick={() => remArr(setProfiles, profiles, i)} className="absolute top-2 right-2 sm:-top-2 sm:-right-2 bg-red-500/20 text-red-400 text-[10px] font-bold px-2 py-1 rounded-full z-10">Hapus</button>
+                          <div className="w-full sm:w-1/3"><LabeledInput label="Nama Situs"><input type="text" value={prof.platform} onChange={(e) => handleArr(setProfiles, profiles, i, 'platform', e.target.value)} className="w-full bg-transparent border-b border-white/20 p-2 text-white text-sm outline-none focus:border-cyan-500" placeholder="Cth: LinkedIn" /></LabeledInput></div>
+                          <div className="w-full sm:w-2/3"><LabeledInput label="URL Tautan"><input type="text" value={prof.url} onChange={(e) => handleArr(setProfiles, profiles, i, 'url', e.target.value)} className="w-full bg-transparent border-b border-white/20 p-2 text-white text-sm outline-none focus:border-cyan-500" placeholder="linkedin.com/in/nama" /></LabeledInput></div>
                         </div>
                       ))}
                     </div>
+                    )}
                   </div>
                 )}
 
                 {/* TAB: PENDIDIKAN */}
                 {activeTab === 'edu' && (
-                  <div className="bg-[#0A1329] p-5 rounded-xl border border-white/5 space-y-4">
-                    <SectionHeader title="Pendidikan" onAdd={() => addArr(setEducations, educations, {institution:"", major:"", period:"", gpa:""})} tips="Cukup masukkan pendidikan terakhir Anda (SMA/SMK atau Universitas)." />
+                  <div className="bg-[#0A1329] p-5 rounded-xl border border-white/5 shadow-md space-y-4">
+                    <SectionHeader title="Pendidikan Terakhir" onAdd={() => addArr(setEducations, educations, {institution:"", major:"", period:"", gpa:""})} tips={careerLevel === 'fresh' ? 'Sebagai Fresh Grad, Anda bisa menambahkan info organisasi intra-kampus di bagian Proyek.' : 'Cukup masukkan pendidikan terakhir (Universitas/SMA).'} />
                     {educations.map((edu, i) => (
-                      <div key={edu.id} className="bg-[#060D1F] p-4 rounded-lg border border-white/5 relative">
+                      <div key={edu.id} className="bg-[#060D1F] p-5 rounded-lg border border-white/10 relative shadow-inner">
                         <button onClick={() => remArr(setEducations, educations, i)} className="absolute top-3 right-3 text-red-400 text-[10px] font-bold bg-red-400/10 px-2 py-1 rounded">Hapus</button>
-                        <LabeledInput label="Nama Instansi"><input type="text" value={edu.institution} onChange={(e) => handleArr(setEducations, educations, i, 'institution', e.target.value)} className="w-11/12 bg-transparent border-b border-white/20 p-2 text-white text-sm outline-none font-bold" placeholder={t.placeholders.eduInst}/></LabeledInput>
-                        <LabeledInput label="Jurusan / Gelar"><input type="text" value={edu.major} onChange={(e) => handleArr(setEducations, educations, i, 'major', e.target.value)} className="w-full bg-transparent border-b border-white/20 p-2 text-white text-sm outline-none" placeholder={t.placeholders.eduMaj}/></LabeledInput>
+                        <LabeledInput label="Nama Instansi"><input type="text" value={edu.institution} onChange={(e) => handleArr(setEducations, educations, i, 'institution', e.target.value)} className="w-11/12 bg-transparent border-b border-white/20 p-2 text-white text-sm outline-none focus:border-cyan-500 font-bold" placeholder="Nama Kampus/Sekolah"/></LabeledInput>
+                        <LabeledInput label="Jurusan / Gelar"><input type="text" value={edu.major} onChange={(e) => handleArr(setEducations, educations, i, 'major', e.target.value)} className="w-full bg-transparent border-b border-white/20 p-2 text-white text-sm outline-none focus:border-cyan-500" placeholder="Cth: S1 Ilmu Komputer"/></LabeledInput>
                         <div className="grid grid-cols-2 gap-4">
-                          <LabeledInput label="Tahun"><input type="text" value={edu.period} onChange={(e) => handleArr(setEducations, educations, i, 'period', e.target.value)} className="w-full bg-transparent border-b border-white/20 p-2 text-white text-sm outline-none" placeholder={t.placeholders.eduDate}/></LabeledInput>
-                          <LabeledInput label="Nilai/IPK (Opsional)"><input type="text" value={edu.gpa} onChange={(e) => handleArr(setEducations, educations, i, 'gpa', e.target.value)} className="w-full bg-transparent border-b border-white/20 p-2 text-white text-sm outline-none" placeholder="Cth: 3.80 / 4.00"/></LabeledInput>
+                          <LabeledInput label="Tahun"><input type="text" value={edu.period} onChange={(e) => handleArr(setEducations, educations, i, 'period', e.target.value)} className="w-full bg-transparent border-b border-white/20 p-2 text-white text-sm outline-none focus:border-cyan-500" placeholder="2018 - 2022"/></LabeledInput>
+                          <LabeledInput label="Nilai/IPK (Opsional)"><input type="text" value={edu.gpa} onChange={(e) => handleArr(setEducations, educations, i, 'gpa', e.target.value)} className="w-full bg-transparent border-b border-white/20 p-2 text-white text-sm outline-none focus:border-cyan-500" placeholder="3.80 / 4.00"/></LabeledInput>
                         </div>
                       </div>
                     ))}
@@ -366,17 +415,17 @@ export default function AdvancedCVMaker() {
 
                 {/* TAB: PENGALAMAN */}
                 {activeTab === 'exp' && (
-                  <div className="bg-[#0A1329] p-5 rounded-xl border border-white/5 space-y-4">
-                    <SectionHeader title="Pengalaman Kerja" onAdd={() => addArr(setExperiences, experiences, {role:"", company:"", period:"", description:""})} tips="Gunakan tanda strip (-) di kolom Deskripsi untuk membuat Bullet Poin otomatis di kertas." />
+                  <div className="bg-[#0A1329] p-5 rounded-xl border border-white/5 shadow-md space-y-4">
+                    <SectionHeader title="Pengalaman Kerja" onAdd={() => addArr(setExperiences, experiences, {role:"", company:"", period:"", description:""})} tips={careerLevel === 'fresh' ? 'Kosongkan (Hapus) jika belum ada. Anda bisa memasukkan Magang/Freelance di sini.' : 'Gunakan tanda strip (-) di kolom Deskripsi untuk membuat Bullet Poin rapi.'} />
                     {experiences.map((exp, i) => (
-                      <div key={exp.id} className="bg-[#060D1F] p-4 rounded-lg border border-white/5 relative">
+                      <div key={exp.id} className="bg-[#060D1F] p-5 rounded-lg border border-white/10 relative shadow-inner">
                         <button onClick={() => remArr(setExperiences, experiences, i)} className="absolute top-3 right-3 text-red-400 text-[10px] font-bold bg-red-400/10 px-2 py-1 rounded">Hapus</button>
-                        <LabeledInput label="Nama Perusahaan"><input type="text" value={exp.company} onChange={(e) => handleArr(setExperiences, experiences, i, 'company', e.target.value)} className="w-11/12 bg-transparent border-b border-white/20 p-2 text-white text-sm outline-none font-bold" placeholder={t.placeholders.expComp}/></LabeledInput>
+                        <LabeledInput label="Nama Perusahaan"><input type="text" value={exp.company} onChange={(e) => handleArr(setExperiences, experiences, i, 'company', e.target.value)} className="w-11/12 bg-transparent border-b border-white/20 p-2 text-white text-sm outline-none focus:border-cyan-500 font-bold" placeholder="PT Nama Perusahaan"/></LabeledInput>
                         <div className="grid grid-cols-2 gap-4">
-                          <LabeledInput label="Posisi"><input type="text" value={exp.role} onChange={(e) => handleArr(setExperiences, experiences, i, 'role', e.target.value)} className="w-full bg-transparent border-b border-white/20 p-2 text-white text-sm outline-none" placeholder={t.placeholders.expRole}/></LabeledInput>
-                          <LabeledInput label="Tahun Bekerja"><input type="text" value={exp.period} onChange={(e) => handleArr(setExperiences, experiences, i, 'period', e.target.value)} className="w-full bg-transparent border-b border-white/20 p-2 text-white text-sm outline-none" placeholder={t.placeholders.expDate}/></LabeledInput>
+                          <LabeledInput label="Posisi"><input type="text" value={exp.role} onChange={(e) => handleArr(setExperiences, experiences, i, 'role', e.target.value)} className="w-full bg-transparent border-b border-white/20 p-2 text-white text-sm outline-none focus:border-cyan-500" placeholder="Cth: Staff Admin"/></LabeledInput>
+                          <LabeledInput label="Tahun Bekerja"><input type="text" value={exp.period} onChange={(e) => handleArr(setExperiences, experiences, i, 'period', e.target.value)} className="w-full bg-transparent border-b border-white/20 p-2 text-white text-sm outline-none focus:border-cyan-500" placeholder="Jan 2022 - Des 2023"/></LabeledInput>
                         </div>
-                        <LabeledInput label="Deskripsi & Pencapaian"><textarea value={exp.description} onChange={(e) => handleArr(setExperiences, experiences, i, 'description', e.target.value)} rows="4" className="w-full bg-[#0A1329] border border-white/10 p-3 rounded-lg text-white text-sm focus:border-cyan-500 outline-none leading-relaxed" placeholder="- Fokus pada pencapaian, bukan hanya tugas harian.&#10;- Berhasil meningkatkan omset sebesar 20% dalam 1 bulan."></textarea></LabeledInput>
+                        <LabeledInput label="Deskripsi (Gunakan Strip - di Awal)"><textarea value={exp.description} onChange={(e) => handleArr(setExperiences, experiences, i, 'description', e.target.value)} rows="5" className="w-full bg-[#0A1329] border border-white/10 p-3 rounded-lg text-white text-sm focus:border-cyan-500 outline-none leading-relaxed" placeholder="- Fokus pada pencapaian dengan metrik angka.&#10;- Berhasil meningkatkan efisiensi operasional 20%."></textarea></LabeledInput>
                       </div>
                     ))}
                   </div>
@@ -384,16 +433,16 @@ export default function AdvancedCVMaker() {
 
                 {/* TAB: PROYEK */}
                 {activeTab === 'proj' && (
-                  <div className="bg-[#0A1329] p-5 rounded-xl border border-white/5 space-y-4">
-                    <SectionHeader title="Proyek Spesial" onAdd={() => addArr(setProjects, projects, {name:"", period:"", description:""})} tips="Sangat berguna untuk Fresh Graduate memasukkan Tugas Akhir, PKL, atau pengalaman Organisasi/Kepanitiaan di sini." />
+                  <div className="bg-[#0A1329] p-5 rounded-xl border border-white/5 shadow-md space-y-4">
+                    <SectionHeader title="Proyek Spesial" onAdd={() => addArr(setProjects, projects, {name:"", period:"", description:""})} tips="Tempat terbaik untuk Tugas Akhir Kampus, Kepanitiaan Organisasi, atau Proyek Pribadi." />
                     {projects.map((proj, i) => (
-                      <div key={proj.id} className="bg-[#060D1F] p-4 rounded-lg border border-white/5 relative">
+                      <div key={proj.id} className="bg-[#060D1F] p-5 rounded-lg border border-white/10 relative shadow-inner">
                         <button onClick={() => remArr(setProjects, projects, i)} className="absolute top-3 right-3 text-red-400 text-[10px] font-bold bg-red-400/10 px-2 py-1 rounded">Hapus</button>
                         <div className="grid grid-cols-2 gap-4">
-                          <LabeledInput label="Nama Kegiatan/Proyek"><input type="text" value={proj.name} onChange={(e) => handleArr(setProjects, projects, i, 'name', e.target.value)} className="w-full bg-transparent border-b border-white/20 p-2 text-white text-sm outline-none font-bold" placeholder={t.placeholders.projName}/></LabeledInput>
-                          <LabeledInput label="Waktu"><input type="text" value={proj.period} onChange={(e) => handleArr(setProjects, projects, i, 'period', e.target.value)} className="w-full bg-transparent border-b border-white/20 p-2 text-white text-sm outline-none" placeholder={t.placeholders.projDate}/></LabeledInput>
+                          <LabeledInput label="Nama Kegiatan/Proyek"><input type="text" value={proj.name} onChange={(e) => handleArr(setProjects, projects, i, 'name', e.target.value)} className="w-full bg-transparent border-b border-white/20 p-2 text-white text-sm outline-none focus:border-cyan-500 font-bold" placeholder="Cth: Skripsi / Riset A"/></LabeledInput>
+                          <LabeledInput label="Waktu Pelaksanaan"><input type="text" value={proj.period} onChange={(e) => handleArr(setProjects, projects, i, 'period', e.target.value)} className="w-full bg-transparent border-b border-white/20 p-2 text-white text-sm outline-none focus:border-cyan-500" placeholder="Tahun"/></LabeledInput>
                         </div>
-                        <LabeledInput label="Detail & Peran Anda"><textarea value={proj.description} onChange={(e) => handleArr(setProjects, projects, i, 'description', e.target.value)} rows="3" className="w-full bg-[#0A1329] border border-white/10 p-3 rounded-lg text-white text-sm focus:border-cyan-500 outline-none leading-relaxed" placeholder="- Bertanggung jawab sebagai koordinator lapangan."></textarea></LabeledInput>
+                        <LabeledInput label="Peran Anda (Gunakan Strip - di Awal)"><textarea value={proj.description} onChange={(e) => handleArr(setProjects, projects, i, 'description', e.target.value)} rows="3" className="w-full bg-[#0A1329] border border-white/10 p-3 rounded-lg text-white text-sm focus:border-cyan-500 outline-none leading-relaxed" placeholder="- Bertanggung jawab sebagai ketua pelaksana."></textarea></LabeledInput>
                       </div>
                     ))}
                   </div>
@@ -401,17 +450,17 @@ export default function AdvancedCVMaker() {
 
                 {/* TAB: SERTIFIKASI */}
                 {activeTab === 'cert' && (
-                  <div className="bg-[#0A1329] p-5 rounded-xl border border-white/5 space-y-4">
-                    <SectionHeader title="Sertifikasi & Pelatihan" onAdd={() => addArr(setCerts, certs, {name:"", issuer:"", period:"", description:""})} tips="Jangan ragu menekan tombol Hapus jika Anda tidak memiliki sertifikasi yang relevan. Bagian ini akan otomatis hilang dari kertas PDF." />
+                  <div className="bg-[#0A1329] p-5 rounded-xl border border-white/5 shadow-md space-y-4">
+                    <SectionHeader title="Sertifikasi & Kursus" onAdd={() => addArr(setCerts, certs, {name:"", issuer:"", period:"", description:""})} tips="Tidak punya? Silakan klik 'Hapus' dan elemen akan otomatis bersih dari kertas cetak." />
                     {certs.map((cert, i) => (
-                      <div key={cert.id} className="bg-[#060D1F] p-4 rounded-lg border border-white/5 relative">
+                      <div key={cert.id} className="bg-[#060D1F] p-5 rounded-lg border border-white/10 relative shadow-inner">
                         <button onClick={() => remArr(setCerts, certs, i)} className="absolute top-3 right-3 text-red-400 text-[10px] font-bold bg-red-400/10 px-2 py-1 rounded">Hapus</button>
                         <div className="grid grid-cols-2 gap-4">
-                          <LabeledInput label="Nama Pelatihan"><input type="text" value={cert.name} onChange={(e) => handleArr(setCerts, certs, i, 'name', e.target.value)} className="w-full bg-transparent border-b border-white/20 p-2 text-white text-sm outline-none font-bold" placeholder={t.placeholders.certName}/></LabeledInput>
-                          <LabeledInput label="Tahun"><input type="text" value={cert.period} onChange={(e) => handleArr(setCerts, certs, i, 'period', e.target.value)} className="w-full bg-transparent border-b border-white/20 p-2 text-white text-sm outline-none" placeholder={t.placeholders.certDate}/></LabeledInput>
+                          <LabeledInput label="Nama Pelatihan"><input type="text" value={cert.name} onChange={(e) => handleArr(setCerts, certs, i, 'name', e.target.value)} className="w-full bg-transparent border-b border-white/20 p-2 text-white text-sm outline-none focus:border-cyan-500 font-bold" placeholder="Cth: Bootcamp UX"/></LabeledInput>
+                          <LabeledInput label="Tahun"><input type="text" value={cert.period} onChange={(e) => handleArr(setCerts, certs, i, 'period', e.target.value)} className="w-full bg-transparent border-b border-white/20 p-2 text-white text-sm outline-none focus:border-cyan-500" placeholder="Tahun Lulus"/></LabeledInput>
                         </div>
-                        <LabeledInput label="Lembaga Penyelenggara"><input type="text" value={cert.issuer} onChange={(e) => handleArr(setCerts, certs, i, 'issuer', e.target.value)} className="w-full bg-transparent border-b border-white/20 p-2 text-white text-sm outline-none" placeholder="Cth: BNSP, Google, dll"/></LabeledInput>
-                        <LabeledInput label="Ilmu yang Didapat"><textarea value={cert.description} onChange={(e) => handleArr(setCerts, certs, i, 'description', e.target.value)} rows="2" className="w-full bg-[#0A1329] border border-white/10 p-3 rounded-lg text-white text-sm focus:border-cyan-500 outline-none leading-relaxed" placeholder="- Memahami dasar-dasar digital marketing."></textarea></LabeledInput>
+                        <LabeledInput label="Lembaga Penyelenggara"><input type="text" value={cert.issuer} onChange={(e) => handleArr(setCerts, certs, i, 'issuer', e.target.value)} className="w-full bg-transparent border-b border-white/20 p-2 text-white text-sm outline-none focus:border-cyan-500" placeholder="Cth: Google, BNSP"/></LabeledInput>
+                        <LabeledInput label="Ilmu / Topik yang Didapat"><textarea value={cert.description} onChange={(e) => handleArr(setCerts, certs, i, 'description', e.target.value)} rows="3" className="w-full bg-[#0A1329] border border-white/10 p-3 rounded-lg text-white text-sm focus:border-cyan-500 outline-none leading-relaxed" placeholder="- Mempelajari dasar-dasar digital marketing."></textarea></LabeledInput>
                       </div>
                     ))}
                   </div>
@@ -421,32 +470,30 @@ export default function AdvancedCVMaker() {
               // =========================================================
               // MODE COVER LETTER
               // =========================================================
-              <div className="bg-[#0A1329] p-5 rounded-xl border border-white/5 space-y-5 animate-fade-in-up">
-                <SectionHeader title="Cover Letter Builder" tips="Data pribadi Anda (Nama, Email, Telepon, Lokasi) ditarik otomatis dari tab 'Mode CV' -> 'Personal'. Anda hanya perlu merancang tujuan suratnya di sini." />
+              <div className="bg-[#0A1329] p-5 rounded-xl border border-white/5 space-y-6 animate-fade-in-up shadow-md">
+                <SectionHeader title="Cover Letter Builder" tips="Data pribadi Anda (Nama, Email, dll) langsung ditarik dari form 'Mode CV'. Anda cukup merancang tujuan surat." />
                 
-                <div className="p-4 bg-blue-500/5 border border-blue-500/20 rounded-lg">
-                  <h3 className="text-xs font-bold text-blue-400 uppercase tracking-widest mb-3">Tujuan Surat</h3>
-                  <LabeledInput label="Tujuan Perusahaan"><input type="text" name="company" value={clData.company} onChange={handleCL} className="w-full bg-[#060D1F] border border-white/10 p-3 rounded-lg text-white text-sm outline-none" placeholder={t.placeholders.clTarget}/></LabeledInput>
+                <div className="p-5 bg-[#060D1F] border border-blue-500/20 rounded-xl shadow-inner">
+                  <h3 className="text-[10px] font-bold text-blue-400 uppercase tracking-widest mb-4 border-b border-blue-500/20 pb-2">Destinasi Surat</h3>
+                  <LabeledInput label="Perusahaan Tujuan"><input type="text" name="company" value={clData.company} onChange={handleCL} className="w-full bg-transparent border-b border-white/20 p-2 text-white text-sm focus:border-blue-500 outline-none" placeholder="PT Nama Perusahaan"/></LabeledInput>
+                  <LabeledInput label="Posisi yang Dilamar"><input type="text" name="targetRole" value={clData.targetRole} onChange={handleCL} className="w-full bg-transparent border-b border-white/20 p-2 text-white text-sm focus:border-blue-500 outline-none" placeholder="Cth: Staff Administrasi"/></LabeledInput>
                   <div className="grid grid-cols-2 gap-4">
-                    <LabeledInput label="Nama Penerima / HRD"><input type="text" name="hr" value={clData.hr} onChange={handleCL} className="w-full bg-[#060D1F] border border-white/10 p-3 rounded-lg text-white text-sm outline-none" placeholder={t.placeholders.clHr}/></LabeledInput>
-                    <LabeledInput label="Tanggal Surat (Klik Ikon)"><input type="date" name="date" value={clData.date} onChange={handleCL} className="w-full bg-[#060D1F] border border-white/10 p-3 rounded-lg text-white text-sm outline-none cursor-pointer" /></LabeledInput>
+                    <LabeledInput label="Nama Penerima (HRD)"><input type="text" name="hr" value={clData.hr} onChange={handleCL} className="w-full bg-transparent border-b border-white/20 p-2 text-white text-sm focus:border-blue-500 outline-none" placeholder="Bapak/Ibu HRD"/></LabeledInput>
+                    <LabeledInput label="Tanggal Surat"><input type="date" name="date" value={clData.date} onChange={handleCL} className="w-full bg-transparent border-b border-white/20 p-2 text-white text-sm focus:border-blue-500 outline-none cursor-pointer" /></LabeledInput>
                   </div>
                 </div>
 
-                <div className="p-4 bg-emerald-500/5 border border-emerald-500/20 rounded-lg">
-                  <h3 className="text-xs font-bold text-emerald-400 uppercase tracking-widest mb-3">Isi Surat</h3>
-                  <p className="text-[10px] text-slate-400 mb-3 leading-relaxed">Ketik manual surat Anda, atau gunakan template bawaan kami yang telah terbukti ampuh menarik perhatian HRD.</p>
-                  
+                <div className="p-5 bg-[#060D1F] border border-emerald-500/20 rounded-xl shadow-inner">
+                  <h3 className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest mb-4 border-b border-emerald-500/20 pb-2">Konten Surat</h3>
                   <button onClick={() => {
-                    const role = basics.role || '[Posisi yang Dilamar]';
+                    const role = clData.targetRole || basics.role || '[Posisi yang Dilamar]';
                     const comp = clData.company || '[Nama Perusahaan]';
                     const text = lang === 'en' 
                       ? `Please accept this letter as an expression of my strong interest in the ${role} position at ${comp}.\n\nWith my background and proven expertise in my field, along with my relevant professional experience, I am confident in my ability to make an immediate and positive impact on your operations.\n\nI have attached my resume for your review, which further details my career achievements and qualifications. I would welcome the opportunity to discuss how my skill set aligns with the needs of your organization in an interview.\n\nThank you very much for your time, consideration, and forthcoming response.`
-                      : `Berdasarkan informasi lowongan pekerjaan yang saya peroleh, saya bermaksud menyampaikan ketertarikan saya untuk melamar posisi ${role} di ${comp}.\n\nDengan latar belakang pendidikan dan keahlian yang saya miliki, serta pengalaman yang relevan, saya yakin dapat belajar dengan cepat dan berkontribusi secara positif bagi perusahaan Anda.\n\nBersama surat lamaran ini, saya lampirkan Curriculum Vitae (CV) sebagai bahan pertimbangan Bapak/Ibu untuk melihat riwayat pendidikan dan profesional saya secara lebih detail. Saya sangat berharap dapat diberikan kesempatan wawancara agar saya bisa memperkenalkan potensi diri saya secara langsung.\n\nTerima kasih atas waktu dan perhatian yang Bapak/Ibu berikan.`;
+                      : `Berdasarkan informasi lowongan pekerjaan yang saya peroleh, saya bermaksud menyampaikan ketertarikan saya untuk melamar posisi ${role} di ${comp}.\n\nDengan latar belakang dan minat kuat yang saya miliki di bidang ini, serta pengalaman kerja yang relevan, saya yakin dapat beradaptasi dengan cepat dan memberikan kontribusi nyata bagi tim Anda.\n\nBersama surat lamaran ini, saya lampirkan Curriculum Vitae (CV) sebagai bahan pertimbangan Bapak/Ibu untuk melihat detail kualifikasi dan riwayat profesional saya. Saya sangat berharap dapat diberikan kesempatan wawancara guna mendiskusikan bagaimana potensi saya dapat sejalan dengan visi perusahaan.\n\nTerima kasih atas waktu dan perhatian yang Bapak/Ibu berikan.`;
                     setClData({...clData, body: text});
-                  }} className="w-full mb-3 py-2 bg-emerald-600/20 hover:bg-emerald-600 text-emerald-400 hover:text-white font-bold text-xs uppercase tracking-widest rounded transition-colors border border-emerald-500/50">Gunakan Template Standar</button>
-                  
-                  <textarea name="body" value={clData.body} onChange={handleCL} rows="8" className="w-full bg-[#060D1F] border border-white/10 p-3 rounded-lg text-white text-sm focus:border-emerald-500 outline-none leading-relaxed" placeholder="Ketik isi surat pengantar Anda di sini..."></textarea>
+                  }} className="w-full mb-4 py-2.5 bg-emerald-600/20 hover:bg-emerald-600 text-emerald-400 hover:text-white font-bold text-xs uppercase tracking-widest rounded transition-colors border border-emerald-500/50">Gunakan Template Standar</button>
+                  <textarea name="body" value={clData.body} onChange={handleCL} rows="12" className="w-full bg-[#0A1329] border border-white/10 p-4 rounded-lg text-white text-sm focus:border-emerald-500 outline-none leading-relaxed" placeholder="Ketik surat pengantar Anda di sini... Atau klik tombol hijau di atas."></textarea>
                 </div>
               </div>
             )}
@@ -455,33 +502,36 @@ export default function AdvancedCVMaker() {
           {/* ========================================================= */}
           {/* PANEL KANAN: PREVIEW KERTAS (SCROLL MANDIRI & ZOOMABLE)   */}
           {/* ========================================================= */}
-          <div id="preview-area" className="w-full lg:w-[60%] h-full overflow-y-auto bg-[#040914] relative flex flex-col no-print border-l border-white/5">
+          <div id="preview-area" className="w-full lg:w-[55%] xl:w-[60%] h-full overflow-y-auto panel-scroll bg-[#030712] relative flex flex-col no-print border-l border-white/5">
             
-            {/* TOOLBAR KERTAS (STICKY) */}
-            <div className="sticky top-0 z-40 bg-[#0A1329]/90 backdrop-blur-md p-4 border-b border-white/10 flex justify-between items-center shadow-lg">
+            {/* TOOLBAR KERTAS */}
+            <div className="sticky top-0 z-40 bg-[#0A1329]/95 backdrop-blur-md p-4 border-b border-white/10 flex justify-between items-center shadow-lg">
               <div className="flex items-center gap-3">
                 <ZoomInIcon />
-                <input type="range" min="0.4" max="1.5" step="0.05" value={scale} onChange={(e) => setScale(e.target.value)} className="w-24 sm:w-32 accent-cyan-500" />
-                <span className="text-[10px] font-bold text-cyan-400">{Math.round(scale * 100)}%</span>
+                <input type="range" min="0.4" max="1.5" step="0.05" value={scale} onChange={(e) => setScale(e.target.value)} className="w-20 sm:w-32 accent-cyan-500 cursor-pointer" />
+                <span className="text-[10px] font-bold text-cyan-400 w-8">{Math.round(scale * 100)}%</span>
               </div>
-              <button onClick={() => window.print()} className="bg-cyan-600 hover:bg-cyan-500 text-white font-bold px-4 py-2 rounded-lg transition-all shadow-[0_0_15px_rgba(6,182,212,0.4)] text-xs uppercase tracking-widest flex items-center gap-2">
+              <button onClick={() => window.print()} className="bg-cyan-600 hover:bg-cyan-500 text-white font-bold px-4 py-2 rounded transition-all shadow-[0_0_15px_rgba(6,182,212,0.4)] text-[10px] uppercase tracking-widest flex items-center gap-2">
                 <PrintIcon /> Cetak PDF
               </button>
             </div>
 
-            {/* AREA KANVAS KERTAS */}
-            <div className="flex-1 overflow-auto flex justify-center py-10">
-              <div style={{ transform: `scale(${scale})`, transformOrigin: 'top center', transition: 'transform 0.2s ease' }} className="w-fit h-fit mb-20">
+            {/* AREA KANVAS KERTAS (ZOOMABLE) */}
+            <div className="flex-1 overflow-visible flex justify-center py-10 pb-32">
+              <div style={{ transform: `scale(${scale})`, transformOrigin: 'top center', transition: 'transform 0.15s ease' }} className="w-fit h-fit">
                 
-                <div id="cv-paper" className={`w-[21cm] min-h-[29.7cm] bg-white text-black py-12 px-14 shadow-2xl shrink-0 border border-gray-200 
+                {/* ID 'cv-paper' sangat krusial untuk dicetak! 
+                  Tidak boleh ada border-radius saat print.
+                */}
+                <div id="cv-paper" className={`w-[21cm] min-h-[29.7cm] bg-white text-black py-[1.5cm] px-[1.5cm] shadow-2xl shrink-0 border border-gray-200 
                   ${template === 'normal' ? 'font-[Arial,Helvetica,sans-serif]' : template === 'harvard' ? 'font-serif' : 'font-sans'}`}>
                   
                   {docMode === 'cl' ? (
                     // ----------------------------------------------------
-                    // RENDER COVER LETTER
+                    // RENDERER COVER LETTER
                     // ----------------------------------------------------
                     <div className="w-full text-black flex flex-col min-h-[25cm] text-[11pt] leading-relaxed">
-                      {/* Data Pengirim (Diambil otomatis dari Form CV) */}
+                      {/* Data Pengirim */}
                       <div className="mb-8 leading-snug">
                         <div className="font-bold text-[12pt]">{basics.name || <span className="text-gray-400 font-normal">{dBasics.name}</span>}</div>
                         <div>{basics.location || <span className="text-gray-400">{dBasics.location}</span>}</div>
@@ -493,49 +543,48 @@ export default function AdvancedCVMaker() {
                       
                       {/* Data Tujuan */}
                       <div className="mb-8 leading-snug">
-                        <div>{lang === 'en' ? 'To:' : 'Kepada Yth.'}</div>
-                        <div className="font-bold">{clData.hr || <span className="text-gray-400 font-normal">{lang === 'en' ? '[Hiring Manager]' : '[Bapak/Ibu HRD]'}</span>}</div>
-                        <div className="font-bold">{clData.company || <span className="text-gray-400 font-normal">{lang === 'en' ? '[Target Company]' : '[Nama Perusahaan]'}</span>}</div>
+                        <div>{isEn ? 'To:' : 'Kepada Yth.'}</div>
+                        <div className="font-bold">{clData.hr || <span className="text-gray-400 font-normal">{isEn ? '[Hiring Manager]' : '[Bapak/Ibu HRD]'}</span>}</div>
+                        <div className="font-bold">{clData.company || <span className="text-gray-400 font-normal">{isEn ? '[Target Company]' : '[Nama Perusahaan]'}</span>}</div>
                       </div>
                       
-                      <div className="mb-4">{lang === 'en' ? `Dear ${clData.hr || 'Hiring Manager'},` : 'Dengan hormat,'}</div>
+                      <div className="mb-4">{isEn ? `Dear ${clData.hr || 'Hiring Manager'},` : 'Dengan hormat,'}</div>
                       
-                      {/* Isi Surat */}
                       <div className="whitespace-pre-wrap text-justify break-words min-h-[150px]">
-                        {clData.body || <span className="text-gray-400 italic">{(lang === 'en' ? 'Cover letter body is empty. Please generate or type your letter.' : 'Isi surat masih kosong. Silakan gunakan tombol template di panel sebelah kiri.')}</span>}
+                        {clData.body || <span className="text-gray-400 italic">{(isEn ? 'Cover letter body is empty. Please use the template button.' : 'Isi surat masih kosong. Silakan gunakan tombol template di panel sebelah kiri.')}</span>}
                       </div>
                       
-                      {/* Penutup */}
-                      <div className="mt-12">{lang === 'en' ? 'Sincerely,' : 'Hormat saya,'}<br/><br/><br/><br/><span className="font-bold">{basics.name || <span className="text-gray-400 font-normal">{dBasics.name}</span>}</span></div>
+                      <div className="mt-12">{isEn ? 'Sincerely,' : 'Hormat saya,'}<br/><br/><br/><br/><span className="font-bold">{basics.name || <span className="text-gray-400 font-normal">{dBasics.name}</span>}</span></div>
                     </div>
                   ) : (
                     // ----------------------------------------------------
-                    // RENDER CV ATS
+                    // RENDERER CV ATS (DYNAMIC ORDER)
                     // ----------------------------------------------------
                     <div className="w-full text-black">
                       {/* HEADER KONTAK */}
                       {(() => {
-                        const contactItems = [
-                          { val: basics.location, ph: dBasics.location }, { val: basics.phone, ph: dBasics.phone }, { val: basics.email, ph: dBasics.email }
-                        ].filter(Boolean);
-
-                        const renderContactLine = (separator) => (
+                        const cList = [{ v: basics.location, p: dBasics.location }, { v: basics.phone, p: dBasics.phone }, { v: basics.email, p: dBasics.email }].filter(Boolean);
+                        const sep = template === 'normal' ? '|' : '•';
+                        
+                        const renderContact = () => (
                           <>
-                            {contactItems.map((item, i) => (
+                            {cList.map((item, i) => (
                               <span key={i} className="whitespace-nowrap">
-                                {item.val ? <span className="text-black">{item.val}</span> : <span className="text-gray-400">{item.ph}</span>}
-                                {(i < contactItems.length - 1 || (i === contactItems.length - 1 && aProf.length > 0)) && <span className="mx-1.5 text-black font-bold">{separator}</span>}
+                                {item.v ? <span className="text-black">{item.v}</span> : <span className="text-gray-400">{item.p}</span>}
+                                {(i < cList.length - 1 || (i === cList.length - 1 && aProf.length > 0)) && <span className="mx-1.5 text-black font-bold">{sep}</span>}
                               </span>
                             ))}
-                            {/* RENDER LINK DINAMIS (Anti Biru, Profesional) */}
+                            {/* TAUTAN PROFIL (Profesional / Anti Biru) */}
                             {aProf.map((prof, i) => (
-                               <span key={`prof-${i}`} className="whitespace-nowrap">
+                               <span key={`p-${i}`} className="whitespace-nowrap">
                                   {prof.url && !prof.isPh ? (
-                                      <a href={`https://${prof.url.replace(/^https?:\/\//, '')}`} className="text-black hover:underline decoration-gray-400" target="_blank" rel="noopener noreferrer">{prof.platform ? `${prof.platform}: ${prof.url}` : prof.url}</a>
+                                      <a href={`https://${prof.url.replace(/^https?:\/\//, '')}`} className="text-black hover:underline decoration-gray-400" target="_blank" rel="noopener noreferrer">
+                                        {prof.platform ? `${prof.platform}: ${prof.url.replace(/^https?:\/\//, '')}` : prof.url.replace(/^https?:\/\//, '')}
+                                      </a>
                                   ) : (
                                       <span className="text-gray-400">{prof.platform ? `${prof.platform}: ${prof.url}` : prof.url}</span>
                                   )}
-                                  {i < aProf.length - 1 && <span className="mx-1.5 text-black font-bold">{separator}</span>}
+                                  {i < aProf.length - 1 && <span className="mx-1.5 text-black font-bold">{sep}</span>}
                                </span>
                             ))}
                           </>
@@ -545,10 +594,9 @@ export default function AdvancedCVMaker() {
                           <>
                             {template === 'normal' && (
                               <div className="pb-2 text-left">
-                                <h1 className="text-[20pt] font-bold mb-0.5 tracking-tight capitalize leading-none text-black">{basics.name || <span className="text-gray-400">{dBasics.name}</span>}</h1>
-                                {/* FIX: POSISI DITAMPILKAN DI SINI */}
-                                <h2 className="text-[12pt] font-semibold mb-1 text-black">{basics.role ? <span>{basics.role}</span> : <span className="text-gray-400">{dBasics.role}</span>}</h2>
-                                <p className="text-[10.5pt] flex flex-wrap mt-1.5 mb-3">{renderContactLine('|')}</p>
+                                <h1 className="text-[22pt] font-bold mb-0 tracking-tight capitalize leading-none text-black">{basics.name || <span className="text-gray-400">{dBasics.name}</span>}</h1>
+                                <h2 className="text-[12pt] font-semibold mb-1 mt-1 text-black">{basics.role ? <span>{basics.role}</span> : <span className="text-gray-400">{dBasics.role}</span>}</h2>
+                                <p className="text-[10.5pt] flex flex-wrap mt-1 mb-3">{renderContact()}</p>
                                 <div className={`text-[10.5pt] leading-[1.6] text-justify mb-4 break-words ${basics.summary ? 'text-black' : 'text-gray-400'}`}>{basics.summary || dBasics.summary}</div>
                               </div>
                             )}
@@ -556,17 +604,17 @@ export default function AdvancedCVMaker() {
                               <div className="border-b-[3px] border-gray-900 pb-4 mb-4 text-left">
                                 <h1 className="text-3xl font-black text-gray-900 mb-1 uppercase tracking-tight">{basics.name || <span className="text-gray-400">{dBasics.name}</span>}</h1>
                                 <h2 className="text-[15px] font-bold mb-2 uppercase tracking-wide">{basics.role ? <span className="text-gray-600">{basics.role}</span> : <span className="text-gray-400">{dBasics.role}</span>}</h2>
-                                <p className="text-[13px] flex flex-wrap gap-y-1 font-medium">{renderContactLine('•')}</p>
-                                <p className={`text-[13px] leading-relaxed mt-3 ${basics.summary ? 'text-gray-800' : 'text-gray-400'}`}>{basics.summary || dBasics.summary}</p>
+                                <p className="text-[12px] flex flex-wrap gap-y-1 font-medium">{renderContact()}</p>
+                                <p className={`text-[12.5px] leading-relaxed mt-3 text-justify ${basics.summary ? 'text-gray-800' : 'text-gray-400'}`}>{basics.summary || dBasics.summary}</p>
                               </div>
                             )}
                             {(template === 'harvard' || template === 'executive') && (
                               <div className={`text-center mb-6 ${template==='executive' ? 'border-b border-gray-400 pb-4' : ''}`}>
-                                <h1 className={`${template==='harvard' ? 'text-[24pt] font-serif font-normal' : 'text-3xl font-black tracking-tight'} uppercase mb-2 text-black`}>{basics.name || <span className="text-gray-400">{dBasics.name}</span>}</h1>
-                                <p className="text-[10pt] flex justify-center flex-wrap font-medium">
+                                <h1 className={`${template==='harvard' ? 'text-[26pt] font-serif font-normal' : 'text-3xl font-black tracking-tight'} uppercase mb-1 text-black`}>{basics.name || <span className="text-gray-400">{dBasics.name}</span>}</h1>
+                                <p className="text-[10.5pt] flex justify-center flex-wrap font-medium">
                                   {basics.role ? <span className="text-gray-900">{basics.role}</span> : <span className="text-gray-400">{dBasics.role}</span>}
                                   <span className="mx-1.5 text-black font-bold">•</span>
-                                  {renderContactLine('•')}
+                                  {renderContact()}
                                 </p>
                                 {template === 'harvard' ? (
                                   <p className={`text-[11pt] leading-relaxed text-justify mt-4 ${basics.summary ? 'text-gray-900' : 'text-gray-400'}`}>{basics.summary || dBasics.summary}</p>
@@ -580,13 +628,11 @@ export default function AdvancedCVMaker() {
                       })()}
 
                       {/* MESIN PENYUSUN URUTAN (FRESH GRAD VS EXPERIENCED) */}
-                      {(() => {
-                         if (careerLevel === 'fresh') {
-                           return <><RenderEdu/><RenderExp/><RenderProj/><RenderSkills/><RenderCert/></>;
-                         } else {
-                           return <><RenderExp/><RenderEdu/><RenderSkills/><RenderProj/><RenderCert/></>;
-                         }
-                      })()}
+                      {careerLevel === 'fresh' ? (
+                        <><RenderEdu/><RenderExp/><RenderProj/><RenderSkills/><RenderCert/></>
+                      ) : (
+                        <><RenderExp/><RenderEdu/><RenderSkills/><RenderProj/><RenderCert/></>
+                      )}
 
                     </div>
                   )}
@@ -596,14 +642,6 @@ export default function AdvancedCVMaker() {
           </div>
         </div>
       </div>
-      
-      {/* GLOBAL CUSTOM SCROLLBAR UNTUK PANEL */}
-      <style dangerouslySetInnerHTML={{__html: `
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(6, 182, 212, 0.4); border-radius: 10px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(6, 182, 212, 0.8); }
-      `}}/>
     </div>
   )
 }
