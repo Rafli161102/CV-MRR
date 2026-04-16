@@ -67,11 +67,12 @@ export default function CVMaker() {
   // =========================================================================
   const t = {
     id: {
-      personal: "Informasi Dasar", exp: "PENGALAMAN KERJA", edu: "PENDIDIKAN", proj: "PROYEK", cert: "SERTIFIKASI", summary: "PROFIL SINGKAT", skills: "KEAHLIAN DAN KOMPETENSI",
+      personal: "Informasi Dasar", exp: "PENGALAMAN KERJA", edu: "PENDIDIKAN", proj: "PROYEK", cert: "SERTIFIKASI", summary: "PROFIL SINGKAT", skills: "KEAHLIAN DAN KOMPETENSI", links: "TAUTAN PROFIL",
       add: "+ Tambah", del: "Hapus", print: "Cetak / Simpan PDF",
       cvMode: "Data CV", clMode: "Surat Lamaran", clTarget: "Perusahaan Tujuan", clHr: "Nama HRD / Penerima", clDate: "Pilih Tanggal", clBody: "Isi Surat Lamaran", clAuto: "Auto-Generate Isi Surat",
       placeholders: { 
-        name: "Nama Lengkap", role: "Posisi Dilamar", loc: "Kota, Provinsi", phone: "Nomor Telepon", email: "Alamat Email", linkedin: "URL Portofolio / LinkedIn",
+        name: "Nama Lengkap", role: "Posisi Dilamar", loc: "Kota, Provinsi", phone: "Nomor Telepon", email: "Alamat Email",
+        linkPlatform: "Label (Cth: LinkedIn/Portofolio)", linkUrl: "URL (linkedin.com/in/nama)",
         summary: "Tuliskan ringkasan profil Anda secara profesional...", 
         skills: "Keahlian 1, Keahlian 2, Keahlian 3 (Pisahkan koma)", 
         expRole: "Nama Jabatan", expComp: "Nama Perusahaan", expDate: "Bulan Tahun - Bulan Tahun", 
@@ -81,11 +82,12 @@ export default function CVMaker() {
       }
     },
     en: {
-      personal: "Basic Information", exp: "EXPERIENCE", edu: "EDUCATION", proj: "PROJECTS", cert: "CERTIFICATION", summary: "PROFESSIONAL SUMMARY", skills: "SKILLS AND COMPETENCIES",
+      personal: "Basic Information", exp: "EXPERIENCE", edu: "EDUCATION", proj: "PROJECTS", cert: "CERTIFICATION", summary: "PROFESSIONAL SUMMARY", skills: "SKILLS AND COMPETENCIES", links: "PROFILE LINKS",
       add: "+ Add New", del: "Remove", print: "Print / Save as PDF",
       cvMode: "CV Data", clMode: "Cover Letter", clTarget: "Target Company", clHr: "Hiring Manager", clDate: "Select Date", clBody: "Cover Letter Body", clAuto: "Auto-Generate Content",
       placeholders: { 
-        name: "Full Name", role: "Targeted Role", loc: "City, Country", phone: "Phone Number", email: "Email Address", linkedin: "LinkedIn / Portfolio URL",
+        name: "Full Name", role: "Targeted Role", loc: "City, Country", phone: "Phone Number", email: "Email Address",
+        linkPlatform: "Label (e.g., LinkedIn/GitHub)", linkUrl: "URL (github.com/username)",
         summary: "Write your professional summary here...", skills: "Core Skills (e.g. HTML, CSS, Figma)", 
         expRole: "Job Title", expComp: "Company Name", expDate: "Month Year - Month Year", 
         eduInst: "University Name", eduMaj: "Major / Degree", eduDate: "Graduation Date",
@@ -94,11 +96,12 @@ export default function CVMaker() {
       }
     },
     jp: {
-      personal: "基本情報", exp: "職務経歴", edu: "学歴", proj: "プロジェクト", cert: "資格・免許", summary: "自己PR / 職務要約", skills: "スキル・知識",
+      personal: "基本情報", exp: "職務経歴", edu: "学歴", proj: "プロジェクト", cert: "資格・免許", summary: "自己PR / 職務要約", skills: "スキル・知識", links: "リンク",
       add: "+ 追加", del: "削除", print: "PDFとして保存",
       cvMode: "履歴書 (CV)", clMode: "送付状 (Cover Letter)", clTarget: "応募先企業名", clHr: "採用担当者名", clDate: "日付を選択", clBody: "本文", clAuto: "AI 自動生成",
       placeholders: { 
-        name: "氏名", role: "希望職種", loc: "住所", phone: "電話番号", email: "メールアドレス", linkedin: "リンク", 
+        name: "氏名", role: "希望職種", loc: "住所", phone: "電話番号", email: "メールアドレス",
+        linkPlatform: "ラベル (例: ポートフォリオ)", linkUrl: "URL",
         summary: "自己PRを入力してください...", skills: "スキル (HTML, CSS...)", 
         expRole: "役職", expComp: "会社名", expDate: "YYYY/MM", 
         eduInst: "学校名", eduMaj: "学部・学科", eduDate: "YYYY/MM", 
@@ -112,9 +115,12 @@ export default function CVMaker() {
   // STATE FORMULIR UTAMA (CV)
   // =========================================================================
   const [basics, setBasics] = useState({ 
-    name: "", furigana: "", role: "", location: "", addressFurigana: "", phone: "", email: "", linkedin: "", summary: "", skills: "",
+    name: "", furigana: "", role: "", location: "", addressFurigana: "", phone: "", email: "", summary: "", skills: "",
     birthdate: "", age: "", gender: "男", nationality: "", visa: "", commuteTime: "", commuteMinute: "", dependents: "", spouse: "", spouseSupport: ""
   });
+  
+  // Perubahan: Mengganti linkedin tunggal menjadi array profil
+  const [profiles, setProfiles] = useState([{ id: 1, platform: "", url: "" }]);
   const [experiences, setExperiences] = useState([{ id: 1, role: "", company: "", period: "", description: "" }]);
   const [educations, setEducations] = useState([{ id: 1, institution: "", major: "", period: "", gpa: "" }]);
   const [projects, setProjects] = useState([{ id: 1, name: "", period: "", description: "" }]);
@@ -171,23 +177,27 @@ export default function CVMaker() {
   };
 
   // =========================================================================
-  // DATA DUMMY PLACEHOLDER
+  // DATA DUMMY PLACEHOLDER (TAMPIL JIKA FORM KOSONG)
   // =========================================================================
   const dBasics = {
-    name: lang === 'en' ? 'JOHN DOE' : lang === 'jp' ? '山田 太郎' : 'NAMA ANDA (PENGIRIM)',
+    name: lang === 'en' ? 'JOHN DOE' : lang === 'jp' ? '山田 太郎' : 'NAMA ANDA',
     role: lang === 'en' ? 'Graphic Designer' : lang === 'jp' ? 'グラフィックデザイナー' : 'Graphic Designer / Posisi',
     location: lang === 'en' ? 'New York, USA' : lang === 'jp' ? '東京都渋谷区' : 'Jakarta, Indonesia',
     phone: lang === 'en' ? '+1 234 567 890' : lang === 'jp' ? '090-1234-5678' : '0812-3456-7890',
     email: lang === 'en' ? 'johndoe@email.com' : lang === 'jp' ? 'yamada@email.com' : 'email@anda.com',
-    linkedin: lang === 'en' ? 'linkedin.com/in/johndoe' : lang === 'jp' ? 'linkedin.com/in/yamada' : 'linkedin.com/in/namaanda',
     summary: lang === 'en' 
       ? 'A highly motivated Graphic Designer with 3+ years of experience in visual branding and UI design. Passionate about creating engaging digital content that drives user engagement.' 
       : lang === 'jp' 
       ? '3年以上のデザイン経験を持つグラフィックデザイナー。ブランドアイデンティティやUIデザインに強みがあり、ユーザーの心を動かすビジュアル制作を得意としています。' 
-      : 'Seorang Graphic Designer dengan pengalaman lebih dari 3 tahun dalam merancang identitas visual dan materi pemasaran. Memiliki minat yang kuat dalam menciptakan desain digital yang efektif.',
+      : 'Seorang Graphic Designer dengan pengalaman dalam merancang identitas visual dan materi pemasaran. Memiliki minat yang kuat dalam menciptakan desain digital yang efektif.',
     skills: lang === 'en' ? 'Adobe Photoshop, Illustrator, Figma, UI/UX Design' : lang === 'jp' ? 'Adobe Photoshop, Illustrator, Figma, UI/UXデザイン' : 'Adobe Photoshop, Illustrator, Figma, Desain UI/UX',
     furigana: 'やまだ たろう', birthdate: '1995/01/01', age: '28', gender: '男', addressFurigana: 'とうきょうと しぶやく', nationality: 'インドネシア', visa: '特定技能1号', commuteTime: '1', commuteMinute: '30', dependents: '0', spouse: '無', spouseSupport: '無'
   };
+
+  const isProfileEmpty = profiles.length === 1 && !profiles[0].platform && !profiles[0].url;
+  const activeProfiles = isProfileEmpty ? [
+      { platform: lang === 'en' ? 'LinkedIn' : lang === 'jp' ? 'ポートフォリオ' : 'LinkedIn', url: 'linkedin.com/in/namaanda', isPlaceholder: true }
+  ] : profiles.filter(p => p.url.trim() || p.platform.trim());
 
   const isExpEmpty = experiences.length === 1 && !experiences[0].company && !experiences[0].role;
   const activeExp = isExpEmpty ? [
@@ -209,6 +219,7 @@ export default function CVMaker() {
     { name: lang==='en'?'UX Design Professional':lang==='jp'?'日本語能力試験 N2':'Sertifikasi Profesional UX', period: lang==='en'?'2023':lang==='jp'?'2023/12':'2023', issuer: 'Google', description: lang==='en'?'- Mastered user research and wireframing.':'- Spesialisasi dalam riset pengguna dan wireframing.', isPlaceholder: true }
   ] : certs.filter(c => c.name.trim() || c.issuer.trim());
 
+  // PARSER TABEL JEPANG (JIS)
   const parseJpDate = (dateStr) => {
     if (!dateStr) return { year: '', month: '' };
     const parts = dateStr.split(/[\/\-\s]+/);
@@ -364,7 +375,7 @@ export default function CVMaker() {
                     </li>
                     <li className="flex gap-2">
                       <span className="text-cyan-400 font-bold">4.</span>
-                      <span><b>Sembunyikan Kategori:</b> Jika Anda tidak memiliki Proyek atau Sertifikasi, tekan tombol <span className="text-red-400 font-bold">Hapus</span>. Kategori akan hilang bersih dari kertas!</span>
+                      <span><b>Sembunyikan Kategori:</b> Jika Anda tidak memiliki Proyek atau Sertifikasi (atau Anda <i>Fresh Graduate</i> tanpa Pengalaman), cukup biarkan kosong atau tekan tombol <span className="text-red-400 font-bold">Hapus</span>. Kategori akan hilang bersih dari kertas tanpa merusak desain!</span>
                     </li>
                   </>
                 ) : (
@@ -455,30 +466,29 @@ export default function CVMaker() {
                       <input type="text" name="location" value={basics.location} onChange={handleBasicsChange} className="w-full bg-[#060D1F] border border-white/5 p-2.5 rounded text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder={t.placeholders.loc} />
                       <input type="text" name="phone" value={basics.phone} onChange={handleBasicsChange} className="w-full bg-[#060D1F] border border-white/5 p-2.5 rounded text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder={t.placeholders.phone} />
                     </div>
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-1 gap-2">
                       <input type="email" name="email" value={basics.email} onChange={handleBasicsChange} className="w-full bg-[#060D1F] border border-white/5 p-2.5 rounded text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder={t.placeholders.email} />
-                      {!isJapanese && <input type="text" name="linkedin" value={basics.linkedin} onChange={handleBasicsChange} className="w-full bg-[#060D1F] border border-white/5 p-2.5 rounded text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder={t.placeholders.linkedin} />}
                     </div>
                     <textarea name="summary" value={basics.summary} onChange={handleBasicsChange} rows={isJapanese ? 3 : 4} className="w-full bg-[#060D1F] border border-white/5 p-2.5 rounded text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder={t.placeholders.summary}></textarea>
                     {!isJapanese && <textarea name="skills" value={basics.skills} onChange={handleBasicsChange} rows="3" className="w-full bg-[#060D1F] border border-white/5 p-2.5 rounded text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder={t.placeholders.skills}></textarea>}
                   </div>
                 </div>
 
+                {!isJapanese && (
                 <div className="mb-6">
                   <div className="flex justify-between items-center mb-3 border-b border-white/10 pb-1">
-                    <h2 className="text-lg font-bold text-cyan-400">{t.exp}</h2>
-                    <button onClick={() => addField(setExperiences, experiences, { role: "", company: "", period: "", description: "" })} className="text-[10px] font-bold bg-cyan-600/20 hover:bg-cyan-600 text-cyan-400 hover:text-white px-2 py-1 rounded transition-colors">{t.add}</button>
+                    <h2 className="text-lg font-bold text-cyan-400">{t.links}</h2>
+                    <button onClick={() => addField(setProfiles, profiles, { platform: "", url: "" })} className="text-[10px] font-bold bg-cyan-600/20 hover:bg-cyan-600 text-cyan-400 hover:text-white px-2 py-1 rounded transition-colors">{t.add}</button>
                   </div>
-                  {experiences.map((exp, index) => (
-                    <div key={exp.id} className="bg-[#060D1F] p-4 rounded-xl mb-3 relative border border-white/5">
-                      <button onClick={() => removeField(setExperiences, experiences, index)} className="absolute top-3 right-3 text-red-400 hover:text-red-300 text-[10px] font-bold px-2 py-1 bg-red-400/10 rounded">{t.del}</button>
-                      <input type="text" value={exp.company} onChange={(e) => handleArrayChange(setExperiences, experiences, index, 'company', e.target.value)} className="w-11/12 bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:border-cyan-500 focus:outline-none mb-2" placeholder={t.placeholders.expComp} />
-                      <input type="text" value={exp.role} onChange={(e) => handleArrayChange(setExperiences, experiences, index, 'role', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:border-cyan-500 focus:outline-none mb-2" placeholder={t.placeholders.expRole} />
-                      <input type="text" value={exp.period} onChange={(e) => handleArrayChange(setExperiences, experiences, index, 'period', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:border-cyan-500 focus:outline-none mb-2" placeholder={t.placeholders.expDate} />
-                      {!isJapanese && <textarea value={exp.description} onChange={(e) => handleArrayChange(setExperiences, experiences, index, 'description', e.target.value)} rows="3" className="w-full mt-2 bg-transparent border border-white/5 rounded p-2 text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder="- Tulis deskripsi pencapaian atau pekerjaan..."></textarea>}
+                  {profiles.map((prof, index) => (
+                    <div key={prof.id} className="bg-[#060D1F] p-4 rounded-xl mb-3 relative border border-white/5 flex gap-2">
+                      <button onClick={() => removeField(setProfiles, profiles, index)} className="absolute -top-2 -right-2 text-red-400 hover:text-red-300 text-[10px] font-bold px-2 py-1 bg-red-400/20 rounded-full">{t.del}</button>
+                      <input type="text" value={prof.platform} onChange={(e) => handleArrayChange(setProfiles, profiles, index, 'platform', e.target.value)} className="w-1/3 bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder={t.placeholders.linkPlatform} />
+                      <input type="text" value={prof.url} onChange={(e) => handleArrayChange(setProfiles, profiles, index, 'url', e.target.value)} className="w-2/3 bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder={t.placeholders.linkUrl} />
                     </div>
                   ))}
                 </div>
+                )}
 
                 <div className="mb-6">
                   <div className="flex justify-between items-center mb-3 border-b border-white/10 pb-1">
@@ -494,6 +504,22 @@ export default function CVMaker() {
                         <input type="text" value={edu.period} onChange={(e) => handleArrayChange(setEducations, educations, index, 'period', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder={t.placeholders.eduDate} />
                         {!isJapanese && <input type="text" value={edu.gpa} onChange={(e) => handleArrayChange(setEducations, educations, index, 'gpa', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder="GPA / IPK" />}
                       </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mb-6">
+                  <div className="flex justify-between items-center mb-3 border-b border-white/10 pb-1">
+                    <h2 className="text-lg font-bold text-cyan-400">{t.exp}</h2>
+                    <button onClick={() => addField(setExperiences, experiences, { role: "", company: "", period: "", description: "" })} className="text-[10px] font-bold bg-cyan-600/20 hover:bg-cyan-600 text-cyan-400 hover:text-white px-2 py-1 rounded transition-colors">{t.add}</button>
+                  </div>
+                  {experiences.map((exp, index) => (
+                    <div key={exp.id} className="bg-[#060D1F] p-4 rounded-xl mb-3 relative border border-white/5">
+                      <button onClick={() => removeField(setExperiences, experiences, index)} className="absolute top-3 right-3 text-red-400 hover:text-red-300 text-[10px] font-bold px-2 py-1 bg-red-400/10 rounded">{t.del}</button>
+                      <input type="text" value={exp.company} onChange={(e) => handleArrayChange(setExperiences, experiences, index, 'company', e.target.value)} className="w-11/12 bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:border-cyan-500 focus:outline-none mb-2" placeholder={t.placeholders.expComp} />
+                      <input type="text" value={exp.role} onChange={(e) => handleArrayChange(setExperiences, experiences, index, 'role', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:border-cyan-500 focus:outline-none mb-2" placeholder={t.placeholders.expRole} />
+                      <input type="text" value={exp.period} onChange={(e) => handleArrayChange(setExperiences, experiences, index, 'period', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:border-cyan-500 focus:outline-none mb-2" placeholder={t.placeholders.expDate} />
+                      {!isJapanese && <textarea value={exp.description} onChange={(e) => handleArrayChange(setExperiences, experiences, index, 'description', e.target.value)} rows="3" className="w-full mt-2 bg-transparent border border-white/5 rounded p-2 text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder="- Tulis deskripsi pencapaian atau pekerjaan..."></textarea>}
                     </div>
                   ))}
                 </div>
@@ -842,8 +868,7 @@ export default function CVMaker() {
                           const contactItems = [
                             { val: basics.location, ph: dBasics.location },
                             { val: basics.phone, ph: dBasics.phone },
-                            { val: basics.email, ph: dBasics.email },
-                            { val: basics.linkedin, ph: dBasics.linkedin }
+                            { val: basics.email, ph: dBasics.email }
                           ].filter(Boolean);
 
                           const renderContactLine = (separator) => (
@@ -853,6 +878,18 @@ export default function CVMaker() {
                                   {item.val ? <span className="text-black">{item.val}</span> : <span className="text-gray-400">{item.ph}</span>}
                                   {i < contactItems.length - 1 && <span className="mx-1.5 text-black font-bold">{separator}</span>}
                                 </span>
+                              ))}
+                              {/* RENDER LINK DINAMIS */}
+                              {activeProfiles.length > 0 && <span className="mx-1.5 text-black font-bold">{separator}</span>}
+                              {activeProfiles.map((prof, i) => (
+                                 <span key={`prof-${i}`} className="whitespace-nowrap">
+                                    {prof.url ? (
+                                        <a href={`https://${prof.url.replace(/^https?:\/\//, '')}`} className="text-blue-600 hover:underline">{prof.url}</a>
+                                    ) : (
+                                        <span className="text-gray-400">{prof.url || 'linkedin.com/in/namaanda'}</span>
+                                    )}
+                                    {i < activeProfiles.length - 1 && <span className="mx-1.5 text-black font-bold">{separator}</span>}
+                                 </span>
                               ))}
                             </>
                           );
@@ -912,10 +949,9 @@ export default function CVMaker() {
                           );
                         })()}
 
-                        {/* PERBAIKAN LOGIKA KONDISIONAL (KATEGORI HILANG JIKA KOSONG) */}
+                        {/* MESIN RENDER DAFTAR (PENGALAMAN DLL) DENGAN PLACEHOLDER GRAY */}
                         {(() => {
                           const formatDesc = (text, isNorm, isPh) => text ? text.split('\n').map((l, i) => { const isBul = l.trim().startsWith('-'); return <div key={i} className={`flex ${isBul ? 'mt-1' : ''}`}>{isBul && <span className="mr-2 font-bold">•</span>}<span className={`${isBul ? 'flex-1' : ''} ${isNorm ? 'text-[10.5pt] leading-[1.5]' : 'text-[13px] leading-relaxed'} ${isPh ? 'text-gray-400' : 'text-black'} text-justify`}>{isBul ? l.replace(/^-/, '').trim() : l}</span></div>; }) : null;
-                          
                           const SecTitle = ({ t }) => {
                             if (template === 'normal') return <h2 className="text-[11pt] font-bold uppercase border-b-[1.5px] border-black mb-2.5 pb-0.5 text-black tracking-wide mt-5">{t}</h2>;
                             if (template === 'executive') return <h2 className="text-[12px] font-bold uppercase border-b border-gray-300 mb-2 pb-1 text-gray-900 tracking-widest mt-3">{t}</h2>;
@@ -923,7 +959,6 @@ export default function CVMaker() {
                             return <h2 className="text-[12pt] font-bold uppercase text-center border-b border-black mb-3 pb-1 tracking-widest mt-4">{t}</h2>;
                           };
                           
-                          // Logika .length > 0 memastikan jika array kosong (dihapus semua), seluruh kategori (termasuk judul) lenyap.
                           const R_Edu = () => activeEdu.length > 0 ? <div className="mb-3"><SecTitle t={t.edu} />{activeEdu.map((e, i) => <div key={i} className="mb-2.5 break-inside-avoid"><div className="flex justify-between"><h3 className={`text-[10.5pt] font-bold ${e.isPlaceholder ? 'text-gray-400' : 'text-black'}`}>{e.institution}</h3><span className={`text-[10.5pt] whitespace-nowrap ${e.isPlaceholder ? 'text-gray-400' : 'text-black'}`}>{e.period}</span></div><div className={`text-[10.5pt] ${e.isPlaceholder ? 'text-gray-400' : 'text-black'}`}>{e.major}</div>{e.gpa && <div className={`text-[10.5pt] ${e.isPlaceholder ? 'text-gray-400' : 'text-black'}`}>{e.gpa}</div>}</div>)}</div> : null;
                           
                           const R_Skl = () => <div className="mb-3 break-inside-avoid"><SecTitle t={t.skills} />{template === 'normal' ? <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-1 mt-1 text-[10.5pt] text-black">{(basics.skills || dBasics.skills).split(',').map((s, i) => <div key={i} className={`flex items-start ${basics.skills ? 'text-black' : 'text-gray-400'}`}><span className="mr-2 font-bold">•</span><span>{s.trim()}</span></div>)}</div> : <p className={`text-[10.5pt] leading-relaxed whitespace-pre-wrap break-words ${basics.skills ? 'text-black' : 'text-gray-400'}`}>{basics.skills || dBasics.skills}</p>}</div>;
@@ -934,6 +969,7 @@ export default function CVMaker() {
                           
                           const R_Crt = () => activeCerts.length > 0 ? <div className="mb-3"><SecTitle t={t.cert} />{activeCerts.map((c, i) => <div key={i} className="mb-3.5 break-inside-avoid"><div className="flex justify-between"><h3 className={`text-[10.5pt] font-bold ${c.isPlaceholder ? 'text-gray-400' : 'text-black'}`}>{c.name}</h3><span className={`text-[10.5pt] whitespace-nowrap ${c.isPlaceholder ? 'text-gray-400' : 'text-black'}`}>{c.period}</span></div><div className={`text-[10.5pt] italic mb-1 ${c.isPlaceholder ? 'text-gray-400' : 'text-black'}`}>{c.issuer}</div><div className={`${template === 'normal' ? 'ml-0' : 'pl-3'}`}>{formatDesc(c.description, template === 'normal', c.isPlaceholder)}</div></div>)}</div> : null;
 
+                          // SUSUNAN MODE FRESH GRADUATE (Pendidikan diutamakan)
                           if (template === 'normal') return <><R_Edu/><R_Skl/><R_Exp/><R_Prj/><R_Crt/></>;
                           if (template === 'modern') return <><R_Exp/><R_Edu/><R_Skl/><R_Prj/><R_Crt/></>;
                           return <><R_Edu/><R_Exp/><R_Prj/><R_Crt/><R_Skl/></>;
