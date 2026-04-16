@@ -47,14 +47,14 @@ const LightbulbIcon = () => (
   </svg>
 );
 
-// Helper Script Loader untuk PDF & Docx Parser di sisi Klien
+// Helper Script Loader untuk PDF & Docx Parser di sisi Klien (HP/Desktop)
 const loadScript = (src) => {
   return new Promise((resolve, reject) => {
     if (document.querySelector(`script[src="${src}"]`)) return resolve();
     const script = document.createElement('script');
     script.src = src;
     script.onload = resolve;
-    script.onerror = reject;
+    script.onerror = () => reject(new Error(`Gagal memuat script dari ${src}. Pastikan koneksi internet stabil.`));
     document.head.appendChild(script);
   });
 };
@@ -226,20 +226,20 @@ export default function CVMaker() {
   };
 
   // =========================================================================
-  // MAGIC AI IMPORT (UPLOAD CV LAMA)
+  // MAGIC AI IMPORT (PERBAIKAN ERROR HANDLING UNTUK MOBILE)
   // =========================================================================
   const handleAiUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
     setIsAiLoading(true);
-    setAiStatus('Membaca file Anda...');
+    setAiStatus('Membaca file dokumen/gambar Anda...');
 
     try {
       let extractedPayload = null;
 
-      // 1. Ekstraksi Teks/Gambar dari Berbagai Format
+      // 1. Ekstraksi Teks/Gambar
       if (file.type === 'application/pdf') {
-        setAiStatus('Membaca dokumen PDF...');
+        setAiStatus('Membaca isi PDF...');
         await loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js');
         window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
         const arrayBuffer = await file.arrayBuffer();
@@ -261,9 +261,10 @@ export default function CVMaker() {
       } 
       else if (file.type.startsWith('image/')) {
         setAiStatus('Memproses gambar...');
-        extractedPayload = await new Promise((resolve) => {
+        extractedPayload = await new Promise((resolve, reject) => {
           const reader = new FileReader();
           reader.onload = () => resolve({ type: 'image_url', url: reader.result });
+          reader.onerror = () => reject(new Error("Gagal membaca file gambar."));
           reader.readAsDataURL(file);
         });
       } 
@@ -271,17 +272,18 @@ export default function CVMaker() {
         extractedPayload = await file.text();
       }
 
-      setAiStatus('Robot AI sedang menyusun data Anda. Mohon tunggu...');
+      setAiStatus('Mengirim data ke AI. Mohon tunggu...');
 
       // 2. Persiapan Payload untuk API AI
       let messages = [
         { 
           role: "system", 
-          content: `Anda adalah ahli ekstraksi data CV ATS. Ekstrak data yang diberikan dan kembalikan HANYA format JSON valid tanpa penjelasan apapun, tanpa blok markdown \`\`\`json. Jika data tidak ada, kosongkan string (""). Format wajib:
+          content: `Anda adalah ahli parser JSON. Berikan balasan HANYA dalam format JSON valid berdasarkan teks/gambar user. Jangan gunakan tag markdown seperti \`\`\`json.
+          Gunakan persis struktur ini:
           {
             "basics": {"name": "", "role": "", "location": "", "phone": "", "email": "", "summary": "", "skills": ""},
             "profiles": [{"platform": "", "url": ""}],
-            "experiences": [{"company": "", "role": "", "period": "", "description": "- Poin 1\\n- Poin 2"}],
+            "experiences": [{"company": "", "role": "", "period": "", "description": ""}],
             "educations": [{"institution": "", "major": "", "period": "", "gpa": ""}],
             "projects": [{"name": "", "period": "", "description": ""}],
             "certs": [{"name": "", "issuer": "", "period": "", "description": ""}]
@@ -293,18 +295,21 @@ export default function CVMaker() {
         messages.push({
           role: "user",
           content: [
-            { type: "text", text: "Ekstrak informasi dari gambar CV berikut ke JSON:" },
+            { type: "text", text: "Ekstrak CV dari gambar ini ke JSON:" },
             { type: "image_url", image_url: { url: extractedPayload.url } }
           ]
         });
       } else {
+        if (!extractedPayload || extractedPayload.trim().length === 0) {
+            throw new Error("Teks tidak terdeteksi dalam file. Pastikan dokumen tidak kosong/berupa hasil scan gambar yang tidak terbaca teksnya.");
+        }
         messages.push({
           role: "user",
-          content: "Ekstrak informasi dari teks CV berikut:\n\n" + extractedPayload
+          content: "Ekstrak CV berikut ini ke JSON:\n\n" + extractedPayload
         });
       }
 
-      // 3. Panggil API AI Open-Compatible
+      // 3. Panggil API AI (TANPA MENGGUNAKAN response_format AGAR PROXY TIDAK ERROR 400)
       const aiRes = await fetch("https://api-ai.tegarfirman.site/v1/chat/completions", {
         method: "POST",
         headers: {
@@ -312,20 +317,39 @@ export default function CVMaker() {
           "Authorization": "Bearer sk-e0dde619-2dd3-4018-aad1-e7f602d58534"
         },
         body: JSON.stringify({
-          model: "gpt-4o-mini", // Gunakan model ringan/cepat yang didukung endpoint
+          model: "gpt-4o-mini",
           messages: messages,
           temperature: 0.1
         })
       });
 
+      // Tangkap error API asli agar muncul di HP
+      if (!aiRes.ok) {
+        const errorText = await aiRes.text();
+        throw new Error(`Server API menolak (Status ${aiRes.status}).\n\nDetail API: ${errorText.substring(0, 100)}`);
+      }
+
       const aiData = await aiRes.json();
+      if (!aiData.choices || !aiData.choices[0]) {
+         throw new Error("Respon API tidak valid / kosong.");
+      }
+      
       let rawContent = aiData.choices[0].message.content;
 
-      // Bersihkan jika AI masih mengembalikan markdown
-      rawContent = rawContent.replace(/```json/g, '').replace(/```/g, '').trim();
+      // 4. PARSER JSON CERDAS (Aman untuk berbagai format balasan AI)
+      // Mencari kurung kurawal pembuka { pertama dan penutup } terakhir
+      const startIndex = rawContent.indexOf('{');
+      const endIndex = rawContent.lastIndexOf('}');
+      
+      if (startIndex !== -1 && endIndex !== -1) {
+        rawContent = rawContent.substring(startIndex, endIndex + 1);
+      } else {
+        throw new Error("AI tidak membalas dengan format JSON yang dikenali.");
+      }
+
       const parsedCV = JSON.parse(rawContent);
 
-      // 4. Update State dengan ID unik
+      // 5. Update State
       if (parsedCV.basics) setBasics(prev => ({...prev, ...parsedCV.basics}));
       if (parsedCV.profiles?.length) setProfiles(parsedCV.profiles.map(p => ({...p, id: Math.random()})));
       if (parsedCV.experiences?.length) setExperiences(parsedCV.experiences.map(e => ({...e, id: Math.random()})));
@@ -333,10 +357,10 @@ export default function CVMaker() {
       if (parsedCV.projects?.length) setProjects(parsedCV.projects.map(p => ({...p, id: Math.random()})));
       if (parsedCV.certs?.length) setCerts(parsedCV.certs.map(c => ({...c, id: Math.random()})));
 
-      alert("Yay! Data CV berhasil diimpor dan disusun rapih oleh AI.");
+      alert("✅ Yay! Data CV berhasil diimpor dan disusun rapih oleh AI.");
     } catch (error) {
-      console.error(error);
-      alert("Maaf, terjadi kesalahan saat mengekstrak dokumen. Pastikan file jelas dan bisa dibaca teksnya.");
+      // Menampilkan pesan error asli ke layer popup HP
+      alert(`⚠️ PROSES GAGAL!\n\nAlasan: ${error.message}`);
     } finally {
       setIsAiLoading(false);
       setAiStatus('');
@@ -1103,7 +1127,7 @@ export default function CVMaker() {
                                 </span>
                               ))}
                               
-                              {/* RENDER LINK PROFIL DINAMIS (Bug Fix: text-black untuk ATS) */}
+                              {/* RENDER LINK PROFIL DINAMIS */}
                               {activeProfiles.map((prof, i) => (
                                  <span key={`prof-${i}`} className="whitespace-nowrap">
                                     {prof.url ? (
@@ -1172,9 +1196,8 @@ export default function CVMaker() {
                           );
                         })()}
 
-                        {/* MESIN RENDER DAFTAR ATS (PENGALAMAN DLL) */}
+                        {/* MESIN RENDER DAFTAR ATS */}
                         {(() => {
-                          // Bug Fix ATS: Merubah div menjadi ul li semantic standar HTML
                           const formatDescATS = (text, isNorm, isPh) => {
                             if (!text) return null;
                             const lines = text.split('\n');
@@ -1218,13 +1241,11 @@ export default function CVMaker() {
                           
                           const R_Crt = () => activeCerts.length > 0 ? <div className="mb-3"><SecTitle t={t.cert} />{activeCerts.map((c, i) => <div key={i} className="mb-3.5 break-inside-avoid"><div className="flex justify-between"><h3 className={`text-[10.5pt] font-bold ${c.isPlaceholder ? 'text-gray-400' : 'text-black'}`}>{c.name}</h3><span className={`text-[10.5pt] whitespace-nowrap ${c.isPlaceholder ? 'text-gray-400' : 'text-black'}`}>{c.period}</span></div><div className={`text-[10.5pt] italic mb-1 ${c.isPlaceholder ? 'text-gray-400' : 'text-black'}`}>{c.issuer}</div><div className={`${template === 'normal' ? 'ml-0' : 'pl-3'}`}>{formatDescATS(c.description, template === 'normal', c.isPlaceholder)}</div></div>)}</div> : null;
 
-                          // MESIN SUSUNAN (ORDER) OTOMATIS: FRESH GRAD VS EXPERIENCED
+                          // MESIN SUSUNAN (ORDER) OTOMATIS
                           const RenderCVOrder = () => {
                              if (careerLevel === 'fresh') {
-                               // Fresh Grad: Pendidikan paling atas
                                return <><R_Edu/><R_Exp/><R_Prj/><R_Skl/><R_Crt/></>;
                              } else {
-                               // Berpengalaman: Pengalaman paling atas
                                return <><R_Exp/><R_Edu/><R_Skl/><R_Prj/><R_Crt/></>;
                              }
                           };
