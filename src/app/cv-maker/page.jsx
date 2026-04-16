@@ -242,15 +242,65 @@ export default function CVMaker() {
   return (
     <div className="min-h-screen pt-28 pb-20 px-4 md:px-8 bg-[#060D1F] relative z-10 selection:bg-cyan-500 selection:text-white font-sans print:bg-white print:pt-0 print:pb-0 print:px-0 print:min-h-0">
       
-      {/* PERBAIKAN CSS CETAK (MEMATIKAN POSITION ABSOLUTE) */}
+      {/* ======================================================================= */}
+      {/* PERBAIKAN CSS CETAK (MEMBUNUH SEMUA ELEMEN WEBSITE KECUALI KERTAS)        */}
+      {/* ======================================================================= */}
       <style dangerouslySetInnerHTML={{__html: `
         @media print {
-          @page { size: A4; margin: 1cm; }
-          html, body { background: white !important; color: black !important; overflow: visible !important; height: auto !important; }
+          /* 1. Reset Ukuran Kertas & Body Default */
+          @page { size: A4; margin: 10mm; }
+          html, body { 
+            background: white !important; 
+            color: black !important; 
+            margin: 0 !important; 
+            padding: 0 !important;
+            height: auto !important;
+            overflow: visible !important;
+          }
+
+          /* 2. Sembunyikan elemen Navigasi & Footer Global (MRR Navbar, dll) */
+          header, nav, footer, aside, iframe, .show-in-pwa, .mrr-navbar, .mrr-footer, button, a {
+            display: none !important;
+          }
+
+          /* 3. Sembunyikan form kontrol pembuat CV */
           .no-print { display: none !important; }
-          #preview-container { width: 100% !important; margin: 0 !important; padding: 0 !important; background: transparent !important; border: none !important; box-shadow: none !important; overflow: visible !important; }
-          #cv-preview { width: 100% !important; max-width: 100% !important; min-width: 0 !important; min-height: 0 !important; margin: 0 !important; padding: 0 !important; box-shadow: none !important; border: none !important; }
+
+          /* 4. Lepaskan kertas dari jeratan Layout Flexbox bawaan agar bisa multi-halaman */
+          .min-h-screen, .max-w-\\[1400px\\], .xl\\:flex-row, .xl\\:w-7\\/12, #preview-container, .w-fit {
+            display: block !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            position: static !important;
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            transform: none !important;
+            overflow: visible !important;
+          }
+
+          /* 5. Format Khusus Kanvas Kertas CV */
+          #cv-preview {
+            display: block !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            min-width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            box-shadow: none !important;
+            border: none !important;
+            page-break-after: auto;
+          }
+
+          /* 6. Cegah elemen teks terpotong di tengah-tengah pergantian halaman */
+          .break-inside-avoid, h2, h3, tr {
+            break-inside: avoid !important;
+            page-break-inside: avoid !important;
+          }
         }
+        
         input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; opacity: 0.7; }
         input[type="date"]::-webkit-calendar-picker-indicator:hover { opacity: 1; }
       `}} />
