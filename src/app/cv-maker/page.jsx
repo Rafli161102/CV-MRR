@@ -41,6 +41,15 @@ const MagicPenIcon = () => (
   </svg>
 );
 
+// Komponen Input dengan Label untuk memudahkan User Awam
+const LabeledInput = ({ label, helperText, children }) => (
+  <div className="space-y-1">
+    <label className="text-[10px] sm:text-xs font-bold text-cyan-400 uppercase tracking-widest pl-1">{label}</label>
+    {children}
+    {helperText && <p className="text-[10px] text-slate-500 pl-1 mt-1">{helperText}</p>}
+  </div>
+);
+
 export default function CVMaker() {
   const [template, setTemplate] = useState('normal'); 
   const [lang, setLang] = useState('id'); 
@@ -71,17 +80,17 @@ export default function CVMaker() {
   const t = {
     id: {
       personal: "Informasi Dasar", exp: "PENGALAMAN KERJA", edu: "PENDIDIKAN", proj: "PROYEK", cert: "SERTIFIKASI", summary: "PROFIL SINGKAT", skills: "KEAHLIAN DAN KOMPETENSI", links: "TAUTAN PROFIL DIGITAL",
-      add: "+ Tambah", del: "Hapus", print: "Cetak / Simpan PDF",
-      cvMode: "Data CV", clMode: "Surat Lamaran", clTarget: "Perusahaan Tujuan", clHr: "Nama HRD / Penerima", clDate: "Pilih Tanggal", clBody: "Isi Surat Lamaran", clAuto: "Auto-Generate Isi Surat",
+      add: "+ Tambah Baru", del: "Hapus", print: "Cetak ke PDF",
+      cvMode: "Buat CV", clMode: "Buat Surat Lamaran", clTarget: "Perusahaan Tujuan", clHr: "Nama HRD / Penerima", clDate: "Pilih Tanggal", clBody: "Isi Surat Lamaran", clAuto: "Buatkan Otomatis via AI",
       placeholders: { 
-        name: "Nama Lengkap", role: "Posisi Dilamar", loc: "Kota, Provinsi", phone: "Nomor Telepon", email: "Alamat Email",
-        linkPlatform: "Label (Cth: LinkedIn/GitHub)", linkUrl: "URL (Cth: linkedin.com/in/nama)",
-        summary: "Tuliskan ringkasan profil Anda secara profesional...", 
-        skills: "Keahlian 1, Keahlian 2, Keahlian 3 (Pisahkan dengan koma)", 
-        expRole: "Nama Jabatan", expComp: "Nama Perusahaan", expDate: "Bulan Tahun - Bulan Tahun", 
-        eduInst: "Nama Kampus / Sekolah", eduMaj: "Jurusan / Gelar", eduDate: "Bulan Tahun Lulus",
-        projName: "Nama Proyek", projDate: "Bulan Tahun", certName: "Nama Sertifikasi", certDate: "Bulan Tahun",
-        clHr: "Bapak/Ibu HRD", clTarget: "PT Nama Perusahaan", clSenderLoc: "Kota, Provinsi", clSenderPhone: "0812-xxxx-xxxx", clSenderEmail: "email@anda.com", clTargetRole: "Contoh: Graphic Designer", clRelevantSkills: "Contoh: Adobe Illustrator, Photoshop"
+        name: "Contoh: Budi Santoso", role: "Posisi yang dilamar (Contoh: Admin Staff)", loc: "Kota & Provinsi (Contoh: Jakarta Selatan)", phone: "Nomor Telepon/WA Aktif", email: "Alamat Email Aktif",
+        linkPlatform: "Nama Situs (Contoh: LinkedIn)", linkUrl: "Tautan URL (Contoh: linkedin.com/in/budi)",
+        summary: "Ceritakan sedikit tentang diri Anda, kelebihan, dan motivasi kerja Anda...", 
+        skills: "Keahlian 1, Keahlian 2, Keahlian 3", 
+        expRole: "Nama Pekerjaan / Posisi", expComp: "Nama Perusahaan / Tempat Kerja", expDate: "Tahun Mulai - Tahun Selesai", 
+        eduInst: "Nama Kampus / Sekolah", eduMaj: "Jurusan / Gelar", eduDate: "Tahun Kelulusan",
+        projName: "Nama Proyek", projDate: "Tahun Pengerjaan", certName: "Nama Sertifikasi / Pelatihan", certDate: "Tahun Lulus",
+        clHr: "Bapak/Ibu HRD", clTarget: "PT Nama Perusahaan", clSenderLoc: "Kota, Provinsi", clSenderPhone: "0812-xxxx-xxxx", clSenderEmail: "email@anda.com", clTargetRole: "Contoh: Staff Administrasi", clRelevantSkills: "Contoh: Microsoft Office, Pengarsipan"
       }
     },
     en: {
@@ -149,7 +158,7 @@ export default function CVMaker() {
     
     let text = "";
     if (lang === 'id') {
-      text = `Berdasarkan informasi lowongan pekerjaan yang saya peroleh, saya bermaksud menyampaikan ketertarikan saya untuk melamar posisi ${role} di ${company}.\n\nDengan latar belakang dan spesialisasi saya di bidang ${skills}, serta pengalaman kerja yang relevan, saya yakin dapat beradaptasi dengan cepat dan memberikan kontribusi nyata bagi tim Anda.\n\nBersama surat lamaran ini, saya lampirkan Curriculum Vitae (CV) sebagai bahan pertimbangan Bapak/Ibu untuk melihat detail kualifikasi dan riwayat profesional saya. Saya sangat berharap dapat diberikan kesempatan wawancara guna mendiskusikan bagaimana potensi saya dapat sejalan dengan visi perusahaan.\n\nTerima kasih atas waktu dan perhatian yang Bapak/Ibu berikan.`;
+      text = `Berdasarkan informasi lowongan pekerjaan yang saya peroleh, saya bermaksud menyampaikan ketertarikan saya untuk melamar posisi ${role} di ${company}.\n\nDengan latar belakang dan keahlian saya di bidang ${skills}, serta pengalaman yang relevan, saya yakin dapat belajar dengan cepat dan berkontribusi secara positif bagi perusahaan Anda.\n\nBersama surat lamaran ini, saya lampirkan Curriculum Vitae (CV) sebagai bahan pertimbangan Bapak/Ibu untuk melihat riwayat pendidikan dan profesional saya. Saya sangat berharap dapat diberikan kesempatan wawancara agar saya bisa memperkenalkan diri lebih jauh.\n\nTerima kasih atas waktu dan perhatian yang Bapak/Ibu berikan.`;
     } else if (lang === 'en') {
       text = `Please accept this letter as an expression of my strong interest in the ${role} position at ${company}.\n\nWith my background and proven expertise in ${skills}, along with my relevant professional experience, I am confident in my ability to make an immediate and positive impact on your operations.\n\nI have attached my resume for your review, which further details my career achievements and qualifications. I would welcome the opportunity to discuss how my skill set aligns with the needs of your organization in an interview.\n\nThank you very much for your time, consideration, and forthcoming response.`;
     } else if (lang === 'jp') {
@@ -189,17 +198,17 @@ export default function CVMaker() {
   // DATA DUMMY PLACEHOLDER (TAMPIL JIKA FORM KOSONG)
   // =========================================================================
   const dBasics = {
-    name: lang === 'en' ? 'JOHN DOE' : lang === 'jp' ? '山田 太郎' : 'NAMA ANDA',
-    role: lang === 'en' ? 'Graphic Designer' : lang === 'jp' ? 'グラフィックデザイナー' : 'Graphic Designer / Posisi',
-    location: lang === 'en' ? 'New York, USA' : lang === 'jp' ? '東京都渋谷区' : 'Jakarta, Indonesia',
+    name: lang === 'en' ? 'JOHN DOE' : lang === 'jp' ? '山田 太郎' : 'NAMA LENGKAP ANDA',
+    role: lang === 'en' ? 'Graphic Designer' : lang === 'jp' ? 'グラフィックデザイナー' : 'Posisi Pekerjaan (Cth: Staf Administrasi)',
+    location: lang === 'en' ? 'New York, USA' : lang === 'jp' ? '東京都渋谷区' : 'Kota, Indonesia',
     phone: lang === 'en' ? '+1 234 567 890' : lang === 'jp' ? '090-1234-5678' : '0812-3456-7890',
     email: lang === 'en' ? 'johndoe@email.com' : lang === 'jp' ? 'yamada@email.com' : 'email@anda.com',
     summary: lang === 'en' 
-      ? 'A highly motivated Graphic Designer with 3+ years of experience in visual branding and UI design. Passionate about creating engaging digital content that drives user engagement.' 
+      ? 'A highly motivated professional ready to contribute to your company.' 
       : lang === 'jp' 
-      ? '3年以上のデザイン経験を持つグラフィックデザイナー。ブランドアイデンティティやUIデザインに強みがあり、ユーザーの心を動かすビジュアル制作を得意としています。' 
-      : 'Seorang Graphic Designer dengan pengalaman dalam merancang identitas visual dan materi pemasaran. Memiliki minat yang kuat dalam menciptakan desain digital yang efektif.',
-    skills: lang === 'en' ? 'Adobe Photoshop, Illustrator, Figma, UI/UX Design' : lang === 'jp' ? 'Adobe Photoshop, Illustrator, Figma, UI/UXデザイン' : 'Adobe Photoshop, Illustrator, Figma, Desain UI/UX',
+      ? '3年以上のデザイン経験を持つグラフィックデザイナー。' 
+      : 'Saya adalah individu yang disiplin dan bertanggung jawab. Mampu bekerja sama dalam tim maupun individu. Cepat belajar dan siap berkontribusi maksimal untuk perusahaan.',
+    skills: lang === 'en' ? 'Microsoft Office, Communication, Teamwork' : lang === 'jp' ? 'Microsoft Office, コミュニケーション' : 'Microsoft Word, Microsoft Excel, Komunikasi, Disiplin Waktu',
     furigana: 'やまだ たろう', birthdate: '1995/01/01', age: '28', gender: '男', addressFurigana: 'とうきょうと しぶやく', nationality: 'インドネシア', visa: '特定技能1号', commuteTime: '1', commuteMinute: '30', dependents: '0', spouse: '無', spouseSupport: '無'
   };
 
@@ -210,22 +219,22 @@ export default function CVMaker() {
 
   const isExpEmpty = experiences.length === 1 && !experiences[0].company && !experiences[0].role;
   const activeExp = isExpEmpty ? [
-    { company: lang==='en'?'Creative Agency Inc.':lang==='jp'?'クリエイティブ株式会社':'PT Agensi Kreatif', role: lang==='en'?'Senior Designer':lang==='jp'?'シニアデザイナー':'Senior Designer', period: lang==='en'?'2021 - Present':lang==='jp'?'2021/04':'2021 - Sekarang', description: lang==='en'?'- Lead the visual design team for 5 major client campaigns.\n- Increased engagement by 30% through rebranding.':lang==='jp'?'〇〇プロジェクトのデザイン制作をリード\nエンゲージメント率を30％向上':'- Memimpin tim desain visual untuk 5 kampanye klien besar.\n- Meningkatkan engagement sebesar 30% melalui strategi rebranding.', isPlaceholder: true }
+    { company: lang==='en'?'Company Name Inc.':lang==='jp'?'〇〇株式会社':'PT Nama Perusahaan', role: lang==='en'?'Job Title':lang==='jp'?'役職名':'Nama Jabatan', period: lang==='en'?'2021 - Present':lang==='jp'?'2021/04':'Tahun Mulai - Tahun Selesai', description: lang==='en'?'- Describe your responsibilities here.\n- Focus on what you achieved.':lang==='jp'?'〇〇プロジェクトを担当\n売上を〇〇％向上':'- Tulis tugas harian Anda di sini.\n- Sebutkan juga pencapaian atau keberhasilan Anda.', isPlaceholder: true }
   ] : experiences.filter(e => e.company.trim() || e.role.trim());
 
   const isEduEmpty = educations.length === 1 && !educations[0].institution && !educations[0].major;
   const activeEdu = isEduEmpty ? [
-    { institution: lang==='en'?'University of Design':lang==='jp'?'〇〇デザイン大学':'Universitas Desain Indonesia', major: lang==='en'?'Bachelor of Arts in Graphic Design':lang==='jp'?'芸術学部 デザイン学科':'S1 Desain Komunikasi Visual', period: lang==='en'?'2016 - 2020':lang==='jp'?'2020/03':'2016 - 2020', gpa: '3.80 / 4.00', isPlaceholder: true }
+    { institution: lang==='en'?'University / School Name':lang==='jp'?'〇〇大学':'Nama Kampus atau Sekolah', major: lang==='en'?'Major / Degree':lang==='jp'?'〇〇学部':'Nama Jurusan (Cth: Akuntansi)', period: lang==='en'?'2016 - 2020':lang==='jp'?'2020/03':'Tahun Mulai - Lulus', gpa: 'Nilai/IPK (Opsional)', isPlaceholder: true }
   ] : educations.filter(e => e.institution.trim() || e.major.trim());
 
   const isProjEmpty = projects.length === 1 && !projects[0].name && !projects[0].description;
   const activeProj = isProjEmpty ? [
-    { name: lang==='en'?'E-Commerce UI Redesign':lang==='jp'?'ECサイトUIリニューアル':'Redesign UI E-Commerce', period: lang==='en'?'2022':lang==='jp'?'2022/08':'2022', description: lang==='en'?'- Redesigned the entire checkout flow.\n- Decreased cart abandonment by 15%.':lang==='jp'?'カート画面のUIを改善\nカゴ落ち率を15％削減':'- Merancang ulang seluruh alur checkout pengguna.\n- Berhasil mengurangi cart abandonment sebesar 15%.', isPlaceholder: true }
+    { name: lang==='en'?'Project Title':lang==='jp'?'〇〇プロジェクト':'Nama Kegiatan / Tugas Akhir', period: lang==='en'?'2022':lang==='jp'?'2022/08':'Tahun Pelaksanaan', description: lang==='en'?'- Describe the project goal.\n- What was your role?':lang==='jp'?'〇〇の開発を担当\n〇〇を達成':'- Ceritakan singkat tentang proyek ini.\n- Apa peran Anda di dalamnya?', isPlaceholder: true }
   ] : projects.filter(p => p.name.trim() || p.description.trim());
 
   const isCertEmpty = certs.length === 1 && !certs[0].name && !certs[0].issuer;
   const activeCerts = isCertEmpty ? [
-    { name: lang==='en'?'UX Design Professional':lang==='jp'?'日本語能力試験 N2':'Sertifikasi Profesional UX', period: lang==='en'?'2023':lang==='jp'?'2023/12':'2023', issuer: 'Google', description: lang==='en'?'- Mastered user research and wireframing.':'- Spesialisasi dalam riset pengguna dan wireframing.', isPlaceholder: true }
+    { name: lang==='en'?'Certificate Name':lang==='jp'?'日本語能力試験 N2':'Nama Pelatihan / Sertifikasi', period: lang==='en'?'2023':lang==='jp'?'2023/12':'Tahun Diperoleh', issuer: 'Penyelenggara (Cth: BLK, Google)', description: lang==='en'?'- What did you learn?':'- Ilmu atau keterampilan apa yang didapat dari pelatihan ini?', isPlaceholder: true }
   ] : certs.filter(c => c.name.trim() || c.issuer.trim());
 
   // PARSER TABEL JEPANG (JIS)
@@ -301,7 +310,9 @@ export default function CVMaker() {
           {/* ========================================================= */}
           {/* KOLOM KIRI: FORMULIR ISIAN                                  */}
           {/* ========================================================= */}
-          <div className="w-full xl:w-5/12 bg-[#0A1329] border border-white/10 p-6 rounded-[2rem] no-print xl:sticky xl:top-32 h-fit max-h-none xl:max-h-[80vh] overflow-visible xl:overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-cyan-600 [&::-webkit-scrollbar-thumb]:rounded-full">
+          <div className="w-full xl:w-5/12 bg-[#0A1329] border border-white/10 p-6 rounded-[2rem] no-print xl:sticky xl:top-32 h-fit max-h-none xl:max-h-[80vh] overflow-visible xl:overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-cyan-600 [&::-webkit-scrollbar-thumb]:rounded-full shadow-2xl">
+            
+            {/* TOGGLE CV vs COVER LETTER */}
             <div className="flex p-1 bg-[#060D1F] border border-cyan-500/30 rounded-xl mb-6 shadow-inner relative overflow-hidden">
               <button onClick={() => setDocMode('cv')} className={`flex-1 flex justify-center items-center gap-2 py-3 text-xs font-bold rounded-lg transition-all z-10 ${docMode === 'cv' ? 'bg-cyan-600 text-white shadow-md' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}>
                 <DocumentIcon /> {t.cvMode}
@@ -311,56 +322,7 @@ export default function CVMaker() {
               </button>
             </div>
 
-            <div className="mb-6 p-5 rounded-xl border border-cyan-500/20 bg-gradient-to-br from-cyan-900/10 to-[#0A1329] shadow-inner relative overflow-hidden group">
-              <div className="absolute top-0 left-0 w-1 h-full bg-cyan-500"></div>
-              <div className="flex items-start gap-3 mb-3">
-                <InfoIcon />
-                <div>
-                  <h3 className="text-cyan-400 font-bold text-[13px] mb-1 tracking-wide">
-                    {docMode === 'cv' ? 'Panduan Super Mudah Mengisi CV' : 'Panduan Membuat Surat Lamaran Sakti'}
-                  </h3>
-                  <p className="text-slate-400 text-[11px] leading-relaxed">
-                    {docMode === 'cv' 
-                      ? 'CV ATS (Applicant Tracking System) dirancang khusus agar mudah dibaca oleh sistem robot (scanner) HRD perusahaan.'
-                      : 'Cover Letter (Surat Lamaran) adalah dokumen pengantar mandiri. Anda tidak perlu repot mengisi tab CV untuk bisa membuat surat lamaran di sini.'}
-                  </p>
-                </div>
-              </div>
-              
-              <ul className="space-y-3 text-[11px] text-slate-300 ml-1">
-                {docMode === 'cv' ? (
-                  <>
-                    <li className="flex gap-2">
-                      <span className="text-cyan-400 font-bold">1.</span>
-                      <span><b>Fitur Bullet Point:</b> Gunakan tanda strip (-) di kotak Deskripsi untuk membuat poin otomatis di kertas.</span>
-                    </li>
-                    <li className="flex gap-2">
-                      <span className="text-cyan-400 font-bold">2.</span>
-                      <span><b>Sistem Translate Instan:</b> Tekan tombol EN atau JP di panel bawah. AI otomatis menerjemahkan CV Anda.</span>
-                    </li>
-                    <li className="flex gap-2">
-                      <span className="text-cyan-400 font-bold">3.</span>
-                      <span><b>Sembunyikan Kategori:</b> Jika tidak memiliki Proyek/Sertifikasi (Atau Anda <i>Fresh Graduate</i>), tekan tombol <span className="text-red-400 font-bold">Hapus</span>. Kategori akan hilang bersih!</span>
-                    </li>
-                  </>
-                ) : (
-                  <>
-                    <li className="flex gap-2">
-                      <span className="text-cyan-400 font-bold">1.</span>
-                      <span><b>Senjata AI Auto-Generate:</b> Ketik spesifik posisi incaran dan keahlian andalan Anda. Lalu klik tombol biru <b>"Auto-Generate"</b>.</span>
-                    </li>
-                  </>
-                )}
-              </ul>
-              
-              <div className="mt-4 bg-cyan-900/30 p-2.5 rounded border border-cyan-500/30 flex gap-2">
-                <div className="text-cyan-400 mt-0.5"><SparklesIcon className="w-4 h-4"/></div>
-                <div className="text-[11px] text-cyan-50 leading-relaxed font-medium">
-                  <span className="text-cyan-300 font-bold uppercase">Aturan Cetak Wajib:</span> Saat Anda menekan tombol cetak, pastikan Ukuran Kertas diatur ke <b>"A4"</b>, dan Margin (Batas Tepi) diset ke <b>"None" (Tidak Ada)</b>.
-                </div>
-              </div>
-            </div>
-
+            {/* KONTROL GLOBAL (TEMPLATE & TRANSLATE) */}
             <div className="mb-6 p-5 bg-[#060D1F] border border-cyan-500/30 rounded-xl shadow-md">
               <div className="flex justify-between items-center mb-4 border-b border-white/10 pb-3">
                 <div className="flex items-center gap-1.5 text-cyan-400">
@@ -373,7 +335,7 @@ export default function CVMaker() {
                 </div>
               </div>
               
-              <h2 className="text-xs font-bold text-cyan-400 uppercase tracking-wider mb-3">Pilih Template {docMode === 'cv' ? 'Kertas CV' : 'Font Surat'}</h2>
+              <h2 className="text-xs font-bold text-cyan-400 uppercase tracking-wider mb-3">Pilih Desain Kertas</h2>
               <div className="grid grid-cols-2 gap-2 mb-4">
                 <button onClick={() => {setTemplate('normal'); if(lang==='jp') setLang('id');}} className={`py-2 px-2 text-[11px] font-bold rounded border transition-all ${template === 'normal' ? 'bg-cyan-600 border-cyan-400 text-white shadow-lg' : 'border-white/10 text-slate-400 hover:bg-white/5 hover:border-cyan-500/30'}`}>1. Normal (Standar ATS)</button>
                 <button onClick={() => {setTemplate('modern'); if(lang==='jp') setLang('id');}} className={`py-2 px-2 text-[11px] font-bold rounded border transition-all ${template === 'modern' ? 'bg-cyan-600 border-cyan-400 text-white shadow-lg' : 'border-white/10 text-slate-400 hover:bg-white/5 hover:border-cyan-500/30'}`}>2. Modern Pro</button>
@@ -386,31 +348,37 @@ export default function CVMaker() {
               {/* FITUR BARU: LEVEL KARIR (Fresh Grad vs Experienced) */}
               {!isJapanese && docMode === 'cv' && (
                 <>
-                  <h2 className="text-xs font-bold text-cyan-400 uppercase tracking-wider mb-2 mt-4 border-t border-white/10 pt-4">Tipe Pelamar (Urutan Kertas)</h2>
+                  <h2 className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider mb-2 mt-4 border-t border-white/10 pt-4">Tipe Pelamar (Mengatur Urutan Otomatis)</h2>
                   <div className="flex bg-[#0A1329] rounded border border-white/10 overflow-hidden shadow-inner">
-                    <button onClick={() => setCareerLevel('fresh')} className={`flex-1 px-4 py-2.5 text-[11px] font-bold transition-colors ${careerLevel === 'fresh' ? 'bg-cyan-600 text-white' : 'text-slate-500 hover:bg-white/5 hover:text-white'}`}>Fresh Graduate</button>
-                    <button onClick={() => setCareerLevel('experienced')} className={`flex-1 px-4 py-2.5 text-[11px] font-bold transition-colors ${careerLevel === 'experienced' ? 'bg-cyan-600 text-white' : 'text-slate-500 hover:bg-white/5 hover:text-white'}`}>Berpengalaman</button>
+                    <button onClick={() => setCareerLevel('fresh')} className={`flex-1 px-4 py-2.5 text-[11px] font-bold transition-colors ${careerLevel === 'fresh' ? 'bg-emerald-600 text-white' : 'text-slate-500 hover:bg-white/5 hover:text-white'}`}>Fresh Graduate (Pemula)</button>
+                    <button onClick={() => setCareerLevel('experienced')} className={`flex-1 px-4 py-2.5 text-[11px] font-bold transition-colors ${careerLevel === 'experienced' ? 'bg-emerald-600 text-white' : 'text-slate-500 hover:bg-white/5 hover:text-white'}`}>Berpengalaman</button>
                   </div>
-                  <p className="text-[10px] text-slate-500 mt-2 italic">
-                    {careerLevel === 'fresh' ? '*Pendidikan akan diletakkan di atas Pengalaman.' : '*Pengalaman Kerja akan diletakkan paling atas.'}
+                  <p className="text-[10px] text-slate-500 mt-2 italic leading-relaxed">
+                    {careerLevel === 'fresh' ? '*Pendidikan akan diletakkan di atas Pengalaman Kerja agar HRD fokus pada pencapaian akademik Anda.' : '*Pengalaman Kerja akan diletakkan paling atas agar HRD langsung melihat riwayat karir Anda.'}
                   </p>
                 </>
               )}
             </div>
 
             {isTranslating && (
-              <div className="mb-4 flex justify-center items-center gap-2 text-xs font-bold text-cyan-400">
-                <svg className="animate-spin h-4 w-4 text-cyan-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                Mesin AI sedang memproses terjemahan...
+              <div className="mb-6 flex justify-center items-center gap-2 text-xs font-bold text-cyan-400 bg-cyan-900/20 p-3 rounded-lg border border-cyan-500/30">
+                <svg className="animate-spin h-5 w-5 text-cyan-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                Robot AI sedang memproses terjemahan...
               </div>
             )}
 
+            {/* FORMULIR CV UTAMA */}
             {docMode === 'cv' && (
               <div className="animate-fade-in-up">
-                <div className="mb-6">
-                  <h2 className="text-lg font-bold text-cyan-400 mb-3 border-b border-white/10 pb-1">{t.personal}</h2>
-                  <div className="space-y-2">
-                    <input type="text" name="name" value={basics.name} onChange={handleBasicsChange} className="w-full bg-[#060D1F] border border-white/5 p-2.5 rounded text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder={t.placeholders.name} />
+                
+                {/* 1. INFORMASI DASAR */}
+                <div className="mb-6 bg-white/[0.02] p-4 rounded-xl border border-white/5 shadow-sm">
+                  <h2 className="text-lg font-bold text-cyan-400 mb-4 border-b border-white/10 pb-2">{t.personal}</h2>
+                  <div className="space-y-4">
+                    <LabeledInput label="Nama Lengkap" helperText="Tuliskan nama asli sesuai KTP">
+                      <input type="text" name="name" value={basics.name} onChange={handleBasicsChange} className="w-full bg-[#060D1F] border border-white/10 p-3 rounded-lg text-white text-sm focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all outline-none" placeholder={t.placeholders.name} />
+                    </LabeledInput>
+                    
                     {isJapanese && (
                       <>
                         <div className="flex gap-2">
@@ -433,105 +401,194 @@ export default function CVMaker() {
                         <input type="text" name="visa" value={basics.visa} onChange={handleBasicsChange} className="w-1/2 bg-[#060D1F] border border-white/5 p-2.5 rounded text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder="在留資格 (Status Visa)" />
                       </div>
                     )}
-                    <input type="text" name="role" value={basics.role} onChange={handleBasicsChange} className="w-full bg-[#060D1F] border border-white/5 p-2.5 rounded text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder={t.placeholders.role} />
-                    <div className="grid grid-cols-2 gap-2">
-                      <input type="text" name="location" value={basics.location} onChange={handleBasicsChange} className="w-full bg-[#060D1F] border border-white/5 p-2.5 rounded text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder={t.placeholders.loc} />
-                      <input type="text" name="phone" value={basics.phone} onChange={handleBasicsChange} className="w-full bg-[#060D1F] border border-white/5 p-2.5 rounded text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder={t.placeholders.phone} />
+
+                    <LabeledInput label="Posisi Pekerjaan" helperText="Posisi yang Anda incar atau keahlian utama Anda">
+                       <input type="text" name="role" value={basics.role} onChange={handleBasicsChange} className="w-full bg-[#060D1F] border border-white/10 p-3 rounded-lg text-white text-sm focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all outline-none" placeholder={t.placeholders.role} />
+                    </LabeledInput>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <LabeledInput label="Lokasi / Kota">
+                         <input type="text" name="location" value={basics.location} onChange={handleBasicsChange} className="w-full bg-[#060D1F] border border-white/10 p-3 rounded-lg text-white text-sm focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all outline-none" placeholder={t.placeholders.loc} />
+                      </LabeledInput>
+                      <LabeledInput label="Nomor Telepon">
+                         <input type="text" name="phone" value={basics.phone} onChange={handleBasicsChange} className="w-full bg-[#060D1F] border border-white/10 p-3 rounded-lg text-white text-sm focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all outline-none" placeholder={t.placeholders.phone} />
+                      </LabeledInput>
                     </div>
-                    <div className="grid grid-cols-1 gap-2">
-                      <input type="email" name="email" value={basics.email} onChange={handleBasicsChange} className="w-full bg-[#060D1F] border border-white/5 p-2.5 rounded text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder={t.placeholders.email} />
-                    </div>
-                    <textarea name="summary" value={basics.summary} onChange={handleBasicsChange} rows={isJapanese ? 3 : 4} className="w-full bg-[#060D1F] border border-white/5 p-2.5 rounded text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder={t.placeholders.summary}></textarea>
-                    {!isJapanese && <textarea name="skills" value={basics.skills} onChange={handleBasicsChange} rows="3" className="w-full bg-[#060D1F] border border-white/5 p-2.5 rounded text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder={t.placeholders.skills}></textarea>}
+
+                    <LabeledInput label="Alamat Email" helperText="Gunakan email yang terlihat profesional (namakamu@gmail.com)">
+                       <input type="email" name="email" value={basics.email} onChange={handleBasicsChange} className="w-full bg-[#060D1F] border border-white/10 p-3 rounded-lg text-white text-sm focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all outline-none" placeholder={t.placeholders.email} />
+                    </LabeledInput>
+
+                    <LabeledInput label="Profil Singkat" helperText="Ceritakan dalam 2-3 kalimat tentang kelebihan dan tujuan karir Anda.">
+                       <textarea name="summary" value={basics.summary} onChange={handleBasicsChange} rows={isJapanese ? 3 : 4} className="w-full bg-[#060D1F] border border-white/10 p-3 rounded-lg text-white text-sm focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all outline-none leading-relaxed" placeholder={t.placeholders.summary}></textarea>
+                    </LabeledInput>
+
+                    {!isJapanese && (
+                      <LabeledInput label="Keahlian (Skills)" helperText="Masukkan keahlian utama Anda. Wajib dipisahkan dengan koma (,). Contoh: Public Speaking, MS Excel, Desain.">
+                         <textarea name="skills" value={basics.skills} onChange={handleBasicsChange} rows="3" className="w-full bg-[#060D1F] border border-white/10 p-3 rounded-lg text-white text-sm focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all outline-none leading-relaxed" placeholder={t.placeholders.skills}></textarea>
+                      </LabeledInput>
+                    )}
                   </div>
                 </div>
 
+                {/* 2. TAUTAN PROFIL DINAMIS */}
                 {!isJapanese && (
-                <div className="mb-6">
-                  <div className="flex justify-between items-center mb-3 border-b border-white/10 pb-1">
+                <div className="mb-6 bg-white/[0.02] p-4 rounded-xl border border-white/5 shadow-sm">
+                  <div className="flex justify-between items-center mb-4 border-b border-white/10 pb-2">
                     <h2 className="text-lg font-bold text-cyan-400">{t.links}</h2>
-                    <button onClick={() => addField(setProfiles, profiles, { platform: "", url: "" })} className="text-[10px] font-bold bg-cyan-600/20 hover:bg-cyan-600 text-cyan-400 hover:text-white px-2 py-1 rounded transition-colors">{t.add}</button>
+                    <button onClick={() => addField(setProfiles, profiles, { platform: "", url: "" })} className="text-[10px] font-bold bg-cyan-600/20 hover:bg-cyan-600 text-cyan-400 hover:text-white px-3 py-1.5 rounded transition-colors">{t.add}</button>
                   </div>
+                  <p className="text-[11px] text-slate-400 mb-4 leading-relaxed">Punya LinkedIn, portofolio online, atau akun GitHub? Tambahkan di sini. Kosongkan jika tidak ada.</p>
+                  
                   {profiles.map((prof, index) => (
-                    <div key={prof.id} className="bg-[#060D1F] p-4 rounded-xl mb-3 relative border border-white/5 flex gap-2">
-                      <button onClick={() => removeField(setProfiles, profiles, index)} className="absolute -top-2 -right-2 text-red-400 hover:text-red-300 text-[10px] font-bold px-2 py-1 bg-red-400/20 rounded-full">{t.del}</button>
-                      <input type="text" value={prof.platform} onChange={(e) => handleArrayChange(setProfiles, profiles, index, 'platform', e.target.value)} className="w-1/3 bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder={t.placeholders.linkPlatform} />
-                      <input type="text" value={prof.url} onChange={(e) => handleArrayChange(setProfiles, profiles, index, 'url', e.target.value)} className="w-2/3 bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder={t.placeholders.linkUrl} />
+                    <div key={prof.id} className="bg-[#060D1F] p-4 rounded-xl mb-3 relative border border-white/10 shadow-inner flex flex-col sm:flex-row gap-3">
+                      <button onClick={() => removeField(setProfiles, profiles, index)} className="absolute -top-2 -right-2 text-red-400 hover:text-red-300 text-[10px] font-bold px-2.5 py-1 bg-[#0A1329] border border-red-500/30 rounded-full z-10">{t.del}</button>
+                      
+                      <div className="w-full sm:w-1/3">
+                         <label className="text-[9px] font-bold text-slate-500 uppercase tracking-widest block mb-1">Nama Tautan</label>
+                         <input type="text" value={prof.platform} onChange={(e) => handleArrayChange(setProfiles, profiles, index, 'platform', e.target.value)} className="w-full bg-transparent border-b border-white/20 p-2 text-white text-sm focus:border-cyan-500 focus:bg-white/5 outline-none transition-all" placeholder={t.placeholders.linkPlatform} />
+                      </div>
+                      <div className="w-full sm:w-2/3">
+                         <label className="text-[9px] font-bold text-slate-500 uppercase tracking-widest block mb-1">Alamat URL Lengkap</label>
+                         <input type="text" value={prof.url} onChange={(e) => handleArrayChange(setProfiles, profiles, index, 'url', e.target.value)} className="w-full bg-transparent border-b border-white/20 p-2 text-white text-sm focus:border-cyan-500 focus:bg-white/5 outline-none transition-all" placeholder={t.placeholders.linkUrl} />
+                      </div>
                     </div>
                   ))}
                 </div>
                 )}
 
-                <div className="mb-6">
-                  <div className="flex justify-between items-center mb-3 border-b border-white/10 pb-1">
+                {/* 3. PENDIDIKAN */}
+                <div className="mb-6 bg-white/[0.02] p-4 rounded-xl border border-white/5 shadow-sm">
+                  <div className="flex justify-between items-center mb-4 border-b border-white/10 pb-2">
                     <h2 className="text-lg font-bold text-cyan-400">{t.edu}</h2>
-                    <button onClick={() => addField(setEducations, educations, { institution: "", major: "", period: "", gpa: "" })} className="text-[10px] font-bold bg-cyan-600/20 hover:bg-cyan-600 text-cyan-400 hover:text-white px-2 py-1 rounded transition-colors">{t.add}</button>
+                    <button onClick={() => addField(setEducations, educations, { institution: "", major: "", period: "", gpa: "" })} className="text-[10px] font-bold bg-cyan-600/20 hover:bg-cyan-600 text-cyan-400 hover:text-white px-3 py-1.5 rounded transition-colors">{t.add}</button>
                   </div>
                   {educations.map((edu, index) => (
-                    <div key={edu.id} className="bg-[#060D1F] p-4 rounded-xl mb-3 relative border border-white/5">
-                      <button onClick={() => removeField(setEducations, educations, index)} className="absolute top-3 right-3 text-red-400 hover:text-red-300 text-[10px] font-bold px-2 py-1 bg-red-400/10 rounded">{t.del}</button>
-                      <input type="text" value={edu.institution} onChange={(e) => handleArrayChange(setEducations, educations, index, 'institution', e.target.value)} className="w-11/12 bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:border-cyan-500 focus:outline-none mb-2" placeholder={t.placeholders.eduInst} />
-                      <input type="text" value={edu.major} onChange={(e) => handleArrayChange(setEducations, educations, index, 'major', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:border-cyan-500 focus:outline-none mb-2" placeholder={t.placeholders.eduMaj} />
-                      <div className="grid grid-cols-2 gap-3 mt-1">
-                        <input type="text" value={edu.period} onChange={(e) => handleArrayChange(setEducations, educations, index, 'period', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder={t.placeholders.eduDate} />
-                        {!isJapanese && <input type="text" value={edu.gpa} onChange={(e) => handleArrayChange(setEducations, educations, index, 'gpa', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder="GPA / IPK" />}
+                    <div key={edu.id} className="bg-[#060D1F] p-4 rounded-xl mb-4 relative border border-white/10 shadow-inner">
+                      <button onClick={() => removeField(setEducations, educations, index)} className="absolute -top-2 -right-2 text-red-400 hover:text-red-300 text-[10px] font-bold px-2.5 py-1 bg-[#0A1329] border border-red-500/30 rounded-full z-10">{t.del}</button>
+                      
+                      <input type="text" value={edu.institution} onChange={(e) => handleArrayChange(setEducations, educations, index, 'institution', e.target.value)} className="w-full bg-transparent border-b border-white/20 p-2 text-white text-sm focus:border-cyan-500 focus:bg-white/5 outline-none transition-all mb-3 font-bold" placeholder={t.placeholders.eduInst} />
+                      <input type="text" value={edu.major} onChange={(e) => handleArrayChange(setEducations, educations, index, 'major', e.target.value)} className="w-full bg-transparent border-b border-white/20 p-2 text-white text-sm focus:border-cyan-500 focus:bg-white/5 outline-none transition-all mb-3" placeholder={t.placeholders.eduMaj} />
+                      
+                      <div className="grid grid-cols-2 gap-4 mt-1">
+                        <div>
+                           <label className="text-[9px] font-bold text-slate-500 uppercase tracking-widest block mb-1">Tahun Lulus</label>
+                           <input type="text" value={edu.period} onChange={(e) => handleArrayChange(setEducations, educations, index, 'period', e.target.value)} className="w-full bg-transparent border-b border-white/20 p-2 text-white text-sm focus:border-cyan-500 focus:bg-white/5 outline-none transition-all" placeholder={t.placeholders.eduDate} />
+                        </div>
+                        {!isJapanese && (
+                           <div>
+                              <label className="text-[9px] font-bold text-slate-500 uppercase tracking-widest block mb-1">Nilai (Opsional)</label>
+                              <input type="text" value={edu.gpa} onChange={(e) => handleArrayChange(setEducations, educations, index, 'gpa', e.target.value)} className="w-full bg-transparent border-b border-white/20 p-2 text-white text-sm focus:border-cyan-500 focus:bg-white/5 outline-none transition-all" placeholder="Cth: 3.80 / 4.00" />
+                           </div>
+                        )}
                       </div>
                     </div>
                   ))}
                 </div>
 
-                <div className="mb-6">
-                  <div className="flex justify-between items-center mb-3 border-b border-white/10 pb-1">
-                    <h2 className="text-lg font-bold text-cyan-400">{t.exp}</h2>
-                    <button onClick={() => addField(setExperiences, experiences, { role: "", company: "", period: "", description: "" })} className="text-[10px] font-bold bg-cyan-600/20 hover:bg-cyan-600 text-cyan-400 hover:text-white px-2 py-1 rounded transition-colors">{t.add}</button>
+                {/* 4. PENGALAMAN KERJA */}
+                <div className="mb-6 bg-white/[0.02] p-4 rounded-xl border border-white/5 shadow-sm">
+                  <div className="flex justify-between items-center mb-4 border-b border-white/10 pb-2">
+                    <div>
+                       <h2 className="text-lg font-bold text-cyan-400">{t.exp}</h2>
+                       <p className="text-[10px] text-slate-500 mt-1">Hapus bagian ini jika Anda belum pernah bekerja.</p>
+                    </div>
+                    <button onClick={() => addField(setExperiences, experiences, { role: "", company: "", period: "", description: "" })} className="text-[10px] font-bold bg-cyan-600/20 hover:bg-cyan-600 text-cyan-400 hover:text-white px-3 py-1.5 rounded transition-colors shrink-0">{t.add}</button>
                   </div>
                   {experiences.map((exp, index) => (
-                    <div key={exp.id} className="bg-[#060D1F] p-4 rounded-xl mb-3 relative border border-white/5">
-                      <button onClick={() => removeField(setExperiences, experiences, index)} className="absolute top-3 right-3 text-red-400 hover:text-red-300 text-[10px] font-bold px-2 py-1 bg-red-400/10 rounded">{t.del}</button>
-                      <input type="text" value={exp.company} onChange={(e) => handleArrayChange(setExperiences, experiences, index, 'company', e.target.value)} className="w-11/12 bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:border-cyan-500 focus:outline-none mb-2" placeholder={t.placeholders.expComp} />
-                      <input type="text" value={exp.role} onChange={(e) => handleArrayChange(setExperiences, experiences, index, 'role', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:border-cyan-500 focus:outline-none mb-2" placeholder={t.placeholders.expRole} />
-                      <input type="text" value={exp.period} onChange={(e) => handleArrayChange(setExperiences, experiences, index, 'period', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:border-cyan-500 focus:outline-none mb-2" placeholder={t.placeholders.expDate} />
-                      {!isJapanese && <textarea value={exp.description} onChange={(e) => handleArrayChange(setExperiences, experiences, index, 'description', e.target.value)} rows="3" className="w-full mt-2 bg-transparent border border-white/5 rounded p-2 text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder="- Tulis deskripsi pencapaian atau pekerjaan..."></textarea>}
+                    <div key={exp.id} className="bg-[#060D1F] p-4 rounded-xl mb-4 relative border border-white/10 shadow-inner">
+                      <button onClick={() => removeField(setExperiences, experiences, index)} className="absolute -top-2 -right-2 text-red-400 hover:text-red-300 text-[10px] font-bold px-2.5 py-1 bg-[#0A1329] border border-red-500/30 rounded-full z-10">{t.del}</button>
+                      
+                      <input type="text" value={exp.company} onChange={(e) => handleArrayChange(setExperiences, experiences, index, 'company', e.target.value)} className="w-full bg-transparent border-b border-white/20 p-2 text-white text-sm focus:border-cyan-500 focus:bg-white/5 outline-none transition-all mb-3 font-bold" placeholder={t.placeholders.expComp} />
+                      
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-3">
+                         <div>
+                           <label className="text-[9px] font-bold text-slate-500 uppercase tracking-widest block mb-1">Posisi</label>
+                           <input type="text" value={exp.role} onChange={(e) => handleArrayChange(setExperiences, experiences, index, 'role', e.target.value)} className="w-full bg-transparent border-b border-white/20 p-2 text-white text-sm focus:border-cyan-500 focus:bg-white/5 outline-none transition-all" placeholder={t.placeholders.expRole} />
+                         </div>
+                         <div>
+                           <label className="text-[9px] font-bold text-slate-500 uppercase tracking-widest block mb-1">Tahun Bekerja</label>
+                           <input type="text" value={exp.period} onChange={(e) => handleArrayChange(setExperiences, experiences, index, 'period', e.target.value)} className="w-full bg-transparent border-b border-white/20 p-2 text-white text-sm focus:border-cyan-500 focus:bg-white/5 outline-none transition-all" placeholder={t.placeholders.expDate} />
+                         </div>
+                      </div>
+
+                      {!isJapanese && (
+                         <div className="mt-4">
+                           <label className="text-[9px] font-bold text-emerald-400 uppercase tracking-widest block mb-2 bg-emerald-500/10 w-fit px-2 py-1 rounded">💡 Tips: Gunakan strip (-) untuk membuat poin</label>
+                           <textarea value={exp.description} onChange={(e) => handleArrayChange(setExperiences, experiences, index, 'description', e.target.value)} rows="4" className="w-full bg-[#0A1329] border border-white/10 rounded-lg p-3 text-white text-sm focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 outline-none leading-relaxed transition-all" placeholder="- Membantu tim menyelesaikan proyek dalam 1 bulan.&#10;- Melakukan riset dan input data ke dalam sistem."></textarea>
+                         </div>
+                      )}
                     </div>
                   ))}
                 </div>
 
                 {!isJapanese && (
-                <div className="mb-6">
-                  <div className="flex justify-between items-center mb-3 border-b border-white/10 pb-1">
-                    <h2 className="text-lg font-bold text-cyan-400">{t.proj}</h2>
-                    <button onClick={() => addField(setProjects, projects, { name: "", period: "", description: "" })} className="text-[10px] font-bold bg-cyan-600/20 hover:bg-cyan-600 text-cyan-400 hover:text-white px-2 py-1 rounded transition-colors">{t.add}</button>
+                <div className="mb-6 bg-white/[0.02] p-4 rounded-xl border border-white/5 shadow-sm">
+                  <div className="flex justify-between items-center mb-4 border-b border-white/10 pb-2">
+                    <div>
+                       <h2 className="text-lg font-bold text-cyan-400">{t.proj}</h2>
+                       <p className="text-[10px] text-slate-500 mt-1">Pernah membuat tugas akhir atau ikut kepanitiaan? Masukkan di sini.</p>
+                    </div>
+                    <button onClick={() => addField(setProjects, projects, { name: "", period: "", description: "" })} className="text-[10px] font-bold bg-cyan-600/20 hover:bg-cyan-600 text-cyan-400 hover:text-white px-3 py-1.5 rounded transition-colors shrink-0">{t.add}</button>
                   </div>
                   {projects.map((proj, index) => (
-                    <div key={proj.id} className="bg-[#060D1F] p-4 rounded-xl mb-3 relative border border-white/5">
-                      <button onClick={() => removeField(setProjects, projects, index)} className="absolute top-3 right-3 text-red-400 hover:text-red-300 text-[10px] font-bold px-2 py-1 bg-red-400/10 rounded">{t.del}</button>
-                      <div className="grid grid-cols-2 gap-3 mb-2 pr-12">
-                        <input type="text" value={proj.name} onChange={(e) => handleArrayChange(setProjects, projects, index, 'name', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder={t.placeholders.projName} />
-                        <input type="text" value={proj.period} onChange={(e) => handleArrayChange(setProjects, projects, index, 'period', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder={t.placeholders.projDate} />
+                    <div key={proj.id} className="bg-[#060D1F] p-4 rounded-xl mb-4 relative border border-white/10 shadow-inner">
+                      <button onClick={() => removeField(setProjects, projects, index)} className="absolute -top-2 -right-2 text-red-400 hover:text-red-300 text-[10px] font-bold px-2.5 py-1 bg-[#0A1329] border border-red-500/30 rounded-full z-10">{t.del}</button>
+                      
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-3">
+                         <div>
+                           <label className="text-[9px] font-bold text-slate-500 uppercase tracking-widest block mb-1">Nama Kegiatan/Proyek</label>
+                           <input type="text" value={proj.name} onChange={(e) => handleArrayChange(setProjects, projects, index, 'name', e.target.value)} className="w-full bg-transparent border-b border-white/20 p-2 text-white text-sm focus:border-cyan-500 focus:bg-white/5 outline-none transition-all font-bold" placeholder={t.placeholders.projName} />
+                         </div>
+                         <div>
+                           <label className="text-[9px] font-bold text-slate-500 uppercase tracking-widest block mb-1">Tahun Pelaksanaan</label>
+                           <input type="text" value={proj.period} onChange={(e) => handleArrayChange(setProjects, projects, index, 'period', e.target.value)} className="w-full bg-transparent border-b border-white/20 p-2 text-white text-sm focus:border-cyan-500 focus:bg-white/5 outline-none transition-all" placeholder={t.placeholders.projDate} />
+                         </div>
                       </div>
-                      <textarea value={proj.description} onChange={(e) => handleArrayChange(setProjects, projects, index, 'description', e.target.value)} rows="3" className="w-full mt-2 bg-transparent border border-white/5 rounded p-2 text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder="- Deskripsi proyek..."></textarea>
+
+                      <div className="mt-4">
+                         <label className="text-[9px] font-bold text-emerald-400 uppercase tracking-widest block mb-2 bg-emerald-500/10 w-fit px-2 py-1 rounded">💡 Tips: Gunakan strip (-) untuk membuat poin</label>
+                         <textarea value={proj.description} onChange={(e) => handleArrayChange(setProjects, projects, index, 'description', e.target.value)} rows="3" className="w-full bg-[#0A1329] border border-white/10 rounded-lg p-3 text-white text-sm focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 outline-none leading-relaxed transition-all" placeholder="- Bertanggung jawab sebagai ketua pelaksana.&#10;- Berhasil mengumpulkan dana 10 Juta Rupiah."></textarea>
+                      </div>
                     </div>
                   ))}
                 </div>
                 )}
 
-                <div className="mb-4">
-                  <div className="flex justify-between items-center mb-3 border-b border-white/10 pb-1">
-                    <h2 className="text-lg font-bold text-cyan-400">{t.cert}</h2>
-                    <button onClick={() => addField(setCerts, certs, { name: "", issuer: "", period: "", description: "" })} className="text-[10px] font-bold bg-cyan-600/20 hover:bg-cyan-600 text-cyan-400 hover:text-white px-2 py-1 rounded transition-colors">{t.add}</button>
+                <div className="mb-4 bg-white/[0.02] p-4 rounded-xl border border-white/5 shadow-sm">
+                  <div className="flex justify-between items-center mb-4 border-b border-white/10 pb-2">
+                    <div>
+                       <h2 className="text-lg font-bold text-cyan-400">{t.cert}</h2>
+                       <p className="text-[10px] text-slate-500 mt-1">Punya sertifikat pelatihan atau keahlian? (Bisa dihapus jika tidak ada)</p>
+                    </div>
+                    <button onClick={() => addField(setCerts, certs, { name: "", issuer: "", period: "", description: "" })} className="text-[10px] font-bold bg-cyan-600/20 hover:bg-cyan-600 text-cyan-400 hover:text-white px-3 py-1.5 rounded transition-colors shrink-0">{t.add}</button>
                   </div>
                   {certs.map((cert, index) => (
-                    <div key={cert.id} className="bg-[#060D1F] p-4 rounded-xl mb-3 relative border border-white/5">
-                      <button onClick={() => removeField(setCerts, certs, index)} className="absolute top-3 right-3 text-red-400 hover:text-red-300 text-[10px] font-bold px-2 py-1 bg-red-400/10 rounded">{t.del}</button>
-                      <div className="grid grid-cols-2 gap-3 mb-2 pr-12">
-                        <input type="text" value={cert.name} onChange={(e) => handleArrayChange(setCerts, certs, index, 'name', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder={t.placeholders.certName} />
-                        <input type="text" value={cert.period} onChange={(e) => handleArrayChange(setCerts, certs, index, 'period', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder={t.placeholders.certDate} />
+                    <div key={cert.id} className="bg-[#060D1F] p-4 rounded-xl mb-4 relative border border-white/10 shadow-inner">
+                      <button onClick={() => removeField(setCerts, certs, index)} className="absolute -top-2 -right-2 text-red-400 hover:text-red-300 text-[10px] font-bold px-2.5 py-1 bg-[#0A1329] border border-red-500/30 rounded-full z-10">{t.del}</button>
+                      
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-3">
+                         <div>
+                           <label className="text-[9px] font-bold text-slate-500 uppercase tracking-widest block mb-1">Nama Sertifikasi</label>
+                           <input type="text" value={cert.name} onChange={(e) => handleArrayChange(setCerts, certs, index, 'name', e.target.value)} className="w-full bg-transparent border-b border-white/20 p-2 text-white text-sm focus:border-cyan-500 focus:bg-white/5 outline-none transition-all font-bold" placeholder={t.placeholders.certName} />
+                         </div>
+                         <div>
+                           <label className="text-[9px] font-bold text-slate-500 uppercase tracking-widest block mb-1">Tahun Diperoleh</label>
+                           <input type="text" value={cert.period} onChange={(e) => handleArrayChange(setCerts, certs, index, 'period', e.target.value)} className="w-full bg-transparent border-b border-white/20 p-2 text-white text-sm focus:border-cyan-500 focus:bg-white/5 outline-none transition-all" placeholder={t.placeholders.certDate} />
+                         </div>
                       </div>
+
                       {!isJapanese && (
-                        <>
-                          <input type="text" value={cert.issuer} onChange={(e) => handleArrayChange(setCerts, certs, index, 'issuer', e.target.value)} className="w-full bg-transparent border-b border-white/10 p-1.5 text-white text-sm focus:border-cyan-500 focus:outline-none mb-2" placeholder="Penerbit (Cth: Google, Dicoding)" />
-                          <textarea value={cert.description} onChange={(e) => handleArrayChange(setCerts, certs, index, 'description', e.target.value)} rows="2" className="w-full mt-1 bg-transparent border border-white/5 rounded p-2 text-white text-sm focus:border-cyan-500 focus:outline-none" placeholder="- Topik yang dipelajari..."></textarea>
-                        </>
+                        <div className="mt-2 space-y-4">
+                          <div>
+                             <label className="text-[9px] font-bold text-slate-500 uppercase tracking-widest block mb-1">Lembaga Penyelenggara</label>
+                             <input type="text" value={cert.issuer} onChange={(e) => handleArrayChange(setCerts, certs, index, 'issuer', e.target.value)} className="w-full bg-transparent border-b border-white/20 p-2 text-white text-sm focus:border-cyan-500 focus:bg-white/5 outline-none transition-all" placeholder="Cth: Google, Kampus Merdeka, BLK" />
+                          </div>
+                          <div>
+                             <label className="text-[9px] font-bold text-emerald-400 uppercase tracking-widest block mb-2 bg-emerald-500/10 w-fit px-2 py-1 rounded">💡 Tips: Gunakan strip (-) untuk membuat poin</label>
+                             <textarea value={cert.description} onChange={(e) => handleArrayChange(setCerts, certs, index, 'description', e.target.value)} rows="2" className="w-full bg-[#0A1329] border border-white/10 rounded-lg p-3 text-white text-sm focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 outline-none leading-relaxed transition-all" placeholder="- Mempelajari dasar-dasar digital marketing."></textarea>
+                          </div>
+                        </div>
                       )}
                     </div>
                   ))}
@@ -560,6 +617,7 @@ export default function CVMaker() {
               </div>
             )}
 
+            {/* FORMULIR COVER LETTER */}
             {docMode === 'cl' && (
               <div className="mb-6 animate-fade-in-up">
                 <div className="flex justify-between items-center mb-5 pb-3 border-b border-white/10">
@@ -848,7 +906,6 @@ export default function CVMaker() {
                               {contactItems.map((item, i) => (
                                 <span key={i} className="whitespace-nowrap">
                                   {item.val ? <span className="text-black">{item.val}</span> : <span className="text-gray-400">{item.ph}</span>}
-                                  {/* Jika ini item kontak terakhir, cek apakah ada profil dinamis. Jika ada, beri pemisah. Jika tidak ada profil, pemisah dihilangkan. */}
                                   {(i < contactItems.length - 1 || (i === contactItems.length - 1 && activeProfiles.length > 0)) && <span className="mx-1.5 text-black font-bold">{separator}</span>}
                                 </span>
                               ))}
@@ -857,9 +914,9 @@ export default function CVMaker() {
                               {activeProfiles.map((prof, i) => (
                                  <span key={`prof-${i}`} className="whitespace-nowrap">
                                     {prof.url ? (
-                                        <a href={`https://${prof.url.replace(/^https?:\/\//, '')}`} className="text-blue-600 hover:underline">{prof.url}</a>
+                                        <a href={`https://${prof.url.replace(/^https?:\/\//, '')}`} className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">{prof.platform ? `${prof.platform}: ${prof.url}` : prof.url}</a>
                                     ) : (
-                                        <span className="text-gray-400">{prof.url || 'linkedin.com/in/namaanda'}</span>
+                                        <span className="text-gray-400">{prof.platform ? `${prof.platform}: ${prof.url || 'linkedin.com/in/namaanda'}` : (prof.url || 'linkedin.com/in/namaanda')}</span>
                                     )}
                                     {i < activeProfiles.length - 1 && <span className="mx-1.5 text-black font-bold">{separator}</span>}
                                  </span>
