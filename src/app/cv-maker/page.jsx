@@ -41,7 +41,7 @@ const MagicPenIcon = () => (
   </svg>
 );
 
-// Komponen Input dengan Label untuk memudahkan User Awam
+// Komponen Input dengan Label
 const LabeledInput = ({ label, helperText, children }) => (
   <div className="space-y-1">
     <label className="text-[10px] sm:text-xs font-bold text-cyan-400 uppercase tracking-widest pl-1">{label}</label>
@@ -55,8 +55,6 @@ export default function CVMaker() {
   const [lang, setLang] = useState('id'); 
   const [isTranslating, setIsTranslating] = useState(false);
   const [docMode, setDocMode] = useState('cv');
-  
-  // STATE BARU: FRESH GRADUATE VS EXPERIENCED
   const [careerLevel, setCareerLevel] = useState('experienced');
 
   const getTodayDate = () => {
@@ -199,7 +197,7 @@ export default function CVMaker() {
   // =========================================================================
   const dBasics = {
     name: lang === 'en' ? 'JOHN DOE' : lang === 'jp' ? '山田 太郎' : 'NAMA LENGKAP ANDA',
-    role: lang === 'en' ? 'Graphic Designer' : lang === 'jp' ? 'グラフィックデザイナー' : 'Posisi Pekerjaan (Cth: Staf Administrasi)',
+    role: lang === 'en' ? 'Graphic Designer' : lang === 'jp' ? 'グラフィックデザイナー' : 'Graphic Designer / Posisi Pekerjaan',
     location: lang === 'en' ? 'New York, USA' : lang === 'jp' ? '東京都渋谷区' : 'Kota, Indonesia',
     phone: lang === 'en' ? '+1 234 567 890' : lang === 'jp' ? '090-1234-5678' : '0812-3456-7890',
     email: lang === 'en' ? 'johndoe@email.com' : lang === 'jp' ? 'yamada@email.com' : 'email@anda.com',
@@ -272,22 +270,25 @@ export default function CVMaker() {
     <div className="min-h-screen pt-28 pb-20 px-4 md:px-8 bg-[#060D1F] relative z-10 selection:bg-cyan-500 selection:text-white font-sans print:bg-white print:pt-0 print:pb-0 print:px-0 print:min-h-0">
       
       {/* ======================================================================= */}
-      {/* PERBAIKAN CSS CETAK (MEMBUNUH SEMUA ELEMEN WEBSITE KECUALI KERTAS)        */}
+      {/* PERBAIKAN CSS CETAK: overflow hidden agar tidak nyangkut lembar 2         */}
       {/* ======================================================================= */}
       <style dangerouslySetInnerHTML={{__html: `
         @media print {
           @page { size: A4; margin: 10mm; }
           html, body { 
-            background: white !important; color: black !important; margin: 0 !important; padding: 0 !important; height: auto !important; overflow: visible !important;
+            background: white !important; color: black !important; margin: 0 !important; padding: 0 !important; height: auto !important; overflow: hidden !important;
           }
           header, nav, footer, aside, iframe, .show-in-pwa, .mrr-navbar, .mrr-footer, button, a { display: none !important; }
           .no-print { display: none !important; }
+          
           .min-h-screen, .max-w-\\[1400px\\], .xl\\:flex-row, .xl\\:w-7\\/12, #preview-container, .w-fit {
-            display: block !important; width: 100% !important; max-width: 100% !important; margin: 0 !important; padding: 0 !important; position: static !important; background: transparent !important; border: none !important; box-shadow: none !important; transform: none !important; overflow: visible !important;
+            display: block !important; width: 100% !important; max-width: 100% !important; margin: 0 !important; padding: 0 !important; position: static !important; background: transparent !important; border: none !important; box-shadow: none !important; transform: none !important; overflow: hidden !important;
           }
+          
           #cv-preview {
-            display: block !important; width: 100% !important; max-width: 100% !important; min-width: 100% !important; margin: 0 !important; padding: 0 !important; box-shadow: none !important; border: none !important; page-break-after: auto;
+            display: block !important; width: 100% !important; max-width: 100% !important; min-width: 100% !important; margin: 0 !important; padding: 0 !important; box-shadow: none !important; border: none !important; page-break-after: auto; page-break-inside: avoid;
           }
+          
           .break-inside-avoid, h2, h3, tr { break-inside: avoid !important; page-break-inside: avoid !important; }
         }
         input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; opacity: 0.7; }
@@ -374,6 +375,14 @@ export default function CVMaker() {
                 {/* 1. INFORMASI DASAR */}
                 <div className="mb-6 bg-white/[0.02] p-4 rounded-xl border border-white/5 shadow-sm">
                   <h2 className="text-lg font-bold text-cyan-400 mb-4 border-b border-white/10 pb-2">{t.personal}</h2>
+                  
+                  {/* PANDUAN ISI PROFIL */}
+                  <div className="mb-4 bg-cyan-900/30 p-3 rounded border border-cyan-500/30">
+                    <p className="text-[10px] text-cyan-50 leading-relaxed font-medium">
+                      <span className="text-cyan-300 font-bold">💡 Tips HRD:</span> Pastikan alamat Email dan Nomor Telepon Anda aktif. Untuk Profil Singkat (Summary), tuliskan 3-4 kalimat padat yang menonjolkan kekuatan, pengalaman (jika ada), dan tujuan karir Anda.
+                    </p>
+                  </div>
+
                   <div className="space-y-4">
                     <LabeledInput label="Nama Lengkap" helperText="Tuliskan nama asli sesuai KTP">
                       <input type="text" name="name" value={basics.name} onChange={handleBasicsChange} className="w-full bg-[#060D1F] border border-white/10 p-3 rounded-lg text-white text-sm focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all outline-none" placeholder={t.placeholders.name} />
@@ -914,7 +923,7 @@ export default function CVMaker() {
                               {activeProfiles.map((prof, i) => (
                                  <span key={`prof-${i}`} className="whitespace-nowrap">
                                     {prof.url ? (
-                                        <a href={`https://${prof.url.replace(/^https?:\/\//, '')}`} className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">{prof.platform ? `${prof.platform}: ${prof.url}` : prof.url}</a>
+                                        <a href={`https://${prof.url.replace(/^https?:\/\//, '')}`} className="text-black hover:underline decoration-gray-400" target="_blank" rel="noopener noreferrer">{prof.platform ? `${prof.platform}: ${prof.url}` : prof.url}</a>
                                     ) : (
                                         <span className="text-gray-400">{prof.platform ? `${prof.platform}: ${prof.url || 'linkedin.com/in/namaanda'}` : (prof.url || 'linkedin.com/in/namaanda')}</span>
                                     )}
@@ -928,9 +937,13 @@ export default function CVMaker() {
                             <>
                               {template === 'normal' && (
                                 <div className="pb-2 text-left">
-                                  <h1 className="text-[20pt] font-bold mb-1 tracking-tight capitalize leading-none text-black">
+                                  <h1 className="text-[20pt] font-bold mb-0.5 tracking-tight capitalize leading-none text-black">
                                     {basics.name || <span className="text-gray-400">{dBasics.name}</span>}
                                   </h1>
+                                  {/* POSISI PEKERJAAN DITAMBAHKAN DI SINI UNTUK TEMPLATE NORMAL */}
+                                  <h2 className="text-[12pt] font-semibold mb-1 text-black">
+                                    {basics.role ? <span className="text-black">{basics.role}</span> : <span className="text-gray-400">{dBasics.role}</span>}
+                                  </h2>
                                   <p className="text-[10.5pt] flex flex-wrap mt-1.5 mb-3">
                                     {renderContactLine('|')}
                                   </p>
@@ -1002,10 +1015,8 @@ export default function CVMaker() {
                           // MESIN SUSUNAN (ORDER) OTOMATIS: FRESH GRAD VS EXPERIENCED
                           const RenderCVOrder = () => {
                              if (careerLevel === 'fresh') {
-                               // Fresh Grad: Pendidikan paling atas
                                return <><R_Edu/><R_Exp/><R_Prj/><R_Skl/><R_Crt/></>;
                              } else {
-                               // Berpengalaman: Pengalaman paling atas
                                return <><R_Exp/><R_Edu/><R_Skl/><R_Prj/><R_Crt/></>;
                              }
                           };
