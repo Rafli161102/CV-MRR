@@ -47,7 +47,7 @@ const LightbulbIcon = () => (
   </svg>
 );
 
-// Helper Script Loader untuk PDF & Docx Parser di sisi Klien (HP/Desktop)
+// Helper Script Loader untuk PDF & Docx Parser di sisi Klien (Aman untuk HP)
 const loadScript = (src) => {
   return new Promise((resolve, reject) => {
     if (document.querySelector(`script[src="${src}"]`)) return resolve();
@@ -96,9 +96,7 @@ export default function CVMaker() {
     return dateStr;
   };
 
-  // =========================================================================
-  // KAMUS BAHASA & PLACEHOLDER TEKS
-  // =========================================================================
+  // KAMUS BAHASA
   const t = {
     id: {
       personal: "Informasi Dasar", exp: "PENGALAMAN KERJA", edu: "PENDIDIKAN", proj: "PROYEK", cert: "SERTIFIKASI", summary: "PROFIL SINGKAT", skills: "KEAHLIAN & KOMPETENSI", links: "TAUTAN PROFIL",
@@ -145,9 +143,7 @@ export default function CVMaker() {
     }
   }[lang];
 
-  // =========================================================================
-  // STATE FORMULIR UTAMA (CV)
-  // =========================================================================
+  // STATE FORMULIR UTAMA
   const [basics, setBasics] = useState({ 
     name: "", furigana: "", role: "", location: "", addressFurigana: "", phone: "", email: "", summary: "", skills: "",
     birthdate: "", age: "", gender: "男", nationality: "", visa: "", commuteTime: "", commuteMinute: "", dependents: "", spouse: "", spouseSupport: ""
@@ -164,7 +160,7 @@ export default function CVMaker() {
     targetRole: "", relevantSkills: "", company: "", hr: "", date: getTodayDate(), body: ""
   });
 
-  // AUTO-SYNC CV -> Cover Letter
+  // AUTO-SYNC
   useEffect(() => {
     setClData(prev => ({
       ...prev,
@@ -223,7 +219,7 @@ export default function CVMaker() {
   };
 
   // =========================================================================
-  // MAGIC AI IMPORT - KINI MENGGUNAKAN POLLINATIONS AI (100% GRATIS & TANPA KEY)
+  // MAGIC AI IMPORT - PENYEMPURNAAN PEMBACAAN PDF (HUDA & RAFLI)
   // =========================================================================
   const handleAiUpload = async (e) => {
     const file = e.target.files[0];
@@ -234,20 +230,47 @@ export default function CVMaker() {
     try {
       let extractedPayload = null;
 
-      // 1. Ekstraksi Teks/Gambar
+      // 1. Ekstraksi Teks/Gambar (Menggunakan Algoritma Y-X Sorting untuk PDF Desain)
       if (file.type === 'application/pdf') {
-        setAiStatus('Membaca isi PDF...');
+        setAiStatus('Membaca struktur PDF...');
         await loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js');
         window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
-        const arrayBuffer = await file.arrayBuffer();
-        const pdf = await window.pdfjsLib.getDocument(arrayBuffer).promise;
-        let text = '';
-        for (let i = 1; i <= pdf.numPages; i++) {
-          const page = await pdf.getPage(i);
-          const content = await page.getTextContent();
-          text += content.items.map(item => item.str).join(' ') + '\n';
+        
+        try {
+          const arrayBuffer = await file.arrayBuffer();
+          // [PERBAIKAN CV HUDA]: Gunakan Uint8Array agar stabil di browser Mobile HP
+          const typedarray = new Uint8Array(arrayBuffer);
+          const pdf = await window.pdfjsLib.getDocument({ data: typedarray }).promise;
+          let text = '';
+          
+          for (let i = 1; i <= pdf.numPages; i++) {
+            const page = await pdf.getPage(i);
+            const content = await page.getTextContent();
+            
+            // [PERBAIKAN CV RAFLI]: Mengurutkan teks berdasarkan posisi visual tinggi(Y) & lebar(X)
+            // Memperbaiki masalah teks kolom kiri tertukar dengan kolom kanan
+            let items = content.items.map(item => ({
+                str: item.str,
+                x: item.transform[4],
+                y: item.transform[5]
+            }));
+
+            items.sort((a, b) => {
+                // Jika perbedaan tinggi (Y) kecil (< 5px), berarti 1 baris, urutkan dari kiri ke kanan (X)
+                if (Math.abs(a.y - b.y) < 5) {
+                    return a.x - b.x; 
+                }
+                // Jika tidak 1 baris, urutkan dari atas ke bawah (Y tertinggi ke terendah)
+                return b.y - a.y; 
+            });
+
+            text += items.map(item => item.str).join(' ') + '\n\n';
+          }
+          extractedPayload = text;
+        } catch (pdfErr) {
+          console.error("PDF Parse Error:", pdfErr);
+          throw new Error("Gagal membaca struktur PDF. Cobalah simpan ulang PDF Anda atau unggah berupa Foto/Gambar.");
         }
-        extractedPayload = text;
       } 
       else if (file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
         setAiStatus('Membaca dokumen Word...');
@@ -257,7 +280,7 @@ export default function CVMaker() {
         extractedPayload = result.value;
       } 
       else if (file.type.startsWith('image/')) {
-        setAiStatus('Memproses gambar...');
+        setAiStatus('Memproses foto/gambar...');
         extractedPayload = await new Promise((resolve, reject) => {
           const reader = new FileReader();
           reader.onload = () => resolve({ type: 'image_url', url: reader.result });
@@ -269,18 +292,23 @@ export default function CVMaker() {
         extractedPayload = await file.text();
       }
 
-      setAiStatus('Robot AI Gratis sedang menyusun data. Mohon tunggu...');
+      setAiStatus('Robot AI Gratis sedang merapikan & menyusun data. Mohon tunggu...');
 
-      // 2. Persiapan Payload untuk Pollinations AI
+      // 2. Persiapan Payload untuk Pollinations AI (Prompt dipersingkat agar tidak terpotong)
       let messages = [
         { 
           role: "system", 
-          content: `Anda adalah mesin ekstraksi data. Ubah teks/gambar ini menjadi JSON murni. JANGAN MENULIS TEKS LAIN SELAIN JSON!
-          Gunakan persis struktur JSON ini:
+          content: `Anda adalah robot HRD. Ubah teks/gambar ini menjadi JSON murni. JANGAN MENULIS TEKS APAPUN SELAIN JSON!
+          PENTING:
+          1. Rangkum deskripsi "experiences" menjadi maks 2-3 poin singkat per pekerjaan.
+          2. Jangan sampai JSON terpotong di akhir.
+          3. Jika ada bagian kosong, isi dengan "".
+          
+          Format Wajib:
           {
             "basics": {"name": "", "role": "", "location": "", "phone": "", "email": "", "summary": "", "skills": ""},
             "profiles": [{"platform": "", "url": ""}],
-            "experiences": [{"company": "", "role": "", "period": "", "description": "- Poin 1"}],
+            "experiences": [{"company": "", "role": "", "period": "", "description": "- Poin 1\\n- Poin 2"}],
             "educations": [{"institution": "", "major": "", "period": "", "gpa": ""}],
             "projects": [{"name": "", "period": "", "description": ""}],
             "certs": [{"name": "", "issuer": "", "period": "", "description": ""}]
@@ -298,11 +326,13 @@ export default function CVMaker() {
         });
       } else {
         if (!extractedPayload || extractedPayload.trim().length === 0) {
-            throw new Error("Dokumen kosong atau tidak terbaca.");
+            throw new Error("Dokumen kosong atau teks tidak bisa terbaca sama sekali.");
         }
+        // Batasi teks maksimal 5000 karakter agar AI tidak error kelebihan beban
+        const safeText = extractedPayload.substring(0, 5000); 
         messages.push({
           role: "user",
-          content: "Ekstrak CV ini ke JSON:\n\n" + extractedPayload
+          content: "Rapikan teks CV berantakan ini dan ekstrak ke JSON:\n\n" + safeText
         });
       }
 
@@ -314,30 +344,36 @@ export default function CVMaker() {
         },
         body: JSON.stringify({
           messages: messages,
-          model: "openai", // Akan otomatis menggunakan GPT-4o yang disediakan gratis oleh Pollinations
+          model: "openai", 
           jsonMode: true,
           seed: Math.floor(Math.random() * 1000)
         })
       });
 
       if (!aiRes.ok) {
-        throw new Error(`Server AI Pollinations error (Status ${aiRes.status}). Silakan coba lagi.`);
+        throw new Error(`Server AI sibuk (Status ${aiRes.status}). Coba klik tombol upload sekali lagi.`);
       }
 
-      // Pollinations AI mengembalikan respon langsung berupa teks (bukan objek complex OpenAI)
       let rawContent = await aiRes.text();
+      
+      // Bersihkan tanda markdown jika AI ngeyel
+      rawContent = rawContent.replace(/```json/gi, '').replace(/```/g, '').trim();
 
       // 4. PARSER JSON CERDAS (Menemukan isi JSON dari teks)
+      let parsedCV;
       const startIndex = rawContent.indexOf('{');
       const endIndex = rawContent.lastIndexOf('}');
       
-      if (startIndex !== -1 && endIndex !== -1) {
-        rawContent = rawContent.substring(startIndex, endIndex + 1);
+      if (startIndex !== -1 && endIndex !== -1 && endIndex > startIndex) {
+        let jsonString = rawContent.substring(startIndex, endIndex + 1);
+        try {
+          parsedCV = JSON.parse(jsonString);
+        } catch (err) {
+          throw new Error("AI gagal membentuk data secara penuh (Data terpotong). Silakan coba lagi.");
+        }
       } else {
-        throw new Error("AI gagal membentuk data JSON. Coba upload ulang dokumennya.");
+        throw new Error("AI tidak memberikan format JSON yang benar. Coba upload lagi.");
       }
-
-      const parsedCV = JSON.parse(rawContent);
 
       // 5. Update Form State
       if (parsedCV.basics) setBasics(prev => ({...prev, ...parsedCV.basics}));
@@ -349,7 +385,7 @@ export default function CVMaker() {
 
       alert("✅ Yay! Data CV Anda berhasil disedot & disusun otomatis oleh AI.");
     } catch (error) {
-      alert(`⚠️ PROSES GAGAL!\n\nAlasan: ${error.message}\n\nTips: Coba gunakan file PDF/Word yang teksnya bisa di-copy (bukan foto/scan yang blur).`);
+      alert(`⚠️ PROSES GAGAL!\n\nTahap Error: ${error.message}`);
     } finally {
       setIsAiLoading(false);
       setAiStatus('');
@@ -358,7 +394,7 @@ export default function CVMaker() {
   };
 
   // =========================================================================
-  // DATA DUMMY PLACEHOLDER (TAMPIL JIKA FORM KOSONG)
+  // DATA DUMMY PLACEHOLDER
   // =========================================================================
   const dBasics = {
     name: lang === 'en' ? 'JOHN DOE' : lang === 'jp' ? '山田 太郎' : 'NAMA LENGKAP ANDA',
