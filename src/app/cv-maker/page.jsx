@@ -59,7 +59,7 @@ const loadScript = (src) => {
   });
 };
 
-// Komponen Input dengan Label untuk memudahkan User Awam
+// Komponen Input dengan Label
 const LabeledInput = ({ label, helperText, children }) => (
   <div className="space-y-1">
     <label className="text-[10px] sm:text-xs font-bold text-cyan-400 uppercase tracking-widest pl-1">{label}</label>
@@ -159,9 +159,6 @@ export default function CVMaker() {
   const [projects, setProjects] = useState([{ id: 1, name: "", period: "", description: "" }]);
   const [certs, setCerts] = useState([{ id: 1, name: "", issuer: "", period: "", description: "" }]);
 
-  // =========================================================================
-  // STATE COVER LETTER
-  // =========================================================================
   const [clData, setClData] = useState({
     senderName: "", senderLocation: "", senderPhone: "", senderEmail: "",
     targetRole: "", relevantSkills: "", company: "", hr: "", date: getTodayDate(), body: ""
@@ -185,7 +182,7 @@ export default function CVMaker() {
   const addField = (setter, state, emptyObj) => setter([...state, { id: Date.now() + Math.random(), ...emptyObj }]);
   const removeField = (setter, state, index) => setter(state.filter((_, i) => i !== index));
 
-  const generateCoverLetter = () => {
+  const generateCoverLetter = async () => {
     const role = clData.targetRole || (lang === 'en' ? '[Targeted Role]' : lang === 'jp' ? '[希望職種]' : '[Posisi yang Dilamar]');
     const company = clData.company || (lang === 'en' ? '[Company Name]' : lang === 'jp' ? '[貴社]' : '[Nama Perusahaan]');
     const skills = clData.relevantSkills || (lang === 'en' ? '[Relevant Skills]' : lang === 'jp' ? '[スキル]' : '[Keahlian yang Relevan]');
@@ -226,7 +223,7 @@ export default function CVMaker() {
   };
 
   // =========================================================================
-  // MAGIC AI IMPORT (PERBAIKAN ERROR HANDLING UNTUK MOBILE)
+  // MAGIC AI IMPORT - KINI MENGGUNAKAN POLLINATIONS AI (100% GRATIS & TANPA KEY)
   // =========================================================================
   const handleAiUpload = async (e) => {
     const file = e.target.files[0];
@@ -272,18 +269,18 @@ export default function CVMaker() {
         extractedPayload = await file.text();
       }
 
-      setAiStatus('Mengirim data ke AI. Mohon tunggu...');
+      setAiStatus('Robot AI Gratis sedang menyusun data. Mohon tunggu...');
 
-      // 2. Persiapan Payload untuk API AI
+      // 2. Persiapan Payload untuk Pollinations AI
       let messages = [
         { 
           role: "system", 
-          content: `Anda adalah ahli parser JSON. Berikan balasan HANYA dalam format JSON valid berdasarkan teks/gambar user. Jangan gunakan tag markdown seperti \`\`\`json.
-          Gunakan persis struktur ini:
+          content: `Anda adalah mesin ekstraksi data. Ubah teks/gambar ini menjadi JSON murni. JANGAN MENULIS TEKS LAIN SELAIN JSON!
+          Gunakan persis struktur JSON ini:
           {
             "basics": {"name": "", "role": "", "location": "", "phone": "", "email": "", "summary": "", "skills": ""},
             "profiles": [{"platform": "", "url": ""}],
-            "experiences": [{"company": "", "role": "", "period": "", "description": ""}],
+            "experiences": [{"company": "", "role": "", "period": "", "description": "- Poin 1"}],
             "educations": [{"institution": "", "major": "", "period": "", "gpa": ""}],
             "projects": [{"name": "", "period": "", "description": ""}],
             "certs": [{"name": "", "issuer": "", "period": "", "description": ""}]
@@ -295,61 +292,54 @@ export default function CVMaker() {
         messages.push({
           role: "user",
           content: [
-            { type: "text", text: "Ekstrak CV dari gambar ini ke JSON:" },
+            { type: "text", text: "Ekstrak CV dari gambar ini ke JSON." },
             { type: "image_url", image_url: { url: extractedPayload.url } }
           ]
         });
       } else {
         if (!extractedPayload || extractedPayload.trim().length === 0) {
-            throw new Error("Teks tidak terdeteksi dalam file. Pastikan dokumen tidak kosong/berupa hasil scan gambar yang tidak terbaca teksnya.");
+            throw new Error("Dokumen kosong atau tidak terbaca.");
         }
         messages.push({
           role: "user",
-          content: "Ekstrak CV berikut ini ke JSON:\n\n" + extractedPayload
+          content: "Ekstrak CV ini ke JSON:\n\n" + extractedPayload
         });
       }
 
-      // 3. Panggil API AI (TANPA MENGGUNAKAN response_format AGAR PROXY TIDAK ERROR 400)
-      const aiRes = await fetch("https://api-ai.tegarfirman.site/v1/chat/completions", {
+      // 3. Panggil API AI POLLINATIONS (Gratis, Tanpa API Key)
+      const aiRes = await fetch("https://text.pollinations.ai/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": "Bearer sk-e0dde619-2dd3-4018-aad1-e7f602d58534"
         },
         body: JSON.stringify({
-          model: "gpt-4o-mini",
           messages: messages,
-          temperature: 0.1
+          model: "openai", // Akan otomatis menggunakan GPT-4o yang disediakan gratis oleh Pollinations
+          jsonMode: true,
+          seed: Math.floor(Math.random() * 1000)
         })
       });
 
-      // Tangkap error API asli agar muncul di HP
       if (!aiRes.ok) {
-        const errorText = await aiRes.text();
-        throw new Error(`Server API menolak (Status ${aiRes.status}).\n\nDetail API: ${errorText.substring(0, 100)}`);
+        throw new Error(`Server AI Pollinations error (Status ${aiRes.status}). Silakan coba lagi.`);
       }
 
-      const aiData = await aiRes.json();
-      if (!aiData.choices || !aiData.choices[0]) {
-         throw new Error("Respon API tidak valid / kosong.");
-      }
-      
-      let rawContent = aiData.choices[0].message.content;
+      // Pollinations AI mengembalikan respon langsung berupa teks (bukan objek complex OpenAI)
+      let rawContent = await aiRes.text();
 
-      // 4. PARSER JSON CERDAS (Aman untuk berbagai format balasan AI)
-      // Mencari kurung kurawal pembuka { pertama dan penutup } terakhir
+      // 4. PARSER JSON CERDAS (Menemukan isi JSON dari teks)
       const startIndex = rawContent.indexOf('{');
       const endIndex = rawContent.lastIndexOf('}');
       
       if (startIndex !== -1 && endIndex !== -1) {
         rawContent = rawContent.substring(startIndex, endIndex + 1);
       } else {
-        throw new Error("AI tidak membalas dengan format JSON yang dikenali.");
+        throw new Error("AI gagal membentuk data JSON. Coba upload ulang dokumennya.");
       }
 
       const parsedCV = JSON.parse(rawContent);
 
-      // 5. Update State
+      // 5. Update Form State
       if (parsedCV.basics) setBasics(prev => ({...prev, ...parsedCV.basics}));
       if (parsedCV.profiles?.length) setProfiles(parsedCV.profiles.map(p => ({...p, id: Math.random()})));
       if (parsedCV.experiences?.length) setExperiences(parsedCV.experiences.map(e => ({...e, id: Math.random()})));
@@ -357,10 +347,9 @@ export default function CVMaker() {
       if (parsedCV.projects?.length) setProjects(parsedCV.projects.map(p => ({...p, id: Math.random()})));
       if (parsedCV.certs?.length) setCerts(parsedCV.certs.map(c => ({...c, id: Math.random()})));
 
-      alert("✅ Yay! Data CV berhasil diimpor dan disusun rapih oleh AI.");
+      alert("✅ Yay! Data CV Anda berhasil disedot & disusun otomatis oleh AI.");
     } catch (error) {
-      // Menampilkan pesan error asli ke layer popup HP
-      alert(`⚠️ PROSES GAGAL!\n\nAlasan: ${error.message}`);
+      alert(`⚠️ PROSES GAGAL!\n\nAlasan: ${error.message}\n\nTips: Coba gunakan file PDF/Word yang teksnya bisa di-copy (bukan foto/scan yang blur).`);
     } finally {
       setIsAiLoading(false);
       setAiStatus('');
@@ -526,7 +515,7 @@ export default function CVMaker() {
                     <SparklesIcon className="w-24 h-24" />
                  </div>
                  <h2 className="text-xs font-bold text-cyan-400 uppercase tracking-wider mb-1 flex items-center gap-2"><SparklesIcon/> Malas Mengetik Ulang?</h2>
-                 <p className="text-[10px] text-slate-300 mb-3 relative z-10">Unggah CV/Resume Anda yang sudah ada (PDF, Word, TXT, atau Gambar Foto). AI kami akan membacanya dan menyusun otomatis ke format ini!</p>
+                 <p className="text-[10px] text-slate-300 mb-3 relative z-10">Unggah CV lama Anda (PDF, Word, atau Gambar Foto). AI kami akan membacanya dan menyusun otomatis ke format ini!</p>
                  
                  <input type="file" accept=".pdf,.docx,.doc,.txt,.png,.jpg,.jpeg" className="hidden" ref={fileInputRef} onChange={handleAiUpload} />
                  <button onClick={() => fileInputRef.current.click()} disabled={isAiLoading} className="w-full py-2.5 bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(6,182,212,0.2)] disabled:opacity-50">
