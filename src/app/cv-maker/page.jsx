@@ -219,7 +219,7 @@ export default function CVMaker() {
   };
 
   // =========================================================================
-  // MAGIC AI IMPORT - PENYEMPURNAAN PEMBACAAN PDF (HUDA & RAFLI)
+  // MAGIC AI IMPORT
   // =========================================================================
   const handleAiUpload = async (e) => {
     const file = e.target.files[0];
@@ -238,7 +238,6 @@ export default function CVMaker() {
         
         try {
           const arrayBuffer = await file.arrayBuffer();
-          // [PERBAIKAN CV HUDA]: Gunakan Uint8Array agar stabil di browser Mobile HP
           const typedarray = new Uint8Array(arrayBuffer);
           const pdf = await window.pdfjsLib.getDocument({ data: typedarray }).promise;
           let text = '';
@@ -247,8 +246,6 @@ export default function CVMaker() {
             const page = await pdf.getPage(i);
             const content = await page.getTextContent();
             
-            // [PERBAIKAN CV RAFLI]: Mengurutkan teks berdasarkan posisi visual tinggi(Y) & lebar(X)
-            // Memperbaiki masalah teks kolom kiri tertukar dengan kolom kanan
             let items = content.items.map(item => ({
                 str: item.str,
                 x: item.transform[4],
@@ -256,11 +253,9 @@ export default function CVMaker() {
             }));
 
             items.sort((a, b) => {
-                // Jika perbedaan tinggi (Y) kecil (< 5px), berarti 1 baris, urutkan dari kiri ke kanan (X)
                 if (Math.abs(a.y - b.y) < 5) {
                     return a.x - b.x; 
                 }
-                // Jika tidak 1 baris, urutkan dari atas ke bawah (Y tertinggi ke terendah)
                 return b.y - a.y; 
             });
 
@@ -294,7 +289,7 @@ export default function CVMaker() {
 
       setAiStatus('Robot AI Gratis sedang merapikan & menyusun data. Mohon tunggu...');
 
-      // 2. Persiapan Payload untuk Pollinations AI (Prompt dipersingkat agar tidak terpotong)
+      // 2. Persiapan Payload untuk Pollinations AI
       let messages = [
         { 
           role: "system", 
@@ -336,7 +331,7 @@ export default function CVMaker() {
         });
       }
 
-      // 3. Panggil API AI POLLINATIONS (Gratis, Tanpa API Key)
+      // 3. Panggil API AI POLLINATIONS (Gratis)
       const aiRes = await fetch("https://text.pollinations.ai/", {
         method: "POST",
         headers: {
@@ -356,10 +351,10 @@ export default function CVMaker() {
 
       let rawContent = await aiRes.text();
       
-      // Bersihkan tanda markdown jika AI ngeyel
+      // Bersihkan tanda markdown
       rawContent = rawContent.replace(/```json/gi, '').replace(/```/g, '').trim();
 
-      // 4. PARSER JSON CERDAS (Menemukan isi JSON dari teks)
+      // 4. PARSER JSON CERDAS
       let parsedCV;
       const startIndex = rawContent.indexOf('{');
       const endIndex = rawContent.lastIndexOf('}');
@@ -471,7 +466,7 @@ export default function CVMaker() {
     <div className="min-h-screen pt-28 pb-20 px-4 md:px-8 bg-[#060D1F] relative z-10 selection:bg-cyan-500 selection:text-white font-sans print:bg-white print:pt-0 print:pb-0 print:px-0 print:min-h-0">
       
       {/* ======================================================================= */}
-      {/* PERBAIKAN CSS CETAK (MEMBUNUH SEMUA ELEMEN WEBSITE KECUALI KERTAS)        */}
+      {/* PERBAIKAN CSS CETAK                                                       */}
       {/* ======================================================================= */}
       <style dangerouslySetInnerHTML={{__html: `
         @media print {
@@ -511,9 +506,7 @@ export default function CVMaker() {
           {/* ========================================================= */}
           <div className="w-full xl:w-5/12 bg-[#0A1329] border border-white/10 p-6 rounded-[2rem] no-print xl:sticky xl:top-32 h-fit max-h-none xl:max-h-[80vh] overflow-visible xl:overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-cyan-600 [&::-webkit-scrollbar-thumb]:rounded-full shadow-2xl">
             
-            {/* ----------------------------------------------------------- */}
-            {/* PANDUAN AWAM / BOOMERS (TUTORIAL)                           */}
-            {/* ----------------------------------------------------------- */}
+            {/* PANDUAN AWAM */}
             <div className="mb-6 bg-amber-500/10 border border-amber-500/30 rounded-xl overflow-hidden transition-all duration-300">
                <button onClick={() => setShowTutorial(!showTutorial)} className="w-full p-4 flex justify-between items-center bg-amber-900/20 hover:bg-amber-900/40 text-amber-400 font-bold text-sm">
                   <span className="flex items-center gap-2"><LightbulbIcon /> Panduan Singkat (Klik untuk {showTutorial ? 'tutup' : 'buka'})</span>
@@ -545,7 +538,6 @@ export default function CVMaker() {
 
             {/* KONTROL GLOBAL & AI IMPORT */}
             <div className="mb-6 space-y-4">
-              {/* TOMBOL AI IMPORT */}
               <div className="p-4 bg-gradient-to-r from-cyan-900/40 to-blue-900/40 border border-cyan-500/30 rounded-xl shadow-md relative overflow-hidden">
                  <div className="absolute -right-6 -top-6 text-cyan-500/10">
                     <SparklesIcon className="w-24 h-24" />
@@ -1173,7 +1165,10 @@ export default function CVMaker() {
                                   <h1 className="text-[20pt] font-bold mb-1 tracking-tight capitalize leading-none text-black">
                                     {basics.name || <span className="text-gray-400">{dBasics.name}</span>}
                                   </h1>
-                                  <p className="text-[10.5pt] flex flex-wrap mt-1.5 mb-3">
+                                  <h2 className="text-[12pt] font-medium mb-1.5 capitalize text-black">
+                                    {basics.role ? <span className="text-black">{basics.role}</span> : <span className="text-gray-400">{dBasics.role}</span>}
+                                  </h2>
+                                  <p className="text-[10.5pt] flex flex-wrap mb-3">
                                     {renderContactLine('|')}
                                   </p>
                                   <div className={`text-[10.5pt] leading-[1.6] text-justify mb-4 break-words ${basics.summary ? 'text-black' : 'text-gray-400'}`}>
