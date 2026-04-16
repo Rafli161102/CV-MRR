@@ -45,7 +45,7 @@ export default function CVMaker() {
   const [template, setTemplate] = useState('normal'); 
   const [lang, setLang] = useState('id'); 
   const [isTranslating, setIsTranslating] = useState(false);
-  const [docMode, setDocMode] = useState('cv'); // 'cv' or 'cl'
+  const [docMode, setDocMode] = useState('cv');
 
   const getTodayDate = () => {
     const today = new Date();
@@ -171,7 +171,7 @@ export default function CVMaker() {
   };
 
   // =========================================================================
-  // DATA DUMMY PLACEHOLDER (TAMPIL JIKA FORM KOSONG)
+  // DATA DUMMY PLACEHOLDER
   // =========================================================================
   const dBasics = {
     name: lang === 'en' ? 'JOHN DOE' : lang === 'jp' ? '山田 太郎' : 'NAMA ANDA (PENGIRIM)',
@@ -209,7 +209,6 @@ export default function CVMaker() {
     { name: lang==='en'?'UX Design Professional':lang==='jp'?'日本語能力試験 N2':'Sertifikasi Profesional UX', period: lang==='en'?'2023':lang==='jp'?'2023/12':'2023', issuer: 'Google', description: lang==='en'?'- Mastered user research and wireframing.':'- Spesialisasi dalam riset pengguna dan wireframing.', isPlaceholder: true }
   ] : certs.filter(c => c.name.trim() || c.issuer.trim());
 
-  // PARSER TABEL JEPANG (JIS)
   const parseJpDate = (dateStr) => {
     if (!dateStr) return { year: '', month: '' };
     const parts = dateStr.split(/[\/\-\s]+/);
@@ -241,15 +240,16 @@ export default function CVMaker() {
   const isJapanese = template === 'jp-umum' || template === 'jp-asing';
 
   return (
-    <div className="min-h-screen pt-28 pb-20 px-4 md:px-8 bg-[#060D1F] relative z-10 selection:bg-cyan-500 selection:text-white font-sans">
+    <div className="min-h-screen pt-28 pb-20 px-4 md:px-8 bg-[#060D1F] relative z-10 selection:bg-cyan-500 selection:text-white font-sans print:bg-white print:pt-0 print:pb-0 print:px-0 print:min-h-0">
+      
+      {/* PERBAIKAN CSS CETAK (MEMATIKAN POSITION ABSOLUTE) */}
       <style dangerouslySetInnerHTML={{__html: `
         @media print {
-          body { background: white !important; }
-          body * { visibility: hidden; }
-          #cv-preview, #cv-preview * { visibility: visible; }
-          #cv-preview { position: absolute; left: 0; top: 0; width: 100%; max-width: 100%; padding: 0 !important; margin: 0 !important; box-shadow: none !important; border: none !important; }
-          @page { size: A4; margin: 1.5cm; }
+          @page { size: A4; margin: 1cm; }
+          html, body { background: white !important; color: black !important; overflow: visible !important; height: auto !important; }
           .no-print { display: none !important; }
+          #preview-container { width: 100% !important; margin: 0 !important; padding: 0 !important; background: transparent !important; border: none !important; box-shadow: none !important; overflow: visible !important; }
+          #cv-preview { width: 100% !important; max-width: 100% !important; min-width: 0 !important; min-height: 0 !important; margin: 0 !important; padding: 0 !important; box-shadow: none !important; border: none !important; }
         }
         input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; opacity: 0.7; }
         input[type="date"]::-webkit-calendar-picker-indicator:hover { opacity: 1; }
@@ -267,6 +267,7 @@ export default function CVMaker() {
         </div>
 
         <div className="flex flex-col xl:flex-row gap-8 items-start">
+          
           {/* ========================================================= */}
           {/* KOLOM KIRI: FORMULIR ISIAN                                  */}
           {/* ========================================================= */}
@@ -280,7 +281,6 @@ export default function CVMaker() {
               </button>
             </div>
 
-            {/* PANDUAN DINAMIS & SANGAT DETAIL */}
             <div className="mb-6 p-5 rounded-xl border border-cyan-500/20 bg-gradient-to-br from-cyan-900/10 to-[#0A1329] shadow-inner relative overflow-hidden group">
               <div className="absolute top-0 left-0 w-1 h-full bg-cyan-500"></div>
               <div className="flex items-start gap-3 mb-3">
@@ -302,34 +302,34 @@ export default function CVMaker() {
                   <>
                     <li className="flex gap-2">
                       <span className="text-cyan-400 font-bold">1.</span>
-                      <span><b>Mulai dari Bahasa Indonesia:</b> Isi seluruh kotak form di bawah ini dengan bahasa ibu agar Anda lebih mudah menyusun kalimatnya.</span>
+                      <span><b>Mulai dari Bahasa Indonesia:</b> Isi seluruh form di bawah dengan bahasa ibu agar lebih mudah menyusun kalimatnya.</span>
                     </li>
                     <li className="flex gap-2">
                       <span className="text-cyan-400 font-bold">2.</span>
-                      <span><b>Fitur Bullet Point:</b> Saat mengisi kotak "Deskripsi" pekerjaan/proyek, gunakan tanda strip (-) di awal kalimat untuk membuat poin otomatis di kertas.</span>
+                      <span><b>Fitur Bullet Point:</b> Gunakan tanda strip (-) di kotak Deskripsi untuk membuat poin otomatis di kertas.</span>
                     </li>
                     <li className="flex gap-2">
                       <span className="text-cyan-400 font-bold">3.</span>
-                      <span><b>Sistem Translate Instan:</b> Tekan tombol kotak <b>EN</b> atau <b>JP</b> di panel "Magic Translate" bawah. AI akan otomatis menerjemahkan seluruh CV Anda tanpa merusak tata letak.</span>
+                      <span><b>Sistem Translate Instan:</b> Tekan tombol <b>EN</b> atau <b>JP</b> di panel "Magic Translate" bawah. AI otomatis menerjemahkan CV Anda.</span>
                     </li>
                     <li className="flex gap-2">
                       <span className="text-cyan-400 font-bold">4.</span>
-                      <span><b>Placeholder Cerdas:</b> Teks abu-abu di kertas hanyalah <i>contoh</i> visual. Teks abu-abu itu akan otomatis terganti menjadi hitam rapi ketika Anda mengetik di form.</span>
+                      <span><b>Sembunyikan Kategori:</b> Jika Anda tidak memiliki Proyek atau Sertifikasi, tekan tombol <span className="text-red-400 font-bold">Hapus</span>. Kategori akan hilang bersih dari kertas!</span>
                     </li>
                   </>
                 ) : (
                   <>
                     <li className="flex gap-2">
                       <span className="text-cyan-400 font-bold">1.</span>
-                      <span><b>Langkah Pertama:</b> Isi kotak Data Pengirim (nama & kontak Anda). Kertas di sebelah kanan akan otomatis menyusunnya rata kiri layaknya surat resmi internasional.</span>
+                      <span><b>Langkah Pertama:</b> Isi kotak Data Pengirim. Kertas di sebelah kanan otomatis menyusunnya rata kiri layaknya surat resmi internasional.</span>
                     </li>
                     <li className="flex gap-2">
                       <span className="text-cyan-400 font-bold">2.</span>
-                      <span><b>Tentukan Tanggal:</b> Klik <i>Ikon Kalender</i>. Sistem akan otomatis memformat penulisan tanggal sesuai bahasa yang dipilih (misal: 30 Maret 2026 atau 2026年3月30日).</span>
+                      <span><b>Tentukan Tanggal:</b> Klik <i>Ikon Kalender</i>. Sistem otomatis memformat penulisan tanggal sesuai bahasa.</span>
                     </li>
                     <li className="flex gap-2">
                       <span className="text-cyan-400 font-bold">3.</span>
-                      <span><b>Senjata AI Auto-Generate:</b> Ketik spesifik posisi incaran dan keahlian andalan Anda. Lalu klik tombol biru <b>"Auto-Generate"</b>. AI akan merangkai paragraf pembuka, isi, dan penutup super profesional secara instan!</span>
+                      <span><b>Senjata AI Auto-Generate:</b> Ketik spesifik posisi incaran dan keahlian andalan Anda. Lalu klik tombol biru <b>"Auto-Generate"</b>.</span>
                     </li>
                   </>
                 )}
@@ -338,7 +338,7 @@ export default function CVMaker() {
               <div className="mt-4 bg-cyan-900/30 p-2.5 rounded border border-cyan-500/30 flex gap-2">
                 <div className="text-cyan-400 mt-0.5"><SparklesIcon className="w-4 h-4"/></div>
                 <div className="text-[11px] text-cyan-50 leading-relaxed font-medium">
-                  <span className="text-cyan-300 font-bold uppercase">Aturan Cetak Wajib:</span> Saat Anda menekan tombol cetak, selalu pastikan pengaturan Ukuran Kertas di browser diset ke <b>"A4"</b>, dan Margin (Batas Tepi) diset ke <b>"None" (Tidak Ada)</b> agar tidak terpotong.
+                  <span className="text-cyan-300 font-bold uppercase">Aturan Cetak Wajib:</span> Saat Anda menekan tombol cetak, pastikan Ukuran Kertas diatur ke <b>"A4"</b>, dan Margin (Batas Tepi) diset ke <b>"None" (Tidak Ada)</b>.
                 </div>
               </div>
             </div>
@@ -372,7 +372,6 @@ export default function CVMaker() {
               </div>
             )}
 
-            {/* FORMULIR CV */}
             {docMode === 'cv' && (
               <div className="animate-fade-in-up">
                 <div className="mb-6">
@@ -513,7 +512,6 @@ export default function CVMaker() {
               </div>
             )}
 
-            {/* FORMULIR COVER LETTER */}
             {docMode === 'cl' && (
               <div className="mb-6 animate-fade-in-up">
                 <div className="flex justify-between items-center mb-5 pb-3 border-b border-white/10">
@@ -593,7 +591,7 @@ export default function CVMaker() {
           {/* ========================================================= */}
           {/* KOLOM KANAN: PREVIEW KERTAS (CV / COVER LETTER)             */}
           {/* ========================================================= */}
-          <div className="w-full xl:w-7/12 bg-[#0A1329]/50 p-4 sm:p-6 rounded-[2rem] overflow-x-auto [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-thumb]:bg-cyan-600 [&::-webkit-scrollbar-thumb]:rounded-full shadow-inner border border-white/5">
+          <div id="preview-container" className="w-full xl:w-7/12 bg-[#0A1329]/50 p-4 sm:p-6 rounded-[2rem] overflow-x-auto [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-thumb]:bg-cyan-600 [&::-webkit-scrollbar-thumb]:rounded-full shadow-inner border border-white/5">
             <div className="w-fit mx-auto relative">
               
               <div id="cv-preview" className={`w-[21cm] min-w-[21cm] min-h-[29.7cm] bg-white text-black py-10 px-12 sm:px-14 shadow-2xl shrink-0 border border-gray-200 
@@ -627,13 +625,7 @@ export default function CVMaker() {
                       </div>
                     ) : (
 
-                      /* ====================================================================== */
-                      /* FORMAT COVER LETTER STANDAR INTERNASIONAL (DIKEMBALIKAN BLOCK RATA KIRI) */
-                      /* TIDAK ADA LAGI HEADER RAKSASA, TIDAK ADA GARIS BAWAH                   */
-                      /* ====================================================================== */
                       <div className="flex-1 text-[11pt] font-sans leading-relaxed text-black">
-                        
-                        {/* 1. Blok Pengirim (Rata Kiri Murni) */}
                         <div className="mb-8 leading-snug">
                           <div className="font-bold text-[12pt]">
                             {clData.senderName || <span className="text-gray-400 font-normal">{lang === 'en' ? '[Your Full Name]' : '[Nama Lengkap Anda]'}</span>}
@@ -649,25 +641,20 @@ export default function CVMaker() {
                           </div>
                         </div>
 
-                        {/* 2. Tanggal Surat */}
                         <div className="mb-8">{formatVisualDate(clData.date, lang)}</div>
                         
-                        {/* 3. Blok Penerima (Tujuan Surat) */}
                         <div className="mb-8 leading-snug">
                           <div>{lang === 'id' ? 'Kepada Yth.' : 'To:'}</div>
                           <div className="font-bold">{clData.hr || <span className="text-gray-400 font-normal">{lang === 'en' ? '[Hiring Manager]' : '[Bapak/Ibu HRD]'}</span>}</div>
                           <div className="font-bold">{clData.company || <span className="text-gray-400 font-normal">{lang === 'en' ? '[Target Company]' : '[Nama Perusahaan]'}</span>}</div>
                         </div>
                         
-                        {/* 4. Salam Pembuka */}
                         <div className="mb-4">{lang === 'id' ? 'Dengan hormat,' : `Dear ${clData.hr || 'Hiring Manager'},`}</div>
                         
-                        {/* 5. Isi Surat Lamaran */}
                         <div className="whitespace-pre-wrap text-justify break-words min-h-[150px]">
                           {clData.body || <span className="text-gray-400 italic">{lang === 'id' ? '(Isi surat masih kosong. Silakan ketik di formulir, atau klik tombol "Auto-Generate" untuk merangkai surat otomatis berdasarkan posisi dan keahlian Anda.)' : '(Body is empty. Please type in the form, or click the "Auto-Generate" button on the left)'}</span>}
                         </div>
                         
-                        {/* 6. Salam Penutup */}
                         <div className="mt-12">{lang === 'id' ? 'Hormat saya,' : 'Sincerely,'}<br/><br/><br/><br/><span className="font-bold">{clData.senderName || <span className="text-gray-400 font-normal">{lang === 'en' ? '[Your Name]' : '[Nama Anda]'}</span>}</span></div>
                       </div>
                     )}
@@ -800,7 +787,6 @@ export default function CVMaker() {
                         </div>
                       </div>
                     ) : (
-                      /* TAMPILAN CV UMUM DENGAN PLACEHOLDER VISUAL */
                       <>
                         {(() => {
                           const contactItems = [
@@ -876,9 +862,10 @@ export default function CVMaker() {
                           );
                         })()}
 
-                        {/* MESIN RENDER DAFTAR (PENGALAMAN DLL) DENGAN PLACEHOLDER GRAY */}
+                        {/* PERBAIKAN LOGIKA KONDISIONAL (KATEGORI HILANG JIKA KOSONG) */}
                         {(() => {
                           const formatDesc = (text, isNorm, isPh) => text ? text.split('\n').map((l, i) => { const isBul = l.trim().startsWith('-'); return <div key={i} className={`flex ${isBul ? 'mt-1' : ''}`}>{isBul && <span className="mr-2 font-bold">•</span>}<span className={`${isBul ? 'flex-1' : ''} ${isNorm ? 'text-[10.5pt] leading-[1.5]' : 'text-[13px] leading-relaxed'} ${isPh ? 'text-gray-400' : 'text-black'} text-justify`}>{isBul ? l.replace(/^-/, '').trim() : l}</span></div>; }) : null;
+                          
                           const SecTitle = ({ t }) => {
                             if (template === 'normal') return <h2 className="text-[11pt] font-bold uppercase border-b-[1.5px] border-black mb-2.5 pb-0.5 text-black tracking-wide mt-5">{t}</h2>;
                             if (template === 'executive') return <h2 className="text-[12px] font-bold uppercase border-b border-gray-300 mb-2 pb-1 text-gray-900 tracking-widest mt-3">{t}</h2>;
@@ -886,15 +873,16 @@ export default function CVMaker() {
                             return <h2 className="text-[12pt] font-bold uppercase text-center border-b border-black mb-3 pb-1 tracking-widest mt-4">{t}</h2>;
                           };
                           
-                          const R_Edu = () => <div className="mb-3"><SecTitle t={t.edu} />{activeEdu.map((e, i) => <div key={i} className="mb-2.5 break-inside-avoid"><div className="flex justify-between"><h3 className={`text-[10.5pt] font-bold ${e.isPlaceholder ? 'text-gray-400' : 'text-black'}`}>{e.institution}</h3><span className={`text-[10.5pt] whitespace-nowrap ${e.isPlaceholder ? 'text-gray-400' : 'text-black'}`}>{e.period}</span></div><div className={`text-[10.5pt] ${e.isPlaceholder ? 'text-gray-400' : 'text-black'}`}>{e.major}</div>{e.gpa && <div className={`text-[10.5pt] ${e.isPlaceholder ? 'text-gray-400' : 'text-black'}`}>{e.gpa}</div>}</div>)}</div>;
+                          // Logika .length > 0 memastikan jika array kosong (dihapus semua), seluruh kategori (termasuk judul) lenyap.
+                          const R_Edu = () => activeEdu.length > 0 ? <div className="mb-3"><SecTitle t={t.edu} />{activeEdu.map((e, i) => <div key={i} className="mb-2.5 break-inside-avoid"><div className="flex justify-between"><h3 className={`text-[10.5pt] font-bold ${e.isPlaceholder ? 'text-gray-400' : 'text-black'}`}>{e.institution}</h3><span className={`text-[10.5pt] whitespace-nowrap ${e.isPlaceholder ? 'text-gray-400' : 'text-black'}`}>{e.period}</span></div><div className={`text-[10.5pt] ${e.isPlaceholder ? 'text-gray-400' : 'text-black'}`}>{e.major}</div>{e.gpa && <div className={`text-[10.5pt] ${e.isPlaceholder ? 'text-gray-400' : 'text-black'}`}>{e.gpa}</div>}</div>)}</div> : null;
                           
                           const R_Skl = () => <div className="mb-3 break-inside-avoid"><SecTitle t={t.skills} />{template === 'normal' ? <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-1 mt-1 text-[10.5pt] text-black">{(basics.skills || dBasics.skills).split(',').map((s, i) => <div key={i} className={`flex items-start ${basics.skills ? 'text-black' : 'text-gray-400'}`}><span className="mr-2 font-bold">•</span><span>{s.trim()}</span></div>)}</div> : <p className={`text-[10.5pt] leading-relaxed whitespace-pre-wrap break-words ${basics.skills ? 'text-black' : 'text-gray-400'}`}>{basics.skills || dBasics.skills}</p>}</div>;
                           
-                          const R_Exp = () => <div className="mb-3"><SecTitle t={t.exp} />{activeExp.map((e, i) => <div key={i} className="mb-3.5 break-inside-avoid"><div className="flex justify-between"><h3 className={`text-[10.5pt] font-bold ${e.isPlaceholder ? 'text-gray-400' : 'text-black'}`}>{e.company}</h3><span className={`text-[10.5pt] whitespace-nowrap ${e.isPlaceholder ? 'text-gray-400' : 'text-black'}`}>{e.period}</span></div><div className={`text-[10.5pt] mb-1 ${template === 'modern' ? 'font-bold' : 'font-medium'} ${e.isPlaceholder ? 'text-gray-400' : template === 'modern' ? 'text-gray-800' : 'text-black'}`}>{e.role}</div><div className={`${template === 'normal' ? 'ml-0' : 'pl-3'}`}>{formatDesc(e.description, template === 'normal', e.isPlaceholder)}</div></div>)}</div>;
+                          const R_Exp = () => activeExp.length > 0 ? <div className="mb-3"><SecTitle t={t.exp} />{activeExp.map((e, i) => <div key={i} className="mb-3.5 break-inside-avoid"><div className="flex justify-between"><h3 className={`text-[10.5pt] font-bold ${e.isPlaceholder ? 'text-gray-400' : 'text-black'}`}>{e.company}</h3><span className={`text-[10.5pt] whitespace-nowrap ${e.isPlaceholder ? 'text-gray-400' : 'text-black'}`}>{e.period}</span></div><div className={`text-[10.5pt] mb-1 ${template === 'modern' ? 'font-bold' : 'font-medium'} ${e.isPlaceholder ? 'text-gray-400' : template === 'modern' ? 'text-gray-800' : 'text-black'}`}>{e.role}</div><div className={`${template === 'normal' ? 'ml-0' : 'pl-3'}`}>{formatDesc(e.description, template === 'normal', e.isPlaceholder)}</div></div>)}</div> : null;
                           
-                          const R_Prj = () => <div className="mb-3"><SecTitle t={t.proj} />{activeProj.map((p, i) => <div key={i} className="mb-3.5 break-inside-avoid"><div className="flex justify-between"><h3 className={`text-[10.5pt] font-bold ${p.isPlaceholder ? 'text-gray-400' : 'text-black'}`}>{p.name}</h3><span className={`text-[10.5pt] whitespace-nowrap ${p.isPlaceholder ? 'text-gray-400' : 'text-black'}`}>{p.period}</span></div><div className={`mt-1 ${template === 'normal' ? 'ml-0' : 'pl-3'}`}>{formatDesc(p.description, template === 'normal', p.isPlaceholder)}</div></div>)}</div>;
+                          const R_Prj = () => activeProj.length > 0 ? <div className="mb-3"><SecTitle t={t.proj} />{activeProj.map((p, i) => <div key={i} className="mb-3.5 break-inside-avoid"><div className="flex justify-between"><h3 className={`text-[10.5pt] font-bold ${p.isPlaceholder ? 'text-gray-400' : 'text-black'}`}>{p.name}</h3><span className={`text-[10.5pt] whitespace-nowrap ${p.isPlaceholder ? 'text-gray-400' : 'text-black'}`}>{p.period}</span></div><div className={`mt-1 ${template === 'normal' ? 'ml-0' : 'pl-3'}`}>{formatDesc(p.description, template === 'normal', p.isPlaceholder)}</div></div>)}</div> : null;
                           
-                          const R_Crt = () => <div className="mb-3"><SecTitle t={t.cert} />{activeCerts.map((c, i) => <div key={i} className="mb-3.5 break-inside-avoid"><div className="flex justify-between"><h3 className={`text-[10.5pt] font-bold ${c.isPlaceholder ? 'text-gray-400' : 'text-black'}`}>{c.name}</h3><span className={`text-[10.5pt] whitespace-nowrap ${c.isPlaceholder ? 'text-gray-400' : 'text-black'}`}>{c.period}</span></div><div className={`text-[10.5pt] italic mb-1 ${c.isPlaceholder ? 'text-gray-400' : 'text-black'}`}>{c.issuer}</div><div className={`${template === 'normal' ? 'ml-0' : 'pl-3'}`}>{formatDesc(c.description, template === 'normal', c.isPlaceholder)}</div></div>)}</div>;
+                          const R_Crt = () => activeCerts.length > 0 ? <div className="mb-3"><SecTitle t={t.cert} />{activeCerts.map((c, i) => <div key={i} className="mb-3.5 break-inside-avoid"><div className="flex justify-between"><h3 className={`text-[10.5pt] font-bold ${c.isPlaceholder ? 'text-gray-400' : 'text-black'}`}>{c.name}</h3><span className={`text-[10.5pt] whitespace-nowrap ${c.isPlaceholder ? 'text-gray-400' : 'text-black'}`}>{c.period}</span></div><div className={`text-[10.5pt] italic mb-1 ${c.isPlaceholder ? 'text-gray-400' : 'text-black'}`}>{c.issuer}</div><div className={`${template === 'normal' ? 'ml-0' : 'pl-3'}`}>{formatDesc(c.description, template === 'normal', c.isPlaceholder)}</div></div>)}</div> : null;
 
                           if (template === 'normal') return <><R_Edu/><R_Skl/><R_Exp/><R_Prj/><R_Crt/></>;
                           if (template === 'modern') return <><R_Exp/><R_Edu/><R_Skl/><R_Prj/><R_Crt/></>;
