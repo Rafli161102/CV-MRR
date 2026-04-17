@@ -18,7 +18,7 @@ const Icons = {
   Transform: (p) => <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...p}><path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" /></svg>,
   Typography: (p) => <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...p}><path strokeLinecap="round" strokeLinejoin="round" d="M10.5 21l5.25-11.25L21 21m-9-3h7.5M3 5.621a48.474 48.474 0 016-.371m0 0c1.12 0 2.233.038 3.334.114M9 5.25V3m3.334 2.364C11.176 10.658 7.69 15.08 3 17.502m9.334-12.138c.896.061 1.785.147 2.666.257m-4.589 8.495a18.023 18.023 0 01-3.827-5.802" /></svg>,
   Brackets: (p) => <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...p}><path strokeLinecap="round" strokeLinejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5" /></svg>,
-  Markdown: (p) => <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...p}><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25M9 16.5v-6h3v6m-3-3h3m-3 3h-3m10.5-3l-3 3m0 0l-3-3m3 3v-6" /></svg>,
+  Markdown: (p) => <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...p}><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25M9 16.5v-6h3v6m-3-3h3m-3-3h-3m10.5-3l-3 3m0 0l-3-3m3 3v-6" /></svg>,
   Key: (p) => <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...p}><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z" /></svg>,
   ArrowRight: (p) => <svg fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" {...p}><path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg>,
   Lock: (p) => <svg fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" {...p}><path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg>,
@@ -27,23 +27,79 @@ const Icons = {
 };
 
 // ============================================================================
-// DATA MASTER TOOLKIT 
+// DATA MASTER TOOLKIT
 // ============================================================================
 export const toolkits = [
-  { id: "cv-maker", title: "ATS CV & Cover Letter", description: "Buat Curriculum Vitae dan Surat Lamaran Kerja standar mesin HRD.", iconName: "Document", link: "/cv-maker", status: "active", category: "Career & Freelance", theme: "purple", hoverAnim: "hover-float", clickAnim: "click-paper-fly" },
-  { id: "css-studio", title: "CSS Visual Studio", description: "Generator visual All-in-One untuk efek Glassmorphism, Neumorphism, dll.", iconName: "Layers", link: "/css-studio", status: "active", category: "Web Developer", theme: "cyan", hoverAnim: "hover-pulse-soft", clickAnim: "click-layer-pop" },
-  { id: "wa-generator", title: "Premium WA & QR Link", description: "Buat tautan otomatis WhatsApp dan ubah menjadi desain QR Code.", iconName: "Network", link: "/wa-generator", status: "coming_soon", category: "Community Tool", theme: "emerald", hoverAnim: "hover-connect", clickAnim: "click-send-msg" },
-  { id: "color-extractor", title: "Brand Color Extractor", description: "Unggah gambar referensi dan ekstrak 5 palet warna dominan.", iconName: "Palette", link: "/color-extractor", status: "coming_soon", category: "Design Utility", theme: "pink", hoverAnim: "hover-rainbow", clickAnim: "click-color-splash" },
-  { id: "email-signature", title: "Email Signature Builder", description: "Rakit desain tanda tangan email HTML profesional yang elegan.", iconName: "Signature", link: "/email-signature", status: "coming_soon", category: "Career & Freelance", theme: "orange", hoverAnim: "hover-draw", clickAnim: "click-sign-done" },
-  { id: "ig-splitter", title: "Seamless IG Splitter", description: "Potong gambar panorama memanjang menjadi 2-10 kotak presisi.", iconName: "Grid", link: "/ig-splitter", status: "coming_soon", category: "Design Utility", theme: "rose", hoverAnim: "hover-split", clickAnim: "click-slice-apart" },
-  { id: "freelance-invoice", title: "Freelance Rate & Invoice", description: "Kalkulator pintar harga per-jam dan generator dokumen Invoice PDF.", iconName: "Receipt", link: "/toolkit/freelance-invoice", status: "active", category: "Career & Freelance", theme: "green", hoverAnim: "hover-wiggle", clickAnim: "click-receipt-print" },
-  { id: "golden-ratio", title: "Golden Ratio Calculator", description: "Dapatkan pembagian proporsi matematis (1:1.618) untuk layout.", iconName: "Ratio", link: "/golden-ratio", status: "coming_soon", category: "Design Utility", theme: "yellow", hoverAnim: "hover-spin-slow", clickAnim: "click-spiral-in" },
-  { id: "event-ticket", title: "Event Badge Generator", description: "Render otomatis daftar peserta menjadi desain Name Badge.", iconName: "Badge", link: "/event-ticket", status: "coming_soon", category: "Community Tool", theme: "blue", hoverAnim: "hover-badge-swing", clickAnim: "click-stamp-approve" },
-  { id: "image-converter", title: "Fast Image to WebP", description: "Kompres dan ubah format gambar (JPG/PNG) menjadi WebP.", iconName: "Transform", link: "/image-converter", status: "coming_soon", category: "Web Developer", theme: "indigo", hoverAnim: "hover-flip", clickAnim: "click-compress-poof" },
-  { id: "type-scale", title: "Typographic Scale", description: "Dapatkan hirarki ukuran font (H1, H2, Paragraf) yang harmonis.", iconName: "Typography", link: "/type-scale", status: "coming_soon", category: "Design Utility", theme: "slate", hoverAnim: "hover-typewriter", clickAnim: "click-text-grow" },
-  { id: "json-visual", title: "JSON Visualizer Tree", description: "Format dan visualisasikan data JSON rumit dalam bentuk cabang diagram.", iconName: "Brackets", link: "/json-visual", status: "coming_soon", category: "Web Developer", theme: "red", hoverAnim: "hover-expand", clickAnim: "click-node-branch" },
-  { id: "markdown-pad", title: "Live Markdown Pad", description: "Editor teks Markdown dengan layar ganda (mengetik dan melihat hasil).", iconName: "Markdown", link: "/markdown-pad", status: "coming_soon", category: "Career & Freelance", theme: "teal", hoverAnim: "hover-slide-up", clickAnim: "click-page-turn" },
-  { id: "jwt-decoder", title: "Offline JWT Decoder", description: "Bongkar dan lihat isi data dari JSON Web Token (JWT) secara aman.", iconName: "Key", link: "/jwt-decoder", status: "coming_soon", category: "Web Developer", theme: "yellow", hoverAnim: "hover-unlock", clickAnim: "click-key-turn" }
+  {
+    id: "cv-maker", title: "ATS CV & Cover Letter", description: "Buat Curriculum Vitae dan Surat Lamaran Kerja standar mesin HRD.",
+    iconName: "Document", link: "/cv-maker", status: "active", category: "Career & Freelance", theme: "purple",
+    hoverAnim: "hover-float", clickAnim: "click-paper-fly" 
+  },
+  {
+    id: "css-studio", title: "CSS Visual Studio", description: "Generator visual All-in-One untuk efek Glassmorphism, Neumorphism, dll.",
+    iconName: "Layers", link: "/css-studio", status: "active", category: "Web Developer", theme: "cyan",
+    hoverAnim: "hover-pulse-soft", clickAnim: "click-layer-pop" 
+  },
+  {
+    id: "wa-generator", title: "Premium WA & QR Link", description: "Buat tautan otomatis WhatsApp dan ubah menjadi desain QR Code.",
+    iconName: "Network", link: "/wa-generator", status: "coming_soon", category: "Community Tool", theme: "emerald",
+    hoverAnim: "hover-connect", clickAnim: "click-send-msg" 
+  },
+  {
+    id: "color-extractor", title: "Brand Color Extractor", description: "Unggah gambar referensi dan ekstrak 5 palet warna dominan.",
+    iconName: "Palette", link: "/color-extractor", status: "coming_soon", category: "Design Utility", theme: "pink",
+    hoverAnim: "hover-rainbow", clickAnim: "click-color-splash" 
+  },
+  {
+    id: "email-signature", title: "Email Signature Builder", description: "Rakit desain tanda tangan email HTML profesional yang elegan.",
+    iconName: "Signature", link: "/email-signature", status: "coming_soon", category: "Career & Freelance", theme: "orange",
+    hoverAnim: "hover-draw", clickAnim: "click-sign-done" 
+  },
+  {
+    id: "ig-splitter", title: "Seamless IG Splitter", description: "Potong gambar panorama memanjang menjadi 2-10 kotak presisi.",
+    iconName: "Grid", link: "/ig-splitter", status: "coming_soon", category: "Design Utility", theme: "rose",
+    hoverAnim: "hover-split", clickAnim: "click-slice-apart" 
+  },
+  {
+    id: "freelance-invoice", title: "Freelance Rate & Invoice", description: "Kalkulator pintar harga per-jam dan generator dokumen Invoice PDF.",
+    iconName: "Receipt", link: "/freelance-invoice", status: "active", category: "Career & Freelance", theme: "green",
+    hoverAnim: "hover-wiggle", clickAnim: "click-receipt-print" 
+  },
+  {
+    id: "golden-ratio", title: "Golden Ratio Calculator", description: "Dapatkan pembagian proporsi matematis (1:1.618) untuk layout.",
+    iconName: "Ratio", link: "/golden-ratio", status: "coming_soon", category: "Design Utility", theme: "yellow",
+    hoverAnim: "hover-spin-slow", clickAnim: "click-spiral-in" 
+  },
+  {
+    id: "event-ticket", title: "Event Badge Generator", description: "Render otomatis daftar peserta menjadi desain Name Badge.",
+    iconName: "Badge", link: "/event-ticket", status: "coming_soon", category: "Community Tool", theme: "blue",
+    hoverAnim: "hover-badge-swing", clickAnim: "click-stamp-approve" 
+  },
+  {
+    id: "image-converter", title: "Fast Image to WebP", description: "Kompres dan ubah format gambar (JPG/PNG) menjadi WebP.",
+    iconName: "Transform", link: "/image-converter", status: "coming_soon", category: "Web Developer", theme: "indigo",
+    hoverAnim: "hover-flip", clickAnim: "click-compress-poof" 
+  },
+  {
+    id: "type-scale", title: "Typographic Scale", description: "Dapatkan hirarki ukuran font (H1, H2, Paragraf) yang harmonis.",
+    iconName: "Typography", link: "/type-scale", status: "coming_soon", category: "Design Utility", theme: "slate",
+    hoverAnim: "hover-typewriter", clickAnim: "click-text-grow" 
+  },
+  {
+    id: "json-visual", title: "JSON Visualizer Tree", description: "Format dan visualisasikan data JSON rumit dalam bentuk cabang diagram.",
+    iconName: "Brackets", link: "/json-visual", status: "coming_soon", category: "Web Developer", theme: "red",
+    hoverAnim: "hover-expand", clickAnim: "click-node-branch" 
+  },
+  {
+    id: "markdown-pad", title: "Live Markdown Pad", description: "Editor teks Markdown dengan layar ganda (mengetik dan melihat hasil).",
+    iconName: "Markdown", link: "/markdown-pad", status: "coming_soon", category: "Career & Freelance", theme: "teal",
+    hoverAnim: "hover-slide-up", clickAnim: "click-page-turn" 
+  },
+  {
+    id: "jwt-decoder", title: "Offline JWT Decoder", description: "Bongkar dan lihat isi data dari JSON Web Token (JWT) secara aman.",
+    iconName: "Key", link: "/jwt-decoder", status: "coming_soon", category: "Web Developer", theme: "yellow",
+    hoverAnim: "hover-unlock", clickAnim: "click-key-turn" 
+  }
 ];
 
 const toolThemes = {
@@ -63,7 +119,7 @@ const toolThemes = {
 };
 
 // =========================================================================
-// KOMPONEN KARTU MODUL (RESPONSIF & ANIMASI KLIK)
+// KOMPONEN: KARTU MODUL
 // =========================================================================
 const UnifiedCard = ({ tool, cardId }) => {
   const [isClicked, setIsClicked] = useState(false);
@@ -72,14 +128,13 @@ const UnifiedCard = ({ tool, cardId }) => {
   const IconComponent = Icons[tool.iconName] || Icons.Document;
 
   const handleClick = (e) => {
-    if (!isActive) return;
     e.preventDefault(); 
     setIsClicked(true); 
-    
-    // Tunda perpindahan halaman agar animasi klik sempat selesai
     setTimeout(() => {
       setIsClicked(false);
-      window.location.href = tool.link; // Standard navigation
+      if(isActive) {
+        console.log(`Pindah ke: ${tool.link}`);
+      }
     }, 600);
   };
 
@@ -87,42 +142,42 @@ const UnifiedCard = ({ tool, cardId }) => {
     <div 
       id={cardId} 
       onClick={handleClick}
-      className={`group relative flex flex-col justify-between p-4 sm:p-5 lg:p-[26px] transition-all duration-500 rounded-2xl sm:rounded-[26px] overflow-hidden min-h-[140px] sm:min-h-[160px] lg:aspect-[1.618/1]
+      className={`group relative flex flex-col justify-between p-[26px] transition-all duration-500 rounded-[26px] overflow-hidden min-h-[160px] lg:aspect-[1.618/1]
         ${isActive 
           ? `bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] backdrop-blur-xl ${theme.border} ${theme.glow} hover:-translate-y-1 cursor-pointer` 
-          : `bg-white/[0.01] border border-white/[0.02] backdrop-blur-md opacity-70 grayscale-[50%] ${theme.border} transition-all cursor-not-allowed`
+          : `bg-white/[0.01] border border-white/[0.02] backdrop-blur-md opacity-70 grayscale-[50%] ${theme.border} hover:grayscale-0 hover:opacity-100 hover:-translate-y-0.5 transition-all cursor-pointer`
       } ${isClicked ? 'scale-[0.96] border-white/20' : ''}`}
     >
       <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl ${theme.bg} rounded-full blur-[40px] opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none`}></div>
 
-      <div className="flex items-start justify-between mb-4 sm:mb-6 relative z-10">
-        <div className={`w-[44px] h-[44px] sm:w-[58px] sm:h-[58px] rounded-[14px] sm:rounded-[16px] flex items-center justify-center transition-all duration-500 shadow-lg 
-          ${!isClicked && isActive ? `group-hover:${tool.hoverAnim}` : ''} 
+      <div className="flex items-start justify-between mb-6 relative z-10">
+        <div className={`w-[58px] h-[58px] rounded-[16px] flex items-center justify-center transition-all duration-500 shadow-lg 
+          ${!isClicked ? `group-hover:${tool.hoverAnim}` : ''} 
           ${isClicked && tool.clickAnim ? tool.clickAnim : ''} 
-          ${isActive ? `bg-gradient-to-tr ${theme.iconBg} text-white` : `bg-white/5 text-slate-400 border border-white/10`}
+          ${isActive ? `bg-gradient-to-tr ${theme.iconBg} text-white` : `bg-white/5 text-slate-400 border border-white/10 group-hover:bg-gradient-to-tr group-hover:${theme.iconBg} group-hover:text-white group-hover:border-transparent`}
         `}>
-           <IconComponent className="w-[24px] h-[24px] sm:w-[32px] sm:h-[32px]" />
+           <IconComponent className="w-[36px] h-[36px]" />
         </div>
 
         <div className="shrink-0">
           {isActive ? (
-            <div className={`flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-full transition-all duration-300 bg-white/5 text-slate-400 group-hover:bg-white/10 ${theme.text} ${isClicked ? 'translate-x-2 opacity-0' : ''}`}>
-              <Icons.ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            <div className={`flex items-center justify-center w-8 h-8 rounded-full transition-all duration-300 bg-white/5 text-slate-400 group-hover:bg-white/10 ${theme.text} ${isClicked ? 'translate-x-2 opacity-0' : ''}`}>
+              <Icons.ArrowRight className="w-4 h-4" />
             </div>
           ) : (
-            <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-black/40 border border-white/5 rounded-full backdrop-blur-md transition-all">
-               <Icons.Lock className="w-[12px] h-[12px] text-slate-500" />
-               <span className="text-[9px] font-bold tracking-widest text-slate-500">SOON</span>
+            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-black/40 border border-white/5 rounded-full backdrop-blur-md transition-all group-hover:bg-white/5">
+               <Icons.Lock className="w-[14px] h-[14px] text-slate-400 group-hover:text-white" />
+               <span className="text-[10px] font-bold tracking-widest text-slate-400 group-hover:text-white transition-colors">SOON</span>
             </div>
           )}
         </div>
       </div>
       
       <div className="relative z-10 flex-1 flex flex-col justify-end">
-        <h3 className={`text-[16px] sm:text-[18px] lg:text-[20px] font-bold tracking-tight mb-1.5 sm:mb-2 transition-colors ${isActive ? 'text-slate-100 group-hover:text-white' : 'text-slate-500'}`}>
+        <h3 className={`text-[20px] font-bold tracking-tight mb-2 transition-colors ${isActive ? 'text-slate-100 group-hover:text-white' : 'text-slate-400 group-hover:text-slate-200'}`}>
           {tool.title}
         </h3>
-        <p className="text-[12px] sm:text-[13px] text-slate-400/80 font-medium line-clamp-2 leading-relaxed transition-colors">
+        <p className="text-[13px] text-slate-400/80 font-medium line-clamp-2 leading-relaxed group-hover:text-slate-400 transition-colors">
           {tool.description}
         </p>
       </div>
@@ -131,7 +186,7 @@ const UnifiedCard = ({ tool, cardId }) => {
 };
 
 // =========================================================================
-// DATA LANGKAH TUTORIAL
+// DATA LANGKAH TUTORIAL (MENGGUNAKAN JSX UNTUK FORMATTING)
 // =========================================================================
 const TOUR_STEPS = [
   { 
@@ -143,55 +198,49 @@ const TOUR_STEPS = [
   { 
     target: 'tut-filter', 
     title: 'Pencarian Cepat', 
-    text: <>Gunakan menu ini untuk menyaring alat. <br/><br/>Contoh: Klik <strong>"Design Utility"</strong> jika Anda hanya ingin melihat alat untuk keperluan memotong gambar atau mengatur warna.</>, 
+    text: <>Gunakan tombol ini untuk menyaring alat. <br/><br/>Contoh: Klik <strong>"Design Utility"</strong> jika Anda hanya ingin melihat alat untuk keperluan memotong gambar atau mengatur warna.</>, 
     position: 'bottom' 
   },
   { 
     target: 'tut-active', 
     title: 'Alat Siap Pakai', 
-    text: <><ul className="list-disc pl-4 space-y-1 mb-2"><li>Kotak berwarna cerah</li><li>Ada ikon panah di pojok</li><li>Bisa langsung diklik!</li></ul>Ini berarti alat tersebut sudah 100% siap membantu pekerjaan Anda.</>, 
+    text: <><ul className="list-disc pl-4 space-y-1"><li>Berwarna cerah</li><li>Memiliki ikon panah di kanan bawah</li><li>Bisa langsung diklik sekarang juga!</li></ul><br/>Ini berarti alat tersebut sudah 100% siap membantu pekerjaan Anda.</>, 
     position: 'bottom' 
   },
   { 
     target: 'tut-locked', 
     title: 'Segera Hadir', 
-    text: <>Kartu abu-abu dengan label <strong>"SOON"</strong> berarti alatnya masih dirakit oleh tim pemrogram kami. <br/><br/>Harap bersabar ya!</>, 
+    text: <>Kartu abu-abu dengan label <strong>"SOON"</strong> (Segera) berarti alatnya masih dalam tahap perakitan oleh tim pemrogram kami. <br/><br/>Harap bersabar ya!</>, 
     position: 'top' 
   },
   { 
     target: 'tut-security', 
     title: 'Privasi Terjamin', 
-    text: <>Sangat penting: Semua alat di website ini bekerja langsung di memori komputer Anda sendiri.<br/><br/>Kami <strong>tidak pernah mencuri</strong> data sensitif Anda.</>, 
+    text: <>Sangat penting: Semua alat di website ini bekerja langsung di dalam memori komputer Anda sendiri.<br/><br/>Kami <strong>tidak pernah mencuri atau mengirim data sensitif Anda</strong> ke server internet manapun.</>, 
     position: 'bottom' 
   }
 ];
 
 // =========================================================================
-// KOMPONEN: BUBBLE TUTORIAL DENGAN CSS SPOTLIGHT (ANTI-BUG NAN)
+// KOMPONEN: BUBBLE TUTORIAL DENGAN SVG SPOTLIGHT MASKING
 // =========================================================================
 const GuidedTour = ({ onComplete }) => {
   const [step, setStep] = useState(0);
   const [targetRect, setTargetRect] = useState(null);
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
 
   const recalculateRect = useCallback(() => {
-    if (typeof window === 'undefined') return;
-    const targetId = TOUR_STEPS[step]?.target;
+    const targetId = TOUR_STEPS[step].target;
     const el = document.getElementById(targetId);
     
     if (el) {
-      const rect = el.getBoundingClientRect();
+      const newRect = el.getBoundingClientRect();
       setTargetRect({
-        top: rect.top,
-        bottom: rect.bottom,
-        left: rect.left,
-        width: rect.width,
-        height: rect.height,
-        // Deteksi bentuk asli elemen agar fokusnya akurat
+        top: newRect.top,
+        bottom: newRect.bottom,
+        left: newRect.left,
+        right: newRect.right,
+        width: newRect.width,
+        height: newRect.height,
         radius: window.getComputedStyle(el).borderRadius || '16px'
       });
     } else {
@@ -200,107 +249,117 @@ const GuidedTour = ({ onComplete }) => {
   }, [step]);
 
   useEffect(() => {
-    if (!isClient) return;
-    const targetId = TOUR_STEPS[step]?.target;
+    const targetId = TOUR_STEPS[step].target;
     const el = document.getElementById(targetId);
 
     if (el) {
-      // Gulir halaman secara otomatis ke elemen tujuan
-      const rect = el.getBoundingClientRect();
-      const absoluteY = window.pageYOffset + rect.top;
-      const middle = absoluteY - (window.innerHeight / 2) + (rect.height / 2);
-      window.scrollTo({ top: middle, behavior: 'smooth' });
+      const y = el.getBoundingClientRect().top + window.scrollY - (window.innerHeight / 2) + (el.getBoundingClientRect().height / 2);
+      window.scrollTo({ top: y, behavior: 'smooth' });
 
-      // Ambil posisinya
-      recalculateRect();
+      const timer = setTimeout(recalculateRect, 400); 
+      return () => clearTimeout(timer);
     } else {
-      // Lewati jika elemen tak ditemukan
-      if (step < TOUR_STEPS.length - 1) setStep(s => s + 1);
-      else onComplete();
+      if (step < TOUR_STEPS.length - 1) {
+        setStep(s => s + 1);
+      } else {
+        onComplete();
+      }
     }
-  }, [step, recalculateRect, onComplete, isClient]);
+  }, [step, recalculateRect, onComplete]);
 
-  // Tetap ikuti elemen walau pengguna sedang men-scroll atau putar layar
   useEffect(() => {
-    if (!isClient) return;
-    window.addEventListener('scroll', recalculateRect, { passive: true });
     window.addEventListener('resize', recalculateRect);
+    window.addEventListener('scroll', recalculateRect);
     return () => {
-      window.removeEventListener('scroll', recalculateRect);
       window.removeEventListener('resize', recalculateRect);
+      window.removeEventListener('scroll', recalculateRect);
     };
-  }, [recalculateRect, isClient]);
+  }, [recalculateRect]);
 
-  if (!isClient || !targetRect) return null;
+  if (!targetRect) return null;
 
-  // KALKULASI POSISI AMAN (Anti Off-screen Bug)
-  const isMobile = window.innerWidth < 640;
-  const padding = 10; 
-  const bubbleWidth = isMobile ? window.innerWidth - 32 : 340;
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
   
-  let bubbleTop = targetRect.bottom + padding + 15;
-  let bubbleBottom = 'auto';
+  let bubbleStyle = {
+    position: 'absolute',
+    left: isMobile ? '50%' : `${targetRect.left + (targetRect.width / 2)}px`,
+    transform: isMobile ? 'translateX(-50%)' : 'translateX(-50%)',
+    zIndex: 210,
+    width: '90%',
+    maxWidth: '340px'
+  };
 
-  // Jika posisi prioritas "top", ATAU ruang di bawah layar sempit, paksa balon naik ke atas elemen
-  if (TOUR_STEPS[step].position === 'top' || (window.innerHeight - targetRect.bottom < 250)) {
-     bubbleTop = 'auto';
-     bubbleBottom = window.innerHeight - targetRect.top + padding + 15;
+  const spaceBelow = window.innerHeight - targetRect.bottom;
+  const spaceAbove = targetRect.top;
+  const prefPosition = TOUR_STEPS[step].position;
+
+  if (prefPosition === 'bottom' && spaceBelow < 250 && spaceAbove > 250) {
+     bubbleStyle.bottom = `${window.innerHeight - targetRect.top + 20}px`; 
+  } else if (prefPosition === 'top' && spaceAbove < 250 && spaceBelow > 250) {
+     bubbleStyle.top = `${targetRect.bottom + 20}px`; 
+  } else if (prefPosition === 'top') {
+     bubbleStyle.bottom = `${window.innerHeight - targetRect.top + 20}px`;
+  } else {
+     bubbleStyle.top = `${targetRect.bottom + 20}px`;
   }
 
   return (
-    <>
-      {/* LAPISAN 1: Penangkap Klik (Mencegah user mengklik kartu lain selagi tur jalan) */}
-      <div className="fixed inset-0 z-[198]" onClick={(e) => e.stopPropagation()} />
+    <div className="fixed inset-0 z-[200]">
+      <svg width="100%" height="100%" className="absolute inset-0 pointer-events-none">
+        <defs>
+          <mask id="spotlight">
+            <rect width="100%" height="100%" fill="white" />
+            <rect
+              x={targetRect.left - 10}
+              y={targetRect.top - 10}
+              width={targetRect.width + 20}
+              height={targetRect.height + 20}
+              rx="20" 
+              fill="black" 
+            />
+          </mask>
+        </defs>
+        <rect width="100%" height="100%" fill="rgba(3, 7, 18, 0.85)" mask="url(#spotlight)" />
+        
+        <rect
+          x={targetRect.left - 10}
+          y={targetRect.top - 10}
+          width={targetRect.width + 20}
+          height={targetRect.height + 20}
+          rx="20"
+          fill="none"
+          stroke="#22d3ee"
+          strokeWidth="3"
+          className="animate-pulse"
+        />
+      </svg>
 
-      {/* LAPISAN 2: Efek Sorotan Layar Gelap (Menggunakan Box-Shadow Anti Bug) */}
-      <div 
-        className="fixed z-[199] pointer-events-none transition-all duration-500 ease-in-out border-2 border-cyan-400 animate-pulse"
-        style={{
-          top: targetRect.top - padding,
-          left: targetRect.left - padding,
-          width: targetRect.width + padding * 2,
-          height: targetRect.height + padding * 2,
-          borderRadius: `calc(${targetRect.radius} + 6px)`,
-          boxShadow: '0 0 0 9999px rgba(3, 7, 18, 0.85), 0 0 20px rgba(34,211,238,0.4)',
-        }}
-      />
-
-      {/* LAPISAN 3: Gelembung Balon Teks */}
-      <div 
-        className="fixed z-[200] bg-[#0f172a] border-2 border-cyan-500/50 shadow-[0_0_40px_rgba(34,211,238,0.25)] rounded-[24px] p-5 sm:p-6 transition-all duration-500 ease-in-out"
-        style={{
-          width: `${bubbleWidth}px`,
-          left: isMobile ? '16px' : `${targetRect.left + (targetRect.width / 2)}px`,
-          transform: isMobile ? 'none' : 'translateX(-50%)',
-          top: bubbleTop !== 'auto' ? `${bubbleTop}px` : 'auto',
-          bottom: bubbleBottom !== 'auto' ? `${bubbleBottom}px` : 'auto',
-        }}
-      >
-         <div className="relative z-10 pointer-events-auto">
+      <div style={bubbleStyle} className="bg-[#0f172a] border-2 border-cyan-500/50 shadow-[0_0_40px_rgba(34,211,238,0.25)] rounded-[24px] p-6 transition-all duration-300">
+         <div className="relative z-10">
            <div className="flex justify-between items-center mb-4">
-             <span className="text-[10px] font-black tracking-widest text-cyan-400 uppercase">Langkah {step + 1}/{TOUR_STEPS.length}</span>
+             <span className="text-[10px] font-black tracking-widest text-cyan-400 uppercase">Langkah {step + 1} dari {TOUR_STEPS.length}</span>
              <button onClick={onComplete} className="text-slate-500 hover:text-white transition-colors bg-white/5 hover:bg-white/10 p-1.5 rounded-full">
                 <Icons.X className="w-3.5 h-3.5" />
              </button>
            </div>
            
-           <h4 className="text-[16px] sm:text-[18px] font-bold text-white mb-3">{TOUR_STEPS[step].title}</h4>
-           <div className="text-[13px] sm:text-[13.5px] text-slate-300 leading-relaxed font-medium mb-6">{TOUR_STEPS[step].text}</div>
+           <h4 className="text-[18px] font-bold text-white mb-3">{TOUR_STEPS[step].title}</h4>
+           <div className="text-[13.5px] text-slate-300 leading-relaxed font-medium mb-6">{TOUR_STEPS[step].text}</div>
            
            <div className="flex justify-between items-center">
-             <button onClick={onComplete} className="text-[11px] sm:text-[12px] font-bold text-slate-500 hover:text-white transition-colors px-1 py-2">Akhiri Tur</button>
-             <button onClick={() => step < TOUR_STEPS.length - 1 ? setStep(s => s + 1) : onComplete()} className="bg-cyan-500 hover:bg-cyan-400 text-black px-5 sm:px-6 py-2 sm:py-2.5 rounded-full text-[12px] sm:text-[13px] font-bold transition-all shadow-[0_0_15px_rgba(34,211,238,0.4)] hover:scale-105 active:scale-95">
+             <button onClick={onComplete} className="text-[12px] font-bold text-slate-500 hover:text-white transition-colors px-2 py-2">Akhiri Tur</button>
+             <button onClick={() => step < TOUR_STEPS.length - 1 ? setStep(s => s + 1) : onComplete()} className="bg-cyan-500 hover:bg-cyan-400 text-black px-6 py-2.5 rounded-full text-[13px] font-bold transition-all shadow-[0_0_15px_rgba(34,211,238,0.4)] hover:scale-105 active:scale-95">
                {step < TOUR_STEPS.length - 1 ? 'Lanjut Mengerti' : 'Selesai!'}
              </button>
            </div>
          </div>
       </div>
-    </>
+    </div>
   );
 }
 
 // =========================================================================
-// KOMPONEN UTAMA HALAMAN
+// MAIN PAGE COMPONENT
 // =========================================================================
 export default function ToolkitPage() {
   const categories = ['Semua', ...new Set(toolkits.map(tool => tool.category))];
@@ -309,7 +368,7 @@ export default function ToolkitPage() {
   const [showTutorial, setShowTutorial] = useState(false);
   
   useEffect(() => {
-    const hasSeenTutorial = localStorage.getItem('override_tutorial_seen_final');
+    const hasSeenTutorial = localStorage.getItem('override_tutorial_seen_v8');
     if (!hasSeenTutorial) {
       setTimeout(() => setShowTutorial(true), 1000);
     }
@@ -317,63 +376,60 @@ export default function ToolkitPage() {
 
   const handleCompleteTutorial = () => {
     setShowTutorial(false);
-    localStorage.setItem('override_tutorial_seen_final', 'true');
+    localStorage.setItem('override_tutorial_seen_v8', 'true');
     window.scrollTo({ top: 0, behavior: 'smooth' }); 
   };
 
   const filteredTools = activeCat === 'Semua' ? [...toolkits] : toolkits.filter(tool => tool.category === activeCat);
 
   return (
-    <div className="w-full min-h-screen bg-[#05050A] text-slate-200 font-sans relative selection:bg-cyan-500/30 selection:text-cyan-300">
+    <div className="min-h-screen bg-[#05050A] text-slate-200 font-sans relative selection:bg-cyan-500/30 selection:text-cyan-300 overflow-x-hidden">
       
       <div className="fixed top-[-20%] left-[-10%] w-[50vw] h-[50vw] bg-blue-600/10 rounded-full blur-[150px] pointer-events-none z-0 mix-blend-screen"></div>
       <div className="fixed bottom-[-20%] right-[-10%] w-[50vw] h-[50vw] bg-purple-600/10 rounded-full blur-[150px] pointer-events-none z-0 mix-blend-screen"></div>
 
-      {/* RUANG AMAN NAVBAR (PT DITINGKATKAN AGAR HEADER TIDAK NABRAK) */}
-      <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8 relative z-10 pt-28 sm:pt-32 lg:pt-36 pb-32">
+      <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-12 relative z-10 pt-12 sm:pt-20 pb-32">
         
         {/* HEADER */}
-        <header className="mb-8 sm:mb-[42px] animate-fade-in-up">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 sm:gap-8 mb-8">
-            <div className="w-full md:w-[60%] lg:w-[65%]">
+        <header className="mb-[42px] animate-fade-in-up">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-8 mb-8">
+            <div className="lg:w-[61.8%]">
               
               <div 
                 id="tut-start"
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-5 sm:mb-6 backdrop-blur-md cursor-pointer hover:bg-white/10 transition-colors w-max" 
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-6 backdrop-blur-md cursor-pointer hover:bg-white/10 transition-colors" 
                 onClick={() => { window.scrollTo({top: 0, behavior: 'smooth'}); setShowTutorial(true); }}
               >
                 <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
-                <span className="text-[12px] sm:text-[13px] font-bold tracking-wide text-slate-300">Mulai Ulang Panduan</span>
+                <span className="text-[13px] font-bold tracking-wide text-slate-300">Mulai Ulang Panduan</span>
               </div>
               
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-[68px] font-black text-white tracking-tight mb-3 sm:mb-4 leading-[1.15] sm:leading-[1.1]">
+              <h1 className="text-[42px] sm:text-[56px] lg:text-[68px] font-black text-white tracking-tight mb-4 leading-[1.1]">
                 Creative <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500">Override.</span>
               </h1>
-              <p className="text-slate-400 text-sm sm:text-[16px] md:text-[18px] font-medium leading-relaxed max-w-2xl">
+              <p className="text-slate-400 text-[16px] sm:text-[18px] font-medium leading-relaxed max-w-xl">
                 Koleksi utilitas canggih. Semuanya bekerja langsung di dalam browser Anda dengan privasi terjamin sepenuhnya.
               </p>
             </div>
 
-            <div className="w-full md:w-auto mt-2 md:mt-0 shrink-0">
-              <button 
-                id="tut-security" 
-                onClick={() => setIsSecurityModalOpen(true)}
-                className="w-full md:w-auto justify-center group flex items-center gap-3 bg-white/5 hover:bg-white/10 border border-white/10 px-5 py-3.5 sm:py-3 rounded-2xl shadow-lg backdrop-blur-md transition-all hover:scale-105 active:scale-95"
-              >
-                <Icons.ShieldCheck className="w-5 h-5 text-emerald-400" />
-                <span className="text-[14px] sm:text-[15px] font-bold text-slate-200">Info Keamanan</span>
-              </button>
-            </div>
+            <button 
+              id="tut-security" 
+              onClick={() => setIsSecurityModalOpen(true)}
+              className="group flex items-center gap-3 bg-white/5 hover:bg-white/10 border border-white/10 px-5 py-3 rounded-2xl shadow-lg backdrop-blur-md transition-all hover:scale-105 active:scale-95 shrink-0"
+            >
+               <Icons.ShieldCheck className="w-5 h-5 text-emerald-400" />
+               <span className="text-[15px] font-bold text-slate-200">Info Keamanan</span>
+            </button>
           </div>
         </header>
 
         {/* TAB FILTER */}
-        <div id="tut-filter" className="w-full overflow-x-auto no-scrollbar py-2 mb-8 sm:mb-[42px] sticky top-[70px] z-30 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
-          <div className="inline-flex items-center gap-2 bg-white/[0.03] p-1.5 sm:p-2 rounded-[20px] border border-white/5 backdrop-blur-xl">
+        <div id="tut-filter" className="flex overflow-x-auto no-scrollbar py-2 mb-[42px] sticky top-4 z-30 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
+          <div className="flex items-center gap-2 bg-white/[0.03] p-2 rounded-[20px] border border-white/5 backdrop-blur-xl">
             {categories.map(cat => (
               <button 
                 key={cat} onClick={() => setActiveCat(cat)}
-                className={`relative px-5 sm:px-6 py-2 sm:py-2.5 text-[13px] sm:text-[14px] font-bold transition-all duration-300 rounded-xl whitespace-nowrap ${
+                className={`relative px-6 py-2.5 text-[14px] font-bold transition-all duration-300 rounded-xl whitespace-nowrap ${
                   activeCat === cat ? 'text-white shadow-md' : 'text-slate-500 hover:text-slate-300 hover:bg-white/5'
                 }`}
               >
@@ -385,10 +441,9 @@ export default function ToolkitPage() {
         </div>
 
         {/* GRID KARTU */}
-        <div className="animate-fade-in-up w-full" style={{ animationDelay: '0.2s' }}>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+        <div className="animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-[26px]">
             {filteredTools.map((tool) => {
-               // Assign target ID cerdas: tempel ke elemen pertama yang aktif & yang akan datang
                const isActiveFirst = tool.id === toolkits.find(t => t.status === 'active')?.id;
                const isLockedFirst = tool.id === toolkits.find(t => t.status !== 'active')?.id;
 
@@ -403,68 +458,68 @@ export default function ToolkitPage() {
 
       </div>
 
-      {/* JENDELA INFO KEAMANAN SPESIFIK */}
+      {/* JENDELA (MODAL) INFO KEAMANAN SPESIFIK */}
       {isSecurityModalOpen && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-xl animate-fade-in">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-black/40 backdrop-blur-xl animate-fade-in touch-none">
            <div className="absolute inset-0" onClick={() => setIsSecurityModalOpen(false)}></div>
            
-           <div className="relative w-full max-w-[540px] max-h-[90vh] overflow-y-auto no-scrollbar bg-[#0F1117]/95 border border-emerald-500/20 shadow-[0_20px_60px_rgba(16,185,129,0.15)] rounded-[24px] sm:rounded-[34px] z-10 ring-1 ring-white/5">
-              <div className="bg-emerald-950/30 border-b border-emerald-500/10 px-5 sm:px-6 py-3 sm:py-4 flex items-center justify-between sticky top-0 z-20 backdrop-blur-md">
+           <div className="relative w-full max-w-[540px] bg-[#0F1117]/95 border border-emerald-500/20 shadow-[0_20px_60px_rgba(16,185,129,0.15)] rounded-[34px] overflow-hidden z-10 ring-1 ring-white/5">
+              <div className="bg-emerald-950/30 border-b border-emerald-500/10 px-6 py-4 flex items-center justify-between">
                  <div className="flex items-center gap-2">
-                    <button onClick={() => setIsSecurityModalOpen(false)} className="w-3 h-3 sm:w-3.5 sm:h-3.5 rounded-full bg-red-500/80 hover:bg-red-400"></button>
-                    <button className="w-3 h-3 sm:w-3.5 sm:h-3.5 rounded-full bg-yellow-500/80 hover:bg-yellow-400"></button>
-                    <button className="w-3 h-3 sm:w-3.5 sm:h-3.5 rounded-full bg-green-500/80 hover:bg-green-400"></button>
+                    <button onClick={() => setIsSecurityModalOpen(false)} className="w-3.5 h-3.5 rounded-full bg-red-500/80 hover:bg-red-400"></button>
+                    <button className="w-3.5 h-3.5 rounded-full bg-yellow-500/80 hover:bg-yellow-400"></button>
+                    <button className="w-3.5 h-3.5 rounded-full bg-green-500/80 hover:bg-green-400"></button>
                  </div>
-                 <span className="text-emerald-400/80 text-[10px] sm:text-[12px] font-bold uppercase tracking-widest">Sistem Keamanan Aktif</span>
+                 <span className="text-emerald-400/80 text-[12px] font-bold uppercase tracking-widest">Sistem Keamanan Aktif</span>
                  <div className="w-10"></div>
               </div>
 
-              <div className="p-6 sm:p-8">
-                 <div className="flex items-center gap-4 sm:gap-5 mb-6 sm:mb-8">
-                    <div className="p-3 sm:p-4 bg-emerald-500/10 text-emerald-400 rounded-xl sm:rounded-2xl border border-emerald-500/20 shadow-inner">
-                      <Icons.ShieldCheck className="w-6 h-6 sm:w-8 sm:h-8" />
+              <div className="p-8">
+                 <div className="flex items-center gap-5 mb-8">
+                    <div className="p-4 bg-emerald-500/10 text-emerald-400 rounded-2xl border border-emerald-500/20 shadow-inner">
+                      <Icons.ShieldCheck className="w-8 h-8" />
                     </div>
                     <div>
-                      <h3 className="text-[20px] sm:text-[24px] font-bold text-white tracking-tight">Privasi 100% Terjamin</h3>
-                      <p className="text-[13px] sm:text-[14px] text-slate-400 mt-1">Kami menghargai privasi Anda melebihi apapun.</p>
+                      <h3 className="text-[24px] font-bold text-white tracking-tight">Privasi 100% Terjamin</h3>
+                      <p className="text-[14px] text-slate-400 mt-1">Kami menghargai privasi Anda melebihi apapun.</p>
                     </div>
                  </div>
 
-                 <div className="space-y-3 sm:space-y-4">
-                   <div className="bg-white/[0.02] border border-white/5 p-4 sm:p-5 rounded-[16px] sm:rounded-[20px] transition-colors hover:bg-white/[0.04]">
-                      <div className="flex items-center gap-3 mb-2">
-                        <div className="w-6 h-6 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 font-bold text-[11px] shrink-0">1</div>
-                        <h4 className="text-white text-[14px] sm:text-[15px] font-bold">Pemrosesan Lokal (Client-Side)</h4>
+                 <div className="space-y-4">
+                   <div className="bg-white/[0.02] border border-white/5 p-5 rounded-[20px] transition-colors hover:bg-white/[0.04]">
+                      <div className="flex items-center gap-3 mb-2.5">
+                        <div className="w-6 h-6 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 font-bold text-[11px]">1</div>
+                        <h4 className="text-white text-[15px] font-bold">Pemrosesan Lokal (Client-Side)</h4>
                       </div>
-                      <p className="text-slate-400 text-[12px] sm:text-[13.5px] leading-relaxed pl-9">
-                        Saat Anda membuat <strong>CV</strong>, menyusun <strong>Invoice</strong>, atau memodifikasi <strong>CSS</strong>, RAM komputer atau HP Anda sendirilah yang memprosesnya, bukan server jarak jauh kami.
+                      <p className="text-slate-400 text-[13.5px] leading-relaxed pl-9">
+                        Saat Anda membuat <strong>CV</strong>, menyusun <strong>Invoice</strong>, atau mengompres <strong>gambar</strong>, RAM komputer atau HP Anda sendirilah yang bekerja keras memprosesnya, bukan server jarak jauh kami.
                       </p>
                    </div>
                    
-                   <div className="bg-white/[0.02] border border-white/5 p-4 sm:p-5 rounded-[16px] sm:rounded-[20px] transition-colors hover:bg-white/[0.04]">
-                      <div className="flex items-center gap-3 mb-2">
-                        <div className="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400 font-bold text-[11px] shrink-0">2</div>
-                        <h4 className="text-white text-[14px] sm:text-[15px] font-bold">Tanpa Database Cloud</h4>
+                   <div className="bg-white/[0.02] border border-white/5 p-5 rounded-[20px] transition-colors hover:bg-white/[0.04]">
+                      <div className="flex items-center gap-3 mb-2.5">
+                        <div className="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400 font-bold text-[11px]">2</div>
+                        <h4 className="text-white text-[15px] font-bold">Tanpa Database Cloud</h4>
                       </div>
-                      <p className="text-slate-400 text-[12px] sm:text-[13.5px] leading-relaxed pl-9">
-                        Karena alat ini tidak memakai database cloud, maka info sensitif Anda (misal: <strong>nama lengkap, nomor rekening, atau data klien</strong>) tidak akan pernah terbang ke internet.
+                      <p className="text-slate-400 text-[13.5px] leading-relaxed pl-9">
+                        Karena alat ini tidak menggunakan database rahasia, maka informasi sensitif Anda seperti <strong>nama lengkap, nomor rekening bank, email, atau desain klien</strong> tidak akan pernah terkirim ke internet.
                       </p>
                    </div>
 
-                   <div className="bg-white/[0.02] border border-white/5 p-4 sm:p-5 rounded-[16px] sm:rounded-[20px] transition-colors hover:bg-white/[0.04]">
-                      <div className="flex items-center gap-3 mb-2">
-                        <div className="w-6 h-6 rounded-full bg-orange-500/20 flex items-center justify-center text-orange-400 font-bold text-[11px] shrink-0">3</div>
-                        <h4 className="text-white text-[14px] sm:text-[15px] font-bold">Penyimpanan Tembolok</h4>
+                   <div className="bg-white/[0.02] border border-white/5 p-5 rounded-[20px] transition-colors hover:bg-white/[0.04]">
+                      <div className="flex items-center gap-3 mb-2.5">
+                        <div className="w-6 h-6 rounded-full bg-orange-500/20 flex items-center justify-center text-orange-400 font-bold text-[11px]">3</div>
+                        <h4 className="text-white text-[15px] font-bold">Penyimpanan Tembolok (Cache)</h4>
                       </div>
-                      <p className="text-slate-400 text-[12px] sm:text-[13.5px] leading-relaxed pl-9">
-                        Data isian Anda hanya dititipkan di memori browser HP/PC Anda sendiri (<i>LocalStorage</i>) agar tak perlu capek mengetik ulang esok hari. Anda bebas menghapusnya kapan saja.
+                      <p className="text-slate-400 text-[13.5px] leading-relaxed pl-9">
+                        Jika ada data yang tersimpan agar Anda tidak perlu mengetik ulang esok hari, data itu hanya dititipkan di memori browser Anda sendiri (<i>LocalStorage</i>). Anda dapat membersihkannya kapan saja Anda mau.
                       </p>
                    </div>
                  </div>
               </div>
 
-              <div className="bg-black/20 px-6 sm:px-8 py-5 sm:py-6 border-t border-white/5 flex justify-end sticky bottom-0 z-20 backdrop-blur-md">
-                 <button onClick={() => setIsSecurityModalOpen(false)} className="w-full sm:w-auto px-8 py-3 bg-emerald-500 hover:bg-emerald-400 text-emerald-950 text-[14px] font-bold rounded-xl sm:rounded-full transition-all active:scale-95 shadow-[0_0_15px_rgba(16,185,129,0.3)]">
+              <div className="bg-black/20 px-8 py-6 border-t border-white/5 flex justify-end">
+                 <button onClick={() => setIsSecurityModalOpen(false)} className="px-8 py-3 bg-emerald-500 hover:bg-emerald-400 text-emerald-950 text-[14px] font-bold rounded-full transition-all active:scale-95 shadow-[0_0_15px_rgba(16,185,129,0.3)]">
                     Saya Mengerti
                  </button>
               </div>
@@ -481,57 +536,82 @@ export default function ToolkitPage() {
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         .animate-fade-in-up { animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
         
-        /* 14 ANIMASI HOVER UNIK */
+        /* ============================================================== */
+        /* 14 ANIMASI HOVER UNIK (KONDISI NORMAL)                         */
+        /* ============================================================== */
         .hover-pulse-soft { animation: pulseSoft 1.5s infinite; }
         @keyframes pulseSoft { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+
         .hover-float { animation: float 2s ease-in-out infinite; }
         @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-6px); } }
+
         .hover-wiggle { animation: wiggle 0.5s ease-in-out infinite; }
         @keyframes wiggle { 0%, 100% { transform: rotate(-3deg); } 50% { transform: rotate(3deg); } }
+
         .group:hover .hover-draw { transform: rotate(-10deg) translate(2px, -2px) scale(1.1); }
         .group:hover .hover-expand { transform: scaleX(1.15) scaleY(0.9); }
         .group:hover .hover-slide-up { transform: translateY(-5px); }
         .group:hover .hover-unlock { transform: rotate(25deg) scale(1.1); }
         .group:hover .hover-flip { transform: perspective(400px) rotateY(25deg); }
         .group:hover .hover-split { transform: skewX(-10deg) translateX(4px); }
+        
         .hover-rainbow { animation: rainbow 3s linear infinite; }
         @keyframes rainbow { 0% { filter: hue-rotate(0deg) saturate(1.5); } 100% { filter: hue-rotate(360deg) saturate(1.5); } }
+
         .hover-typewriter { animation: typewriter 0.3s infinite; }
         @keyframes typewriter { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(2px); } }
+
         .hover-connect { animation: connectPulse 1s infinite; }
         @keyframes connectPulse { 0% { transform: scale(1); filter: brightness(1); } 50% { transform: scale(1.15); filter: brightness(1.4); } 100% { transform: scale(1); filter: brightness(1); } }
+
         .hover-spin-slow { animation: spinSlow 4s linear infinite; }
         @keyframes spinSlow { 100% { transform: rotate(360deg); } }
+
         .hover-badge-swing { transform-origin: top center; animation: swing 1.5s ease-in-out infinite; }
         @keyframes swing { 0%, 100% { transform: rotate(-10deg); } 50% { transform: rotate(10deg); } }
 
-        /* 14 ANIMASI KLIK (SEBELUM PINDAH) */
+        /* ============================================================== */
+        /* 14 ANIMASI KLIK (DILAKUKAN SEBELUM PINDAH HALAMAN)             */
+        /* ============================================================== */
         .click-paper-fly { animation: paperFly 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards !important; }
         @keyframes paperFly { 0% { transform: translateY(0) scale(1); opacity: 1; } 50% { transform: translateY(-20px) scale(1.1) rotate(5deg); opacity: 0.8; } 100% { transform: translateY(-100px) scale(0.5) rotate(15deg); opacity: 0; } }
+
         .click-layer-pop { animation: layerPop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards !important; }
         @keyframes layerPop { 0% { transform: scale(1); } 40% { transform: scale(1.4); filter: brightness(1.5); } 100% { transform: scale(0); opacity: 0; } }
+
         .click-send-msg { animation: sendMsg 0.6s ease-in forwards !important; }
         @keyframes sendMsg { 0% { transform: translateX(0); opacity: 1; } 30% { transform: translateX(-10px); } 100% { transform: translateX(100px); opacity: 0; } }
+
         .click-color-splash { animation: colorSplash 0.6s ease-out forwards !important; }
         @keyframes colorSplash { 0% { transform: scale(1); } 50% { transform: scale(1.5); filter: drop-shadow(0 0 10px pink) drop-shadow(0 0 20px cyan); } 100% { transform: scale(3); opacity: 0; } }
+
         .click-sign-done { animation: signDone 0.6s ease-in-out forwards !important; }
         @keyframes signDone { 0% { transform: translateX(0) skewX(0); } 100% { transform: translateX(50px) skewX(-30deg); opacity: 0; } }
+
         .click-slice-apart { animation: sliceApart 0.6s ease-out forwards !important; }
         @keyframes sliceApart { 0% { transform: scaleY(1); } 50% { transform: scaleY(1.2); } 100% { transform: scaleY(0); opacity: 0; } }
+
         .click-receipt-print { animation: receiptPrint 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards !important; }
         @keyframes receiptPrint { 0% { transform: translateY(0); clip-path: inset(0 0 0 0); } 40% { transform: translateY(10px); } 100% { transform: translateY(80px); opacity: 0; clip-path: inset(100% 0 0 0); } }
+
         .click-spiral-in { animation: spiralIn 0.6s ease-in forwards !important; }
         @keyframes spiralIn { 0% { transform: scale(1) rotate(0deg); } 100% { transform: scale(0) rotate(360deg); opacity: 0; } }
+
         .click-stamp-approve { animation: stampApprove 0.5s ease-out forwards !important; }
         @keyframes stampApprove { 0% { transform: scale(1); } 30% { transform: scale(2); opacity: 0.5; } 100% { transform: scale(0.9); opacity: 0; } }
+
         .click-compress-poof { animation: compressPoof 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards !important; }
         @keyframes compressPoof { 0% { transform: scale(1); } 10% { transform: scale(1.1); } 100% { transform: scale(0); opacity: 0; } }
+
         .click-text-grow { animation: textGrow 0.6s ease-out forwards !important; }
         @keyframes textGrow { 0% { transform: scale(1); } 100% { transform: scale(5); opacity: 0; } }
+
         .click-node-branch { animation: nodeBranch 0.6s ease-out forwards !important; }
         @keyframes nodeBranch { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(40px, -40px) scale(0); opacity: 0; } }
+
         .click-page-turn { animation: pageTurn 0.6s ease-in forwards !important; transform-style: preserve-3d; }
         @keyframes pageTurn { 0% { transform: rotateY(0deg); } 100% { transform: rotateY(-180deg); opacity: 0; } }
+
         .click-key-turn { animation: keyTurn 0.6s ease-in-out forwards !important; }
         @keyframes keyTurn { 0% { transform: rotate(0deg); } 50% { transform: rotate(90deg); } 100% { transform: rotate(90deg) scale(0); opacity: 0; } }
       `}} />
