@@ -39,7 +39,7 @@ const Icons = {
 };
 
 // ============================================================================
-// DATA MASTER TOOLKIT (Database Tools)
+// DATA MASTER TOOLKIT (Database Tools Anda)
 // ============================================================================
 export const toolkits = [
   { id: "cv-maker", title: "ATS CV & Cover Letter", description: "Buat Curriculum Vitae dan Surat Lamaran Kerja standar HRD.", iconName: "Document", link: "/cv-maker", status: "active", category: "Career & Freelance", theme: "purple", hoverAnim: "hover-float", clickAnim: "click-paper-fly" },
@@ -91,7 +91,6 @@ const UnifiedCard = ({ tool, cardId }) => {
     
     setTimeout(() => {
       setIsClicked(false);
-      // Navigasi HTML murni
       if (tool.link && tool.link.trim() !== '' && tool.link !== '#') {
         if (linkRef.current) {
           linkRef.current.click();
@@ -110,7 +109,7 @@ const UnifiedCard = ({ tool, cardId }) => {
       <div 
         id={cardId} 
         onClick={handleClick}
-        className={`group relative flex flex-col justify-between p-3 sm:p-5 lg:p-6 transition-all duration-300 rounded-xl sm:rounded-[20px] lg:rounded-[24px] overflow-hidden min-h-[110px] sm:min-h-[140px] lg:aspect-[1.618/1] transform-gpu
+        className={`group relative flex flex-col justify-between p-3.5 sm:p-5 lg:p-6 transition-all duration-300 rounded-[18px] sm:rounded-[20px] lg:rounded-[24px] overflow-hidden min-h-[120px] sm:min-h-[140px] lg:aspect-[1.618/1] transform-gpu
           ${isActive 
             ? `bg-[#0a0f18] border border-white/[0.08] hover:border-white/[0.15] ${theme.glow} hover:-translate-y-1 cursor-pointer` 
             : `bg-white/[0.01] border border-white/[0.02] opacity-60 grayscale-[80%] transition-all cursor-not-allowed`
@@ -145,7 +144,7 @@ const UnifiedCard = ({ tool, cardId }) => {
           <h3 className={`text-[12px] sm:text-[15px] lg:text-[17px] font-bold tracking-tight mb-0.5 sm:mb-1 transition-colors ${isActive ? 'text-slate-100 group-hover:text-white' : 'text-slate-500'} line-clamp-1`}>
             {tool.title}
           </h3>
-          <p className="text-[9px] sm:text-[11px] lg:text-[12px] text-slate-400/80 font-medium line-clamp-2 leading-relaxed transition-colors">
+          <p className="text-[9.5px] sm:text-[11px] lg:text-[12px] text-slate-400/80 font-medium line-clamp-2 leading-relaxed transition-colors">
             {tool.description}
           </p>
         </div>
@@ -156,37 +155,37 @@ const UnifiedCard = ({ tool, cardId }) => {
 
 
 // =========================================================================
-// KOMPONEN: BUBBLE TUTORIAL (GAMING HUD STYLE - MURNI DIRECT DOM, BEBAS CRASH)
+// KOMPONEN: BUBBLE TUTORIAL (GAMING HUD STYLE - MURNI DIRECT DOM, NATIVE FEEL)
 // =========================================================================
 const GuidedTour = ({ onComplete, filteredTools }) => {
   const [step, setStep] = useState(0);
   const [isScanning, setIsScanning] = useState(true);
-  const [isMoving, setIsMoving] = useState(false);
   const [isClicking, setIsClicking] = useState(false); 
+  const [fadeBubble, setFadeBubble] = useState(true); // Untuk animasi transisi bubble
   
   const highlightRef = useRef(null);
   const bubbleRef = useRef(null);
   const targetIdRef = useRef(null);
 
-  // PEMBENTUKAN LANGKAH TUTORIAL SECARA DINAMIS
+  // PEMBENTUKAN LANGKAH TUTORIAL SECARA DINAMIS (Sinkron dengan database)
   const TOUR_STEPS = useMemo(() => {
     const steps = [
       { 
         target: 'tut-filter', 
         title: 'Sistem Kategori', 
-        text: 'Gunakan panel ini untuk menyaring fungsi spesifik. Tersedia kategori khusus untuk Web Developer, Career, dan Design Utility.', 
+        text: 'Gunakan panel ini untuk menyaring fungsionalitas. Kategori alat akan langsung beradaptasi di bawah ini.', 
         position: 'bottom' 
       }
     ];
 
-    // Otomatis menelusuri SEMUA alat yang dirender dan dijadikan langkah panduan
+    // Otomatis menelusuri SEMUA alat yang ada pada list filter (Otomatis menyesuaikan dengan toolkits DB)
     filteredTools.forEach(tool => {
       steps.push({
         target: `tool-${tool.id}`,
         title: tool.title,
         text: tool.status === 'active' 
-              ? `[${tool.category}] ${tool.description} Status: Aktif dan siap digunakan.`
-              : `[${tool.category}] ${tool.description} Status: Segera Hadir.`,
+              ? `Kategori: ${tool.category}. ${tool.description} Status: Aktif dan siap digunakan.`
+              : `Kategori: ${tool.category}. ${tool.description} Status: Segera Hadir.`,
         position: 'bottom'
       });
     });
@@ -195,7 +194,7 @@ const GuidedTour = ({ onComplete, filteredTools }) => {
       { 
         target: 'tut-security', 
         title: 'Infrastruktur Keamanan', 
-        text: 'Sistem ini beroperasi murni secara Client-Side. Seluruh data diproses secara luring di perangkat Anda tanpa server backend.', 
+        text: 'Sistem ini beroperasi murni secara Client-Side. Seluruh data diproses secara luring di perangkat Anda tanpa intervensi server luar.', 
         position: 'bottom' 
       },
       { 
@@ -209,15 +208,31 @@ const GuidedTour = ({ onComplete, filteredTools }) => {
     return steps;
   }, [filteredTools]);
 
-  // Efek transisi mulus SAAT PINDAH STEP saja, menghindari delay saat user scroll
+  // MENCEGAH PENGGUNA MENGGULIR LAYAR SECARA MANUAL (ANTI-MELESET)
   useEffect(() => {
-    targetIdRef.current = TOUR_STEPS[step]?.target;
-    setIsMoving(true);
-    const timer = setTimeout(() => setIsMoving(false), 400);
-    return () => clearTimeout(timer);
-  }, [step, TOUR_STEPS]);
+    if (isScanning) return; 
 
-  // UPDATE DOM LANGSUNG: Kinerja setara Native 60fps tanpa menyebabkan Maximum Depth Error
+    // Mengunci interaksi scroll agar highlight tetap presisi seperti aplikasi Native
+    const preventDefault = (e) => e.preventDefault();
+    window.addEventListener('wheel', preventDefault, { passive: false });
+    window.addEventListener('touchmove', preventDefault, { passive: false });
+    
+    // Mencegah scroll via keyboard
+    const preventKeys = (e) => {
+        if (['ArrowUp', 'ArrowDown', 'Space', 'PageUp', 'PageDown'].includes(e.code)) {
+            e.preventDefault();
+        }
+    };
+    window.addEventListener('keydown', preventKeys, { passive: false });
+
+    return () => {
+        window.removeEventListener('wheel', preventDefault);
+        window.removeEventListener('touchmove', preventDefault);
+        window.removeEventListener('keydown', preventKeys);
+    };
+  }, [isScanning]);
+
+  // UPDATE DOM LANGSUNG VIA REF: 60FPS murni, menempel instan tanpa transisi CSS yang memicu lag
   const updatePositions = useCallback(() => {
     if (!targetIdRef.current || !highlightRef.current || !bubbleRef.current) return;
     
@@ -231,7 +246,7 @@ const GuidedTour = ({ onComplete, filteredTools }) => {
     const isMobile = window.innerWidth < 640;
     const bubbleWidth = isMobile ? Math.min(window.innerWidth - 32, 280) : 320;
 
-    // Mutasi DOM Langsung untuk Tracker Highlight
+    // Tracker Highlight: Murni injeksi koordinat piksel tanpa transisi CSS
     highlightRef.current.style.top = `${rect.top - padding}px`;
     highlightRef.current.style.left = `${rect.left - padding}px`;
     highlightRef.current.style.width = `${rect.width + padding * 2}px`;
@@ -251,7 +266,7 @@ const GuidedTour = ({ onComplete, filteredTools }) => {
     const prefPos = TOUR_STEPS[step]?.position || 'bottom';
     const xTransform = isMobile ? '-50%' : '-50%';
 
-    // Logika Auto-Flip (Mencegah ketutupan)
+    // Logika Auto-Flip Pintar (Mencegah ketutupan)
     if (prefPos === 'top') {
         if (spaceAbove > 200) {
             bubbleRef.current.style.top = `${rect.top - padding - 16}px`;
@@ -275,17 +290,28 @@ const GuidedTour = ({ onComplete, filteredTools }) => {
     }
   }, [step, TOUR_STEPS]);
 
-  // Pencari Target Awal: Memastikan elemen termuat dulu sebelum menscroll
+  // Eksekutor Langkah
   useEffect(() => {
      let retries = 0;
      let scanTimer;
+     
+     targetIdRef.current = TOUR_STEPS[step]?.target;
      setIsScanning(true);
+     setFadeBubble(false); // Sembunyikan bubble saat berpindah agar smooth
 
      const scanTarget = () => {
         const el = document.getElementById(targetIdRef.current);
         if (el && el.getBoundingClientRect().width > 0) {
+            // Karena user tidak bisa scroll manual, maka program yang menscroll ke arah target dengan mulus
             el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
             setIsScanning(false);
+            
+            // Tampilkan bubble panduan secara halus setelah scroll mulai berjalan
+            setTimeout(() => {
+                setFadeBubble(true);
+            }, 100);
+
             updatePositions();
         } else {
             if (retries < 20) {
@@ -299,9 +325,9 @@ const GuidedTour = ({ onComplete, filteredTools }) => {
      };
      scanTarget();
      return () => clearTimeout(scanTimer);
-  }, [step, onComplete, TOUR_STEPS.length, updatePositions]); 
+  }, [step, onComplete, TOUR_STEPS, updatePositions]); 
 
-  // Tracker Super Cepat untuk menempel pada elemen saat di-scroll tanpa lag
+  // Tracker Update Frame-by-Frame (Anti-Lag / Anti-Meleset)
   useEffect(() => {
      if (isScanning) return;
      let rafId;
@@ -315,6 +341,7 @@ const GuidedTour = ({ onComplete, filteredTools }) => {
 
   const handleNextStep = () => {
     setIsClicking(true); 
+    setFadeBubble(false); // Matikan bubble pelan-pelan
     setTimeout(() => {
        setIsClicking(false); 
        if (step < TOUR_STEPS.length - 1) {
@@ -326,8 +353,8 @@ const GuidedTour = ({ onComplete, filteredTools }) => {
   };
 
   return (
-    // Z-INDEX TERTINGGI 
-    <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 999999 }} onClick={(e) => e.stopPropagation()} className="pointer-events-none">
+    // Z-INDEX TERTINGGI MENGALAHKAN NAVBAR
+    <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 999999 }} className="pointer-events-none">
       
       {isScanning && (
         <div className="absolute inset-0 flex items-center justify-center bg-[#030712]/90 transition-all duration-300 pointer-events-auto">
@@ -338,15 +365,14 @@ const GuidedTour = ({ onComplete, filteredTools }) => {
         </div>
       )}
 
-      {/* MASKING JERNIH 100%: Dimutasi via ref langsung agar 60fps & bebas error */}
+      {/* MASKING JERNIH 100%: Dimutasi via ref langsung (tanpa CSS Transition) agar menempel mati layaknya magnet */}
       <div 
         ref={highlightRef}
         className="absolute pointer-events-none"
         style={{
           opacity: isScanning ? 0 : 1,
           boxShadow: '0 0 0 9999px rgba(3,7,18,0.85)',
-          // Matikan transisi saat di scroll agar menempel instan!
-          transition: isMoving ? 'top 0.4s cubic-bezier(0.4, 0, 0.2, 1), left 0.4s cubic-bezier(0.4, 0, 0.2, 1), width 0.4s cubic-bezier(0.4, 0, 0.2, 1), height 0.4s cubic-bezier(0.4, 0, 0.2, 1)' : 'none',
+          transition: 'opacity 0.2s', // Hanya transisi opacity, jangan berikan transisi top/left!
         }}
       >
          <div className="absolute inset-0 bg-cyan-400/5 animate-pulse rounded-[inherit]"></div>
@@ -356,7 +382,7 @@ const GuidedTour = ({ onComplete, filteredTools }) => {
          <div className="absolute bottom-[-4px] left-[-4px] w-4 h-4 border-b-[2px] border-l-[2px] border-cyan-400 rounded-bl-md"></div>
          <div className="absolute bottom-[-4px] right-[-4px] w-4 h-4 border-b-[2px] border-r-[2px] border-cyan-400 rounded-br-md"></div>
          
-         {/* KURSOR HUD PENUNJUK */}
+         {/* KURSOR HUD PENUNJUK (Dengan Animasi Pulse saat Idle, dan Shrink saat Klik) */}
          <div className="absolute -bottom-2 -right-2 sm:-bottom-3 sm:-right-3 z-[999999]">
             {isClicking && <div className="absolute inset-0 rounded-full border-2 border-cyan-400 animate-ping opacity-70"></div>}
             <div className={`transition-all duration-200 ${isClicking ? 'scale-[0.7] -translate-x-2 -translate-y-2 drop-shadow-[0_0_20px_rgba(34,211,238,1)] brightness-[1.5] rotate-[-15deg]' : 'animate-hud-pointer'}`}>
@@ -365,14 +391,13 @@ const GuidedTour = ({ onComplete, filteredTools }) => {
          </div>
       </div>
 
-      {/* BUBBLE KOTAK TEKS (Dimutasi langsung via ref) */}
+      {/* BUBBLE KOTAK TEKS (Fade in/out halus saat pindah step) */}
       <div 
         ref={bubbleRef}
-        className="bg-[#0f172a] border border-cyan-500/50 shadow-[0_20px_40px_rgba(0,0,0,0.5)] rounded-[20px] p-4 sm:p-5 pointer-events-auto"
+        className={`bg-[#0f172a] border border-cyan-500/50 shadow-[0_20px_40px_rgba(0,0,0,0.5)] rounded-[20px] p-4 sm:p-5 pointer-events-auto transition-opacity duration-300 ${fadeBubble ? 'opacity-100' : 'opacity-0'}`}
         style={{
           position: 'absolute',
-          opacity: isScanning ? 0 : 1,
-          transition: isMoving ? 'top 0.4s cubic-bezier(0.4, 0, 0.2, 1), left 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)' : 'none',
+          // Tidak diberi transisi top/left agar tidak kabur dengan scrollIntoView
         }}
       >
          <div className="relative z-10">
@@ -410,7 +435,7 @@ export default function ToolkitPage() {
   const [activeCat, setActiveCat] = useState('Semua');
   const [isSecurityModalOpen, setIsSecurityModalOpen] = useState(false);
   
-  // STATE MENGATUR ALUR PANDUAN
+  // STATE MENGATUR ALUR: 'idle' -> 'welcome' -> 'tour'
   const [tourState, setTourState] = useState('idle');
   
   const categories = useMemo(() => ['Semua', ...new Set(toolkits.map(tool => tool.category))], []);
@@ -420,12 +445,13 @@ export default function ToolkitPage() {
   }, [activeCat]);
 
   useEffect(() => {
-    // Mencegah browser melompat sendiri saat di-refresh
+    // MENCEGAH BROWSER SCROLL KE BAWAH SENDIRI SAAT DI REFRESH
     if ('scrollRestoration' in window.history) {
       window.history.scrollRestoration = 'manual';
     }
+    window.scrollTo(0, 0);
 
-    const hasSeenWelcome = localStorage.getItem('portfolio_welcome_v8');
+    const hasSeenWelcome = localStorage.getItem('portfolio_welcome_v10');
     if (!hasSeenWelcome) {
        setTourState('welcome');
     }
@@ -438,19 +464,21 @@ export default function ToolkitPage() {
 
   const handleCompleteTour = () => {
     setTourState('idle');
-    localStorage.setItem('portfolio_welcome_v8', 'true');
+    localStorage.setItem('portfolio_welcome_v10', 'true');
     window.scrollTo({ top: 0, behavior: 'smooth' }); 
   };
 
   return (
-    <div className="w-full bg-[#05050A] text-slate-200 font-sans relative overflow-x-hidden flex flex-col min-h-screen selection:bg-cyan-500/30 selection:text-cyan-300">
+    // Tidak menggunakan overflow-x-hidden untuk mencegah icon Hamburger navbar terpotong!
+    <div className="w-full bg-[#05050A] text-slate-200 font-sans relative flex flex-col min-h-screen selection:bg-cyan-500/30 selection:text-cyan-300">
       
-      <div className="fixed inset-0 z-[-1] pointer-events-none">
+      {/* Background blur dibungkus di wrapper terisolasi agar tidak menyebabkan scroll horizontal */}
+      <div className="fixed inset-0 z-[-1] pointer-events-none overflow-hidden">
         <div className="absolute top-[-10%] left-[-10%] w-[80vw] h-[80vw] sm:w-[50vw] sm:h-[50vw] bg-blue-600/10 rounded-full blur-[120px] sm:blur-[150px] mix-blend-screen"></div>
         <div className="absolute bottom-[-10%] right-[-10%] w-[80vw] h-[80vw] sm:w-[50vw] sm:h-[50vw] bg-purple-600/10 rounded-full blur-[120px] sm:blur-[150px] mix-blend-screen"></div>
       </div>
 
-      {/* CONTAINER DIPERBAIKI: max-w-7xl sejajar presisi dengan Hamburger Navbar standar Tailwind */}
+      {/* CONTAINER DIPERBAIKI: max-w-7xl px-4 sm:px-6 lg:px-8 presisi dengan margin Navbar global Tailwind */}
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 sm:pt-28 lg:pt-32 pb-0 flex flex-col flex-grow">
         
         <header className="mb-6 sm:mb-8 lg:mb-12 animate-fade-in-up">
@@ -503,8 +531,8 @@ export default function ToolkitPage() {
           </div>
         </div>
 
-        {/* LAYOUT MOBILE 2 KOLOM AGAR PRESISI, ELEGAN & TIDAK MEMBUANG SCROLL */}
-        <div className="animate-fade-in-up w-full" style={{ animationDelay: '0.2s' }}>
+        {/* EFEK TRANSISI KATEGORI HALUS & LAYOUT MOBILE 2 KOLOM YANG RAPI */}
+        <div key={activeCat} className="animate-fade-in-up w-full" style={{ animationDuration: '0.4s' }}>
           <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 pb-0 mb-0">
             {filteredTools.map((tool) => {
                return <UnifiedCard 
@@ -545,10 +573,10 @@ export default function ToolkitPage() {
 
       {/* MODAL SELAMAT DATANG (DI-TENGAH MURNI & ANTI-SCROLL BUG) */}
       {tourState === 'welcome' && (
-        <div className="fixed inset-0 z-[999999] grid place-items-center p-4 sm:p-6 bg-black/80 backdrop-blur-sm animate-fade-in touch-none h-[100dvh]">
-           <div className="bg-[#0F1117] border border-cyan-500/30 p-5 sm:p-6 rounded-[24px] max-w-[320px] w-full shadow-[0_0_60px_rgba(34,211,238,0.15)] text-center relative overflow-hidden ring-1 ring-white/5 m-auto max-h-[90dvh] overflow-y-auto no-scrollbar">
+        <div className="fixed inset-0 z-[999999] flex items-center justify-center p-4 sm:p-6 bg-black/80 backdrop-blur-sm animate-fade-in touch-none">
+           <div className="bg-[#0F1117] border border-cyan-500/30 p-5 sm:p-6 rounded-[24px] max-w-[320px] w-full shadow-[0_0_60px_rgba(34,211,238,0.15)] text-center relative overflow-hidden ring-1 ring-white/5 max-h-[85vh] overflow-y-auto no-scrollbar">
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-400 to-blue-500"></div>
-              <div className="w-12 h-12 mx-auto bg-cyan-500/10 rounded-full flex items-center justify-center mb-4 border border-cyan-500/20">
+              <div className="w-12 h-12 mx-auto bg-cyan-500/10 rounded-full flex items-center justify-center mb-4 border border-cyan-500/20 mt-2">
                  <Icons.Sparkles className="w-5 h-5 text-cyan-400" />
               </div>
               <h3 className="text-base sm:text-lg font-bold text-white mb-2 tracking-tight">Selamat Datang!</h3>
@@ -556,7 +584,7 @@ export default function ToolkitPage() {
                  Sistem ini dirancang khusus untuk mempermudah proses kreatif Anda. Mari ikuti panduan singkat untuk mengenal fitur-fiturnya.
               </p>
               <div className="flex gap-3">
-                 <button onClick={() => { setTourState('idle'); localStorage.setItem('portfolio_welcome_v8', 'true'); }} className="flex-1 py-2.5 rounded-full border border-white/10 text-slate-300 text-[11px] font-bold hover:bg-white/5 transition-colors">
+                 <button onClick={() => { setTourState('idle'); localStorage.setItem('portfolio_welcome_v10', 'true'); }} className="flex-1 py-2.5 rounded-full border border-white/10 text-slate-300 text-[11px] font-bold hover:bg-white/5 transition-colors">
                    Lewati
                  </button>
                  <button onClick={handleStartTour} className="flex-1 py-2.5 rounded-full bg-cyan-500 text-black text-[11px] font-bold hover:bg-cyan-400 transition-colors shadow-[0_0_15px_rgba(34,211,238,0.4)] active:scale-95">
@@ -567,26 +595,26 @@ export default function ToolkitPage() {
         </div>
       )}
 
-      {/* JENDELA INFO KEAMANAN (Dengan overflow-y-auto untuk layar HP kecil) */}
+      {/* JENDELA INFO KEAMANAN (Terkunci Sempurna di Tengah dengan scroll internal) */}
       {isSecurityModalOpen && (
-        <div className="fixed inset-0 z-[999999] grid place-items-center p-4 sm:p-6 bg-[#000000]/80 backdrop-blur-sm animate-fade-in h-[100dvh]">
+        <div className="fixed inset-0 z-[999999] flex items-center justify-center p-4 sm:p-6 bg-[#000000]/80 backdrop-blur-sm animate-fade-in">
            <div className="absolute inset-0 cursor-pointer" onClick={() => setIsSecurityModalOpen(false)}></div>
            
-           <div className="relative w-full max-w-md bg-[#0a0a0a]/95 backdrop-blur-2xl border border-white/10 shadow-[0_0_80px_rgba(0,0,0,0.8)] rounded-[24px] sm:rounded-[32px] overflow-hidden z-10 flex flex-col max-h-[90dvh] m-auto">
+           <div className="relative w-full max-w-md bg-[#0a0a0a]/95 backdrop-blur-2xl border border-white/10 shadow-[0_0_80px_rgba(0,0,0,0.8)] rounded-[24px] sm:rounded-[32px] overflow-hidden z-10 flex flex-col max-h-[85vh]">
               
               <div className="p-4 sm:p-6 text-center border-b border-white/5 relative shrink-0">
                  <button onClick={() => setIsSecurityModalOpen(false)} className="absolute top-4 right-4 sm:top-6 sm:right-6 text-slate-500 hover:text-white transition-colors bg-white/5 hover:bg-white/10 p-1.5 sm:p-2 rounded-full">
                    <Icons.X className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                  </button>
 
-                 <div className="w-10 h-10 sm:w-16 sm:h-16 mx-auto bg-gradient-to-br from-emerald-400 to-cyan-500 rounded-[10px] sm:rounded-2xl flex items-center justify-center shadow-[0_0_30px_rgba(52,211,153,0.3)] mb-2 sm:mb-4">
+                 <div className="w-10 h-10 sm:w-16 sm:h-16 mx-auto bg-gradient-to-br from-emerald-400 to-cyan-500 rounded-[10px] sm:rounded-2xl flex items-center justify-center shadow-[0_0_30px_rgba(52,211,153,0.3)] mb-2 sm:mb-4 mt-2">
                     <Icons.ShieldCheck className="w-5 h-5 sm:w-8 sm:h-8 text-white" />
                  </div>
                  <h3 className="text-base sm:text-2xl font-bold text-white tracking-tight">Privasi & Keamanan</h3>
                  <p className="hidden sm:block text-[11px] sm:text-sm text-slate-400 mt-1 sm:mt-2 font-medium">100% Aman. Nol Data di Server.</p>
               </div>
 
-              <div className="p-4 sm:p-6 space-y-3 sm:space-y-5 bg-white/[0.02] overflow-y-auto no-scrollbar">
+              <div className="p-4 sm:p-6 space-y-3 sm:space-y-5 bg-white/[0.02] overflow-y-auto no-scrollbar flex-grow">
                  <div className="flex gap-3 items-start">
                     <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center shrink-0 text-emerald-400 font-bold text-[10px] sm:text-xs">1</div>
                     <div>
