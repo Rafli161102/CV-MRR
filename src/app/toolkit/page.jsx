@@ -30,76 +30,20 @@ const Icons = {
 // DATA MASTER TOOLKIT 
 // ============================================================================
 export const toolkits = [
-  {
-    id: "cv-maker", title: "ATS CV & Cover Letter", description: "Buat Curriculum Vitae dan Surat Lamaran Kerja standar mesin HRD.",
-    iconName: "Document", link: "/cv-maker", status: "active", category: "Career & Freelance", theme: "purple",
-    hoverAnim: "hover-float", clickAnim: "click-paper-fly" 
-  },
-  {
-    id: "css-studio", title: "CSS Visual Studio", description: "Generator visual All-in-One untuk efek Glassmorphism, Neumorphism, dll.",
-    iconName: "Layers", link: "/css-studio", status: "active", category: "Web Developer", theme: "cyan",
-    hoverAnim: "hover-pulse-soft", clickAnim: "click-layer-pop" 
-  },
-  {
-    id: "wa-generator", title: "Premium WA & QR Link", description: "Buat tautan otomatis WhatsApp dan ubah menjadi desain QR Code.",
-    iconName: "Network", link: "/wa-generator", status: "coming_soon", category: "Community Tool", theme: "emerald",
-    hoverAnim: "hover-connect", clickAnim: "click-send-msg" 
-  },
-  {
-    id: "color-extractor", title: "Brand Color Extractor", description: "Unggah gambar referensi dan ekstrak 5 palet warna dominan.",
-    iconName: "Palette", link: "/color-extractor", status: "coming_soon", category: "Design Utility", theme: "pink",
-    hoverAnim: "hover-rainbow", clickAnim: "click-color-splash" 
-  },
-  {
-    id: "email-signature", title: "Email Signature Builder", description: "Rakit desain tanda tangan email HTML profesional yang elegan.",
-    iconName: "Signature", link: "/email-signature", status: "coming_soon", category: "Career & Freelance", theme: "orange",
-    hoverAnim: "hover-draw", clickAnim: "click-sign-done" 
-  },
-  {
-    id: "ig-splitter", title: "Seamless IG Splitter", description: "Potong gambar panorama memanjang menjadi 2-10 kotak presisi.",
-    iconName: "Grid", link: "/ig-splitter", status: "coming_soon", category: "Design Utility", theme: "rose",
-    hoverAnim: "hover-split", clickAnim: "click-slice-apart" 
-  },
-  {
-    id: "freelance-invoice", title: "Freelance Rate & Invoice", description: "Kalkulator pintar harga per-jam dan generator dokumen Invoice PDF.",
-    iconName: "Receipt", link: "/freelance-invoice", status: "active", category: "Career & Freelance", theme: "green",
-    hoverAnim: "hover-wiggle", clickAnim: "click-receipt-print" 
-  },
-  {
-    id: "golden-ratio", title: "Golden Ratio Calculator", description: "Dapatkan pembagian proporsi matematis (1:1.618) untuk layout.",
-    iconName: "Ratio", link: "/golden-ratio", status: "coming_soon", category: "Design Utility", theme: "yellow",
-    hoverAnim: "hover-spin-slow", clickAnim: "click-spiral-in" 
-  },
-  {
-    id: "event-ticket", title: "Event Badge Generator", description: "Render otomatis daftar peserta menjadi desain Name Badge.",
-    iconName: "Badge", link: "/event-ticket", status: "coming_soon", category: "Community Tool", theme: "blue",
-    hoverAnim: "hover-badge-swing", clickAnim: "click-stamp-approve" 
-  },
-  {
-    id: "image-converter", title: "Fast Image to WebP", description: "Kompres dan ubah format gambar (JPG/PNG) menjadi WebP.",
-    iconName: "Transform", link: "/image-converter", status: "coming_soon", category: "Web Developer", theme: "indigo",
-    hoverAnim: "hover-flip", clickAnim: "click-compress-poof" 
-  },
-  {
-    id: "type-scale", title: "Typographic Scale", description: "Dapatkan hirarki ukuran font (H1, H2, Paragraf) yang harmonis.",
-    iconName: "Typography", link: "/type-scale", status: "coming_soon", category: "Design Utility", theme: "slate",
-    hoverAnim: "hover-typewriter", clickAnim: "click-text-grow" 
-  },
-  {
-    id: "json-visual", title: "JSON Visualizer Tree", description: "Format dan visualisasikan data JSON rumit dalam bentuk cabang diagram.",
-    iconName: "Brackets", link: "/json-visual", status: "coming_soon", category: "Web Developer", theme: "red",
-    hoverAnim: "hover-expand", clickAnim: "click-node-branch" 
-  },
-  {
-    id: "markdown-pad", title: "Live Markdown Pad", description: "Editor teks Markdown dengan layar ganda (mengetik dan melihat hasil).",
-    iconName: "Markdown", link: "/markdown-pad", status: "coming_soon", category: "Career & Freelance", theme: "teal",
-    hoverAnim: "hover-slide-up", clickAnim: "click-page-turn" 
-  },
-  {
-    id: "jwt-decoder", title: "Offline JWT Decoder", description: "Bongkar dan lihat isi data dari JSON Web Token (JWT) secara aman.",
-    iconName: "Key", link: "/jwt-decoder", status: "coming_soon", category: "Web Developer", theme: "yellow",
-    hoverAnim: "hover-unlock", clickAnim: "click-key-turn" 
-  }
+  { id: "cv-maker", title: "ATS CV & Cover Letter", description: "Buat Curriculum Vitae dan Surat Lamaran Kerja standar mesin HRD.", iconName: "Document", link: "/cv-maker", status: "active", category: "Career & Freelance", theme: "purple", hoverAnim: "hover-float", clickAnim: "click-paper-fly" },
+  { id: "css-studio", title: "CSS Visual Studio", description: "Generator visual All-in-One untuk efek Glassmorphism, Neumorphism, dll.", iconName: "Layers", link: "/css-studio", status: "active", category: "Web Developer", theme: "cyan", hoverAnim: "hover-pulse-soft", clickAnim: "click-layer-pop" },
+  { id: "wa-generator", title: "Premium WA & QR Link", description: "Buat tautan otomatis WhatsApp dan ubah menjadi desain QR Code.", iconName: "Network", link: "/wa-generator", status: "coming_soon", category: "Community Tool", theme: "emerald", hoverAnim: "hover-connect", clickAnim: "click-send-msg" },
+  { id: "color-extractor", title: "Brand Color Extractor", description: "Unggah gambar referensi dan ekstrak 5 palet warna dominan.", iconName: "Palette", link: "/color-extractor", status: "coming_soon", category: "Design Utility", theme: "pink", hoverAnim: "hover-rainbow", clickAnim: "click-color-splash" },
+  { id: "email-signature", title: "Email Signature Builder", description: "Rakit desain tanda tangan email HTML profesional yang elegan.", iconName: "Signature", link: "/email-signature", status: "coming_soon", category: "Career & Freelance", theme: "orange", hoverAnim: "hover-draw", clickAnim: "click-sign-done" },
+  { id: "ig-splitter", title: "Seamless IG Splitter", description: "Potong gambar panorama memanjang menjadi 2-10 kotak presisi.", iconName: "Grid", link: "/ig-splitter", status: "coming_soon", category: "Design Utility", theme: "rose", hoverAnim: "hover-split", clickAnim: "click-slice-apart" },
+  { id: "freelance-invoice", title: "Freelance Rate & Invoice", description: "Kalkulator pintar harga per-jam dan generator dokumen Invoice PDF.", iconName: "Receipt", link: "/toolkit/freelance-invoice", status: "active", category: "Career & Freelance", theme: "green", hoverAnim: "hover-wiggle", clickAnim: "click-receipt-print" },
+  { id: "golden-ratio", title: "Golden Ratio Calculator", description: "Dapatkan pembagian proporsi matematis (1:1.618) untuk layout.", iconName: "Ratio", link: "/golden-ratio", status: "coming_soon", category: "Design Utility", theme: "yellow", hoverAnim: "hover-spin-slow", clickAnim: "click-spiral-in" },
+  { id: "event-ticket", title: "Event Badge Generator", description: "Render otomatis daftar peserta menjadi desain Name Badge.", iconName: "Badge", link: "/event-ticket", status: "coming_soon", category: "Community Tool", theme: "blue", hoverAnim: "hover-badge-swing", clickAnim: "click-stamp-approve" },
+  { id: "image-converter", title: "Fast Image to WebP", description: "Kompres dan ubah format gambar (JPG/PNG) menjadi WebP.", iconName: "Transform", link: "/image-converter", status: "coming_soon", category: "Web Developer", theme: "indigo", hoverAnim: "hover-flip", clickAnim: "click-compress-poof" },
+  { id: "type-scale", title: "Typographic Scale", description: "Dapatkan hirarki ukuran font (H1, H2, Paragraf) yang harmonis.", iconName: "Typography", link: "/type-scale", status: "coming_soon", category: "Design Utility", theme: "slate", hoverAnim: "hover-typewriter", clickAnim: "click-text-grow" },
+  { id: "json-visual", title: "JSON Visualizer Tree", description: "Format dan visualisasikan data JSON rumit dalam bentuk cabang diagram.", iconName: "Brackets", link: "/json-visual", status: "coming_soon", category: "Web Developer", theme: "red", hoverAnim: "hover-expand", clickAnim: "click-node-branch" },
+  { id: "markdown-pad", title: "Live Markdown Pad", description: "Editor teks Markdown dengan layar ganda (mengetik dan melihat hasil).", iconName: "Markdown", link: "/markdown-pad", status: "coming_soon", category: "Career & Freelance", theme: "teal", hoverAnim: "hover-slide-up", clickAnim: "click-page-turn" },
+  { id: "jwt-decoder", title: "Offline JWT Decoder", description: "Bongkar dan lihat isi data dari JSON Web Token (JWT) secara aman.", iconName: "Key", link: "/jwt-decoder", status: "coming_soon", category: "Web Developer", theme: "yellow", hoverAnim: "hover-unlock", clickAnim: "click-key-turn" }
 ];
 
 const toolThemes = {
@@ -119,7 +63,7 @@ const toolThemes = {
 };
 
 // =========================================================================
-// KOMPONEN KARTU MODUL (RESPONSIF MOBILE-FIRST)
+// KOMPONEN KARTU MODUL (RESPONSIF & ANIMASI KLIK)
 // =========================================================================
 const UnifiedCard = ({ tool, cardId }) => {
   const [isClicked, setIsClicked] = useState(false);
@@ -128,14 +72,14 @@ const UnifiedCard = ({ tool, cardId }) => {
   const IconComponent = Icons[tool.iconName] || Icons.Document;
 
   const handleClick = (e) => {
+    if (!isActive) return;
     e.preventDefault(); 
     setIsClicked(true); 
+    
+    // Tunda perpindahan halaman agar animasi klik sempat selesai
     setTimeout(() => {
       setIsClicked(false);
-      if(isActive) {
-        console.log(`Pindah ke: ${tool.link}`); 
-        // Implementasi Next.js: router.push(tool.link);
-      }
+      window.location.href = tool.link; // Standard navigation
     }, 600);
   };
 
@@ -143,21 +87,21 @@ const UnifiedCard = ({ tool, cardId }) => {
     <div 
       id={cardId} 
       onClick={handleClick}
-      className={`group relative flex flex-col justify-between p-5 sm:p-6 lg:p-[26px] transition-all duration-500 rounded-2xl sm:rounded-[26px] overflow-hidden min-h-[140px] sm:min-h-[160px] lg:aspect-[1.618/1]
+      className={`group relative flex flex-col justify-between p-4 sm:p-5 lg:p-[26px] transition-all duration-500 rounded-2xl sm:rounded-[26px] overflow-hidden min-h-[140px] sm:min-h-[160px] lg:aspect-[1.618/1]
         ${isActive 
           ? `bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] backdrop-blur-xl ${theme.border} ${theme.glow} hover:-translate-y-1 cursor-pointer` 
-          : `bg-white/[0.01] border border-white/[0.02] backdrop-blur-md opacity-70 grayscale-[50%] ${theme.border} hover:grayscale-0 hover:opacity-100 hover:-translate-y-0.5 transition-all cursor-pointer`
+          : `bg-white/[0.01] border border-white/[0.02] backdrop-blur-md opacity-70 grayscale-[50%] ${theme.border} transition-all cursor-not-allowed`
       } ${isClicked ? 'scale-[0.96] border-white/20' : ''}`}
     >
       <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl ${theme.bg} rounded-full blur-[40px] opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none`}></div>
 
       <div className="flex items-start justify-between mb-4 sm:mb-6 relative z-10">
-        <div className={`w-[48px] h-[48px] sm:w-[58px] sm:h-[58px] rounded-[14px] sm:rounded-[16px] flex items-center justify-center transition-all duration-500 shadow-lg 
-          ${!isClicked ? `group-hover:${tool.hoverAnim}` : ''} 
+        <div className={`w-[44px] h-[44px] sm:w-[58px] sm:h-[58px] rounded-[14px] sm:rounded-[16px] flex items-center justify-center transition-all duration-500 shadow-lg 
+          ${!isClicked && isActive ? `group-hover:${tool.hoverAnim}` : ''} 
           ${isClicked && tool.clickAnim ? tool.clickAnim : ''} 
-          ${isActive ? `bg-gradient-to-tr ${theme.iconBg} text-white` : `bg-white/5 text-slate-400 border border-white/10 group-hover:bg-gradient-to-tr group-hover:${theme.iconBg} group-hover:text-white group-hover:border-transparent`}
+          ${isActive ? `bg-gradient-to-tr ${theme.iconBg} text-white` : `bg-white/5 text-slate-400 border border-white/10`}
         `}>
-           <IconComponent className="w-[28px] h-[28px] sm:w-[36px] sm:h-[36px]" />
+           <IconComponent className="w-[24px] h-[24px] sm:w-[32px] sm:h-[32px]" />
         </div>
 
         <div className="shrink-0">
@@ -166,19 +110,19 @@ const UnifiedCard = ({ tool, cardId }) => {
               <Icons.ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </div>
           ) : (
-            <div className="flex items-center gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 bg-black/40 border border-white/5 rounded-full backdrop-blur-md transition-all group-hover:bg-white/5">
-               <Icons.Lock className="w-[12px] h-[12px] sm:w-[14px] sm:h-[14px] text-slate-400 group-hover:text-white" />
-               <span className="text-[9px] sm:text-[10px] font-bold tracking-widest text-slate-400 group-hover:text-white transition-colors">SOON</span>
+            <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-black/40 border border-white/5 rounded-full backdrop-blur-md transition-all">
+               <Icons.Lock className="w-[12px] h-[12px] text-slate-500" />
+               <span className="text-[9px] font-bold tracking-widest text-slate-500">SOON</span>
             </div>
           )}
         </div>
       </div>
       
       <div className="relative z-10 flex-1 flex flex-col justify-end">
-        <h3 className={`text-[18px] sm:text-[20px] font-bold tracking-tight mb-1.5 sm:mb-2 transition-colors ${isActive ? 'text-slate-100 group-hover:text-white' : 'text-slate-400 group-hover:text-slate-200'}`}>
+        <h3 className={`text-[16px] sm:text-[18px] lg:text-[20px] font-bold tracking-tight mb-1.5 sm:mb-2 transition-colors ${isActive ? 'text-slate-100 group-hover:text-white' : 'text-slate-500'}`}>
           {tool.title}
         </h3>
-        <p className="text-[12px] sm:text-[13px] text-slate-400/80 font-medium line-clamp-2 leading-relaxed group-hover:text-slate-400 transition-colors">
+        <p className="text-[12px] sm:text-[13px] text-slate-400/80 font-medium line-clamp-2 leading-relaxed transition-colors">
           {tool.description}
         </p>
       </div>
@@ -205,7 +149,7 @@ const TOUR_STEPS = [
   { 
     target: 'tut-active', 
     title: 'Alat Siap Pakai', 
-    text: <><ul className="list-disc pl-4 space-y-1"><li>Kotak berwarna cerah</li><li>Ada ikon panah di pojok</li><li>Bisa langsung diklik!</li></ul><br/>Ini berarti alat tersebut sudah 100% siap membantu pekerjaan Anda.</>, 
+    text: <><ul className="list-disc pl-4 space-y-1 mb-2"><li>Kotak berwarna cerah</li><li>Ada ikon panah di pojok</li><li>Bisa langsung diklik!</li></ul>Ini berarti alat tersebut sudah 100% siap membantu pekerjaan Anda.</>, 
     position: 'bottom' 
   },
   { 
@@ -223,37 +167,33 @@ const TOUR_STEPS = [
 ];
 
 // =========================================================================
-// KOMPONEN: BUBBLE TUTORIAL DENGAN SVG SPOTLIGHT MASKING (ANTI BUG)
+// KOMPONEN: BUBBLE TUTORIAL DENGAN CSS SPOTLIGHT (ANTI-BUG NAN)
 // =========================================================================
 const GuidedTour = ({ onComplete }) => {
   const [step, setStep] = useState(0);
   const [targetRect, setTargetRect] = useState(null);
   const [isClient, setIsClient] = useState(false);
-  const [windowDimensions, setWindowDimensions] = useState({ width: 0, height: 0 });
 
-  // Memastikan rendering hanya di Client Side (menghindari error NaN / Server Mismatch)
   useEffect(() => {
     setIsClient(true);
-    setWindowDimensions({ width: window.innerWidth, height: window.innerHeight });
   }, []);
 
   const recalculateRect = useCallback(() => {
     if (typeof window === 'undefined') return;
-    const targetId = TOUR_STEPS[step].target;
+    const targetId = TOUR_STEPS[step]?.target;
     const el = document.getElementById(targetId);
     
     if (el) {
-      const newRect = el.getBoundingClientRect();
+      const rect = el.getBoundingClientRect();
       setTargetRect({
-        top: newRect.top,
-        bottom: newRect.bottom,
-        left: newRect.left,
-        right: newRect.right,
-        width: newRect.width,
-        height: newRect.height,
+        top: rect.top,
+        bottom: rect.bottom,
+        left: rect.left,
+        width: rect.width,
+        height: rect.height,
+        // Deteksi bentuk asli elemen agar fokusnya akurat
         radius: window.getComputedStyle(el).borderRadius || '16px'
       });
-      setWindowDimensions({ width: window.innerWidth, height: window.innerHeight });
     } else {
       setTargetRect(null);
     }
@@ -261,96 +201,82 @@ const GuidedTour = ({ onComplete }) => {
 
   useEffect(() => {
     if (!isClient) return;
-    const targetId = TOUR_STEPS[step].target;
+    const targetId = TOUR_STEPS[step]?.target;
     const el = document.getElementById(targetId);
 
     if (el) {
-      const y = el.getBoundingClientRect().top + window.scrollY - (window.innerHeight / 2) + (el.getBoundingClientRect().height / 2);
-      window.scrollTo({ top: y, behavior: 'smooth' });
+      // Gulir halaman secara otomatis ke elemen tujuan
+      const rect = el.getBoundingClientRect();
+      const absoluteY = window.pageYOffset + rect.top;
+      const middle = absoluteY - (window.innerHeight / 2) + (rect.height / 2);
+      window.scrollTo({ top: middle, behavior: 'smooth' });
 
-      const timer = setTimeout(recalculateRect, 500); 
-      return () => clearTimeout(timer);
+      // Ambil posisinya
+      recalculateRect();
     } else {
-      if (step < TOUR_STEPS.length - 1) {
-        setStep(s => s + 1);
-      } else {
-        onComplete();
-      }
+      // Lewati jika elemen tak ditemukan
+      if (step < TOUR_STEPS.length - 1) setStep(s => s + 1);
+      else onComplete();
     }
   }, [step, recalculateRect, onComplete, isClient]);
 
+  // Tetap ikuti elemen walau pengguna sedang men-scroll atau putar layar
   useEffect(() => {
     if (!isClient) return;
+    window.addEventListener('scroll', recalculateRect, { passive: true });
     window.addEventListener('resize', recalculateRect);
-    window.addEventListener('scroll', recalculateRect);
     return () => {
-      window.removeEventListener('resize', recalculateRect);
       window.removeEventListener('scroll', recalculateRect);
+      window.removeEventListener('resize', recalculateRect);
     };
   }, [recalculateRect, isClient]);
 
-  if (!isClient || !targetRect || windowDimensions.width === 0 || isNaN(targetRect.top)) return null;
+  if (!isClient || !targetRect) return null;
 
-  const isMobile = windowDimensions.width < 640;
+  // KALKULASI POSISI AMAN (Anti Off-screen Bug)
+  const isMobile = window.innerWidth < 640;
+  const padding = 10; 
+  const bubbleWidth = isMobile ? window.innerWidth - 32 : 340;
   
-  let bubbleStyle = {
-    position: 'absolute',
-    zIndex: 210,
-    width: isMobile ? 'calc(100% - 32px)' : '340px',
-    left: isMobile ? '16px' : `${targetRect.left + (targetRect.width / 2)}px`,
-    transform: isMobile ? 'none' : 'translateX(-50%)',
-  };
+  let bubbleTop = targetRect.bottom + padding + 15;
+  let bubbleBottom = 'auto';
 
-  const spaceBelow = windowDimensions.height - targetRect.bottom;
-  const spaceAbove = targetRect.top;
-  const prefPosition = TOUR_STEPS[step].position;
-
-  // Kalkulasi posisi aman menghindari NaN
-  const topPos = targetRect.bottom + 20;
-  const bottomPos = windowDimensions.height - targetRect.top + 20;
-
-  if (prefPosition === 'bottom' && spaceBelow < 250 && spaceAbove > 250) {
-     bubbleStyle.bottom = `${bottomPos}px`; 
-  } else if (prefPosition === 'top' && spaceAbove < 250 && spaceBelow > 250) {
-     bubbleStyle.top = `${topPos}px`; 
-  } else if (prefPosition === 'top') {
-     bubbleStyle.bottom = `${bottomPos}px`;
-  } else {
-     bubbleStyle.top = `${topPos}px`;
+  // Jika posisi prioritas "top", ATAU ruang di bawah layar sempit, paksa balon naik ke atas elemen
+  if (TOUR_STEPS[step].position === 'top' || (window.innerHeight - targetRect.bottom < 250)) {
+     bubbleTop = 'auto';
+     bubbleBottom = window.innerHeight - targetRect.top + padding + 15;
   }
 
   return (
-    <div className="fixed inset-0 z-[200]">
-      <svg width="100%" height="100%" className="absolute inset-0 pointer-events-none">
-        <defs>
-          <mask id="spotlight">
-            <rect width="100%" height="100%" fill="white" />
-            <rect
-              x={targetRect.left - 10}
-              y={targetRect.top - 10}
-              width={targetRect.width + 20}
-              height={targetRect.height + 20}
-              rx={parseInt(targetRect.radius) > 0 ? parseInt(targetRect.radius) + 10 : 20} 
-              fill="black" 
-            />
-          </mask>
-        </defs>
-        <rect width="100%" height="100%" fill="rgba(3, 7, 18, 0.85)" mask="url(#spotlight)" />
-        <rect
-          x={targetRect.left - 10}
-          y={targetRect.top - 10}
-          width={targetRect.width + 20}
-          height={targetRect.height + 20}
-          rx={parseInt(targetRect.radius) > 0 ? parseInt(targetRect.radius) + 10 : 20}
-          fill="none"
-          stroke="#22d3ee"
-          strokeWidth="3"
-          className="animate-pulse"
-        />
-      </svg>
+    <>
+      {/* LAPISAN 1: Penangkap Klik (Mencegah user mengklik kartu lain selagi tur jalan) */}
+      <div className="fixed inset-0 z-[198]" onClick={(e) => e.stopPropagation()} />
 
-      <div style={bubbleStyle} className="bg-[#0f172a] border-2 border-cyan-500/50 shadow-[0_0_40px_rgba(34,211,238,0.25)] rounded-[24px] p-5 sm:p-6 transition-all duration-300">
-         <div className="relative z-10">
+      {/* LAPISAN 2: Efek Sorotan Layar Gelap (Menggunakan Box-Shadow Anti Bug) */}
+      <div 
+        className="fixed z-[199] pointer-events-none transition-all duration-500 ease-in-out border-2 border-cyan-400 animate-pulse"
+        style={{
+          top: targetRect.top - padding,
+          left: targetRect.left - padding,
+          width: targetRect.width + padding * 2,
+          height: targetRect.height + padding * 2,
+          borderRadius: `calc(${targetRect.radius} + 6px)`,
+          boxShadow: '0 0 0 9999px rgba(3, 7, 18, 0.85), 0 0 20px rgba(34,211,238,0.4)',
+        }}
+      />
+
+      {/* LAPISAN 3: Gelembung Balon Teks */}
+      <div 
+        className="fixed z-[200] bg-[#0f172a] border-2 border-cyan-500/50 shadow-[0_0_40px_rgba(34,211,238,0.25)] rounded-[24px] p-5 sm:p-6 transition-all duration-500 ease-in-out"
+        style={{
+          width: `${bubbleWidth}px`,
+          left: isMobile ? '16px' : `${targetRect.left + (targetRect.width / 2)}px`,
+          transform: isMobile ? 'none' : 'translateX(-50%)',
+          top: bubbleTop !== 'auto' ? `${bubbleTop}px` : 'auto',
+          bottom: bubbleBottom !== 'auto' ? `${bubbleBottom}px` : 'auto',
+        }}
+      >
+         <div className="relative z-10 pointer-events-auto">
            <div className="flex justify-between items-center mb-4">
              <span className="text-[10px] font-black tracking-widest text-cyan-400 uppercase">Langkah {step + 1}/{TOUR_STEPS.length}</span>
              <button onClick={onComplete} className="text-slate-500 hover:text-white transition-colors bg-white/5 hover:bg-white/10 p-1.5 rounded-full">
@@ -369,12 +295,12 @@ const GuidedTour = ({ onComplete }) => {
            </div>
          </div>
       </div>
-    </div>
+    </>
   );
 }
 
 // =========================================================================
-// MAIN PAGE COMPONENT
+// KOMPONEN UTAMA HALAMAN
 // =========================================================================
 export default function ToolkitPage() {
   const categories = ['Semua', ...new Set(toolkits.map(tool => tool.category))];
@@ -383,7 +309,7 @@ export default function ToolkitPage() {
   const [showTutorial, setShowTutorial] = useState(false);
   
   useEffect(() => {
-    const hasSeenTutorial = localStorage.getItem('override_tutorial_seen_v10');
+    const hasSeenTutorial = localStorage.getItem('override_tutorial_seen_final');
     if (!hasSeenTutorial) {
       setTimeout(() => setShowTutorial(true), 1000);
     }
@@ -391,23 +317,22 @@ export default function ToolkitPage() {
 
   const handleCompleteTutorial = () => {
     setShowTutorial(false);
-    localStorage.setItem('override_tutorial_seen_v10', 'true');
+    localStorage.setItem('override_tutorial_seen_final', 'true');
     window.scrollTo({ top: 0, behavior: 'smooth' }); 
   };
 
   const filteredTools = activeCat === 'Semua' ? [...toolkits] : toolkits.filter(tool => tool.category === activeCat);
 
   return (
-    // Memastikan w-full agar tidak ciut ke tengah ketika ditaruh di dalam Layout global
     <div className="w-full min-h-screen bg-[#05050A] text-slate-200 font-sans relative selection:bg-cyan-500/30 selection:text-cyan-300">
       
       <div className="fixed top-[-20%] left-[-10%] w-[50vw] h-[50vw] bg-blue-600/10 rounded-full blur-[150px] pointer-events-none z-0 mix-blend-screen"></div>
       <div className="fixed bottom-[-20%] right-[-10%] w-[50vw] h-[50vw] bg-purple-600/10 rounded-full blur-[150px] pointer-events-none z-0 mix-blend-screen"></div>
 
-      {/* Container utama dengan padding yang responsif */}
-      <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8 relative z-10 pt-8 sm:pt-12 lg:pt-20 pb-32">
+      {/* RUANG AMAN NAVBAR (PT DITINGKATKAN AGAR HEADER TIDAK NABRAK) */}
+      <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8 relative z-10 pt-28 sm:pt-32 lg:pt-36 pb-32">
         
-        {/* HEADER: Flex-col di mobile, Flex-row di layar lebih besar */}
+        {/* HEADER */}
         <header className="mb-8 sm:mb-[42px] animate-fade-in-up">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 sm:gap-8 mb-8">
             <div className="w-full md:w-[60%] lg:w-[65%]">
@@ -429,7 +354,6 @@ export default function ToolkitPage() {
               </p>
             </div>
 
-            {/* Tombol Info Keamanan dibuat penuh (w-full) khusus di versi mobile agar rapi */}
             <div className="w-full md:w-auto mt-2 md:mt-0 shrink-0">
               <button 
                 id="tut-security" 
@@ -464,6 +388,7 @@ export default function ToolkitPage() {
         <div className="animate-fade-in-up w-full" style={{ animationDelay: '0.2s' }}>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
             {filteredTools.map((tool) => {
+               // Assign target ID cerdas: tempel ke elemen pertama yang aktif & yang akan datang
                const isActiveFirst = tool.id === toolkits.find(t => t.status === 'active')?.id;
                const isLockedFirst = tool.id === toolkits.find(t => t.status !== 'active')?.id;
 
@@ -480,7 +405,7 @@ export default function ToolkitPage() {
 
       {/* JENDELA INFO KEAMANAN SPESIFIK */}
       {isSecurityModalOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-xl animate-fade-in touch-none">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-xl animate-fade-in">
            <div className="absolute inset-0" onClick={() => setIsSecurityModalOpen(false)}></div>
            
            <div className="relative w-full max-w-[540px] max-h-[90vh] overflow-y-auto no-scrollbar bg-[#0F1117]/95 border border-emerald-500/20 shadow-[0_20px_60px_rgba(16,185,129,0.15)] rounded-[24px] sm:rounded-[34px] z-10 ring-1 ring-white/5">
@@ -512,7 +437,7 @@ export default function ToolkitPage() {
                         <h4 className="text-white text-[14px] sm:text-[15px] font-bold">Pemrosesan Lokal (Client-Side)</h4>
                       </div>
                       <p className="text-slate-400 text-[12px] sm:text-[13.5px] leading-relaxed pl-9">
-                        Saat Anda membuat <strong>CV</strong>, menyusun <strong>Invoice</strong>, atau memodifikasi <strong>CSS</strong>, RAM komputer atau HP Anda sendirilah yang bekerja keras memprosesnya, bukan server kami.
+                        Saat Anda membuat <strong>CV</strong>, menyusun <strong>Invoice</strong>, atau memodifikasi <strong>CSS</strong>, RAM komputer atau HP Anda sendirilah yang memprosesnya, bukan server jarak jauh kami.
                       </p>
                    </div>
                    
@@ -522,17 +447,17 @@ export default function ToolkitPage() {
                         <h4 className="text-white text-[14px] sm:text-[15px] font-bold">Tanpa Database Cloud</h4>
                       </div>
                       <p className="text-slate-400 text-[12px] sm:text-[13.5px] leading-relaxed pl-9">
-                        Karena alat ini tidak menggunakan database cloud, maka informasi sensitif Anda seperti <strong>nama lengkap, nomor rekening, atau identitas klien</strong> tidak akan pernah terkirim ke internet.
+                        Karena alat ini tidak memakai database cloud, maka info sensitif Anda (misal: <strong>nama lengkap, nomor rekening, atau data klien</strong>) tidak akan pernah terbang ke internet.
                       </p>
                    </div>
 
                    <div className="bg-white/[0.02] border border-white/5 p-4 sm:p-5 rounded-[16px] sm:rounded-[20px] transition-colors hover:bg-white/[0.04]">
                       <div className="flex items-center gap-3 mb-2">
                         <div className="w-6 h-6 rounded-full bg-orange-500/20 flex items-center justify-center text-orange-400 font-bold text-[11px] shrink-0">3</div>
-                        <h4 className="text-white text-[14px] sm:text-[15px] font-bold">Penyimpanan Tembolok (Cache)</h4>
+                        <h4 className="text-white text-[14px] sm:text-[15px] font-bold">Penyimpanan Tembolok</h4>
                       </div>
                       <p className="text-slate-400 text-[12px] sm:text-[13.5px] leading-relaxed pl-9">
-                        Data isian Anda hanya dititipkan di memori browser HP/PC Anda sendiri (<i>LocalStorage</i>) agar Anda tidak perlu mengetik ulang esok hari. Anda bebas membersihkannya kapan saja.
+                        Data isian Anda hanya dititipkan di memori browser HP/PC Anda sendiri (<i>LocalStorage</i>) agar tak perlu capek mengetik ulang esok hari. Anda bebas menghapusnya kapan saja.
                       </p>
                    </div>
                  </div>
@@ -556,9 +481,7 @@ export default function ToolkitPage() {
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         .animate-fade-in-up { animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
         
-        /* ============================================================== */
-        /* 14 ANIMASI HOVER UNIK                                          */
-        /* ============================================================== */
+        /* 14 ANIMASI HOVER UNIK */
         .hover-pulse-soft { animation: pulseSoft 1.5s infinite; }
         @keyframes pulseSoft { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
         .hover-float { animation: float 2s ease-in-out infinite; }
@@ -582,9 +505,7 @@ export default function ToolkitPage() {
         .hover-badge-swing { transform-origin: top center; animation: swing 1.5s ease-in-out infinite; }
         @keyframes swing { 0%, 100% { transform: rotate(-10deg); } 50% { transform: rotate(10deg); } }
 
-        /* ============================================================== */
-        /* 14 ANIMASI KLIK (SEBELUM PINDAH)                               */
-        /* ============================================================== */
+        /* 14 ANIMASI KLIK (SEBELUM PINDAH) */
         .click-paper-fly { animation: paperFly 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards !important; }
         @keyframes paperFly { 0% { transform: translateY(0) scale(1); opacity: 1; } 50% { transform: translateY(-20px) scale(1.1) rotate(5deg); opacity: 0.8; } 100% { transform: translateY(-100px) scale(0.5) rotate(15deg); opacity: 0; } }
         .click-layer-pop { animation: layerPop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards !important; }
