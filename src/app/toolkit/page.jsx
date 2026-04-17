@@ -75,7 +75,7 @@ const toolThemes = {
 };
 
 // =========================================================================
-// KOMPONEN KARTU MODUL (DENGAN ANCHOR TAG MURNI)
+// KOMPONEN KARTU MODUL (DIPERBAIKI UNTUK 2 KOLOM DI MOBILE)
 // =========================================================================
 const UnifiedCard = ({ tool, cardId }) => {
   const [isClicked, setIsClicked] = useState(false);
@@ -91,6 +91,7 @@ const UnifiedCard = ({ tool, cardId }) => {
     
     setTimeout(() => {
       setIsClicked(false);
+      // Navigasi HTML murni
       if (tool.link && tool.link.trim() !== '' && tool.link !== '#') {
         if (linkRef.current) {
           linkRef.current.click();
@@ -109,31 +110,31 @@ const UnifiedCard = ({ tool, cardId }) => {
       <div 
         id={cardId} 
         onClick={handleClick}
-        className={`group relative flex flex-col justify-between p-4 sm:p-5 lg:p-6 transition-all duration-300 rounded-xl sm:rounded-[20px] lg:rounded-[24px] overflow-hidden min-h-[120px] sm:min-h-[140px] lg:aspect-[1.618/1] transform-gpu
+        className={`group relative flex flex-col justify-between p-3 sm:p-5 lg:p-6 transition-all duration-300 rounded-xl sm:rounded-[20px] lg:rounded-[24px] overflow-hidden min-h-[110px] sm:min-h-[140px] lg:aspect-[1.618/1] transform-gpu
           ${isActive 
             ? `bg-[#0a0f18] border border-white/[0.08] hover:border-white/[0.15] ${theme.glow} hover:-translate-y-1 cursor-pointer` 
             : `bg-white/[0.01] border border-white/[0.02] opacity-60 grayscale-[80%] transition-all cursor-not-allowed`
         } ${isClicked ? 'scale-[0.96] border-white/30 !shadow-none' : ''}`}
       >
-        <div className={`absolute top-0 right-0 w-24 h-24 sm:w-32 sm:h-32 bg-gradient-to-bl ${theme.bg} rounded-full blur-[30px] sm:blur-[40px] opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none`}></div>
+        <div className={`absolute top-0 right-0 w-20 h-20 sm:w-32 sm:h-32 bg-gradient-to-bl ${theme.bg} rounded-full blur-[24px] sm:blur-[40px] opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none`}></div>
 
         <div className="flex items-start justify-between mb-3 sm:mb-4 lg:mb-6 relative z-10">
-          <div className={`w-9 h-9 sm:w-11 sm:h-11 lg:w-12 lg:h-12 rounded-[10px] sm:rounded-[14px] flex items-center justify-center transition-all duration-500 shadow-lg shrink-0
+          <div className={`w-8 h-8 sm:w-11 sm:h-11 lg:w-12 lg:h-12 rounded-lg sm:rounded-[14px] flex items-center justify-center transition-all duration-500 shadow-lg shrink-0
             ${!isClicked && isActive ? `group-hover:${tool.hoverAnim}` : ''} 
             ${isClicked && tool.clickAnim ? tool.clickAnim : ''} 
             ${isActive ? `bg-gradient-to-tr ${theme.iconBg} text-white` : `bg-white/5 text-slate-400 border border-white/10`}
           `}>
-             <IconComponent className="w-[18px] h-[18px] sm:w-5 sm:h-5 lg:w-[22px] lg:h-[22px]" />
+             <IconComponent className="w-4 h-4 sm:w-5 sm:h-5 lg:w-[22px] lg:h-[22px]" />
           </div>
 
           <div className="shrink-0">
             {isActive ? (
-              <div className={`flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 rounded-full transition-all duration-300 bg-white/5 text-slate-400 group-hover:bg-white/10 ${theme.text} ${isClicked ? 'translate-x-2 opacity-0' : ''}`}>
-                <Icons.ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+              <div className={`flex items-center justify-center w-5 h-5 sm:w-7 sm:h-7 lg:w-8 lg:h-8 rounded-full transition-all duration-300 bg-white/5 text-slate-400 group-hover:bg-white/10 ${theme.text} ${isClicked ? 'translate-x-2 opacity-0' : ''}`}>
+                <Icons.ArrowRight className="w-2.5 h-2.5 sm:w-3.5 sm:h-3.5" />
               </div>
             ) : (
               <div className="flex items-center gap-1 px-1.5 py-1 sm:px-2.5 sm:py-1.5 bg-black/40 border border-white/5 rounded-full">
-                 <Icons.Lock className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-slate-500" />
+                 <Icons.Lock className="w-2 h-2 sm:w-3 sm:h-3 text-slate-500" />
                  <span className="text-[7px] sm:text-[9px] font-bold tracking-widest text-slate-500">SOON</span>
               </div>
             )}
@@ -141,10 +142,10 @@ const UnifiedCard = ({ tool, cardId }) => {
         </div>
         
         <div className="relative z-10 flex-1 flex flex-col justify-end">
-          <h3 className={`text-[13px] sm:text-[15px] lg:text-[17px] font-bold tracking-tight mb-1 transition-colors ${isActive ? 'text-slate-100 group-hover:text-white' : 'text-slate-500'} line-clamp-1`}>
+          <h3 className={`text-[11px] sm:text-[15px] lg:text-[17px] font-bold tracking-tight mb-0.5 sm:mb-1 transition-colors ${isActive ? 'text-slate-100 group-hover:text-white' : 'text-slate-500'} line-clamp-1`}>
             {tool.title}
           </h3>
-          <p className="text-[10px] sm:text-[11px] lg:text-[12px] text-slate-400/80 font-medium line-clamp-2 sm:line-clamp-2 leading-relaxed transition-colors">
+          <p className="text-[9px] sm:text-[11px] lg:text-[12px] text-slate-400/80 font-medium line-clamp-2 leading-relaxed transition-colors">
             {tool.description}
           </p>
         </div>
@@ -154,15 +155,16 @@ const UnifiedCard = ({ tool, cardId }) => {
 };
 
 // =========================================================================
-// KOMPONEN: BUBBLE TUTORIAL (ANTI-CRASH, BEBAS LOOP, RINGAN & PRESISI)
+// KOMPONEN: BUBBLE TUTORIAL (GAMING HUD STYLE - MURNI TANPA BUG/FREEZE)
 // =========================================================================
-const GuidedTour = ({ onComplete, activeTools, lockedTools }) => {
+const GuidedTour = ({ onComplete, filteredTools }) => {
   const [step, setStep] = useState(0);
   const [targetRect, setTargetRect] = useState(null);
   const [isScanning, setIsScanning] = useState(true);
   const [isClicking, setIsClicking] = useState(false); 
   
-  // Mengunci array panduan menggunakan useMemo agar tidak menyebabkan Infinity Loop
+  // PEMBENTUKAN LANGKAH TUTORIAL SECARA DINAMIS & AMAN (Menggunakan useMemo)
+  // Menghindari Infinite Loop dari sisi React. Sinkron 100% dengan toolkitsDB.
   const TOUR_STEPS = useMemo(() => {
     const steps = [
       { 
@@ -173,31 +175,23 @@ const GuidedTour = ({ onComplete, activeTools, lockedTools }) => {
       }
     ];
 
-    const firstActive = activeTools[0];
-    if (firstActive) {
+    // Menelusuri seluruh alat secara otomatis, apa pun statusnya!
+    filteredTools.forEach(tool => {
       steps.push({
-        target: `tool-${firstActive.id}`,
-        title: 'Modul Tersedia',
-        text: `Modul yang menyala menandakan alat ini sudah 100% siap digunakan. Klik untuk membuka fungsinya secara instan.`,
+        target: `tool-${tool.id}`,
+        title: tool.title,
+        text: tool.status === 'active' 
+              ? `[${tool.category}] ${tool.description} Status: Aktif dan siap digunakan!`
+              : `[${tool.category}] ${tool.description} Status: Sedang dirakit (Segera Hadir).`,
         position: 'bottom'
       });
-    }
-
-    const firstLocked = lockedTools[0];
-    if (firstLocked) {
-      steps.push({
-        target: `tool-${firstLocked.id}`,
-        title: 'Tahap Perakitan',
-        text: `Kartu redup menandakan modul sedang dalam pengembangan. Sistem akan otomatis memperbaruinya saat alat siap rilis.`,
-        position: 'top'
-      });
-    }
+    });
 
     steps.push(
       { 
         target: 'tut-security', 
         title: 'Infrastruktur Keamanan', 
-        text: 'Sangat krusial: Sistem ini beroperasi murni secara Client-Side. Seluruh data diproses secara luring di perangkat tanpa server backend.', 
+        text: 'Sistem ini beroperasi murni secara Client-Side. Seluruh data diproses secara luring di perangkat tanpa server backend.', 
         position: 'bottom' 
       },
       { 
@@ -209,16 +203,20 @@ const GuidedTour = ({ onComplete, activeTools, lockedTools }) => {
     );
 
     return steps;
-  }, [activeTools, lockedTools]);
+  }, [filteredTools]);
 
   // Fungsi kalkulasi posisi secara presisi dan ringan
   const updateRect = useCallback(() => {
-    const el = document.getElementById(TOUR_STEPS[step]?.target);
+    if (typeof window === 'undefined') return;
+    const targetId = TOUR_STEPS[step]?.target;
+    if (!targetId) return;
+
+    const el = document.getElementById(targetId);
     if (el) {
       const rect = el.getBoundingClientRect();
       if (rect.width > 0 && rect.height > 0) {
         setTargetRect(prev => {
-          // ANTI-LOOP: Jangan render ulang jika pergerakannya cuma kurang dari 2 piksel (menghemat memori)
+          // ANTI-LOOP: Jangan render ulang jika pergerakannya cuma kurang dari 2 piksel
           if (prev && 
               Math.abs(prev.top - rect.top) < 2 && 
               Math.abs(prev.left - rect.left) < 2 &&
@@ -435,15 +433,15 @@ export default function ToolkitPage() {
     return activeCat === 'Semua' ? [...toolkits] : toolkits.filter(tool => tool.category === activeCat);
   }, [activeCat]);
 
-  const activeToolsRendered = useMemo(() => filteredTools.filter(t => t.status === 'active'), [filteredTools]);
-  const lockedToolsRendered = useMemo(() => filteredTools.filter(t => t.status !== 'active'), [filteredTools]);
-
   useEffect(() => {
     if ('scrollRestoration' in window.history) {
       window.history.scrollRestoration = 'manual';
     }
     
-    const hasSeenWelcome = localStorage.getItem('portfolio_welcome_v5');
+    // Jangan izinkan browser ngescroll otomatis saat halaman di-refresh
+    window.scrollTo(0, 0);
+
+    const hasSeenWelcome = localStorage.getItem('portfolio_welcome_v6');
     if (!hasSeenWelcome) {
        setTourState('welcome');
     }
@@ -456,7 +454,7 @@ export default function ToolkitPage() {
 
   const handleCompleteTour = () => {
     setTourState('idle');
-    localStorage.setItem('portfolio_welcome_v5', 'true');
+    localStorage.setItem('portfolio_welcome_v6', 'true');
     window.scrollTo({ top: 0, behavior: 'smooth' }); 
   };
 
@@ -468,7 +466,7 @@ export default function ToolkitPage() {
         <div className="absolute bottom-[-10%] right-[-10%] w-[80vw] h-[80vw] sm:w-[50vw] sm:h-[50vw] bg-purple-600/10 rounded-full blur-[120px] sm:blur-[150px] mix-blend-screen"></div>
       </div>
 
-      {/* CONTAINER DIPERBAIKI: max-w-7xl presisi dengan Hamburger Navbar Global Tailwind */}
+      {/* CONTAINER DIPERBAIKI: max-w-7xl px-4 sm:px-6 lg:px-8 Menyesuaikan presisi sejajar dengan Hamburger Navbar standar */}
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 sm:pt-28 lg:pt-32 pb-0 flex flex-col flex-grow">
         
         <header className="mb-6 sm:mb-8 lg:mb-12 animate-fade-in-up">
@@ -521,9 +519,9 @@ export default function ToolkitPage() {
           </div>
         </div>
 
-        {/* LAYOUT MOBILE 1 KOLOM AGAR RAPI (TIDAK BERDESAKAN) */}
+        {/* LAYOUT MOBILE 2 KOLOM AGAR PRESISI, ELEGAN & TIDAK MEMBUANG SCROLL */}
         <div className="animate-fade-in-up w-full" style={{ animationDelay: '0.2s' }}>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 pb-0 mb-0">
+          <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 pb-0 mb-0">
             {filteredTools.map((tool) => {
                return <UnifiedCard 
                   key={tool.id} 
@@ -561,10 +559,10 @@ export default function ToolkitPage() {
 
       </div>
 
-      {/* MODAL SELAMAT DATANG (MENCEGAH BUG SCROLL-DOWN) */}
+      {/* MODAL SELAMAT DATANG (MENCEGAH BUG SCROLL-DOWN) DI-TENGAH MURNI */}
       {tourState === 'welcome' && (
-        <div className="fixed inset-0 z-[999999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in touch-none">
-           <div className="bg-[#0F1117] border border-cyan-500/30 p-6 rounded-3xl max-w-[320px] w-full shadow-[0_0_60px_rgba(34,211,238,0.15)] text-center relative overflow-hidden ring-1 ring-white/5">
+        <div className="fixed inset-0 z-[999999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
+           <div className="bg-[#0F1117] border border-cyan-500/30 p-5 sm:p-6 rounded-3xl max-w-[320px] w-full shadow-[0_0_60px_rgba(34,211,238,0.15)] text-center relative overflow-hidden ring-1 ring-white/5">
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-400 to-blue-500"></div>
               <div className="w-12 h-12 mx-auto bg-cyan-500/10 rounded-full flex items-center justify-center mb-4 border border-cyan-500/20">
                  <Icons.Sparkles className="w-5 h-5 text-cyan-400" />
@@ -574,7 +572,7 @@ export default function ToolkitPage() {
                  Sistem ini dirancang khusus untuk mempermudah proses kreatif Anda. Mari ikuti panduan singkat untuk mengenal fitur-fiturnya.
               </p>
               <div className="flex gap-3">
-                 <button onClick={() => { setTourState('idle'); localStorage.setItem('portfolio_welcome_v5', 'true'); }} className="flex-1 py-2.5 rounded-full border border-white/10 text-slate-300 text-[11px] font-bold hover:bg-white/5 transition-colors">
+                 <button onClick={() => { setTourState('idle'); localStorage.setItem('portfolio_welcome_v6', 'true'); }} className="flex-1 py-2.5 rounded-full border border-white/10 text-slate-300 text-[11px] font-bold hover:bg-white/5 transition-colors">
                    Lewati
                  </button>
                  <button onClick={handleStartTour} className="flex-1 py-2.5 rounded-full bg-cyan-500 text-black text-[11px] font-bold hover:bg-cyan-400 transition-colors shadow-[0_0_15px_rgba(34,211,238,0.4)] active:scale-95">
@@ -590,7 +588,8 @@ export default function ToolkitPage() {
         <div className="fixed inset-0 z-[999999] flex items-center justify-center p-4 sm:p-6 bg-[#000000]/80 backdrop-blur-sm animate-fade-in">
            <div className="absolute inset-0 cursor-pointer" onClick={() => setIsSecurityModalOpen(false)}></div>
            
-           <div className="relative w-full max-w-md my-auto bg-[#0a0a0a]/95 backdrop-blur-2xl border border-white/10 shadow-[0_0_80px_rgba(0,0,0,0.8)] rounded-[24px] sm:rounded-[32px] z-10 flex flex-col max-h-[90vh]">
+           {/* Kontainer Utama Modal - Terkunci di tengah dengan max-h */}
+           <div className="relative w-full max-w-md bg-[#0a0a0a]/95 backdrop-blur-2xl border border-white/10 shadow-[0_0_80px_rgba(0,0,0,0.8)] rounded-[24px] sm:rounded-[32px] overflow-hidden z-10 flex flex-col max-h-[85vh]">
               
               <div className="p-4 sm:p-6 text-center border-b border-white/5 relative shrink-0">
                  <button onClick={() => setIsSecurityModalOpen(false)} className="absolute top-4 right-4 sm:top-6 sm:right-6 text-slate-500 hover:text-white transition-colors bg-white/5 hover:bg-white/10 p-1.5 sm:p-2 rounded-full">
@@ -604,8 +603,8 @@ export default function ToolkitPage() {
                  <p className="hidden sm:block text-[11px] sm:text-sm text-slate-400 mt-1 sm:mt-2 font-medium">100% Aman. Nol Data di Server.</p>
               </div>
 
+              {/* Area Teks yang bisa di-scroll ke bawah jika layar HP terlalu kecil */}
               <div className="p-4 sm:p-6 space-y-3 sm:space-y-5 bg-white/[0.02] overflow-y-auto no-scrollbar">
-                 
                  <div className="flex gap-3 items-start">
                     <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center shrink-0 text-emerald-400 font-bold text-[10px] sm:text-xs">1</div>
                     <div>
@@ -629,7 +628,6 @@ export default function ToolkitPage() {
                        <p className="text-slate-400 text-[11px] sm:text-[12px] leading-snug mt-1">Hanya dititipkan di browser Anda, dan bisa dihapus kapan saja.</p>
                     </div>
                  </div>
-
               </div>
 
               <div className="p-4 sm:p-5 border-t border-white/5 bg-[#050505]/50 shrink-0">
@@ -641,7 +639,7 @@ export default function ToolkitPage() {
         </div>
       )}
 
-      {tourState === 'tour' && <GuidedTour onComplete={handleCompleteTour} activeTools={activeToolsRendered} lockedTools={lockedToolsRendered} />}
+      {tourState === 'tour' && <GuidedTour onComplete={handleCompleteTour} filteredTools={filteredTools} />}
 
       <style dangerouslySetInnerHTML={{__html: `
         .no-scrollbar::-webkit-scrollbar { display: none; }
