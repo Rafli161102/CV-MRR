@@ -63,7 +63,7 @@ const toolThemes = {
 };
 
 // =========================================================================
-// KOMPONEN KARTU MODUL (RESPONSIF, IKON KECIL & RAPI)
+// KOMPONEN KARTU MODUL (RESPONSIF 2 KOLOM MOBILE)
 // =========================================================================
 const UnifiedCard = ({ tool, cardId }) => {
   const [isClicked, setIsClicked] = useState(false);
@@ -145,7 +145,7 @@ const TOUR_STEPS = [
 ];
 
 // =========================================================================
-// KOMPONEN: BUBBLE TUTORIAL DENGAN CSS SPOTLIGHT (ANTI SCROLL BUG)
+// KOMPONEN: BUBBLE TUTORIAL DENGAN PENGUNCI REAL-TIME (ANTI MELeset)
 // =========================================================================
 const GuidedTour = ({ onComplete }) => {
   const [step, setStep] = useState(0);
@@ -156,65 +156,49 @@ const GuidedTour = ({ onComplete }) => {
     setIsClient(true);
   }, []);
 
-  const recalculateRect = useCallback(() => {
-    if (typeof window === 'undefined') return;
-    const targetId = TOUR_STEPS[step]?.target;
-    const el = document.getElementById(targetId);
-    
-    if (el) {
-      const rect = el.getBoundingClientRect();
-      if (rect.width > 0 && rect.height > 0) {
-        setTargetRect({
-          top: rect.top,
-          bottom: rect.bottom,
-          left: rect.left,
-          right: rect.right,
-          width: rect.width,
-          height: rect.height,
-          radius: window.getComputedStyle(el).borderRadius || '16px'
-        });
-      }
-    } else {
-      setTargetRect(null);
-    }
-  }, [step]);
-
   useEffect(() => {
     if (!isClient) return;
     const targetId = TOUR_STEPS[step]?.target;
-    const el = document.getElementById(targetId);
+    let intervalId;
 
-    if (el) {
-      const rect = el.getBoundingClientRect();
-      
-      // Evaluasi apakah elemen cukup terlihat di layar. Jika tidak, gulir ke arahnya perlahan.
-      const isVisible = rect.top >= 100 && rect.bottom <= window.innerHeight - 100;
-      
-      if (!isVisible) {
-        const absoluteY = window.pageYOffset + rect.top;
-        const middle = absoluteY - (window.innerHeight / 2) + (rect.height / 2);
-        window.scrollTo({ top: middle, behavior: 'smooth' });
+    // Fungsi untuk memperbarui koordinat target terus-menerus
+    const lockOnTarget = () => {
+      const el = document.getElementById(targetId);
+      if (el) {
+        const rect = el.getBoundingClientRect();
+        // Hanya rekam jika elemen berukuran valid dan terlihat di memori
+        if (rect.width > 0) {
+          setTargetRect({
+            top: rect.top,
+            bottom: rect.bottom,
+            left: rect.left,
+            right: rect.right,
+            width: rect.width,
+            height: rect.height,
+            radius: window.getComputedStyle(el).borderRadius || '16px'
+          });
+        }
       }
+    };
 
-      // Sensor berganda: Mengecek lagi posisi tepat setelah animasi scroll dirasa usai (menghindari meleset di mobile)
-      const timer = setTimeout(recalculateRect, isVisible ? 50 : 600); 
-      const timer2 = setTimeout(recalculateRect, 1000); 
-      return () => { clearTimeout(timer); clearTimeout(timer2); };
+    const el = document.getElementById(targetId);
+    if (el) {
+      // Gulir lembut ke elemen saat pertama kali masuk step
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      
+      // KUNCI UTAMA: Update koordinat sangat cepat (tiap 50ms) agar sorotan menempel
+      // walau layar HP bergeser karena URL Bar yang memanjang/menyusut.
+      intervalId = setInterval(lockOnTarget, 50);
     } else {
+      // Lewati jika elemen tak ditemukan di DOM (misal tak ada kartu SOON)
       if (step < TOUR_STEPS.length - 1) setStep(s => s + 1);
       else onComplete();
     }
-  }, [step, recalculateRect, onComplete, isClient]);
 
-  useEffect(() => {
-    if (!isClient) return;
-    window.addEventListener('scroll', recalculateRect, { passive: true });
-    window.addEventListener('resize', recalculateRect);
     return () => {
-      window.removeEventListener('scroll', recalculateRect);
-      window.removeEventListener('resize', recalculateRect);
+      if (intervalId) clearInterval(intervalId);
     };
-  }, [recalculateRect, isClient]);
+  }, [step, isClient, onComplete]);
 
   if (!isClient || !targetRect) return null;
 
@@ -236,7 +220,7 @@ const GuidedTour = ({ onComplete }) => {
       <div className="fixed inset-0 z-[198]" onClick={(e) => e.stopPropagation()} />
 
       <div 
-        className="fixed z-[199] pointer-events-none transition-all duration-500 ease-in-out border-2 border-cyan-400 animate-pulse"
+        className="fixed z-[199] pointer-events-none transition-all duration-[50ms] ease-linear border-2 border-cyan-400 animate-pulse"
         style={{
           top: targetRect.top - padding,
           left: targetRect.left - padding,
@@ -248,7 +232,7 @@ const GuidedTour = ({ onComplete }) => {
       />
 
       <div 
-        className="fixed z-[200] bg-[#0f172a] border border-cyan-500/50 shadow-[0_20px_40px_rgba(0,0,0,0.5)] rounded-[24px] p-5 sm:p-6 transition-all duration-500 ease-in-out"
+        className="fixed z-[200] bg-[#0f172a] border border-cyan-500/50 shadow-[0_20px_40px_rgba(0,0,0,0.5)] rounded-[24px] p-5 sm:p-6 transition-all duration-[50ms] ease-linear"
         style={{
           width: `${bubbleWidth}px`,
           left: isMobile ? '16px' : `${targetRect.left + (targetRect.width / 2)}px`,
@@ -290,7 +274,7 @@ export default function ToolkitPage() {
   const [showTutorial, setShowTutorial] = useState(false);
   
   useEffect(() => {
-    const hasSeenTutorial = localStorage.getItem('override_tutorial_seen_final_v11');
+    const hasSeenTutorial = localStorage.getItem('override_tutorial_seen_final_v13');
     if (!hasSeenTutorial) {
       setTimeout(() => setShowTutorial(true), 1000);
     }
@@ -298,22 +282,22 @@ export default function ToolkitPage() {
 
   const handleCompleteTutorial = () => {
     setShowTutorial(false);
-    localStorage.setItem('override_tutorial_seen_final_v11', 'true');
+    localStorage.setItem('override_tutorial_seen_final_v13', 'true');
     window.scrollTo({ top: 0, behavior: 'smooth' }); 
   };
 
   const filteredTools = activeCat === 'Semua' ? [...toolkits] : toolkits.filter(tool => tool.category === activeCat);
 
   return (
-    <div className="w-full bg-[#05050A] text-slate-200 font-sans selection:bg-cyan-500/30 selection:text-cyan-300 flex flex-col">
+    <div className="w-full min-h-screen bg-[#05050A] text-slate-200 font-sans selection:bg-cyan-500/30 selection:text-cyan-300 flex flex-col">
       
       <div className="fixed inset-0 z-[-1] pointer-events-none overflow-hidden">
         <div className="absolute top-[-10%] left-[-10%] w-[80vw] h-[80vw] sm:w-[50vw] sm:h-[50vw] bg-blue-600/10 rounded-full blur-[120px] sm:blur-[150px] mix-blend-screen"></div>
         <div className="absolute bottom-[-10%] right-[-10%] w-[80vw] h-[80vw] sm:w-[50vw] sm:h-[50vw] bg-purple-600/10 rounded-full blur-[120px] sm:blur-[150px] mix-blend-screen"></div>
       </div>
 
-      {/* Padding bawah dinolkan (pb-0) dan margin bawah dihapus agar mentok footer */}
-      <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8 pt-24 sm:pt-32 lg:pt-36 flex flex-col">
+      {/* SPACE BAWAH DIHAPUS (pb-0) AGAR MENTOK FOOTER */}
+      <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8 pt-24 sm:pt-32 lg:pt-36 flex flex-col flex-grow">
         
         <header className="mb-6 sm:mb-8 lg:mb-[42px] animate-fade-in-up">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 sm:gap-8 mb-6 sm:mb-8">
@@ -329,7 +313,7 @@ export default function ToolkitPage() {
               </div>
               
               <h1 className="text-[32px] sm:text-4xl lg:text-5xl xl:text-6xl font-black text-white tracking-tight mb-2 sm:mb-3 lg:mb-4 leading-[1.15] sm:leading-[1.1]">
-                Creative <span className="animate-gradient-text bg-clip-text text-transparent bg-gradient-to-r from-red-500 via-yellow-500 via-green-500 via-blue-500 to-purple-500">Override.</span>
+                Creative <span className="text-rgb-animated">Override.</span>
               </h1>
               <p className="text-slate-400 text-[13px] sm:text-sm md:text-base lg:text-lg font-medium leading-relaxed max-w-2xl">
                 Koleksi utilitas canggih. Semuanya bekerja langsung di dalam browser Anda dengan privasi terjamin sepenuhnya.
@@ -365,9 +349,9 @@ export default function ToolkitPage() {
           </div>
         </div>
 
-        {/* DI PAKSA 2 KOLOM DI MOBILE (grid-cols-2) dan margin bawah di-set ke 0 */}
-        <div className="animate-fade-in-up w-full mb-0 pb-0" style={{ animationDelay: '0.2s' }}>
-          <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 pb-6">
+        {/* GRID KARTU - DIPAKSA 2 KOLOM DI MOBILE - PB-0 AGAR MENTOK BAWAH */}
+        <div className="animate-fade-in-up w-full pb-0 mb-0" style={{ animationDelay: '0.2s' }}>
+          <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
             {filteredTools.map((tool) => {
                const isActiveFirst = tool.id === toolkits.find(t => t.status === 'active')?.id;
                const isLockedFirst = tool.id === toolkits.find(t => t.status !== 'active')?.id;
@@ -383,7 +367,7 @@ export default function ToolkitPage() {
 
       </div>
 
-      {/* JENDELA INFO KEAMANAN (Kompak dan Pas Layar Mobile) */}
+      {/* JENDELA INFO KEAMANAN (KOMPAK, TIDAK PERLU SCROLL DI MOBILE) */}
       {isSecurityModalOpen && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 bg-[#000000]/80 backdrop-blur-sm animate-fade-in">
            <div className="absolute inset-0 cursor-pointer" onClick={() => setIsSecurityModalOpen(false)}></div>
@@ -439,8 +423,6 @@ export default function ToolkitPage() {
         </div>
       )}
 
-      {showTutorial && <GuidedTour onComplete={handleCompleteTutorial} />}
-
       <style dangerouslySetInnerHTML={{__html: `
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -448,15 +430,18 @@ export default function ToolkitPage() {
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         .animate-fade-in-up { animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
         
-        /* EFEK RGB OTOMATIS ("Override.") */
-        .animate-gradient-text {
-          background-size: 300% 300%;
-          animation: rgbText 6s ease-in-out infinite;
+        /* 1. EFEK ANIMASI RGB GAMING SEJATI */
+        .text-rgb-animated {
+          background: linear-gradient(to right, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8b00ff, #ff0000);
+          background-size: 200% auto;
+          color: transparent;
+          -webkit-background-clip: text;
+          background-clip: text;
+          animation: rgbFlow 3s linear infinite;
         }
-        @keyframes rgbText {
-          0% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-          100% { background-position: 0% 50%; }
+        @keyframes rgbFlow {
+          0% { background-position: 0% center; }
+          100% { background-position: -200% center; }
         }
 
         /* 14 ANIMASI HOVER UNIK */
