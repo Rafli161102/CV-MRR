@@ -18,7 +18,7 @@ const Icons = {
   Transform: (p) => <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...p}><path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" /></svg>,
   Typography: (p) => <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...p}><path strokeLinecap="round" strokeLinejoin="round" d="M10.5 21l5.25-11.25L21 21m-9-3h7.5M3 5.621a48.474 48.474 0 016-.371m0 0c1.12 0 2.233.038 3.334.114M9 5.25V3m3.334 2.364C11.176 10.658 7.69 15.08 3 17.502m9.334-12.138c.896.061 1.785.147 2.666.257m-4.589 8.495a18.023 18.023 0 01-3.827-5.802" /></svg>,
   Brackets: (p) => <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...p}><path strokeLinecap="round" strokeLinejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5" /></svg>,
-  Markdown: (p) => <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...p}><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25M9 16.5v-6h3v6m-3-3h3m-3 3h-3m10.5-3l-3 3m0 0l-3-3m3 3v-6" /></svg>,
+  Markdown: (p) => <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...p}><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25M9 16.5v-6h3v6m-3-3h3m-3-3h-3m10.5-3l-3 3m0 0l-3-3m3 3v-6" /></svg>,
   Key: (p) => <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...p}><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z" /></svg>,
   ArrowRight: (p) => <svg fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" {...p}><path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg>,
   Lock: (p) => <svg fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" {...p}><path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg>,
@@ -63,7 +63,7 @@ const toolThemes = {
 };
 
 // =========================================================================
-// KOMPONEN KARTU MODUL (RESPONSIF, IKON KECIL, ANTI GLITCH)
+// KOMPONEN KARTU MODUL (RESPONSIF, IKON KECIL & RAPI)
 // =========================================================================
 const UnifiedCard = ({ tool, cardId }) => {
   const [isClicked, setIsClicked] = useState(false);
@@ -79,9 +79,7 @@ const UnifiedCard = ({ tool, cardId }) => {
     
     setTimeout(() => {
       setIsClicked(false);
-      if (linkRef.current) {
-        linkRef.current.click();
-      }
+      if (linkRef.current) linkRef.current.click();
     }, 600);
   };
 
@@ -91,43 +89,42 @@ const UnifiedCard = ({ tool, cardId }) => {
       <div 
         id={cardId} 
         onClick={handleClick}
-        className={`group relative flex flex-col justify-between p-4 sm:p-5 transition-all duration-300 rounded-2xl sm:rounded-[24px] overflow-hidden min-h-[120px] sm:min-h-[140px] lg:aspect-[1.618/1] transform-gpu
+        className={`group relative flex flex-col justify-between p-3 sm:p-5 lg:p-6 transition-all duration-300 rounded-xl sm:rounded-[20px] lg:rounded-[24px] overflow-hidden min-h-[110px] sm:min-h-[140px] lg:aspect-[1.618/1] transform-gpu
           ${isActive 
             ? `bg-[#0a0f18] border border-white/[0.08] hover:border-white/[0.15] ${theme.glow} hover:-translate-y-1 cursor-pointer` 
-            : `bg-white/[0.01] border border-white/[0.02] opacity-50 grayscale-[80%] transition-all cursor-not-allowed`
+            : `bg-white/[0.01] border border-white/[0.02] opacity-60 grayscale-[80%] transition-all cursor-not-allowed`
         } ${isClicked ? 'scale-[0.96] border-white/30 !shadow-none' : ''}`}
       >
-        <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl ${theme.bg} rounded-full blur-[40px] opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none`}></div>
+        <div className={`absolute top-0 right-0 w-24 h-24 sm:w-32 sm:h-32 bg-gradient-to-bl ${theme.bg} rounded-full blur-[30px] sm:blur-[40px] opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none`}></div>
 
-        <div className="flex items-start justify-between mb-3 sm:mb-4 relative z-10">
-          {/* UKURAN IKON DIPERKECIL AGAR LEBIH PROPORSIONAL */}
-          <div className={`w-9 h-9 sm:w-10 sm:h-10 lg:w-12 lg:h-12 rounded-xl flex items-center justify-center transition-all duration-500 shadow-lg shrink-0
+        <div className="flex items-start justify-between mb-3 sm:mb-4 lg:mb-6 relative z-10">
+          <div className={`w-8 h-8 sm:w-11 sm:h-11 lg:w-12 lg:h-12 rounded-[10px] sm:rounded-[14px] flex items-center justify-center transition-all duration-500 shadow-lg shrink-0
             ${!isClicked && isActive ? `group-hover:${tool.hoverAnim}` : ''} 
             ${isClicked && tool.clickAnim ? tool.clickAnim : ''} 
             ${isActive ? `bg-gradient-to-tr ${theme.iconBg} text-white` : `bg-white/5 text-slate-400 border border-white/10`}
           `}>
-             <IconComponent className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6" />
+             <IconComponent className="w-4 h-4 sm:w-5 sm:h-5 lg:w-[22px] lg:h-[22px]" />
           </div>
 
           <div className="shrink-0">
             {isActive ? (
-              <div className={`flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 rounded-full transition-all duration-300 bg-white/5 text-slate-400 group-hover:bg-white/10 ${theme.text} ${isClicked ? 'translate-x-2 opacity-0' : ''}`}>
-                <Icons.ArrowRight className="w-3 h-3 sm:w-4 sm:h-4" />
+              <div className={`flex items-center justify-center w-5 h-5 sm:w-7 sm:h-7 lg:w-8 lg:h-8 rounded-full transition-all duration-300 bg-white/5 text-slate-400 group-hover:bg-white/10 ${theme.text} ${isClicked ? 'translate-x-2 opacity-0' : ''}`}>
+                <Icons.ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
               </div>
             ) : (
-              <div className="flex items-center gap-1.5 px-2 py-1 sm:px-2.5 sm:py-1.5 bg-black/40 border border-white/5 rounded-full">
-                 <Icons.Lock className="w-3 h-3 text-slate-500" />
-                 <span className="text-[8px] sm:text-[9px] font-bold tracking-widest text-slate-500">SOON</span>
+              <div className="flex items-center gap-1 px-1.5 py-1 sm:px-2.5 sm:py-1.5 bg-black/40 border border-white/5 rounded-full">
+                 <Icons.Lock className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-slate-500" />
+                 <span className="text-[7px] sm:text-[9px] font-bold tracking-widest text-slate-500">SOON</span>
               </div>
             )}
           </div>
         </div>
         
         <div className="relative z-10 flex-1 flex flex-col justify-end">
-          <h3 className={`text-[15px] sm:text-base lg:text-[18px] font-bold tracking-tight mb-1 sm:mb-1.5 transition-colors ${isActive ? 'text-slate-100 group-hover:text-white' : 'text-slate-500'}`}>
+          <h3 className={`text-[12px] sm:text-[16px] lg:text-[18px] font-bold tracking-tight mb-1 sm:mb-1.5 transition-colors ${isActive ? 'text-slate-100 group-hover:text-white' : 'text-slate-500'}`}>
             {tool.title}
           </h3>
-          <p className="text-[11px] sm:text-xs text-slate-400/80 font-medium line-clamp-2 leading-relaxed transition-colors">
+          <p className="text-[9px] sm:text-[11px] lg:text-[12px] text-slate-400/80 font-medium line-clamp-2 leading-relaxed transition-colors">
             {tool.description}
           </p>
         </div>
@@ -190,8 +187,8 @@ const GuidedTour = ({ onComplete }) => {
     if (el) {
       const rect = el.getBoundingClientRect();
       
-      // HANYA scroll jika elemen TIDAK TERLIHAT penuh di layar agar tidak memantul-mantul
-      const isVisible = rect.top >= 80 && rect.bottom <= window.innerHeight - 80;
+      // Evaluasi apakah elemen cukup terlihat di layar. Jika tidak, gulir ke arahnya perlahan.
+      const isVisible = rect.top >= 100 && rect.bottom <= window.innerHeight - 100;
       
       if (!isVisible) {
         const absoluteY = window.pageYOffset + rect.top;
@@ -199,8 +196,10 @@ const GuidedTour = ({ onComplete }) => {
         window.scrollTo({ top: middle, behavior: 'smooth' });
       }
 
-      const timer = setTimeout(recalculateRect, isVisible ? 100 : 500); 
-      return () => clearTimeout(timer);
+      // Sensor berganda: Mengecek lagi posisi tepat setelah animasi scroll dirasa usai (menghindari meleset di mobile)
+      const timer = setTimeout(recalculateRect, isVisible ? 50 : 600); 
+      const timer2 = setTimeout(recalculateRect, 1000); 
+      return () => { clearTimeout(timer); clearTimeout(timer2); };
     } else {
       if (step < TOUR_STEPS.length - 1) setStep(s => s + 1);
       else onComplete();
@@ -226,6 +225,7 @@ const GuidedTour = ({ onComplete }) => {
   let bubbleTop = targetRect.bottom + padding + 15;
   let bubbleBottom = 'auto';
 
+  // Mengubah posisi pop-up jika menabrak batas layar bawah
   if (TOUR_STEPS[step].position === 'top' || (window.innerHeight - targetRect.bottom < 250)) {
      bubbleTop = 'auto';
      bubbleBottom = window.innerHeight - targetRect.top + padding + 15;
@@ -290,7 +290,7 @@ export default function ToolkitPage() {
   const [showTutorial, setShowTutorial] = useState(false);
   
   useEffect(() => {
-    const hasSeenTutorial = localStorage.getItem('override_tutorial_seen_final_v5');
+    const hasSeenTutorial = localStorage.getItem('override_tutorial_seen_final_v11');
     if (!hasSeenTutorial) {
       setTimeout(() => setShowTutorial(true), 1000);
     }
@@ -298,41 +298,40 @@ export default function ToolkitPage() {
 
   const handleCompleteTutorial = () => {
     setShowTutorial(false);
-    localStorage.setItem('override_tutorial_seen_final_v5', 'true');
+    localStorage.setItem('override_tutorial_seen_final_v11', 'true');
     window.scrollTo({ top: 0, behavior: 'smooth' }); 
   };
 
   const filteredTools = activeCat === 'Semua' ? [...toolkits] : toolkits.filter(tool => tool.category === activeCat);
 
   return (
-    <div className="w-full min-h-screen bg-[#05050A] text-slate-200 font-sans selection:bg-cyan-500/30 selection:text-cyan-300 flex flex-col">
+    <div className="w-full bg-[#05050A] text-slate-200 font-sans selection:bg-cyan-500/30 selection:text-cyan-300 flex flex-col">
       
       <div className="fixed inset-0 z-[-1] pointer-events-none overflow-hidden">
         <div className="absolute top-[-10%] left-[-10%] w-[80vw] h-[80vw] sm:w-[50vw] sm:h-[50vw] bg-blue-600/10 rounded-full blur-[120px] sm:blur-[150px] mix-blend-screen"></div>
         <div className="absolute bottom-[-10%] right-[-10%] w-[80vw] h-[80vw] sm:w-[50vw] sm:h-[50vw] bg-purple-600/10 rounded-full blur-[120px] sm:blur-[150px] mix-blend-screen"></div>
       </div>
 
-      {/* RUANG BAWAH (pb-12/16) DIKURANGI AGAR LEBIH MENTOK KE BAWAH (FOOTER) */}
-      <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8 pt-24 sm:pt-32 lg:pt-36 pb-12 sm:pb-16 flex-grow">
+      {/* Padding bawah dinolkan (pb-0) dan margin bawah dihapus agar mentok footer */}
+      <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8 pt-24 sm:pt-32 lg:pt-36 flex flex-col">
         
-        {/* HEADER */}
-        <header className="mb-8 sm:mb-[42px] animate-fade-in-up">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 sm:gap-8 mb-8">
+        <header className="mb-6 sm:mb-8 lg:mb-[42px] animate-fade-in-up">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 sm:gap-8 mb-6 sm:mb-8">
             <div className="w-full md:w-[60%] lg:w-[65%]">
               
               <div 
                 id="tut-start"
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-5 sm:mb-6 backdrop-blur-md cursor-pointer hover:bg-white/10 transition-colors w-max" 
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-4 sm:mb-5 lg:mb-6 backdrop-blur-md cursor-pointer hover:bg-white/10 transition-colors w-max" 
                 onClick={() => { window.scrollTo({top: 0, behavior: 'smooth'}); setShowTutorial(true); }}
               >
                 <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
-                <span className="text-[11px] sm:text-[13px] font-bold tracking-wide text-slate-300">Mulai Ulang Panduan</span>
+                <span className="text-[11px] sm:text-[12px] lg:text-[13px] font-bold tracking-wide text-slate-300">Mulai Ulang Panduan</span>
               </div>
               
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-[68px] font-black text-white tracking-tight mb-3 sm:mb-4 leading-[1.15] sm:leading-[1.1]">
-                Creative <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 animate-gradient-text">Override.</span>
+              <h1 className="text-[32px] sm:text-4xl lg:text-5xl xl:text-6xl font-black text-white tracking-tight mb-2 sm:mb-3 lg:mb-4 leading-[1.15] sm:leading-[1.1]">
+                Creative <span className="animate-gradient-text bg-clip-text text-transparent bg-gradient-to-r from-red-500 via-yellow-500 via-green-500 via-blue-500 to-purple-500">Override.</span>
               </h1>
-              <p className="text-slate-400 text-sm sm:text-base md:text-lg font-medium leading-relaxed max-w-2xl">
+              <p className="text-slate-400 text-[13px] sm:text-sm md:text-base lg:text-lg font-medium leading-relaxed max-w-2xl">
                 Koleksi utilitas canggih. Semuanya bekerja langsung di dalam browser Anda dengan privasi terjamin sepenuhnya.
               </p>
             </div>
@@ -341,22 +340,21 @@ export default function ToolkitPage() {
               <button 
                 id="tut-security" 
                 onClick={() => setIsSecurityModalOpen(true)}
-                className="w-full md:w-auto justify-center group flex items-center gap-3 bg-white/5 hover:bg-white/10 border border-white/10 px-5 py-3.5 sm:py-3 rounded-2xl shadow-lg backdrop-blur-md transition-all hover:scale-105 active:scale-95"
+                className="w-full md:w-auto justify-center group flex items-center gap-2.5 sm:gap-3 bg-white/5 hover:bg-white/10 border border-white/10 px-4 sm:px-5 py-3 sm:py-3.5 rounded-2xl shadow-lg backdrop-blur-md transition-all hover:scale-105 active:scale-95"
               >
-                <Icons.ShieldCheck className="w-5 h-5 text-emerald-400" />
-                <span className="text-[14px] sm:text-[15px] font-bold text-slate-200">Info Keamanan</span>
+                <Icons.ShieldCheck className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-400" />
+                <span className="text-[13px] sm:text-[14px] lg:text-[15px] font-bold text-slate-200">Info Keamanan</span>
               </button>
             </div>
           </div>
         </header>
 
-        {/* TAB FILTER */}
-        <div id="tut-filter" className="w-full overflow-x-auto no-scrollbar py-2 mb-8 sm:mb-[42px] sticky top-[70px] sm:top-[90px] z-[5] animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
-          <div className="inline-flex items-center gap-2 bg-white/[0.03] p-1.5 sm:p-2 rounded-[20px] border border-white/5 backdrop-blur-xl">
+        <div id="tut-filter" className="w-full overflow-x-auto no-scrollbar py-2 mb-6 sm:mb-8 lg:mb-[42px] sticky top-[70px] sm:top-[90px] z-[5] animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
+          <div className="inline-flex items-center gap-1.5 sm:gap-2 bg-white/[0.03] p-1.5 rounded-[16px] sm:rounded-[20px] border border-white/5 backdrop-blur-xl">
             {categories.map(cat => (
               <button 
                 key={cat} onClick={() => setActiveCat(cat)}
-                className={`relative px-5 sm:px-6 py-2 sm:py-2.5 text-[12px] sm:text-[14px] font-bold transition-all duration-300 rounded-xl whitespace-nowrap ${
+                className={`relative px-4 sm:px-5 lg:px-6 py-2 sm:py-2.5 text-[11px] sm:text-[12px] lg:text-[14px] font-bold transition-all duration-300 rounded-xl whitespace-nowrap ${
                   activeCat === cat ? 'text-white shadow-md' : 'text-slate-500 hover:text-slate-300 hover:bg-white/5'
                 }`}
               >
@@ -367,9 +365,9 @@ export default function ToolkitPage() {
           </div>
         </div>
 
-        {/* GRID KARTU */}
-        <div className="animate-fade-in-up w-full" style={{ animationDelay: '0.2s' }}>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+        {/* DI PAKSA 2 KOLOM DI MOBILE (grid-cols-2) dan margin bawah di-set ke 0 */}
+        <div className="animate-fade-in-up w-full mb-0 pb-0" style={{ animationDelay: '0.2s' }}>
+          <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 pb-6">
             {filteredTools.map((tool) => {
                const isActiveFirst = tool.id === toolkits.find(t => t.status === 'active')?.id;
                const isLockedFirst = tool.id === toolkits.find(t => t.status !== 'active')?.id;
@@ -385,58 +383,55 @@ export default function ToolkitPage() {
 
       </div>
 
-      {/* JENDELA INFO KEAMANAN PREMIUM DENGAN STRUKTUR SCROLL YANG LEBIH BAIK UNTUK MOBILE */}
+      {/* JENDELA INFO KEAMANAN (Kompak dan Pas Layar Mobile) */}
       {isSecurityModalOpen && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 bg-[#000000]/80 backdrop-blur-sm animate-fade-in">
            <div className="absolute inset-0 cursor-pointer" onClick={() => setIsSecurityModalOpen(false)}></div>
            
-           <div className="relative w-full max-w-md bg-[#0a0a0a]/90 backdrop-blur-2xl border border-white/10 shadow-[0_0_80px_rgba(0,0,0,0.8)] rounded-[24px] sm:rounded-[32px] overflow-hidden z-10 flex flex-col max-h-[90vh]">
+           <div className="relative w-full max-w-md bg-[#0a0a0a]/90 backdrop-blur-2xl border border-white/10 shadow-[0_0_80px_rgba(0,0,0,0.8)] rounded-[20px] sm:rounded-[32px] overflow-hidden z-10 flex flex-col">
               
-              {/* Header Tetap */}
               <div className="p-4 sm:p-6 text-center border-b border-white/5 relative shrink-0">
                  <button onClick={() => setIsSecurityModalOpen(false)} className="absolute top-4 right-4 sm:top-6 sm:right-6 text-slate-500 hover:text-white transition-colors bg-white/5 hover:bg-white/10 p-1.5 sm:p-2 rounded-full">
                    <Icons.X className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                  </button>
 
-                 <div className="w-12 h-12 sm:w-16 sm:h-16 mx-auto bg-gradient-to-br from-emerald-400 to-cyan-500 rounded-[14px] sm:rounded-2xl flex items-center justify-center shadow-[0_0_30px_rgba(52,211,153,0.3)] mb-3 sm:mb-4">
-                    <Icons.ShieldCheck className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
+                 <div className="w-10 h-10 sm:w-16 sm:h-16 mx-auto bg-gradient-to-br from-emerald-400 to-cyan-500 rounded-[10px] sm:rounded-2xl flex items-center justify-center shadow-[0_0_30px_rgba(52,211,153,0.3)] mb-2 sm:mb-4">
+                    <Icons.ShieldCheck className="w-5 h-5 sm:w-8 sm:h-8 text-white" />
                  </div>
-                 <h3 className="text-lg sm:text-2xl font-bold text-white tracking-tight">Privasi & Keamanan</h3>
-                 <p className="text-[11px] sm:text-sm text-slate-400 mt-1 sm:mt-2 font-medium">100% Aman. Nol Data di Server.</p>
+                 <h3 className="text-base sm:text-2xl font-bold text-white tracking-tight">Privasi & Keamanan</h3>
+                 <p className="hidden sm:block text-[11px] sm:text-sm text-slate-400 mt-1 sm:mt-2 font-medium">100% Aman. Nol Data di Server.</p>
               </div>
 
-              {/* Konten Bisa Di-Scroll */}
-              <div className="p-4 sm:p-6 space-y-3 sm:space-y-5 bg-white/[0.02] overflow-y-auto no-scrollbar">
+              <div className="p-4 sm:p-6 space-y-2.5 sm:space-y-5 bg-white/[0.02]">
                  
-                 <div className="flex gap-3 sm:gap-4 items-start">
-                    <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center shrink-0 mt-0.5 text-emerald-400 font-bold text-[10px] sm:text-xs">1</div>
+                 <div className="flex gap-3 items-start">
+                    <div className="w-5 h-5 sm:w-8 sm:h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center shrink-0 text-emerald-400 font-bold text-[9px] sm:text-xs mt-0.5">1</div>
                     <div>
-                       <h4 className="text-white text-[13px] sm:text-[15px] font-bold">Pemrosesan Lokal</h4>
-                       <p className="text-slate-400 text-[11px] sm:text-[13px] leading-relaxed mt-1">Semua proses pembuatan dokumen berjalan murni di dalam perangkat Anda sendiri.</p>
+                       <h4 className="text-white text-[12px] sm:text-[14px] font-bold">Pemrosesan Lokal</h4>
+                       <p className="text-slate-400 text-[10px] sm:text-[12px] leading-snug sm:leading-relaxed mt-0.5 sm:mt-1">Berjalan murni di dalam perangkat Anda sendiri.</p>
                     </div>
                  </div>
                  
-                 <div className="flex gap-3 sm:gap-4 items-start">
-                    <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center shrink-0 mt-0.5 text-emerald-400 font-bold text-[10px] sm:text-xs">2</div>
+                 <div className="flex gap-3 items-start">
+                    <div className="w-5 h-5 sm:w-8 sm:h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center shrink-0 text-emerald-400 font-bold text-[9px] sm:text-xs mt-0.5">2</div>
                     <div>
-                       <h4 className="text-white text-[13px] sm:text-[15px] font-bold">Tanpa Database Cloud</h4>
-                       <p className="text-slate-400 text-[11px] sm:text-[13px] leading-relaxed mt-1">Data sensitif Anda (seperti NIK, Alamat, atau Data Klien) tidak pernah terbang ke internet.</p>
+                       <h4 className="text-white text-[12px] sm:text-[14px] font-bold">Tanpa Database Cloud</h4>
+                       <p className="text-slate-400 text-[10px] sm:text-[12px] leading-snug sm:leading-relaxed mt-0.5 sm:mt-1">Data sensitif Anda tidak pernah terbang ke internet.</p>
                     </div>
                  </div>
 
-                 <div className="flex gap-3 sm:gap-4 items-start">
-                    <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center shrink-0 mt-0.5 text-emerald-400 font-bold text-[10px] sm:text-xs">3</div>
+                 <div className="flex gap-3 items-start">
+                    <div className="w-5 h-5 sm:w-8 sm:h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center shrink-0 text-emerald-400 font-bold text-[9px] sm:text-xs mt-0.5">3</div>
                     <div>
-                       <h4 className="text-white text-[13px] sm:text-[15px] font-bold">Penyimpanan Cache</h4>
-                       <p className="text-slate-400 text-[11px] sm:text-[13px] leading-relaxed mt-1">Sistem hanya menitipkan isian di memori browser (Local Storage) dan bisa dihapus kapan saja.</p>
+                       <h4 className="text-white text-[12px] sm:text-[14px] font-bold">Penyimpanan Cache</h4>
+                       <p className="text-slate-400 text-[10px] sm:text-[12px] leading-snug sm:leading-relaxed mt-0.5 sm:mt-1">Hanya dititipkan di browser Anda, dan bisa dihapus kapan saja.</p>
                     </div>
                  </div>
 
               </div>
 
-              {/* Tombol Tetap di Bawah */}
-              <div className="p-4 sm:p-5 border-t border-white/5 bg-[#050505]/50 shrink-0">
-                 <button onClick={() => setIsSecurityModalOpen(false)} className="w-full py-2.5 sm:py-3 bg-white text-black text-xs sm:text-sm font-bold rounded-xl hover:bg-slate-200 transition-colors active:scale-95">
+              <div className="p-3 sm:p-5 border-t border-white/5 bg-[#050505]/50 shrink-0">
+                 <button onClick={() => setIsSecurityModalOpen(false)} className="w-full py-2 sm:py-3 bg-white text-black text-[11px] sm:text-sm font-bold rounded-lg sm:rounded-xl hover:bg-slate-200 transition-colors active:scale-95">
                     Saya Mengerti
                  </button>
               </div>
@@ -453,12 +448,12 @@ export default function ToolkitPage() {
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         .animate-fade-in-up { animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
         
-        /* ANIMASI TEKS GRADASI OTOMATIS ("Override.") */
+        /* EFEK RGB OTOMATIS ("Override.") */
         .animate-gradient-text {
-          background-size: 200% auto;
-          animation: textGradient 4s ease infinite;
+          background-size: 300% 300%;
+          animation: rgbText 6s ease-in-out infinite;
         }
-        @keyframes textGradient {
+        @keyframes rgbText {
           0% { background-position: 0% 50%; }
           50% { background-position: 100% 50%; }
           100% { background-position: 0% 50%; }
