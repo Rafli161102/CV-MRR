@@ -39,7 +39,7 @@ const Icons = {
 };
 
 // ============================================================================
-// DATA MASTER TOOLKIT (Database Tools Anda)
+// DATA MASTER TOOLKIT (Database Tools)
 // ============================================================================
 export const toolkits = [
   { id: "cv-maker", title: "ATS CV & Cover Letter", description: "Buat Curriculum Vitae dan Surat Lamaran Kerja standar HRD.", iconName: "Document", link: "/cv-maker", status: "active", category: "Career & Freelance", theme: "purple", hoverAnim: "hover-float", clickAnim: "click-paper-fly" },
@@ -142,7 +142,7 @@ const UnifiedCard = ({ tool, cardId }) => {
         </div>
         
         <div className="relative z-10 flex-1 flex flex-col justify-end">
-          <h3 className={`text-[11px] sm:text-[15px] lg:text-[17px] font-bold tracking-tight mb-0.5 sm:mb-1 transition-colors ${isActive ? 'text-slate-100 group-hover:text-white' : 'text-slate-500'} line-clamp-1`}>
+          <h3 className={`text-[12px] sm:text-[15px] lg:text-[17px] font-bold tracking-tight mb-0.5 sm:mb-1 transition-colors ${isActive ? 'text-slate-100 group-hover:text-white' : 'text-slate-500'} line-clamp-1`}>
             {tool.title}
           </h3>
           <p className="text-[9px] sm:text-[11px] lg:text-[12px] text-slate-400/80 font-medium line-clamp-2 leading-relaxed transition-colors">
@@ -154,17 +154,21 @@ const UnifiedCard = ({ tool, cardId }) => {
   );
 };
 
+
 // =========================================================================
-// KOMPONEN: BUBBLE TUTORIAL (GAMING HUD STYLE - MURNI TANPA BUG/FREEZE)
+// KOMPONEN: BUBBLE TUTORIAL (GAMING HUD STYLE - MURNI DIRECT DOM, BEBAS CRASH)
 // =========================================================================
 const GuidedTour = ({ onComplete, filteredTools }) => {
   const [step, setStep] = useState(0);
-  const [targetRect, setTargetRect] = useState(null);
   const [isScanning, setIsScanning] = useState(true);
+  const [isMoving, setIsMoving] = useState(false);
   const [isClicking, setIsClicking] = useState(false); 
   
-  // PEMBENTUKAN LANGKAH TUTORIAL SECARA DINAMIS & AMAN (Menggunakan useMemo)
-  // Menghindari Infinite Loop dari sisi React. Sinkron 100% dengan toolkitsDB.
+  const highlightRef = useRef(null);
+  const bubbleRef = useRef(null);
+  const targetIdRef = useRef(null);
+
+  // PEMBENTUKAN LANGKAH TUTORIAL SECARA DINAMIS
   const TOUR_STEPS = useMemo(() => {
     const steps = [
       { 
@@ -175,14 +179,14 @@ const GuidedTour = ({ onComplete, filteredTools }) => {
       }
     ];
 
-    // Menelusuri seluruh alat secara otomatis, apa pun statusnya!
+    // Otomatis menelusuri SEMUA alat yang dirender dan dijadikan langkah panduan
     filteredTools.forEach(tool => {
       steps.push({
         target: `tool-${tool.id}`,
         title: tool.title,
         text: tool.status === 'active' 
-              ? `[${tool.category}] ${tool.description} Status: Aktif dan siap digunakan!`
-              : `[${tool.category}] ${tool.description} Status: Sedang dirakit (Segera Hadir).`,
+              ? `[${tool.category}] ${tool.description} Status: Aktif dan siap digunakan.`
+              : `[${tool.category}] ${tool.description} Status: Segera Hadir.`,
         position: 'bottom'
       });
     });
@@ -191,7 +195,7 @@ const GuidedTour = ({ onComplete, filteredTools }) => {
       { 
         target: 'tut-security', 
         title: 'Infrastruktur Keamanan', 
-        text: 'Sistem ini beroperasi murni secara Client-Side. Seluruh data diproses secara luring di perangkat tanpa server backend.', 
+        text: 'Sistem ini beroperasi murni secara Client-Side. Seluruh data diproses secara luring di perangkat Anda tanpa server backend.', 
         position: 'bottom' 
       },
       { 
@@ -205,80 +209,109 @@ const GuidedTour = ({ onComplete, filteredTools }) => {
     return steps;
   }, [filteredTools]);
 
-  // Fungsi kalkulasi posisi secara presisi dan ringan
-  const updateRect = useCallback(() => {
-    if (typeof window === 'undefined') return;
-    const targetId = TOUR_STEPS[step]?.target;
-    if (!targetId) return;
+  // Efek transisi mulus SAAT PINDAH STEP saja, menghindari delay saat user scroll
+  useEffect(() => {
+    targetIdRef.current = TOUR_STEPS[step]?.target;
+    setIsMoving(true);
+    const timer = setTimeout(() => setIsMoving(false), 400);
+    return () => clearTimeout(timer);
+  }, [step, TOUR_STEPS]);
 
-    const el = document.getElementById(targetId);
-    if (el) {
-      const rect = el.getBoundingClientRect();
-      if (rect.width > 0 && rect.height > 0) {
-        setTargetRect(prev => {
-          // ANTI-LOOP: Jangan render ulang jika pergerakannya cuma kurang dari 2 piksel
-          if (prev && 
-              Math.abs(prev.top - rect.top) < 2 && 
-              Math.abs(prev.left - rect.left) < 2 &&
-              Math.abs(prev.width - rect.width) < 2 &&
-              Math.abs(prev.height - rect.height) < 2) {
-            return prev;
-          }
-          return {
-            top: rect.top,
-            bottom: rect.bottom,
-            left: rect.left,
-            right: rect.right,
-            width: rect.width,
-            height: rect.height,
-            radius: window.getComputedStyle(el).borderRadius || '16px'
-          };
-        });
-      }
+  // UPDATE DOM LANGSUNG: Kinerja setara Native 60fps tanpa menyebabkan Maximum Depth Error
+  const updatePositions = useCallback(() => {
+    if (!targetIdRef.current || !highlightRef.current || !bubbleRef.current) return;
+    
+    const el = document.getElementById(targetIdRef.current);
+    if (!el) return;
+
+    const rect = el.getBoundingClientRect();
+    if (rect.width === 0 || rect.height === 0) return;
+
+    const padding = 8;
+    const isMobile = window.innerWidth < 640;
+    const bubbleWidth = isMobile ? Math.min(window.innerWidth - 32, 280) : 320;
+
+    // Mutasi DOM Langsung untuk Tracker Highlight
+    highlightRef.current.style.top = `${rect.top - padding}px`;
+    highlightRef.current.style.left = `${rect.left - padding}px`;
+    highlightRef.current.style.width = `${rect.width + padding * 2}px`;
+    highlightRef.current.style.height = `${rect.height + padding * 2}px`;
+    highlightRef.current.style.borderRadius = window.getComputedStyle(el).borderRadius || '16px';
+
+    // Kalkulasi Posisi Bubble Panduan
+    let idealLeft = rect.left + (rect.width / 2);
+    if (idealLeft - (bubbleWidth / 2) < 16) idealLeft = (bubbleWidth / 2) + 16;
+    if (idealLeft + (bubbleWidth / 2) > window.innerWidth - 16) idealLeft = window.innerWidth - (bubbleWidth / 2) - 16;
+
+    bubbleRef.current.style.left = isMobile ? '50%' : `${idealLeft}px`;
+    bubbleRef.current.style.width = `${bubbleWidth}px`;
+
+    const spaceAbove = rect.top;
+    const spaceBelow = window.innerHeight - rect.bottom;
+    const prefPos = TOUR_STEPS[step]?.position || 'bottom';
+    const xTransform = isMobile ? '-50%' : '-50%';
+
+    // Logika Auto-Flip (Mencegah ketutupan)
+    if (prefPos === 'top') {
+        if (spaceAbove > 200) {
+            bubbleRef.current.style.top = `${rect.top - padding - 16}px`;
+            bubbleRef.current.style.bottom = 'auto';
+            bubbleRef.current.style.transform = `translate(${xTransform}, -100%)`;
+        } else {
+            bubbleRef.current.style.top = `${rect.bottom + padding + 16}px`;
+            bubbleRef.current.style.bottom = 'auto';
+            bubbleRef.current.style.transform = `translate(${xTransform}, 0)`;
+        }
+    } else {
+        if (spaceBelow > 200 || spaceBelow > spaceAbove) {
+            bubbleRef.current.style.top = `${rect.bottom + padding + 16}px`;
+            bubbleRef.current.style.bottom = 'auto';
+            bubbleRef.current.style.transform = `translate(${xTransform}, 0)`;
+        } else {
+            bubbleRef.current.style.top = `${rect.top - padding - 16}px`;
+            bubbleRef.current.style.bottom = 'auto';
+            bubbleRef.current.style.transform = `translate(${xTransform}, -100%)`;
+        }
     }
   }, [step, TOUR_STEPS]);
 
-  // Pencari Target: Berhenti otomatis setelah 2 detik
+  // Pencari Target Awal: Memastikan elemen termuat dulu sebelum menscroll
   useEffect(() => {
      let retries = 0;
-     let timerId;
-
+     let scanTimer;
      setIsScanning(true);
-     setTargetRect(null);
 
-     const findTarget = () => {
-        const el = document.getElementById(TOUR_STEPS[step]?.target);
+     const scanTarget = () => {
+        const el = document.getElementById(targetIdRef.current);
         if (el && el.getBoundingClientRect().width > 0) {
-           el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-           setIsScanning(false);
-           updateRect();
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            setIsScanning(false);
+            updatePositions();
         } else {
-           if (retries < 20) { // Coba selama 2 detik (20 x 100ms)
-             retries++;
-             timerId = setTimeout(findTarget, 100);
-           } else {
-             handleNextStep(); // Jika objek hilang, lewati ke step berikutnya
-           }
+            if (retries < 20) {
+                retries++;
+                scanTimer = setTimeout(scanTarget, 100);
+            } else {
+                if (step < TOUR_STEPS.length - 1) setStep(s => s + 1);
+                else onComplete();
+            }
         }
      };
+     scanTarget();
+     return () => clearTimeout(scanTimer);
+  }, [step, onComplete, TOUR_STEPS.length, updatePositions]); 
 
-     findTarget();
-     return () => clearTimeout(timerId);
-  }, [step, TOUR_STEPS, updateRect]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  // Tracker Super Ringan: Berjalan 10 kali per detik, dihaluskan oleh transisi CSS
+  // Tracker Super Cepat untuk menempel pada elemen saat di-scroll tanpa lag
   useEffect(() => {
-    if (isScanning) return;
-    const intervalId = setInterval(updateRect, 100);
-    window.addEventListener('scroll', updateRect, { passive: true });
-    window.addEventListener('resize', updateRect);
-    
-    return () => {
-      clearInterval(intervalId);
-      window.removeEventListener('scroll', updateRect);
-      window.removeEventListener('resize', updateRect);
-    };
-  }, [isScanning, updateRect]);
+     if (isScanning) return;
+     let rafId;
+     const loop = () => {
+        updatePositions();
+        rafId = requestAnimationFrame(loop);
+     };
+     loop();
+     return () => cancelAnimationFrame(rafId);
+  }, [isScanning, updatePositions]);
 
   const handleNextStep = () => {
     setIsClicking(true); 
@@ -292,129 +325,80 @@ const GuidedTour = ({ onComplete, filteredTools }) => {
     }, 250); 
   };
 
-  if (!targetRect && !isScanning) return null;
-
-  const isMobile = typeof window !== 'undefined' ? window.innerWidth < 640 : false;
-  const padding = 8; 
-  // Tooltip Ramping Responsif
-  const bubbleWidth = isMobile ? Math.min(window.innerWidth - 32, 280) : 320; 
-  
-  // Auto-Flip Tooltip
-  let bTop = 'auto';
-  let bBottom = 'auto';
-  let bLeft = '50%';
-  let transformCalc = 'translate(-50%, 0)';
-
-  if (targetRect && !isScanning) {
-      const spaceAbove = targetRect.top;
-      const spaceBelow = window.innerHeight - targetRect.bottom;
-
-      let idealLeft = targetRect.left + (targetRect.width / 2);
-      if (idealLeft - (bubbleWidth / 2) < 16) idealLeft = (bubbleWidth / 2) + 16;
-      if (idealLeft + (bubbleWidth / 2) > window.innerWidth - 16) idealLeft = window.innerWidth - (bubbleWidth / 2) - 16;
-
-      bLeft = isMobile ? '50%' : `${idealLeft}px`;
-      const xTransform = isMobile ? '-50%' : '-50%';
-
-      // Memastikan kotak tooltip selalu diletakkan di area yang luas
-      if (TOUR_STEPS[step].position === 'top') {
-         if (spaceAbove > 200) {
-            bBottom = `${window.innerHeight - targetRect.top + padding + 16}px`;
-            transformCalc = `translate(${xTransform}, 0)`;
-         } else {
-            bTop = `${targetRect.bottom + padding + 16}px`;
-            transformCalc = `translate(${xTransform}, 0)`;
-         }
-      } else {
-         if (spaceBelow > 200 || spaceBelow > spaceAbove) {
-            bTop = `${targetRect.bottom + padding + 16}px`;
-            transformCalc = `translate(${xTransform}, 0)`;
-         } else {
-            bBottom = `${window.innerHeight - targetRect.top + padding + 16}px`;
-            transformCalc = `translate(${xTransform}, 0)`;
-         }
-      }
-  }
-
   return (
     // Z-INDEX TERTINGGI 
     <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 999999 }} onClick={(e) => e.stopPropagation()} className="pointer-events-none">
       
-      {isScanning ? (
-        <div className="absolute inset-0 flex items-center justify-center bg-[#030712]/90 transition-all duration-300">
+      {isScanning && (
+        <div className="absolute inset-0 flex items-center justify-center bg-[#030712]/90 transition-all duration-300 pointer-events-auto">
            <div className="flex flex-col items-center gap-3 text-cyan-400 font-bold tracking-widest animate-pulse">
-              <Icons.Search className="w-10 h-10 animate-spin-slow" />
-              <span className="text-[11px] uppercase">Memindai Area...</span>
+              <Icons.Search className="w-8 h-8 animate-spin-slow" />
+              <span className="text-[10px] uppercase">Memindai Target...</span>
            </div>
         </div>
-      ) : targetRect && (
-        <>
-          {/* MASKING JERNIH 100%: Box-shadow raksasa menggelapkan sekeliling, membiarkan tengahnya terang */}
-          <div 
-            className="absolute transition-all duration-[300ms] ease-out pointer-events-none"
-            style={{
-              top: targetRect.top - padding,
-              left: targetRect.left - padding,
-              width: targetRect.width + padding * 2,
-              height: targetRect.height + padding * 2,
-              borderRadius: `calc(${targetRect.radius} + 4px)`,
-              boxShadow: '0 0 0 9999px rgba(3,7,18,0.85)', 
-            }}
-          >
-             <div className="absolute inset-0 bg-cyan-400/5 animate-pulse rounded-[inherit]"></div>
-
-             <div className="absolute top-[-4px] left-[-4px] w-4 h-4 border-t-[2px] border-l-[2px] border-cyan-400 rounded-tl-md"></div>
-             <div className="absolute top-[-4px] right-[-4px] w-4 h-4 border-t-[2px] border-r-[2px] border-cyan-400 rounded-tr-md"></div>
-             <div className="absolute bottom-[-4px] left-[-4px] w-4 h-4 border-b-[2px] border-l-[2px] border-cyan-400 rounded-bl-md"></div>
-             <div className="absolute bottom-[-4px] right-[-4px] w-4 h-4 border-b-[2px] border-r-[2px] border-cyan-400 rounded-br-md"></div>
-             
-             {/* KURSOR HUD PENUNJUK (Dengan Animasi Shrink/Klik Game saat ditekan) */}
-             <div className="absolute -bottom-2 -right-2 sm:-bottom-3 sm:-right-3 z-[999999]">
-                {isClicking && <div className="absolute inset-0 rounded-full border-2 border-cyan-400 animate-ping opacity-70"></div>}
-                <div className={`transition-all duration-200 ${isClicking ? 'scale-[0.7] -translate-x-2 -translate-y-2 drop-shadow-[0_0_20px_rgba(34,211,238,1)] brightness-[1.5] rotate-[-15deg]' : 'animate-hud-pointer'}`}>
-                   <Icons.PointerCursor className="w-8 h-8 sm:w-10 sm:h-10 text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.8)]" />
-                </div>
-             </div>
-          </div>
-
-          {/* BUBBLE KOTAK TEKS */}
-          <div 
-            className="bg-[#0f172a] border border-cyan-500/50 shadow-[0_20px_40px_rgba(0,0,0,0.5)] rounded-[20px] p-4 sm:p-5 pointer-events-auto"
-            style={{
-              position: 'absolute',
-              width: `${bubbleWidth}px`,
-              left: bLeft,
-              top: bTop,
-              bottom: bBottom,
-              transform: transformCalc,
-              transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-            }}
-          >
-             <div className="relative z-10">
-               <div className="flex justify-between items-center mb-3 border-b border-white/5 pb-2">
-                 <span className="text-[9px] sm:text-[10px] font-black tracking-[0.1em] text-cyan-400 uppercase flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
-                    Panduan {step + 1} / {TOUR_STEPS.length}
-                 </span>
-                 <button onClick={onComplete} className="text-slate-500 hover:text-white transition-colors bg-white/5 hover:bg-white/10 p-1.5 rounded-full">
-                    <Icons.X className="w-3 h-3" />
-                 </button>
-               </div>
-               
-               <h4 className="text-[14px] sm:text-[15px] font-bold text-white mb-2 tracking-tight">{TOUR_STEPS[step].title}</h4>
-               <div className="text-[11.5px] sm:text-[12px] text-slate-300 leading-relaxed font-medium mb-5">{TOUR_STEPS[step].text}</div>
-               
-               <div className="flex justify-between items-center pt-2">
-                 <button onClick={onComplete} className="text-[10px] font-bold text-slate-500 hover:text-white transition-colors px-2 py-1 uppercase tracking-wide">Lewati</button>
-                 <button onClick={handleNextStep} disabled={isClicking} className="group bg-cyan-500 hover:bg-cyan-400 text-black px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-[11px] font-bold transition-all shadow-[0_0_15px_rgba(34,211,238,0.4)] active:scale-95 flex items-center gap-2">
-                   {step < TOUR_STEPS.length - 1 ? 'Lanjut' : 'Selesai!'}
-                   <Icons.ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
-                 </button>
-               </div>
-             </div>
-          </div>
-        </>
       )}
+
+      {/* MASKING JERNIH 100%: Dimutasi via ref langsung agar 60fps & bebas error */}
+      <div 
+        ref={highlightRef}
+        className="absolute pointer-events-none"
+        style={{
+          opacity: isScanning ? 0 : 1,
+          boxShadow: '0 0 0 9999px rgba(3,7,18,0.85)',
+          // Matikan transisi saat di scroll agar menempel instan!
+          transition: isMoving ? 'top 0.4s cubic-bezier(0.4, 0, 0.2, 1), left 0.4s cubic-bezier(0.4, 0, 0.2, 1), width 0.4s cubic-bezier(0.4, 0, 0.2, 1), height 0.4s cubic-bezier(0.4, 0, 0.2, 1)' : 'none',
+        }}
+      >
+         <div className="absolute inset-0 bg-cyan-400/5 animate-pulse rounded-[inherit]"></div>
+
+         <div className="absolute top-[-4px] left-[-4px] w-4 h-4 border-t-[2px] border-l-[2px] border-cyan-400 rounded-tl-md"></div>
+         <div className="absolute top-[-4px] right-[-4px] w-4 h-4 border-t-[2px] border-r-[2px] border-cyan-400 rounded-tr-md"></div>
+         <div className="absolute bottom-[-4px] left-[-4px] w-4 h-4 border-b-[2px] border-l-[2px] border-cyan-400 rounded-bl-md"></div>
+         <div className="absolute bottom-[-4px] right-[-4px] w-4 h-4 border-b-[2px] border-r-[2px] border-cyan-400 rounded-br-md"></div>
+         
+         {/* KURSOR HUD PENUNJUK */}
+         <div className="absolute -bottom-2 -right-2 sm:-bottom-3 sm:-right-3 z-[999999]">
+            {isClicking && <div className="absolute inset-0 rounded-full border-2 border-cyan-400 animate-ping opacity-70"></div>}
+            <div className={`transition-all duration-200 ${isClicking ? 'scale-[0.7] -translate-x-2 -translate-y-2 drop-shadow-[0_0_20px_rgba(34,211,238,1)] brightness-[1.5] rotate-[-15deg]' : 'animate-hud-pointer'}`}>
+               <Icons.PointerCursor className="w-8 h-8 sm:w-10 sm:h-10 text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.8)]" />
+            </div>
+         </div>
+      </div>
+
+      {/* BUBBLE KOTAK TEKS (Dimutasi langsung via ref) */}
+      <div 
+        ref={bubbleRef}
+        className="bg-[#0f172a] border border-cyan-500/50 shadow-[0_20px_40px_rgba(0,0,0,0.5)] rounded-[20px] p-4 sm:p-5 pointer-events-auto"
+        style={{
+          position: 'absolute',
+          opacity: isScanning ? 0 : 1,
+          transition: isMoving ? 'top 0.4s cubic-bezier(0.4, 0, 0.2, 1), left 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)' : 'none',
+        }}
+      >
+         <div className="relative z-10">
+           <div className="flex justify-between items-center mb-3 border-b border-white/5 pb-2">
+             <span className="text-[9px] sm:text-[10px] font-black tracking-[0.1em] text-cyan-400 uppercase flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
+                Panduan {step + 1} / {TOUR_STEPS.length}
+             </span>
+             <button onClick={onComplete} className="text-slate-500 hover:text-white transition-colors bg-white/5 hover:bg-white/10 p-1.5 rounded-full">
+                <Icons.X className="w-3 h-3" />
+             </button>
+           </div>
+           
+           <h4 className="text-[14px] sm:text-[15px] font-bold text-white mb-2 tracking-tight">{TOUR_STEPS[step]?.title}</h4>
+           <div className="text-[11px] sm:text-[11.5px] text-slate-300 leading-relaxed font-medium mb-5">{TOUR_STEPS[step]?.text}</div>
+           
+           <div className="flex justify-between items-center pt-2">
+             <button onClick={onComplete} className="text-[10px] font-bold text-slate-500 hover:text-white transition-colors px-2 py-1 uppercase tracking-wide">Lewati</button>
+             <button onClick={handleNextStep} disabled={isClicking} className="group bg-cyan-500 hover:bg-cyan-400 text-black px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-[11px] font-bold transition-all shadow-[0_0_15px_rgba(34,211,238,0.4)] active:scale-95 flex items-center gap-2">
+               {step < TOUR_STEPS.length - 1 ? 'Lanjut' : 'Selesai!'}
+               <Icons.ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+             </button>
+           </div>
+         </div>
+      </div>
+
     </div>
   );
 }
@@ -425,6 +409,8 @@ const GuidedTour = ({ onComplete, filteredTools }) => {
 export default function ToolkitPage() {
   const [activeCat, setActiveCat] = useState('Semua');
   const [isSecurityModalOpen, setIsSecurityModalOpen] = useState(false);
+  
+  // STATE MENGATUR ALUR PANDUAN
   const [tourState, setTourState] = useState('idle');
   
   const categories = useMemo(() => ['Semua', ...new Set(toolkits.map(tool => tool.category))], []);
@@ -434,14 +420,12 @@ export default function ToolkitPage() {
   }, [activeCat]);
 
   useEffect(() => {
+    // Mencegah browser melompat sendiri saat di-refresh
     if ('scrollRestoration' in window.history) {
       window.history.scrollRestoration = 'manual';
     }
-    
-    // Jangan izinkan browser ngescroll otomatis saat halaman di-refresh
-    window.scrollTo(0, 0);
 
-    const hasSeenWelcome = localStorage.getItem('portfolio_welcome_v6');
+    const hasSeenWelcome = localStorage.getItem('portfolio_welcome_v8');
     if (!hasSeenWelcome) {
        setTourState('welcome');
     }
@@ -454,7 +438,7 @@ export default function ToolkitPage() {
 
   const handleCompleteTour = () => {
     setTourState('idle');
-    localStorage.setItem('portfolio_welcome_v6', 'true');
+    localStorage.setItem('portfolio_welcome_v8', 'true');
     window.scrollTo({ top: 0, behavior: 'smooth' }); 
   };
 
@@ -466,7 +450,7 @@ export default function ToolkitPage() {
         <div className="absolute bottom-[-10%] right-[-10%] w-[80vw] h-[80vw] sm:w-[50vw] sm:h-[50vw] bg-purple-600/10 rounded-full blur-[120px] sm:blur-[150px] mix-blend-screen"></div>
       </div>
 
-      {/* CONTAINER DIPERBAIKI: max-w-7xl px-4 sm:px-6 lg:px-8 Menyesuaikan presisi sejajar dengan Hamburger Navbar standar */}
+      {/* CONTAINER DIPERBAIKI: max-w-7xl sejajar presisi dengan Hamburger Navbar standar Tailwind */}
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 sm:pt-28 lg:pt-32 pb-0 flex flex-col flex-grow">
         
         <header className="mb-6 sm:mb-8 lg:mb-12 animate-fade-in-up">
@@ -559,10 +543,10 @@ export default function ToolkitPage() {
 
       </div>
 
-      {/* MODAL SELAMAT DATANG (MENCEGAH BUG SCROLL-DOWN) DI-TENGAH MURNI */}
+      {/* MODAL SELAMAT DATANG (DI-TENGAH MURNI & ANTI-SCROLL BUG) */}
       {tourState === 'welcome' && (
-        <div className="fixed inset-0 z-[999999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
-           <div className="bg-[#0F1117] border border-cyan-500/30 p-5 sm:p-6 rounded-3xl max-w-[320px] w-full shadow-[0_0_60px_rgba(34,211,238,0.15)] text-center relative overflow-hidden ring-1 ring-white/5">
+        <div className="fixed inset-0 z-[999999] grid place-items-center p-4 sm:p-6 bg-black/80 backdrop-blur-sm animate-fade-in touch-none h-[100dvh]">
+           <div className="bg-[#0F1117] border border-cyan-500/30 p-5 sm:p-6 rounded-[24px] max-w-[320px] w-full shadow-[0_0_60px_rgba(34,211,238,0.15)] text-center relative overflow-hidden ring-1 ring-white/5 m-auto max-h-[90dvh] overflow-y-auto no-scrollbar">
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-400 to-blue-500"></div>
               <div className="w-12 h-12 mx-auto bg-cyan-500/10 rounded-full flex items-center justify-center mb-4 border border-cyan-500/20">
                  <Icons.Sparkles className="w-5 h-5 text-cyan-400" />
@@ -572,7 +556,7 @@ export default function ToolkitPage() {
                  Sistem ini dirancang khusus untuk mempermudah proses kreatif Anda. Mari ikuti panduan singkat untuk mengenal fitur-fiturnya.
               </p>
               <div className="flex gap-3">
-                 <button onClick={() => { setTourState('idle'); localStorage.setItem('portfolio_welcome_v6', 'true'); }} className="flex-1 py-2.5 rounded-full border border-white/10 text-slate-300 text-[11px] font-bold hover:bg-white/5 transition-colors">
+                 <button onClick={() => { setTourState('idle'); localStorage.setItem('portfolio_welcome_v8', 'true'); }} className="flex-1 py-2.5 rounded-full border border-white/10 text-slate-300 text-[11px] font-bold hover:bg-white/5 transition-colors">
                    Lewati
                  </button>
                  <button onClick={handleStartTour} className="flex-1 py-2.5 rounded-full bg-cyan-500 text-black text-[11px] font-bold hover:bg-cyan-400 transition-colors shadow-[0_0_15px_rgba(34,211,238,0.4)] active:scale-95">
@@ -585,11 +569,10 @@ export default function ToolkitPage() {
 
       {/* JENDELA INFO KEAMANAN (Dengan overflow-y-auto untuk layar HP kecil) */}
       {isSecurityModalOpen && (
-        <div className="fixed inset-0 z-[999999] flex items-center justify-center p-4 sm:p-6 bg-[#000000]/80 backdrop-blur-sm animate-fade-in">
+        <div className="fixed inset-0 z-[999999] grid place-items-center p-4 sm:p-6 bg-[#000000]/80 backdrop-blur-sm animate-fade-in h-[100dvh]">
            <div className="absolute inset-0 cursor-pointer" onClick={() => setIsSecurityModalOpen(false)}></div>
            
-           {/* Kontainer Utama Modal - Terkunci di tengah dengan max-h */}
-           <div className="relative w-full max-w-md bg-[#0a0a0a]/95 backdrop-blur-2xl border border-white/10 shadow-[0_0_80px_rgba(0,0,0,0.8)] rounded-[24px] sm:rounded-[32px] overflow-hidden z-10 flex flex-col max-h-[85vh]">
+           <div className="relative w-full max-w-md bg-[#0a0a0a]/95 backdrop-blur-2xl border border-white/10 shadow-[0_0_80px_rgba(0,0,0,0.8)] rounded-[24px] sm:rounded-[32px] overflow-hidden z-10 flex flex-col max-h-[90dvh] m-auto">
               
               <div className="p-4 sm:p-6 text-center border-b border-white/5 relative shrink-0">
                  <button onClick={() => setIsSecurityModalOpen(false)} className="absolute top-4 right-4 sm:top-6 sm:right-6 text-slate-500 hover:text-white transition-colors bg-white/5 hover:bg-white/10 p-1.5 sm:p-2 rounded-full">
@@ -603,7 +586,6 @@ export default function ToolkitPage() {
                  <p className="hidden sm:block text-[11px] sm:text-sm text-slate-400 mt-1 sm:mt-2 font-medium">100% Aman. Nol Data di Server.</p>
               </div>
 
-              {/* Area Teks yang bisa di-scroll ke bawah jika layar HP terlalu kecil */}
               <div className="p-4 sm:p-6 space-y-3 sm:space-y-5 bg-white/[0.02] overflow-y-auto no-scrollbar">
                  <div className="flex gap-3 items-start">
                     <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center shrink-0 text-emerald-400 font-bold text-[10px] sm:text-xs">1</div>
