@@ -24,9 +24,17 @@ const Icons = {
   Lock: (p) => <svg fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" {...p}><path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg>,
   ShieldCheck: (p) => <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...p}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296a3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043a3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296a3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043a3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z" /></svg>,
   X: (p) => <svg fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" {...p}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>,
-  Code: (p) => <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...p}><path strokeLinecap="round" strokeLinejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5" /></svg>,
   Brush: (p) => <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...p}><path strokeLinecap="round" strokeLinejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.876-5.814a1.151 1.151 0 00-1.597-1.597L14.146 6.32a15.996 15.996 0 00-4.649 4.763m3.42 3.42a6.776 6.776 0 00-3.42-3.42" /></svg>,
-  ArrowUpRight: (p) => <svg fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" {...p}><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" /></svg>
+  Code: (p) => <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...p}><path strokeLinecap="round" strokeLinejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5" /></svg>,
+  ArrowUpRight: (p) => <svg fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" {...p}><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" /></svg>,
+  Search: (p) => <svg fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" {...p}><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" /></svg>,
+  
+  // Ikon Kursor ala Video Game (Desain Modern Pointer)
+  PointerCursor: (p) => (
+    <svg viewBox="0 0 24 24" fill="currentColor" {...p}>
+      <path d="M4.08 1.488a1 1 0 011.265-.175l14.4 9.6a1 1 0 01-.168 1.706l-5.748 2.395 3.864 7.728a1 1 0 01-1.789.894l-3.882-7.765-4.536 4.536A1 1 0 016 19.6V2.4a1 1 0 01.08-.312z" />
+    </svg>
+  )
 };
 
 // ============================================================================
@@ -66,7 +74,7 @@ const toolThemes = {
 };
 
 // =========================================================================
-// KOMPONEN KARTU MODUL
+// KOMPONEN KARTU MODUL (DENGAN ANCHOR TAG MURNI - ANTI CRASH)
 // =========================================================================
 const UnifiedCard = ({ tool, cardId }) => {
   const [isClicked, setIsClicked] = useState(false);
@@ -146,29 +154,31 @@ const UnifiedCard = ({ tool, cardId }) => {
 };
 
 // =========================================================================
-// DATA LANGKAH TUTORIAL
+// DATA LANGKAH TUTORIAL (Misi Utama)
 // =========================================================================
 const TOUR_STEPS = [
-  { target: 'tut-start', title: 'Mulai dari Sini', text: <>Ini adalah meja kerja digital Anda. <br/><br/>Kapanpun Anda merasa kebingungan, klik tombol <strong>"Mulai Panduan"</strong> ini untuk memanggil saya kembali.</>, position: 'bottom' },
-  { target: 'tut-filter', title: 'Pencarian Cepat', text: <>Gunakan menu ini untuk menyaring alat. <br/><br/>Contoh: Klik <strong>"Design Utility"</strong> jika Anda hanya ingin melihat alat untuk keperluan desain grafis Anda.</>, position: 'bottom' },
-  { target: 'tut-active', title: 'Alat Siap Pakai', text: <><ul className="list-disc pl-4 space-y-1 mb-2 text-left"><li>Kotak berwarna cerah</li><li>Ada ikon panah di pojok</li><li>Bisa langsung diklik!</li></ul>Ini berarti alat tersebut sudah 100% siap membantu pekerjaan Anda.</>, position: 'bottom' },
-  { target: 'tut-locked', title: 'Segera Hadir', text: <>Kartu abu-abu dengan label <strong>"SOON"</strong> berarti alatnya masih dirakit oleh saya. <br/><br/>Nantikan fitur-fitur keren selanjutnya!</>, position: 'top' },
-  { target: 'tut-security', title: 'Privasi Terjamin', text: <>Sangat penting: Semua alat di sini <strong>beroperasi murni di perangkat Anda</strong> (tanpa server backend).<br/><br/>Karya dan data Anda 100% aman.</>, position: 'bottom' }
+  { target: 'tut-start', title: 'Akses Panduan Utama', text: <>Ini adalah meja kerja digital Anda. <br/><br/>Kapanpun Anda merasa kebingungan, klik tombol ini untuk memanggil ulang instruksi sistem.</>, position: 'bottom' },
+  { target: 'tut-filter', title: 'Filter Modul Cepat', text: <>Gunakan tab menu ini untuk menyaring alat. <br/><br/>Contoh: Klik <strong>"Design Utility"</strong> jika Anda hanya ingin melihat alat untuk keperluan merancang grafis UI/UX.</>, position: 'bottom' },
+  { target: 'tut-active', title: 'Modul Aktif & Tersedia', text: <><ul className="list-disc pl-4 space-y-1 mb-2 text-left"><li>Bentuk menyala berwarna cerah</li><li>Memiliki ikon navigasi panah</li><li>Dapat diakses seketika</li></ul>Modul ini sudah 100% siap memproses data pekerjaan Anda.</>, position: 'bottom' },
+  { target: 'tut-locked', title: 'Modul Dalam Perakitan', text: <>Kartu beraksen abu-abu dengan label <strong>"SOON"</strong> berarti alat ini masih dalam tahap pemrograman struktur oleh saya. <br/><br/>Nantikan pembaruan fitur eksklusif selanjutnya!</>, position: 'top' },
+  { target: 'tut-security', title: 'Infrastruktur Privasi', text: <>Sangat krusial: Semua alat di sini <strong>beroperasi murni di RAM perangkat Anda</strong> (tanpa server backend atau database).<br/><br/>Karya dan data klien Anda dijamin tidak akan pernah bocor ke internet.</>, position: 'bottom' }
 ];
 
 // =========================================================================
-// KOMPONEN: BUBBLE TUTORIAL DENGAN PELACAKAN INTERVAL
+// KOMPONEN: BUBBLE TUTORIAL (GAMING HUD STYLE - 100% ANTI-GAGAL & PRESISI)
 // =========================================================================
 const GuidedTour = ({ onComplete }) => {
   const [step, setStep] = useState(0);
   const [targetRect, setTargetRect] = useState(null);
+  const [isScanning, setIsScanning] = useState(true);
   const [isClient, setIsClient] = useState(false);
+  const requestRef = useRef();
 
   useEffect(() => {
     setIsClient(true);
   }, []);
 
-  const lockOnTarget = useCallback(() => {
+  const updateRect = useCallback(() => {
     if (typeof window === 'undefined') return;
     const targetId = TOUR_STEPS[step]?.target;
     if (!targetId) return;
@@ -188,96 +198,175 @@ const GuidedTour = ({ onComplete }) => {
         });
       }
     }
+    requestRef.current = requestAnimationFrame(updateRect);
   }, [step]);
 
   useEffect(() => {
     if (!isClient) return;
-    const targetId = TOUR_STEPS[step]?.target;
-    const el = document.getElementById(targetId);
 
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      // Gunakan interval tangguh agar tidak kabur sama sekali
-      const tracker = setInterval(lockOnTarget, 50);
-      return () => clearInterval(tracker);
-    } else {
-      if (step < TOUR_STEPS.length - 1) setStep(s => s + 1);
-      else onComplete();
-    }
-  }, [step, isClient, lockOnTarget, onComplete]);
+    let retries = 0;
+    let timerId;
+    let tracker;
 
-  // Listener tambahan
-  useEffect(() => {
-    if (!isClient) return;
-    window.addEventListener('scroll', lockOnTarget, { passive: true });
-    window.addEventListener('resize', lockOnTarget);
-    return () => {
-      window.removeEventListener('scroll', lockOnTarget);
-      window.removeEventListener('resize', lockOnTarget);
+    setIsScanning(true);
+    setTargetRect(null); // Reset highlight kotak setiap ganti step untuk animasi mulus
+
+    // RADAR PINTAR: Menunggu elemen dimuat secara penuh
+    const findTarget = () => {
+      const targetId = TOUR_STEPS[step]?.target;
+      const el = document.getElementById(targetId);
+
+      if (el) {
+        const rect = el.getBoundingClientRect();
+        if (rect.width > 0) {
+           el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+           setIsScanning(false);
+           updateRect(); // Mulai sorot
+           tracker = setInterval(updateRect, 50); // Kunci posisi agar menempel walau layar di scroll
+        } else {
+           retry();
+        }
+      } else {
+        retry();
+      }
     };
-  }, [lockOnTarget, isClient]);
 
-  if (!isClient || !targetRect) return null;
+    const retry = () => {
+      if (retries < 30) { // Sabar mencari hingga 3 Detik (kebal lag/blank)
+        retries++;
+        timerId = setTimeout(findTarget, 100);
+      } else {
+        if (step < TOUR_STEPS.length - 1) setStep(s => s + 1);
+        else onComplete();
+      }
+    };
+
+    findTarget();
+
+    return () => {
+      if (timerId) clearTimeout(timerId);
+      if (tracker) clearInterval(tracker);
+      if (requestRef.current) cancelAnimationFrame(requestRef.current);
+    };
+  }, [step, isClient, updateRect, onComplete]);
+
+  if (!isClient) return null;
 
   const isMobile = window.innerWidth < 640;
-  const padding = 8; 
-  const bubbleWidth = isMobile ? window.innerWidth - 32 : 340;
+  const padding = 10; 
+  const bubbleWidth = isMobile ? window.innerWidth - 32 : 360;
   
-  let bubbleTop = targetRect.bottom + padding + 15;
-  let bubbleBottom = 'auto';
+  // Kalkulasi Penempatan Tooltip (Mencegah Ketutupan Layar atau Elemen)
+  let bTop = '50%';
+  let bLeft = '50%';
+  let transformCalc = 'translate(-50%, -50%)';
 
-  // Mengubah posisi pop-up jika menabrak batas layar bawah
-  if (TOUR_STEPS[step].position === 'top' || (window.innerHeight - targetRect.bottom < 250)) {
-     bubbleTop = 'auto';
-     bubbleBottom = window.innerHeight - targetRect.top + padding + 15;
+  if (targetRect) {
+      const spaceAbove = targetRect.top;
+      const spaceBelow = window.innerHeight - targetRect.bottom;
+      const prefPos = TOUR_STEPS[step].position;
+
+      // Batasan X agar tooltip tidak keluar dari layar kiri/kanan
+      let idealLeft = targetRect.left + (targetRect.width / 2);
+      if (idealLeft - (bubbleWidth / 2) < 16) idealLeft = (bubbleWidth / 2) + 16;
+      if (idealLeft + (bubbleWidth / 2) > window.innerWidth - 16) idealLeft = window.innerWidth - (bubbleWidth / 2) - 16;
+
+      bLeft = isMobile ? '50%' : `${idealLeft}px`;
+
+      // Logika Atas atau Bawah otomatis: Jika tempat yang diminta sempit, pindah ke sisi yang lebih luas
+      if (prefPos === 'top') {
+         if (spaceAbove > 200) {
+            bTop = `${targetRect.top - padding - 20}px`;
+            transformCalc = 'translate(-50%, -100%)';
+         } else {
+            bTop = `${targetRect.bottom + padding + 20}px`;
+            transformCalc = 'translate(-50%, 0)';
+         }
+      } else { // default 'bottom'
+         if (spaceBelow > 250 || spaceBelow > spaceAbove) {
+            bTop = `${targetRect.bottom + padding + 20}px`;
+            transformCalc = 'translate(-50%, 0)';
+         } else {
+            bTop = `${targetRect.top - padding - 20}px`;
+            transformCalc = 'translate(-50%, -100%)';
+         }
+      }
   }
 
   return (
-    <div className="fixed inset-0 z-[198]" onClick={(e) => e.stopPropagation()}>
+    // Z-INDEX TERTINGGI (999999) agar tak pernah tertutup Navbar/Footer global Anda
+    <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 999999 }} onClick={(e) => e.stopPropagation()}>
       
-      <div className="absolute inset-0 bg-[#030712]/80 backdrop-blur-[2px] transition-all duration-300" />
-
-      <div 
-        className="absolute pointer-events-none border-2 border-cyan-400 animate-pulse"
-        style={{
-          top: targetRect.top - padding,
-          left: targetRect.left - padding,
-          width: targetRect.width + padding * 2,
-          height: targetRect.height + padding * 2,
-          borderRadius: `calc(${targetRect.radius} + 6px)`,
-          boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.4), 0 0 20px rgba(34,211,238,0.4)',
-        }}
-      />
-
-      <div 
-        className="absolute bg-[#0f172a] border border-cyan-500/50 shadow-[0_20px_40px_rgba(0,0,0,0.5)] rounded-[24px] p-5 sm:p-6 transition-all duration-100 ease-linear"
-        style={{
-          width: `${bubbleWidth}px`,
-          left: isMobile ? '16px' : `${targetRect.left + (targetRect.width / 2)}px`,
-          transform: isMobile ? 'none' : 'translateX(-50%)',
-          top: bubbleTop !== 'auto' ? `${bubbleTop}px` : 'auto',
-          bottom: bubbleBottom !== 'auto' ? `${bubbleBottom}px` : 'auto',
-        }}
-      >
-         <div className="relative z-10 pointer-events-auto">
-           <div className="flex justify-between items-center mb-4">
-             <span className="text-[10px] font-black tracking-widest text-cyan-400 uppercase">Langkah {step + 1}/{TOUR_STEPS.length}</span>
-             <button onClick={onComplete} className="text-slate-500 hover:text-white transition-colors bg-white/5 hover:bg-white/10 p-1.5 rounded-full">
-                <Icons.X className="w-3.5 h-3.5" />
-             </button>
+      {/* Jika masih mencari, tampilkan Radar Loading. Jika ketemu, lubangi layarnya murni box-shadow tanpa blur. */}
+      {isScanning ? (
+        <div className="absolute inset-0 flex items-center justify-center bg-[#030712]/90 backdrop-blur-sm transition-all duration-300">
+           <div className="flex flex-col items-center gap-3 text-cyan-400 font-bold tracking-widest animate-pulse">
+              <Icons.Search className="w-10 h-10 animate-spin-slow" />
+              <span className="text-[11px] uppercase">Memindai Target...</span>
            </div>
-           
-           <h4 className="text-[16px] sm:text-[18px] font-bold text-white mb-3">{TOUR_STEPS[step].title}</h4>
-           <div className="text-[13px] sm:text-[13.5px] text-slate-300 leading-relaxed font-medium mb-6">{TOUR_STEPS[step].text}</div>
-           
-           <div className="flex justify-between items-center">
-             <button onClick={onComplete} className="text-[11px] sm:text-[12px] font-bold text-slate-500 hover:text-white transition-colors px-2 py-2">Akhiri Tur</button>
-             <button onClick={() => step < TOUR_STEPS.length - 1 ? setStep(s => s + 1) : onComplete()} className="bg-cyan-500 hover:bg-cyan-400 text-black px-5 sm:px-6 py-2 sm:py-2.5 rounded-full text-[12px] sm:text-[13px] font-bold transition-all shadow-[0_0_15px_rgba(34,211,238,0.4)] hover:scale-105 active:scale-95">
-               {step < TOUR_STEPS.length - 1 ? 'Lanjut Mengerti' : 'Selesai!'}
-             </button>
-           </div>
-         </div>
-      </div>
+        </div>
+      ) : targetRect ? (
+        <>
+          <div 
+            className="absolute pointer-events-none transition-all duration-300 ease-out"
+            style={{
+              top: targetRect.top - padding,
+              left: targetRect.left - padding,
+              width: targetRect.width + padding * 2,
+              height: targetRect.height + padding * 2,
+              borderRadius: `calc(${targetRect.radius} + 6px)`,
+              boxShadow: '0 0 0 9999px rgba(3,7,18,0.85)', 
+            }}
+          >
+             {/* Sudut-Sudut Pembidik Kamera ala Sci-Fi HUD */}
+             <div className="absolute top-[-4px] left-[-4px] w-6 h-6 border-t-2 border-l-2 border-cyan-400 rounded-tl-xl animate-pulse-fast"></div>
+             <div className="absolute top-[-4px] right-[-4px] w-6 h-6 border-t-2 border-r-2 border-cyan-400 rounded-tr-xl animate-pulse-fast"></div>
+             <div className="absolute bottom-[-4px] left-[-4px] w-6 h-6 border-b-2 border-l-2 border-cyan-400 rounded-bl-xl animate-pulse-fast"></div>
+             <div className="absolute bottom-[-4px] right-[-4px] w-6 h-6 border-b-2 border-r-2 border-cyan-400 rounded-br-xl animate-pulse-fast"></div>
+             
+             {/* Animasi Kursor Penunjuk ala Video Game (Diletakkan di Sudut Kanan Bawah target agar tidak menutupi tengah objek) */}
+             <div className="absolute -bottom-2 -right-2 sm:-bottom-4 sm:-right-4 pointer-events-none z-[999999]">
+                <Icons.PointerCursor className="w-10 h-10 sm:w-12 sm:h-12 text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.8)] animate-hud-click" />
+             </div>
+          </div>
+
+          {/* Kotak Misi Panduan */}
+          <div 
+            className="bg-[#0f172a] border border-cyan-500/50 shadow-[0_20px_40px_rgba(0,0,0,0.5)] rounded-[24px] p-5 sm:p-6"
+            style={{
+              position: 'absolute',
+              width: `${bubbleWidth}px`,
+              left: bLeft,
+              top: bTop,
+              transform: transformCalc,
+              transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+            }}
+          >
+             <div className="relative z-10 pointer-events-auto">
+               <div className="flex justify-between items-center mb-4 border-b border-white/5 pb-3">
+                 <span className="text-[10px] font-black tracking-[0.15em] text-cyan-400 uppercase flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
+                    Misi {step + 1} / {TOUR_STEPS.length}
+                 </span>
+                 <button onClick={onComplete} className="text-slate-500 hover:text-white transition-colors bg-white/5 hover:bg-white/10 p-1.5 rounded-full">
+                    <Icons.X className="w-3 h-3" />
+                 </button>
+               </div>
+               
+               <h4 className="text-[16px] sm:text-[18px] font-bold text-white mb-3 tracking-tight">{TOUR_STEPS[step].title}</h4>
+               <div className="text-[13px] sm:text-[13.5px] text-slate-400 leading-relaxed font-medium mb-6">{TOUR_STEPS[step].text}</div>
+               
+               <div className="flex justify-between items-center pt-2">
+                 <button onClick={onComplete} className="text-[11px] sm:text-[12px] font-bold text-slate-500 hover:text-white transition-colors px-2 py-2 uppercase tracking-wide">Tutup Panduan</button>
+                 <button onClick={() => step < TOUR_STEPS.length - 1 ? setStep(s => s + 1) : onComplete()} className="group bg-cyan-500 hover:bg-cyan-400 text-black px-6 sm:px-8 py-2.5 sm:py-3 rounded-full text-[12px] sm:text-[13px] font-bold transition-all shadow-[0_0_15px_rgba(34,211,238,0.4)] hover:scale-105 active:scale-95 flex items-center gap-2">
+                   {step < TOUR_STEPS.length - 1 ? 'Lanjutkan' : 'Selesai!'}
+                   <Icons.ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                 </button>
+               </div>
+             </div>
+          </div>
+        </>
+      ) : null}
     </div>
   );
 }
@@ -292,26 +381,25 @@ export default function ToolkitPage() {
   const [showTutorial, setShowTutorial] = useState(false);
   
   useEffect(() => {
-    // MEMAKSA AUTO-START UNTUK SEMUA ORANG
-    // Menggunakan key "sessionStorage" sehingga setiap kali tab browser baru dibuka, tour pasti jalan.
-    const hasSeenTutorial = sessionStorage.getItem('portfolio_tour_active');
-    if (!hasSeenTutorial) {
-      // Jeda 1.5 detik agar halaman ke-render utuh (aman dari lag load)
-      const timer = setTimeout(() => setShowTutorial(true), 1500); 
-      return () => clearTimeout(timer);
-    }
+    // AUTO-START MUTLAK SETIAP KALI HALAMAN DI-MUAT
+    // Memberikan jeda 1.2 detik agar UI sempat ter-render sempurna.
+    const timer = setTimeout(() => setShowTutorial(true), 1200); 
+    return () => clearTimeout(timer);
   }, []);
 
   const handleCompleteTutorial = () => {
     setShowTutorial(false);
-    sessionStorage.setItem('portfolio_tour_active', 'true');
     window.scrollTo({ top: 0, behavior: 'smooth' }); 
   };
 
   const filteredTools = activeCat === 'Semua' ? [...toolkits] : toolkits.filter(tool => tool.category === activeCat);
 
+  // Deklarasi target dinamis untuk Tour Guide
+  const firstActiveToolId = toolkits.find(t => t.status === 'active')?.id;
+  const firstLockedToolId = toolkits.find(t => t.status !== 'active')?.id;
+
   return (
-    <div className="w-full bg-[#05050A] text-slate-200 font-sans selection:bg-cyan-500/30 selection:text-cyan-300 relative overflow-hidden flex flex-col">
+    <div className="w-full bg-[#05050A] text-slate-200 font-sans relative overflow-x-hidden flex flex-col min-h-screen selection:bg-cyan-500/30 selection:text-cyan-300">
       
       <div className="fixed inset-0 z-[-1] pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[80vw] h-[80vw] sm:w-[50vw] sm:h-[50vw] bg-blue-600/10 rounded-full blur-[120px] sm:blur-[150px] mix-blend-screen"></div>
@@ -320,7 +408,7 @@ export default function ToolkitPage() {
 
       <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8 pt-24 sm:pt-28 lg:pt-32 pb-0 flex flex-col flex-grow">
         
-        {/* HEADER DIPERBAIKI (TOMBOL PANDUAN DI ATAS, INFO KEAMANAN DI KANAN PADA DESKTOP) */}
+        {/* HEADER DIPERBAIKI (TOMBOL PANDUAN KIRI ATAS, INFO KEAMANAN KANAN) */}
         <header className="mb-6 sm:mb-8 lg:mb-12 animate-fade-in-up">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 sm:gap-8">
             <div className="w-full md:w-[65%]">
@@ -330,15 +418,15 @@ export default function ToolkitPage() {
                 className="inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-white/5 border border-white/10 mb-4 sm:mb-5 lg:mb-6 backdrop-blur-md cursor-pointer hover:bg-white/10 transition-colors w-max" 
                 onClick={() => { 
                   setActiveCat('Semua'); 
-                  setShowTutorial(false);
+                  setShowTutorial(false); // Reset State
                   setTimeout(() => {
                      window.scrollTo({top: 0, behavior: 'smooth'}); 
-                     setShowTutorial(true); 
-                  }, 100);
+                     setShowTutorial(true); // Nyalakan ulang
+                  }, 150); 
                 }}
               >
-                <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
-                <span className="text-[10px] sm:text-xs font-bold tracking-wide text-slate-300 uppercase">Mulai Panduan</span>
+                <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse-fast"></div>
+                <span className="text-[10px] sm:text-xs font-bold tracking-wide text-slate-300 uppercase">Mulai Ulang Panduan</span>
               </button>
               
               <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-black text-white tracking-tight mb-3 sm:mb-4 leading-[1.1]">
@@ -381,39 +469,30 @@ export default function ToolkitPage() {
         <div className="animate-fade-in-up w-full" style={{ animationDelay: '0.2s' }}>
           <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
             {filteredTools.map((tool) => {
-               const isActiveFirst = tool.id === filteredTools.find(t => t.status === 'active')?.id;
-               const isLockedFirst = tool.id === filteredTools.find(t => t.status !== 'active')?.id;
+               const isTargetActive = tool.id === firstActiveToolId;
+               const isTargetLocked = tool.id === firstLockedToolId;
 
                return <UnifiedCard 
                   key={tool.id} 
                   tool={tool} 
-                  cardId={isActiveFirst ? 'tut-active' : isLockedFirst ? 'tut-locked' : undefined} 
+                  cardId={isTargetActive ? 'tut-active' : isTargetLocked ? 'tut-locked' : undefined} 
                />;
             })}
           </div>
         </div>
 
-        {/* CALL TO ACTION EKSKLUSIF PORTOFOLIO (Graphic Designer Buffer) */}
-        <div className="w-full mt-16 sm:mt-24 pt-12 sm:pt-16 pb-12 sm:pb-16 border-t border-white/5 relative flex flex-col items-center justify-center text-center animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
+        {/* SHOWCASE EKSKLUSIF DESAINER GRAFIS (Pemisah Estetik Bersih, Bebas Emoticon) */}
+        <div className="w-full mt-16 sm:mt-24 pt-12 sm:pt-16 pb-24 sm:pb-32 border-t border-white/5 relative flex flex-col items-center justify-center text-center animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2/3 md:w-1/3 h-[1px] bg-gradient-to-r from-transparent via-cyan-500/30 to-transparent"></div>
            
-           <div className="flex items-center gap-3 mb-5 sm:mb-6">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center shadow-lg">
-                 <Icons.Brush className="w-4 h-4 sm:w-5 sm:h-5 text-pink-400" />
-              </div>
-              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center shadow-lg">
-                 <Icons.Code className="w-4 h-4 sm:w-5 sm:h-5 text-cyan-400" />
-              </div>
-           </div>
-           
-           <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-white mb-2 sm:mb-3 tracking-tight">Dirancang Penuh Estetika & Keamanan</h3>
-           <p className="text-slate-400 text-[11px] sm:text-xs md:text-sm max-w-xl mb-6 sm:mb-8 leading-relaxed px-4">
-             Sebagai <strong>Desainer Grafis</strong>, saya menyusun setiap piksel antarmuka ini dengan teliti. Seluruh kumpulan <i>tools</i> beroperasi murni secara <strong>Client-Side (Tanpa Backend/Database)</strong>, menjamin keamanan karya dan data sensitif Anda secara mutlak.
+           <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-3 sm:mb-4 tracking-tight">Karya Visual Tanpa Batas</h3>
+           <p className="text-slate-400 text-xs sm:text-sm md:text-base max-w-2xl mb-8 sm:mb-10 leading-relaxed px-4">
+             Sebagai seorang <strong>Desainer Grafis & Front-End Developer</strong>, antarmuka ini dirancang presisi hingga ke tingkat piksel. Seluruh utilitas beroperasi secara <strong>Client-Side (Tanpa Backend)</strong>, memastikan keamanan privasi data Anda secara mutlak.
            </p>
            
-           <a href="mailto:rafli161102@gmail.com" className="group flex items-center gap-2 px-6 sm:px-8 py-3 sm:py-3.5 bg-white text-black hover:bg-slate-200 rounded-full text-[11px] sm:text-sm font-bold transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(255,255,255,0.1)]">
+           <a href="mailto:rafli161102@gmail.com" className="group flex items-center gap-2 px-8 py-3.5 bg-white text-black hover:bg-slate-200 rounded-full text-xs sm:text-sm font-bold transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(255,255,255,0.1)]">
              Mari Berkolaborasi
-             <Icons.ArrowUpRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-transform" />
+             <Icons.ArrowUpRight className="w-4 h-4 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-transform" />
            </a>
         </div>
 
@@ -421,7 +500,7 @@ export default function ToolkitPage() {
 
       {/* JENDELA INFO KEAMANAN (KOMPAK) */}
       {isSecurityModalOpen && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 bg-[#000000]/80 backdrop-blur-sm animate-fade-in">
+        <div className="fixed inset-0 z-[999999] flex items-center justify-center p-4 sm:p-6 bg-[#000000]/80 backdrop-blur-sm animate-fade-in">
            <div className="absolute inset-0 cursor-pointer" onClick={() => setIsSecurityModalOpen(false)}></div>
            
            <div className="relative w-full max-w-md bg-[#0a0a0a]/90 backdrop-blur-2xl border border-white/10 shadow-[0_0_80px_rgba(0,0,0,0.8)] rounded-[20px] sm:rounded-[32px] overflow-hidden z-10 flex flex-col">
@@ -475,6 +554,8 @@ export default function ToolkitPage() {
         </div>
       )}
 
+      {showTutorial && <GuidedTour onComplete={handleCompleteTutorial} />}
+
       <style dangerouslySetInnerHTML={{__html: `
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -482,24 +563,39 @@ export default function ToolkitPage() {
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         .animate-fade-in-up { animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
         
-        /* EFEK ANIMASI RGB COLOR THEORY TRIAD (Cyan/Blue, Magenta/Pink, Yellow) Yg Aesthetic */
+        /* EFEK ANIMASI RGB COLOR THEORY TRIAD Yg Aesthetic (Cyan -> Pink -> Yellow) */
         .text-rgb-animated {
           background: linear-gradient(
             to right, 
             #00c6ff, /* Cyan */
-            #0072ff, /* Deep Blue */
             #f093fb, /* Light Pink */
-            #f5576c, /* Rose/Red */
+            #eab308, /* Yellow */
             #00c6ff  /* Cyan (loop back) */
           );
           background-size: 200% auto;
           color: transparent;
           -webkit-background-clip: text;
           background-clip: text;
-          animation: rgbFlow 5s linear infinite;
+          animation: rgbFlow 4s linear infinite;
         }
         @keyframes rgbFlow {
           to { background-position: -200% center; }
+        }
+        
+        /* ========================================================= */
+        /* ANIMASI KURSOR HUD "GAMING" UNTUK PANDUAN / TOUR GUIDE    */
+        /* ========================================================= */
+        @keyframes hudClick {
+          0% { transform: translate(10px, 10px) scale(1); }
+          50% { transform: translate(-2px, -2px) scale(0.9); }
+          100% { transform: translate(10px, 10px) scale(1); }
+        }
+        .animate-hud-click {
+          animation: hudClick 1.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        }
+
+        .animate-pulse-fast {
+          animation: pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
 
         /* 14 ANIMASI HOVER UNIK */
