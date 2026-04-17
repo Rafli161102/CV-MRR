@@ -24,7 +24,9 @@ const Icons = {
   Lock: (p) => <svg fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" {...p}><path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg>,
   ShieldCheck: (p) => <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...p}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296a3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043a3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296a3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043a3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z" /></svg>,
   X: (p) => <svg fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" {...p}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>,
-  Rocket: (p) => <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...p}><path strokeLinecap="round" strokeLinejoin="round" d="M15.59 14.37a6 6 0 01-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 006.16-12.12A14.98 14.98 0 009.631 8.41m5.96 5.96a14.926 14.926 0 01-5.841 2.58m-.119-8.54a6 6 0 00-7.381 5.84h4.8m2.581-5.84a14.927 14.927 0 00-2.58 5.84m2.699 2.7c-.103.021-.207.041-.311.06a15.09 15.09 0 01-2.448-2.448 14.9 14.9 0 01.06-.312m-2.24 2.39a4.493 4.493 0 00-1.757 4.306 4.433 4.433 0 002.771 2.77c1.651.567 3.485.044 4.306-1.756l3.05-3.05a15.001 15.001 0 00-3.235-3.235l-3.05 3.05z" /></svg>
+  Code: (p) => <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...p}><path strokeLinecap="round" strokeLinejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5" /></svg>,
+  Brush: (p) => <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...p}><path strokeLinecap="round" strokeLinejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.876-5.814a1.151 1.151 0 00-1.597-1.597L14.146 6.32a15.996 15.996 0 00-4.649 4.763m3.42 3.42a6.776 6.776 0 00-3.42-3.42" /></svg>,
+  ArrowUpRight: (p) => <svg fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" {...p}><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" /></svg>
 };
 
 // ============================================================================
@@ -64,7 +66,7 @@ const toolThemes = {
 };
 
 // =========================================================================
-// KOMPONEN KARTU MODUL (RESPONSIF 2 KOLOM MOBILE)
+// KOMPONEN KARTU MODUL
 // =========================================================================
 const UnifiedCard = ({ tool, cardId }) => {
   const [isClicked, setIsClicked] = useState(false);
@@ -80,7 +82,14 @@ const UnifiedCard = ({ tool, cardId }) => {
     
     setTimeout(() => {
       setIsClicked(false);
-      if (linkRef.current) linkRef.current.click();
+      // Fallback HTML navigation murni
+      if (tool.link && tool.link.trim() !== '' && tool.link !== '#') {
+        if (linkRef.current) {
+          linkRef.current.click();
+        } else {
+          window.location.href = tool.link;
+        }
+      }
     }, 600);
   };
 
@@ -117,7 +126,7 @@ const UnifiedCard = ({ tool, cardId }) => {
             ) : (
               <div className="flex items-center gap-1 px-1.5 py-1 sm:px-2.5 sm:py-1.5 bg-black/40 border border-white/5 rounded-full">
                  <Icons.Lock className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-slate-500" />
-                 <span className="text-[8px] sm:text-[9px] font-bold tracking-widest text-slate-500">SOON</span>
+                 <span className="text-[7px] sm:text-[9px] font-bold tracking-widest text-slate-500">SOON</span>
               </div>
             )}
           </div>
@@ -141,20 +150,19 @@ const UnifiedCard = ({ tool, cardId }) => {
 // =========================================================================
 const TOUR_STEPS = [
   { target: 'tut-start', title: 'Mulai dari Sini', text: <>Ini adalah meja kerja digital Anda. <br/><br/>Kapanpun Anda merasa kebingungan, klik tombol <strong>"Mulai Panduan"</strong> ini untuk memanggil saya kembali.</>, position: 'bottom' },
-  { target: 'tut-filter', title: 'Pencarian Cepat', text: <>Gunakan menu ini untuk menyaring alat. <br/><br/>Contoh: Klik <strong>"Design Utility"</strong> jika Anda hanya ingin melihat alat untuk keperluan desain.</>, position: 'bottom' },
+  { target: 'tut-filter', title: 'Pencarian Cepat', text: <>Gunakan menu ini untuk menyaring alat. <br/><br/>Contoh: Klik <strong>"Design Utility"</strong> jika Anda hanya ingin melihat alat untuk keperluan desain grafis Anda.</>, position: 'bottom' },
   { target: 'tut-active', title: 'Alat Siap Pakai', text: <><ul className="list-disc pl-4 space-y-1 mb-2 text-left"><li>Kotak berwarna cerah</li><li>Ada ikon panah di pojok</li><li>Bisa langsung diklik!</li></ul>Ini berarti alat tersebut sudah 100% siap membantu pekerjaan Anda.</>, position: 'bottom' },
-  { target: 'tut-locked', title: 'Segera Hadir', text: <>Kartu abu-abu dengan label <strong>"SOON"</strong> berarti alatnya masih dirakit oleh tim pemrogram kami. <br/><br/>Harap bersabar ya!</>, position: 'top' },
-  { target: 'tut-security', title: 'Privasi Terjamin', text: <>Sangat penting: Semua alat di website ini bekerja langsung di memori komputer Anda sendiri.<br/><br/>Kami <strong>tidak pernah mencuri</strong> data sensitif Anda.</>, position: 'bottom' }
+  { target: 'tut-locked', title: 'Segera Hadir', text: <>Kartu abu-abu dengan label <strong>"SOON"</strong> berarti alatnya masih dirakit oleh saya. <br/><br/>Nantikan fitur-fitur keren selanjutnya!</>, position: 'top' },
+  { target: 'tut-security', title: 'Privasi Terjamin', text: <>Sangat penting: Semua alat di sini <strong>beroperasi murni di perangkat Anda</strong> (tanpa server backend).<br/><br/>Karya dan data Anda 100% aman.</>, position: 'bottom' }
 ];
 
 // =========================================================================
-// KOMPONEN: BUBBLE TUTORIAL DENGAN PELACAKAN INTERVAL (ANTI KABUR/MELeset)
+// KOMPONEN: BUBBLE TUTORIAL DENGAN PELACAKAN INTERVAL
 // =========================================================================
 const GuidedTour = ({ onComplete }) => {
   const [step, setStep] = useState(0);
   const [targetRect, setTargetRect] = useState(null);
   const [isClient, setIsClient] = useState(false);
-  const requestRef = useRef();
 
   useEffect(() => {
     setIsClient(true);
@@ -180,7 +188,6 @@ const GuidedTour = ({ onComplete }) => {
         });
       }
     }
-    requestRef.current = requestAnimationFrame(lockOnTarget);
   }, [step]);
 
   useEffect(() => {
@@ -190,16 +197,25 @@ const GuidedTour = ({ onComplete }) => {
 
     if (el) {
       el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      requestRef.current = requestAnimationFrame(lockOnTarget);
+      // Gunakan interval tangguh agar tidak kabur sama sekali
+      const tracker = setInterval(lockOnTarget, 50);
+      return () => clearInterval(tracker);
     } else {
       if (step < TOUR_STEPS.length - 1) setStep(s => s + 1);
       else onComplete();
     }
-
-    return () => {
-      if (requestRef.current) cancelAnimationFrame(requestRef.current);
-    };
   }, [step, isClient, lockOnTarget, onComplete]);
+
+  // Listener tambahan
+  useEffect(() => {
+    if (!isClient) return;
+    window.addEventListener('scroll', lockOnTarget, { passive: true });
+    window.addEventListener('resize', lockOnTarget);
+    return () => {
+      window.removeEventListener('scroll', lockOnTarget);
+      window.removeEventListener('resize', lockOnTarget);
+    };
+  }, [lockOnTarget, isClient]);
 
   if (!isClient || !targetRect) return null;
 
@@ -221,7 +237,6 @@ const GuidedTour = ({ onComplete }) => {
       
       <div className="absolute inset-0 bg-[#030712]/80 backdrop-blur-[2px] transition-all duration-300" />
 
-      {/* Spotlight murni tanpa CSS Transition delay agar mengunci erat ke target saat scroll */}
       <div 
         className="absolute pointer-events-none border-2 border-cyan-400 animate-pulse"
         style={{
@@ -235,7 +250,7 @@ const GuidedTour = ({ onComplete }) => {
       />
 
       <div 
-        className="absolute bg-[#0f172a] border border-cyan-500/50 shadow-[0_20px_40px_rgba(0,0,0,0.5)] rounded-[24px] p-5 sm:p-6"
+        className="absolute bg-[#0f172a] border border-cyan-500/50 shadow-[0_20px_40px_rgba(0,0,0,0.5)] rounded-[24px] p-5 sm:p-6 transition-all duration-100 ease-linear"
         style={{
           width: `${bubbleWidth}px`,
           left: isMobile ? '16px' : `${targetRect.left + (targetRect.width / 2)}px`,
@@ -277,10 +292,11 @@ export default function ToolkitPage() {
   const [showTutorial, setShowTutorial] = useState(false);
   
   useEffect(() => {
-    // Key di-reset agar PASTI MUNCUL untuk user/previewer baru
-    const hasSeenTutorial = localStorage.getItem('portfolio_toolkit_tour_v2');
+    // MEMAKSA AUTO-START UNTUK SEMUA ORANG
+    // Menggunakan key "sessionStorage" sehingga setiap kali tab browser baru dibuka, tour pasti jalan.
+    const hasSeenTutorial = sessionStorage.getItem('portfolio_tour_active');
     if (!hasSeenTutorial) {
-      // Delay 1.5 detik memberikan waktu agar halaman selesai di-render sebelum tutorial muncul
+      // Jeda 1.5 detik agar halaman ke-render utuh (aman dari lag load)
       const timer = setTimeout(() => setShowTutorial(true), 1500); 
       return () => clearTimeout(timer);
     }
@@ -288,7 +304,7 @@ export default function ToolkitPage() {
 
   const handleCompleteTutorial = () => {
     setShowTutorial(false);
-    localStorage.setItem('portfolio_toolkit_tour_v2', 'true');
+    sessionStorage.setItem('portfolio_tour_active', 'true');
     window.scrollTo({ top: 0, behavior: 'smooth' }); 
   };
 
@@ -302,16 +318,16 @@ export default function ToolkitPage() {
         <div className="absolute bottom-[-10%] right-[-10%] w-[80vw] h-[80vw] sm:w-[50vw] sm:h-[50vw] bg-purple-600/10 rounded-full blur-[120px] sm:blur-[150px] mix-blend-screen"></div>
       </div>
 
-      <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8 pt-24 sm:pt-32 lg:pt-36 flex flex-col flex-grow">
+      <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8 pt-24 sm:pt-28 lg:pt-32 pb-0 flex flex-col flex-grow">
         
-        {/* HEADER DIPERBAIKI (TOMBOL TERPISAH, JUDUL FOKUS KIRI) */}
+        {/* HEADER DIPERBAIKI (TOMBOL PANDUAN DI ATAS, INFO KEAMANAN DI KANAN PADA DESKTOP) */}
         <header className="mb-6 sm:mb-8 lg:mb-12 animate-fade-in-up">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 sm:gap-8">
             <div className="w-full md:w-[65%]">
               
               <button 
                 id="tut-start"
-                className="inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-white/5 border border-white/10 mb-4 sm:mb-6 backdrop-blur-md cursor-pointer hover:bg-white/10 transition-colors w-max" 
+                className="inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-white/5 border border-white/10 mb-4 sm:mb-5 lg:mb-6 backdrop-blur-md cursor-pointer hover:bg-white/10 transition-colors w-max" 
                 onClick={() => { 
                   setActiveCat('Semua'); 
                   setShowTutorial(false);
@@ -333,7 +349,7 @@ export default function ToolkitPage() {
               </p>
             </div>
 
-            <div className="w-full md:w-auto shrink-0">
+            <div className="w-full md:w-auto shrink-0 flex md:justify-end">
               <button 
                 id="tut-security" 
                 onClick={() => setIsSecurityModalOpen(true)}
@@ -377,27 +393,27 @@ export default function ToolkitPage() {
           </div>
         </div>
 
-        {/* CALL TO ACTION EKSKLUSIF PORTOFOLIO (PEMISAH AGAR TIDAK MENTOK FOOTER) */}
-        <div className="w-full mt-16 sm:mt-24 pt-12 sm:pt-16 pb-16 sm:pb-24 border-t border-white/5 relative flex flex-col items-center justify-center text-center animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
+        {/* CALL TO ACTION EKSKLUSIF PORTOFOLIO (Graphic Designer Buffer) */}
+        <div className="w-full mt-16 sm:mt-24 pt-12 sm:pt-16 pb-12 sm:pb-16 border-t border-white/5 relative flex flex-col items-center justify-center text-center animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2/3 md:w-1/3 h-[1px] bg-gradient-to-r from-transparent via-cyan-500/30 to-transparent"></div>
            
            <div className="flex items-center gap-3 mb-5 sm:mb-6">
-              <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center shadow-lg">
-                 <Icons.Palette className="w-4 h-4 sm:w-5 sm:h-5 text-pink-400" />
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center shadow-lg">
+                 <Icons.Brush className="w-4 h-4 sm:w-5 sm:h-5 text-pink-400" />
               </div>
-              <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center shadow-lg">
-                 <Icons.Layers className="w-4 h-4 sm:w-5 sm:h-5 text-cyan-400" />
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center shadow-lg">
+                 <Icons.Code className="w-4 h-4 sm:w-5 sm:h-5 text-cyan-400" />
               </div>
            </div>
            
-           <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-white mb-2 sm:mb-3 tracking-tight">Karya Visual Tanpa Batas</h3>
-           <p className="text-slate-400 text-[11px] sm:text-xs md:text-sm max-w-lg mb-6 sm:mb-8 leading-relaxed px-4">
-             Dirancang khusus dengan pendekatan <strong>Desain Grafis & Front-End modern</strong>. Semua utilitas di atas murni berjalan di sisi Klien (tanpa Database/Backend) untuk memastikan karya Anda diolah dengan estetis dan privasi 100% terjaga.
+           <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-white mb-2 sm:mb-3 tracking-tight">Dirancang Penuh Estetika & Keamanan</h3>
+           <p className="text-slate-400 text-[11px] sm:text-xs md:text-sm max-w-xl mb-6 sm:mb-8 leading-relaxed px-4">
+             Sebagai <strong>Desainer Grafis</strong>, saya menyusun setiap piksel antarmuka ini dengan teliti. Seluruh kumpulan <i>tools</i> beroperasi murni secara <strong>Client-Side (Tanpa Backend/Database)</strong>, menjamin keamanan karya dan data sensitif Anda secara mutlak.
            </p>
            
-           <a href="mailto:rafli161102@gmail.com" className="group flex items-center gap-2 px-6 sm:px-8 py-3 sm:py-3.5 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-full text-[11px] sm:text-sm font-bold transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(6,182,212,0.3)]">
-             <Icons.Rocket className="w-4 h-4" />
+           <a href="mailto:rafli161102@gmail.com" className="group flex items-center gap-2 px-6 sm:px-8 py-3 sm:py-3.5 bg-white text-black hover:bg-slate-200 rounded-full text-[11px] sm:text-sm font-bold transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(255,255,255,0.1)]">
              Mari Berkolaborasi
+             <Icons.ArrowUpRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-transform" />
            </a>
         </div>
 
@@ -466,13 +482,14 @@ export default function ToolkitPage() {
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         .animate-fade-in-up { animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
         
-        /* EFEK ANIMASI RGB COLOR THEORY TRIAD Yg Aesthetic (Cyan -> Pink -> Deep Blue) */
+        /* EFEK ANIMASI RGB COLOR THEORY TRIAD (Cyan/Blue, Magenta/Pink, Yellow) Yg Aesthetic */
         .text-rgb-animated {
           background: linear-gradient(
             to right, 
             #00c6ff, /* Cyan */
-            #f093fb, /* Light Pink */
             #0072ff, /* Deep Blue */
+            #f093fb, /* Light Pink */
+            #f5576c, /* Rose/Red */
             #00c6ff  /* Cyan (loop back) */
           );
           background-size: 200% auto;
