@@ -23,7 +23,8 @@ const Icons = {
   ArrowRight: (p) => <svg fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" {...p}><path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg>,
   Lock: (p) => <svg fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" {...p}><path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg>,
   ShieldCheck: (p) => <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...p}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296a3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043a3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296a3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043a3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z" /></svg>,
-  X: (p) => <svg fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" {...p}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+  X: (p) => <svg fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" {...p}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>,
+  Rocket: (p) => <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...p}><path strokeLinecap="round" strokeLinejoin="round" d="M15.59 14.37a6 6 0 01-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 006.16-12.12A14.98 14.98 0 009.631 8.41m5.96 5.96a14.926 14.926 0 01-5.841 2.58m-.119-8.54a6 6 0 00-7.381 5.84h4.8m2.581-5.84a14.927 14.927 0 00-2.58 5.84m2.699 2.7c-.103.021-.207.041-.311.06a15.09 15.09 0 01-2.448-2.448 14.9 14.9 0 01.06-.312m-2.24 2.39a4.493 4.493 0 00-1.757 4.306 4.433 4.433 0 002.771 2.77c1.651.567 3.485.044 4.306-1.756l3.05-3.05a15.001 15.001 0 00-3.235-3.235l-3.05 3.05z" /></svg>
 };
 
 // ============================================================================
@@ -63,7 +64,7 @@ const toolThemes = {
 };
 
 // =========================================================================
-// KOMPONEN KARTU MODUL
+// KOMPONEN KARTU MODUL (RESPONSIF 2 KOLOM MOBILE)
 // =========================================================================
 const UnifiedCard = ({ tool, cardId }) => {
   const [isClicked, setIsClicked] = useState(false);
@@ -79,14 +80,7 @@ const UnifiedCard = ({ tool, cardId }) => {
     
     setTimeout(() => {
       setIsClicked(false);
-      // Fallback navigation jika useRouter tidak digunakan
-      if (tool.link && tool.link.trim() !== '' && tool.link !== '#') {
-        if (linkRef.current) {
-          linkRef.current.click();
-        } else {
-          window.location.href = tool.link;
-        }
-      }
+      if (linkRef.current) linkRef.current.click();
     }, 600);
   };
 
@@ -98,7 +92,7 @@ const UnifiedCard = ({ tool, cardId }) => {
       <div 
         id={cardId} 
         onClick={handleClick}
-        className={`group relative flex flex-col justify-between p-3 sm:p-5 lg:p-6 transition-all duration-300 rounded-xl sm:rounded-[20px] lg:rounded-[24px] overflow-hidden min-h-[110px] sm:min-h-[140px] lg:aspect-[1.618/1] transform-gpu
+        className={`group relative flex flex-col justify-between p-4 sm:p-5 lg:p-6 transition-all duration-300 rounded-xl sm:rounded-[20px] lg:rounded-[24px] overflow-hidden min-h-[120px] sm:min-h-[140px] lg:aspect-[1.618/1] transform-gpu
           ${isActive 
             ? `bg-[#0a0f18] border border-white/[0.08] hover:border-white/[0.15] ${theme.glow} hover:-translate-y-1 cursor-pointer` 
             : `bg-white/[0.01] border border-white/[0.02] opacity-60 grayscale-[80%] transition-all cursor-not-allowed`
@@ -107,33 +101,33 @@ const UnifiedCard = ({ tool, cardId }) => {
         <div className={`absolute top-0 right-0 w-24 h-24 sm:w-32 sm:h-32 bg-gradient-to-bl ${theme.bg} rounded-full blur-[30px] sm:blur-[40px] opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none`}></div>
 
         <div className="flex items-start justify-between mb-3 sm:mb-4 lg:mb-6 relative z-10">
-          <div className={`w-8 h-8 sm:w-11 sm:h-11 lg:w-12 lg:h-12 rounded-[10px] sm:rounded-[14px] flex items-center justify-center transition-all duration-500 shadow-lg shrink-0
+          <div className={`w-9 h-9 sm:w-11 sm:h-11 lg:w-12 lg:h-12 rounded-[10px] sm:rounded-[14px] flex items-center justify-center transition-all duration-500 shadow-lg shrink-0
             ${!isClicked && isActive ? `group-hover:${tool.hoverAnim}` : ''} 
             ${isClicked && tool.clickAnim ? tool.clickAnim : ''} 
             ${isActive ? `bg-gradient-to-tr ${theme.iconBg} text-white` : `bg-white/5 text-slate-400 border border-white/10`}
           `}>
-             <IconComponent className="w-4 h-4 sm:w-5 sm:h-5 lg:w-[22px] lg:h-[22px]" />
+             <IconComponent className="w-[18px] h-[18px] sm:w-5 sm:h-5 lg:w-[22px] lg:h-[22px]" />
           </div>
 
           <div className="shrink-0">
             {isActive ? (
-              <div className={`flex items-center justify-center w-5 h-5 sm:w-7 sm:h-7 lg:w-8 lg:h-8 rounded-full transition-all duration-300 bg-white/5 text-slate-400 group-hover:bg-white/10 ${theme.text} ${isClicked ? 'translate-x-2 opacity-0' : ''}`}>
+              <div className={`flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 rounded-full transition-all duration-300 bg-white/5 text-slate-400 group-hover:bg-white/10 ${theme.text} ${isClicked ? 'translate-x-2 opacity-0' : ''}`}>
                 <Icons.ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
               </div>
             ) : (
               <div className="flex items-center gap-1 px-1.5 py-1 sm:px-2.5 sm:py-1.5 bg-black/40 border border-white/5 rounded-full">
                  <Icons.Lock className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-slate-500" />
-                 <span className="text-[7px] sm:text-[9px] font-bold tracking-widest text-slate-500">SOON</span>
+                 <span className="text-[8px] sm:text-[9px] font-bold tracking-widest text-slate-500">SOON</span>
               </div>
             )}
           </div>
         </div>
         
         <div className="relative z-10 flex-1 flex flex-col justify-end">
-          <h3 className={`text-[12px] sm:text-[16px] lg:text-[18px] font-bold tracking-tight mb-1 sm:mb-1.5 transition-colors ${isActive ? 'text-slate-100 group-hover:text-white' : 'text-slate-500'}`}>
+          <h3 className={`text-[13px] sm:text-[16px] lg:text-[18px] font-bold tracking-tight mb-1 sm:mb-1.5 transition-colors ${isActive ? 'text-slate-100 group-hover:text-white' : 'text-slate-500'} line-clamp-1`}>
             {tool.title}
           </h3>
-          <p className="text-[9px] sm:text-[11px] lg:text-[12px] text-slate-400/80 font-medium line-clamp-2 leading-relaxed transition-colors">
+          <p className="text-[10px] sm:text-[11px] lg:text-[12px] text-slate-400/80 font-medium line-clamp-2 sm:line-clamp-2 leading-relaxed transition-colors">
             {tool.description}
           </p>
         </div>
@@ -146,15 +140,15 @@ const UnifiedCard = ({ tool, cardId }) => {
 // DATA LANGKAH TUTORIAL
 // =========================================================================
 const TOUR_STEPS = [
-  { target: 'tut-start', title: 'Mulai dari Sini', text: <>Ini adalah meja kerja digital Anda. <br/><br/>Kapanpun Anda merasa kebingungan, klik tombol <strong>"Mulai Ulang Panduan"</strong> ini untuk memanggil saya kembali.</>, position: 'bottom' },
+  { target: 'tut-start', title: 'Mulai dari Sini', text: <>Ini adalah meja kerja digital Anda. <br/><br/>Kapanpun Anda merasa kebingungan, klik tombol <strong>"Mulai Panduan"</strong> ini untuk memanggil saya kembali.</>, position: 'bottom' },
   { target: 'tut-filter', title: 'Pencarian Cepat', text: <>Gunakan menu ini untuk menyaring alat. <br/><br/>Contoh: Klik <strong>"Design Utility"</strong> jika Anda hanya ingin melihat alat untuk keperluan desain.</>, position: 'bottom' },
-  { target: 'tut-active', title: 'Alat Siap Pakai', text: <><ul className="list-disc pl-4 space-y-1 mb-2"><li>Kotak berwarna cerah</li><li>Ada ikon panah di pojok</li><li>Bisa langsung diklik!</li></ul>Ini berarti alat tersebut sudah 100% siap membantu pekerjaan Anda.</>, position: 'bottom' },
+  { target: 'tut-active', title: 'Alat Siap Pakai', text: <><ul className="list-disc pl-4 space-y-1 mb-2 text-left"><li>Kotak berwarna cerah</li><li>Ada ikon panah di pojok</li><li>Bisa langsung diklik!</li></ul>Ini berarti alat tersebut sudah 100% siap membantu pekerjaan Anda.</>, position: 'bottom' },
   { target: 'tut-locked', title: 'Segera Hadir', text: <>Kartu abu-abu dengan label <strong>"SOON"</strong> berarti alatnya masih dirakit oleh tim pemrogram kami. <br/><br/>Harap bersabar ya!</>, position: 'top' },
   { target: 'tut-security', title: 'Privasi Terjamin', text: <>Sangat penting: Semua alat di website ini bekerja langsung di memori komputer Anda sendiri.<br/><br/>Kami <strong>tidak pernah mencuri</strong> data sensitif Anda.</>, position: 'bottom' }
 ];
 
 // =========================================================================
-// KOMPONEN: BUBBLE TUTORIAL DENGAN PELACAKAN INTERVAL
+// KOMPONEN: BUBBLE TUTORIAL DENGAN PELACAKAN INTERVAL (ANTI KABUR/MELeset)
 // =========================================================================
 const GuidedTour = ({ onComplete }) => {
   const [step, setStep] = useState(0);
@@ -216,6 +210,7 @@ const GuidedTour = ({ onComplete }) => {
   let bubbleTop = targetRect.bottom + padding + 15;
   let bubbleBottom = 'auto';
 
+  // Mengubah posisi pop-up jika menabrak batas layar bawah
   if (TOUR_STEPS[step].position === 'top' || (window.innerHeight - targetRect.bottom < 250)) {
      bubbleTop = 'auto';
      bubbleBottom = window.innerHeight - targetRect.top + padding + 15;
@@ -226,52 +221,48 @@ const GuidedTour = ({ onComplete }) => {
       
       <div className="absolute inset-0 bg-[#030712]/80 backdrop-blur-[2px] transition-all duration-300" />
 
-      {targetRect && (
-        <>
-          <div 
-            className="absolute pointer-events-none border-2 border-cyan-400 animate-pulse"
-            style={{
-              top: targetRect.top - padding,
-              left: targetRect.left - padding,
-              width: targetRect.width + padding * 2,
-              height: targetRect.height + padding * 2,
-              borderRadius: `calc(${targetRect.radius} + 6px)`,
-              boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.4), 0 0 20px rgba(34,211,238,0.4)',
-            }}
-          />
+      {/* Spotlight murni tanpa CSS Transition delay agar mengunci erat ke target saat scroll */}
+      <div 
+        className="absolute pointer-events-none border-2 border-cyan-400 animate-pulse"
+        style={{
+          top: targetRect.top - padding,
+          left: targetRect.left - padding,
+          width: targetRect.width + padding * 2,
+          height: targetRect.height + padding * 2,
+          borderRadius: `calc(${targetRect.radius} + 6px)`,
+          boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.4), 0 0 20px rgba(34,211,238,0.4)',
+        }}
+      />
 
-          <div 
-            className="absolute bg-[#0f172a] border border-cyan-500/50 shadow-[0_20px_40px_rgba(0,0,0,0.5)] rounded-[24px] p-5 sm:p-6 transition-all duration-[50ms] ease-linear"
-            style={{
-              width: `${bubbleWidth}px`,
-              left: isMobile ? '16px' : `${targetRect.left + (targetRect.width / 2)}px`,
-              transform: isMobile ? 'none' : 'translateX(-50%)',
-              top: bubbleTop !== 'auto' ? `${bubbleTop}px` : 'auto',
-              bottom: bubbleBottom !== 'auto' ? `${bubbleBottom}px` : 'auto',
-              transition: 'opacity 0.3s ease'
-            }}
-          >
-             <div className="relative z-10 pointer-events-auto">
-               <div className="flex justify-between items-center mb-4">
-                 <span className="text-[10px] font-black tracking-widest text-cyan-400 uppercase">Langkah {step + 1}/{TOUR_STEPS.length}</span>
-                 <button onClick={onComplete} className="text-slate-500 hover:text-white transition-colors bg-white/5 hover:bg-white/10 p-1.5 rounded-full">
-                    <Icons.X className="w-3.5 h-3.5" />
-                 </button>
-               </div>
-               
-               <h4 className="text-[16px] sm:text-[18px] font-bold text-white mb-3">{TOUR_STEPS[step].title}</h4>
-               <div className="text-[13px] sm:text-[13.5px] text-slate-300 leading-relaxed font-medium mb-6">{TOUR_STEPS[step].text}</div>
-               
-               <div className="flex justify-between items-center">
-                 <button onClick={onComplete} className="text-[11px] sm:text-[12px] font-bold text-slate-500 hover:text-white transition-colors px-1 py-2">Akhiri Tur</button>
-                 <button onClick={() => step < TOUR_STEPS.length - 1 ? setStep(s => s + 1) : onComplete()} className="bg-cyan-500 hover:bg-cyan-400 text-black px-5 sm:px-6 py-2 sm:py-2.5 rounded-full text-[12px] sm:text-[13px] font-bold transition-all shadow-[0_0_15px_rgba(34,211,238,0.4)] hover:scale-105 active:scale-95">
-                   {step < TOUR_STEPS.length - 1 ? 'Lanjut Mengerti' : 'Selesai!'}
-                 </button>
-               </div>
-             </div>
-          </div>
-        </>
-      )}
+      <div 
+        className="absolute bg-[#0f172a] border border-cyan-500/50 shadow-[0_20px_40px_rgba(0,0,0,0.5)] rounded-[24px] p-5 sm:p-6"
+        style={{
+          width: `${bubbleWidth}px`,
+          left: isMobile ? '16px' : `${targetRect.left + (targetRect.width / 2)}px`,
+          transform: isMobile ? 'none' : 'translateX(-50%)',
+          top: bubbleTop !== 'auto' ? `${bubbleTop}px` : 'auto',
+          bottom: bubbleBottom !== 'auto' ? `${bubbleBottom}px` : 'auto',
+        }}
+      >
+         <div className="relative z-10 pointer-events-auto">
+           <div className="flex justify-between items-center mb-4">
+             <span className="text-[10px] font-black tracking-widest text-cyan-400 uppercase">Langkah {step + 1}/{TOUR_STEPS.length}</span>
+             <button onClick={onComplete} className="text-slate-500 hover:text-white transition-colors bg-white/5 hover:bg-white/10 p-1.5 rounded-full">
+                <Icons.X className="w-3.5 h-3.5" />
+             </button>
+           </div>
+           
+           <h4 className="text-[16px] sm:text-[18px] font-bold text-white mb-3">{TOUR_STEPS[step].title}</h4>
+           <div className="text-[13px] sm:text-[13.5px] text-slate-300 leading-relaxed font-medium mb-6">{TOUR_STEPS[step].text}</div>
+           
+           <div className="flex justify-between items-center">
+             <button onClick={onComplete} className="text-[11px] sm:text-[12px] font-bold text-slate-500 hover:text-white transition-colors px-2 py-2">Akhiri Tur</button>
+             <button onClick={() => step < TOUR_STEPS.length - 1 ? setStep(s => s + 1) : onComplete()} className="bg-cyan-500 hover:bg-cyan-400 text-black px-5 sm:px-6 py-2 sm:py-2.5 rounded-full text-[12px] sm:text-[13px] font-bold transition-all shadow-[0_0_15px_rgba(34,211,238,0.4)] hover:scale-105 active:scale-95">
+               {step < TOUR_STEPS.length - 1 ? 'Lanjut Mengerti' : 'Selesai!'}
+             </button>
+           </div>
+         </div>
+      </div>
     </div>
   );
 }
@@ -286,17 +277,18 @@ export default function ToolkitPage() {
   const [showTutorial, setShowTutorial] = useState(false);
   
   useEffect(() => {
-    // Memastikan tutorial langsung jalan (Auto-Start)
-    const hasSeenTutorial = localStorage.getItem('override_tour_active_v1');
+    // Key di-reset agar PASTI MUNCUL untuk user/previewer baru
+    const hasSeenTutorial = localStorage.getItem('portfolio_toolkit_tour_v2');
     if (!hasSeenTutorial) {
-      const timer = setTimeout(() => setShowTutorial(true), 500);
+      // Delay 1.5 detik memberikan waktu agar halaman selesai di-render sebelum tutorial muncul
+      const timer = setTimeout(() => setShowTutorial(true), 1500); 
       return () => clearTimeout(timer);
     }
   }, []);
 
   const handleCompleteTutorial = () => {
     setShowTutorial(false);
-    localStorage.setItem('override_tour_active_v1', 'true');
+    localStorage.setItem('portfolio_toolkit_tour_v2', 'true');
     window.scrollTo({ top: 0, behavior: 'smooth' }); 
   };
 
@@ -310,16 +302,16 @@ export default function ToolkitPage() {
         <div className="absolute bottom-[-10%] right-[-10%] w-[80vw] h-[80vw] sm:w-[50vw] sm:h-[50vw] bg-purple-600/10 rounded-full blur-[120px] sm:blur-[150px] mix-blend-screen"></div>
       </div>
 
-      {/* pb-0 untuk menghilangkan space bawah agar mentok footer */}
-      <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8 pt-24 sm:pt-32 lg:pt-36 pb-0 flex flex-col flex-grow">
+      <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8 pt-24 sm:pt-32 lg:pt-36 flex flex-col flex-grow">
         
-        <header className="mb-6 sm:mb-8 lg:mb-[42px] animate-fade-in-up">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 sm:gap-8 mb-6 sm:mb-8">
-            <div className="w-full md:w-[60%] lg:w-[65%]">
+        {/* HEADER DIPERBAIKI (TOMBOL TERPISAH, JUDUL FOKUS KIRI) */}
+        <header className="mb-6 sm:mb-8 lg:mb-12 animate-fade-in-up">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 sm:gap-8">
+            <div className="w-full md:w-[65%]">
               
-              <div 
+              <button 
                 id="tut-start"
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-4 sm:mb-5 lg:mb-6 backdrop-blur-md cursor-pointer hover:bg-white/10 transition-colors w-max" 
+                className="inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-white/5 border border-white/10 mb-4 sm:mb-6 backdrop-blur-md cursor-pointer hover:bg-white/10 transition-colors w-max" 
                 onClick={() => { 
                   setActiveCat('Semua'); 
                   setShowTutorial(false);
@@ -330,31 +322,31 @@ export default function ToolkitPage() {
                 }}
               >
                 <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
-                <span className="text-[11px] sm:text-[12px] lg:text-[13px] font-bold tracking-wide text-slate-300">Mulai Ulang Panduan</span>
-              </div>
+                <span className="text-[10px] sm:text-xs font-bold tracking-wide text-slate-300 uppercase">Mulai Panduan</span>
+              </button>
               
-              <h1 className="text-[32px] sm:text-4xl lg:text-5xl xl:text-6xl font-black text-white tracking-tight mb-2 sm:mb-3 lg:mb-4 leading-[1.15] sm:leading-[1.1]">
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-black text-white tracking-tight mb-3 sm:mb-4 leading-[1.1]">
                 Creative <span className="text-rgb-animated">Override.</span>
               </h1>
-              <p className="text-slate-400 text-[13px] sm:text-sm md:text-base lg:text-lg font-medium leading-relaxed max-w-2xl">
+              <p className="text-slate-400 text-xs sm:text-sm md:text-base font-medium leading-relaxed max-w-2xl">
                 Koleksi utilitas canggih. Semuanya bekerja langsung di dalam browser Anda dengan privasi terjamin sepenuhnya.
               </p>
             </div>
 
-            <div className="w-full md:w-auto mt-2 md:mt-0 shrink-0">
+            <div className="w-full md:w-auto shrink-0">
               <button 
                 id="tut-security" 
                 onClick={() => setIsSecurityModalOpen(true)}
-                className="w-full md:w-auto justify-center group flex items-center gap-2.5 sm:gap-3 bg-white/5 hover:bg-white/10 border border-white/10 px-4 sm:px-5 py-3 sm:py-3.5 rounded-2xl shadow-lg backdrop-blur-md transition-all hover:scale-105 active:scale-95"
+                className="w-full md:w-auto justify-center flex items-center gap-2 sm:gap-3 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 px-4 sm:px-6 py-3 sm:py-3.5 rounded-xl sm:rounded-2xl shadow-lg backdrop-blur-md transition-all hover:scale-105 active:scale-95 text-emerald-400"
               >
-                <Icons.ShieldCheck className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-400" />
-                <span className="text-[13px] sm:text-[14px] lg:text-[15px] font-bold text-slate-200">Info Keamanan</span>
+                <Icons.ShieldCheck className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span className="text-[13px] sm:text-[14px] font-bold">Info Keamanan</span>
               </button>
             </div>
           </div>
         </header>
 
-        <div id="tut-filter" className="w-full overflow-x-auto no-scrollbar py-2 mb-6 sm:mb-8 lg:mb-[42px] sticky top-[70px] sm:top-[90px] z-[5] animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
+        <div id="tut-filter" className="w-full overflow-x-auto no-scrollbar py-2 mb-6 sm:mb-8 lg:mb-10 sticky top-[70px] sm:top-[90px] z-[5] animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
           <div className="inline-flex items-center gap-1.5 sm:gap-2 bg-white/[0.03] p-1.5 rounded-[16px] sm:rounded-[20px] border border-white/5 backdrop-blur-xl">
             {categories.map(cat => (
               <button 
@@ -370,8 +362,8 @@ export default function ToolkitPage() {
           </div>
         </div>
 
-        <div className="animate-fade-in-up w-full pb-0 mb-0" style={{ animationDelay: '0.2s' }}>
-          <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 pb-0 mb-0">
+        <div className="animate-fade-in-up w-full" style={{ animationDelay: '0.2s' }}>
+          <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
             {filteredTools.map((tool) => {
                const isActiveFirst = tool.id === filteredTools.find(t => t.status === 'active')?.id;
                const isLockedFirst = tool.id === filteredTools.find(t => t.status !== 'active')?.id;
@@ -385,8 +377,33 @@ export default function ToolkitPage() {
           </div>
         </div>
 
+        {/* CALL TO ACTION EKSKLUSIF PORTOFOLIO (PEMISAH AGAR TIDAK MENTOK FOOTER) */}
+        <div className="w-full mt-16 sm:mt-24 pt-12 sm:pt-16 pb-16 sm:pb-24 border-t border-white/5 relative flex flex-col items-center justify-center text-center animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
+           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2/3 md:w-1/3 h-[1px] bg-gradient-to-r from-transparent via-cyan-500/30 to-transparent"></div>
+           
+           <div className="flex items-center gap-3 mb-5 sm:mb-6">
+              <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center shadow-lg">
+                 <Icons.Palette className="w-4 h-4 sm:w-5 sm:h-5 text-pink-400" />
+              </div>
+              <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center shadow-lg">
+                 <Icons.Layers className="w-4 h-4 sm:w-5 sm:h-5 text-cyan-400" />
+              </div>
+           </div>
+           
+           <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-white mb-2 sm:mb-3 tracking-tight">Karya Visual Tanpa Batas</h3>
+           <p className="text-slate-400 text-[11px] sm:text-xs md:text-sm max-w-lg mb-6 sm:mb-8 leading-relaxed px-4">
+             Dirancang khusus dengan pendekatan <strong>Desain Grafis & Front-End modern</strong>. Semua utilitas di atas murni berjalan di sisi Klien (tanpa Database/Backend) untuk memastikan karya Anda diolah dengan estetis dan privasi 100% terjaga.
+           </p>
+           
+           <a href="mailto:rafli161102@gmail.com" className="group flex items-center gap-2 px-6 sm:px-8 py-3 sm:py-3.5 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-full text-[11px] sm:text-sm font-bold transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(6,182,212,0.3)]">
+             <Icons.Rocket className="w-4 h-4" />
+             Mari Berkolaborasi
+           </a>
+        </div>
+
       </div>
 
+      {/* JENDELA INFO KEAMANAN (KOMPAK) */}
       {isSecurityModalOpen && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 bg-[#000000]/80 backdrop-blur-sm animate-fade-in">
            <div className="absolute inset-0 cursor-pointer" onClick={() => setIsSecurityModalOpen(false)}></div>
@@ -398,7 +415,7 @@ export default function ToolkitPage() {
                    <Icons.X className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                  </button>
 
-                 <div className="w-10 h-10 sm:w-16 sm:h-16 mx-auto bg-gradient-to-br from-blue-500 to-pink-500 rounded-[10px] sm:rounded-2xl flex items-center justify-center shadow-[0_0_30px_rgba(236,72,153,0.3)] mb-2 sm:mb-4">
+                 <div className="w-10 h-10 sm:w-16 sm:h-16 mx-auto bg-gradient-to-br from-emerald-400 to-cyan-500 rounded-[10px] sm:rounded-2xl flex items-center justify-center shadow-[0_0_30px_rgba(52,211,153,0.3)] mb-2 sm:mb-4">
                     <Icons.ShieldCheck className="w-5 h-5 sm:w-8 sm:h-8 text-white" />
                  </div>
                  <h3 className="text-base sm:text-2xl font-bold text-white tracking-tight">Privasi & Keamanan</h3>
@@ -408,7 +425,7 @@ export default function ToolkitPage() {
               <div className="p-4 sm:p-6 space-y-2.5 sm:space-y-5 bg-white/[0.02]">
                  
                  <div className="flex gap-3 items-start">
-                    <div className="w-5 h-5 sm:w-8 sm:h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center shrink-0 text-blue-400 font-bold text-[9px] sm:text-xs mt-0.5">1</div>
+                    <div className="w-5 h-5 sm:w-8 sm:h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center shrink-0 text-emerald-400 font-bold text-[9px] sm:text-xs mt-0.5">1</div>
                     <div>
                        <h4 className="text-white text-[12px] sm:text-[14px] font-bold">Pemrosesan Lokal</h4>
                        <p className="text-slate-400 text-[10px] sm:text-[12px] leading-snug sm:leading-relaxed mt-0.5 sm:mt-1">Berjalan murni di dalam perangkat Anda sendiri.</p>
@@ -416,7 +433,7 @@ export default function ToolkitPage() {
                  </div>
                  
                  <div className="flex gap-3 items-start">
-                    <div className="w-5 h-5 sm:w-8 sm:h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center shrink-0 text-pink-400 font-bold text-[9px] sm:text-xs mt-0.5">2</div>
+                    <div className="w-5 h-5 sm:w-8 sm:h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center shrink-0 text-emerald-400 font-bold text-[9px] sm:text-xs mt-0.5">2</div>
                     <div>
                        <h4 className="text-white text-[12px] sm:text-[14px] font-bold">Tanpa Database Cloud</h4>
                        <p className="text-slate-400 text-[10px] sm:text-[12px] leading-snug sm:leading-relaxed mt-0.5 sm:mt-1">Data sensitif Anda tidak pernah terbang ke internet.</p>
@@ -424,7 +441,7 @@ export default function ToolkitPage() {
                  </div>
 
                  <div className="flex gap-3 items-start">
-                    <div className="w-5 h-5 sm:w-8 sm:h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center shrink-0 text-yellow-400 font-bold text-[9px] sm:text-xs mt-0.5">3</div>
+                    <div className="w-5 h-5 sm:w-8 sm:h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center shrink-0 text-emerald-400 font-bold text-[9px] sm:text-xs mt-0.5">3</div>
                     <div>
                        <h4 className="text-white text-[12px] sm:text-[14px] font-bold">Penyimpanan Cache</h4>
                        <p className="text-slate-400 text-[10px] sm:text-[12px] leading-snug sm:leading-relaxed mt-0.5 sm:mt-1">Hanya dititipkan di browser Anda, dan bisa dihapus kapan saja.</p>
@@ -449,20 +466,20 @@ export default function ToolkitPage() {
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         .animate-fade-in-up { animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
         
-        /* EFEK ANIMASI RGB COLOR THEORY TRIAD (Blue, Magenta, Yellow) */
+        /* EFEK ANIMASI RGB COLOR THEORY TRIAD Yg Aesthetic (Cyan -> Pink -> Deep Blue) */
         .text-rgb-animated {
           background: linear-gradient(
             to right, 
-            #3b82f6, /* Blue */
-            #ec4899, /* Pink/Magenta */
-            #eab308, /* Yellow */
-            #3b82f6  /* Blue (loop) */
+            #00c6ff, /* Cyan */
+            #f093fb, /* Light Pink */
+            #0072ff, /* Deep Blue */
+            #00c6ff  /* Cyan (loop back) */
           );
           background-size: 200% auto;
           color: transparent;
           -webkit-background-clip: text;
           background-clip: text;
-          animation: rgbFlow 3s linear infinite;
+          animation: rgbFlow 5s linear infinite;
         }
         @keyframes rgbFlow {
           to { background-position: -200% center; }
