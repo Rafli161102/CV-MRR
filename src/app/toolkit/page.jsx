@@ -63,7 +63,7 @@ const toolThemes = {
 };
 
 // =========================================================================
-// KOMPONEN KARTU MODUL (RESPONSIF 2 KOLOM MOBILE)
+// KOMPONEN KARTU MODUL
 // =========================================================================
 const UnifiedCard = ({ tool, cardId }) => {
   const [isClicked, setIsClicked] = useState(false);
@@ -79,13 +79,22 @@ const UnifiedCard = ({ tool, cardId }) => {
     
     setTimeout(() => {
       setIsClicked(false);
-      if (linkRef.current) linkRef.current.click();
+      // Fallback navigation jika useRouter tidak digunakan
+      if (tool.link && tool.link.trim() !== '' && tool.link !== '#') {
+        if (linkRef.current) {
+          linkRef.current.click();
+        } else {
+          window.location.href = tool.link;
+        }
+      }
     }, 600);
   };
 
   return (
     <>
-      <a ref={linkRef} href={tool.link} style={{ display: 'none' }} aria-hidden="true"></a>
+      {tool.link && tool.link.trim() !== '' && tool.link !== '#' && (
+        <a ref={linkRef} href={tool.link} style={{ display: 'none' }} aria-hidden="true"></a>
+      )}
       <div 
         id={cardId} 
         onClick={handleClick}
@@ -145,60 +154,58 @@ const TOUR_STEPS = [
 ];
 
 // =========================================================================
-// KOMPONEN: BUBBLE TUTORIAL DENGAN PENGUNCI REAL-TIME (ANTI MELeset)
+// KOMPONEN: BUBBLE TUTORIAL DENGAN PELACAKAN INTERVAL
 // =========================================================================
 const GuidedTour = ({ onComplete }) => {
   const [step, setStep] = useState(0);
   const [targetRect, setTargetRect] = useState(null);
   const [isClient, setIsClient] = useState(false);
+  const requestRef = useRef();
 
   useEffect(() => {
     setIsClient(true);
   }, []);
 
-  useEffect(() => {
-    if (!isClient) return;
+  const lockOnTarget = useCallback(() => {
+    if (typeof window === 'undefined') return;
     const targetId = TOUR_STEPS[step]?.target;
-    let intervalId;
-
-    // Fungsi untuk memperbarui koordinat target terus-menerus
-    const lockOnTarget = () => {
-      const el = document.getElementById(targetId);
-      if (el) {
-        const rect = el.getBoundingClientRect();
-        // Hanya rekam jika elemen berukuran valid dan terlihat di memori
-        if (rect.width > 0) {
-          setTargetRect({
-            top: rect.top,
-            bottom: rect.bottom,
-            left: rect.left,
-            right: rect.right,
-            width: rect.width,
-            height: rect.height,
-            radius: window.getComputedStyle(el).borderRadius || '16px'
-          });
-        }
-      }
-    };
+    if (!targetId) return;
 
     const el = document.getElementById(targetId);
     if (el) {
-      // Gulir lembut ke elemen saat pertama kali masuk step
+      const rect = el.getBoundingClientRect();
+      if (rect.width > 0 && rect.height > 0) {
+        setTargetRect({
+          top: rect.top,
+          bottom: rect.bottom,
+          left: rect.left,
+          right: rect.right,
+          width: rect.width,
+          height: rect.height,
+          radius: window.getComputedStyle(el).borderRadius || '16px'
+        });
+      }
+    }
+    requestRef.current = requestAnimationFrame(lockOnTarget);
+  }, [step]);
+
+  useEffect(() => {
+    if (!isClient) return;
+    const targetId = TOUR_STEPS[step]?.target;
+    const el = document.getElementById(targetId);
+
+    if (el) {
       el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      
-      // KUNCI UTAMA: Update koordinat sangat cepat (tiap 50ms) agar sorotan menempel
-      // walau layar HP bergeser karena URL Bar yang memanjang/menyusut.
-      intervalId = setInterval(lockOnTarget, 50);
+      requestRef.current = requestAnimationFrame(lockOnTarget);
     } else {
-      // Lewati jika elemen tak ditemukan di DOM (misal tak ada kartu SOON)
       if (step < TOUR_STEPS.length - 1) setStep(s => s + 1);
       else onComplete();
     }
 
     return () => {
-      if (intervalId) clearInterval(intervalId);
+      if (requestRef.current) cancelAnimationFrame(requestRef.current);
     };
-  }, [step, isClient, onComplete]);
+  }, [step, isClient, lockOnTarget, onComplete]);
 
   if (!isClient || !targetRect) return null;
 
@@ -209,58 +216,63 @@ const GuidedTour = ({ onComplete }) => {
   let bubbleTop = targetRect.bottom + padding + 15;
   let bubbleBottom = 'auto';
 
-  // Mengubah posisi pop-up jika menabrak batas layar bawah
   if (TOUR_STEPS[step].position === 'top' || (window.innerHeight - targetRect.bottom < 250)) {
      bubbleTop = 'auto';
      bubbleBottom = window.innerHeight - targetRect.top + padding + 15;
   }
 
   return (
-    <>
-      <div className="fixed inset-0 z-[198]" onClick={(e) => e.stopPropagation()} />
+    <div className="fixed inset-0 z-[198]" onClick={(e) => e.stopPropagation()}>
+      
+      <div className="absolute inset-0 bg-[#030712]/80 backdrop-blur-[2px] transition-all duration-300" />
 
-      <div 
-        className="fixed z-[199] pointer-events-none transition-all duration-[50ms] ease-linear border-2 border-cyan-400 animate-pulse"
-        style={{
-          top: targetRect.top - padding,
-          left: targetRect.left - padding,
-          width: targetRect.width + padding * 2,
-          height: targetRect.height + padding * 2,
-          borderRadius: `calc(${targetRect.radius} + 6px)`,
-          boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.85), 0 0 20px rgba(34,211,238,0.4)',
-        }}
-      />
+      {targetRect && (
+        <>
+          <div 
+            className="absolute pointer-events-none border-2 border-cyan-400 animate-pulse"
+            style={{
+              top: targetRect.top - padding,
+              left: targetRect.left - padding,
+              width: targetRect.width + padding * 2,
+              height: targetRect.height + padding * 2,
+              borderRadius: `calc(${targetRect.radius} + 6px)`,
+              boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.4), 0 0 20px rgba(34,211,238,0.4)',
+            }}
+          />
 
-      <div 
-        className="fixed z-[200] bg-[#0f172a] border border-cyan-500/50 shadow-[0_20px_40px_rgba(0,0,0,0.5)] rounded-[24px] p-5 sm:p-6 transition-all duration-[50ms] ease-linear"
-        style={{
-          width: `${bubbleWidth}px`,
-          left: isMobile ? '16px' : `${targetRect.left + (targetRect.width / 2)}px`,
-          transform: isMobile ? 'none' : 'translateX(-50%)',
-          top: bubbleTop !== 'auto' ? `${bubbleTop}px` : 'auto',
-          bottom: bubbleBottom !== 'auto' ? `${bubbleBottom}px` : 'auto',
-        }}
-      >
-         <div className="relative z-10 pointer-events-auto">
-           <div className="flex justify-between items-center mb-4">
-             <span className="text-[10px] font-black tracking-widest text-cyan-400 uppercase">Langkah {step + 1}/{TOUR_STEPS.length}</span>
-             <button onClick={onComplete} className="text-slate-500 hover:text-white transition-colors bg-white/5 hover:bg-white/10 p-1.5 rounded-full">
-                <Icons.X className="w-3.5 h-3.5" />
-             </button>
-           </div>
-           
-           <h4 className="text-[16px] sm:text-[18px] font-bold text-white mb-3">{TOUR_STEPS[step].title}</h4>
-           <div className="text-[13px] sm:text-[13.5px] text-slate-300 leading-relaxed font-medium mb-6">{TOUR_STEPS[step].text}</div>
-           
-           <div className="flex justify-between items-center">
-             <button onClick={onComplete} className="text-[11px] sm:text-[12px] font-bold text-slate-500 hover:text-white transition-colors px-1 py-2">Akhiri Tur</button>
-             <button onClick={() => step < TOUR_STEPS.length - 1 ? setStep(s => s + 1) : onComplete()} className="bg-cyan-500 hover:bg-cyan-400 text-black px-5 sm:px-6 py-2 sm:py-2.5 rounded-full text-[12px] sm:text-[13px] font-bold transition-all shadow-[0_0_15px_rgba(34,211,238,0.4)] hover:scale-105 active:scale-95">
-               {step < TOUR_STEPS.length - 1 ? 'Lanjut Mengerti' : 'Selesai!'}
-             </button>
-           </div>
-         </div>
-      </div>
-    </>
+          <div 
+            className="absolute bg-[#0f172a] border border-cyan-500/50 shadow-[0_20px_40px_rgba(0,0,0,0.5)] rounded-[24px] p-5 sm:p-6 transition-all duration-[50ms] ease-linear"
+            style={{
+              width: `${bubbleWidth}px`,
+              left: isMobile ? '16px' : `${targetRect.left + (targetRect.width / 2)}px`,
+              transform: isMobile ? 'none' : 'translateX(-50%)',
+              top: bubbleTop !== 'auto' ? `${bubbleTop}px` : 'auto',
+              bottom: bubbleBottom !== 'auto' ? `${bubbleBottom}px` : 'auto',
+              transition: 'opacity 0.3s ease'
+            }}
+          >
+             <div className="relative z-10 pointer-events-auto">
+               <div className="flex justify-between items-center mb-4">
+                 <span className="text-[10px] font-black tracking-widest text-cyan-400 uppercase">Langkah {step + 1}/{TOUR_STEPS.length}</span>
+                 <button onClick={onComplete} className="text-slate-500 hover:text-white transition-colors bg-white/5 hover:bg-white/10 p-1.5 rounded-full">
+                    <Icons.X className="w-3.5 h-3.5" />
+                 </button>
+               </div>
+               
+               <h4 className="text-[16px] sm:text-[18px] font-bold text-white mb-3">{TOUR_STEPS[step].title}</h4>
+               <div className="text-[13px] sm:text-[13.5px] text-slate-300 leading-relaxed font-medium mb-6">{TOUR_STEPS[step].text}</div>
+               
+               <div className="flex justify-between items-center">
+                 <button onClick={onComplete} className="text-[11px] sm:text-[12px] font-bold text-slate-500 hover:text-white transition-colors px-1 py-2">Akhiri Tur</button>
+                 <button onClick={() => step < TOUR_STEPS.length - 1 ? setStep(s => s + 1) : onComplete()} className="bg-cyan-500 hover:bg-cyan-400 text-black px-5 sm:px-6 py-2 sm:py-2.5 rounded-full text-[12px] sm:text-[13px] font-bold transition-all shadow-[0_0_15px_rgba(34,211,238,0.4)] hover:scale-105 active:scale-95">
+                   {step < TOUR_STEPS.length - 1 ? 'Lanjut Mengerti' : 'Selesai!'}
+                 </button>
+               </div>
+             </div>
+          </div>
+        </>
+      )}
+    </div>
   );
 }
 
@@ -274,30 +286,32 @@ export default function ToolkitPage() {
   const [showTutorial, setShowTutorial] = useState(false);
   
   useEffect(() => {
-    const hasSeenTutorial = localStorage.getItem('override_tutorial_seen_final_v13');
+    // Memastikan tutorial langsung jalan (Auto-Start)
+    const hasSeenTutorial = localStorage.getItem('override_tour_active_v1');
     if (!hasSeenTutorial) {
-      setTimeout(() => setShowTutorial(true), 1000);
+      const timer = setTimeout(() => setShowTutorial(true), 500);
+      return () => clearTimeout(timer);
     }
   }, []);
 
   const handleCompleteTutorial = () => {
     setShowTutorial(false);
-    localStorage.setItem('override_tutorial_seen_final_v13', 'true');
+    localStorage.setItem('override_tour_active_v1', 'true');
     window.scrollTo({ top: 0, behavior: 'smooth' }); 
   };
 
   const filteredTools = activeCat === 'Semua' ? [...toolkits] : toolkits.filter(tool => tool.category === activeCat);
 
   return (
-    <div className="w-full min-h-screen bg-[#05050A] text-slate-200 font-sans selection:bg-cyan-500/30 selection:text-cyan-300 flex flex-col">
+    <div className="w-full bg-[#05050A] text-slate-200 font-sans selection:bg-cyan-500/30 selection:text-cyan-300 relative overflow-hidden flex flex-col">
       
-      <div className="fixed inset-0 z-[-1] pointer-events-none overflow-hidden">
+      <div className="fixed inset-0 z-[-1] pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[80vw] h-[80vw] sm:w-[50vw] sm:h-[50vw] bg-blue-600/10 rounded-full blur-[120px] sm:blur-[150px] mix-blend-screen"></div>
         <div className="absolute bottom-[-10%] right-[-10%] w-[80vw] h-[80vw] sm:w-[50vw] sm:h-[50vw] bg-purple-600/10 rounded-full blur-[120px] sm:blur-[150px] mix-blend-screen"></div>
       </div>
 
-      {/* SPACE BAWAH DIHAPUS (pb-0) AGAR MENTOK FOOTER */}
-      <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8 pt-24 sm:pt-32 lg:pt-36 flex flex-col flex-grow">
+      {/* pb-0 untuk menghilangkan space bawah agar mentok footer */}
+      <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8 pt-24 sm:pt-32 lg:pt-36 pb-0 flex flex-col flex-grow">
         
         <header className="mb-6 sm:mb-8 lg:mb-[42px] animate-fade-in-up">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 sm:gap-8 mb-6 sm:mb-8">
@@ -306,7 +320,14 @@ export default function ToolkitPage() {
               <div 
                 id="tut-start"
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-4 sm:mb-5 lg:mb-6 backdrop-blur-md cursor-pointer hover:bg-white/10 transition-colors w-max" 
-                onClick={() => { window.scrollTo({top: 0, behavior: 'smooth'}); setShowTutorial(true); }}
+                onClick={() => { 
+                  setActiveCat('Semua'); 
+                  setShowTutorial(false);
+                  setTimeout(() => {
+                     window.scrollTo({top: 0, behavior: 'smooth'}); 
+                     setShowTutorial(true); 
+                  }, 100);
+                }}
               >
                 <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
                 <span className="text-[11px] sm:text-[12px] lg:text-[13px] font-bold tracking-wide text-slate-300">Mulai Ulang Panduan</span>
@@ -349,12 +370,11 @@ export default function ToolkitPage() {
           </div>
         </div>
 
-        {/* GRID KARTU - DIPAKSA 2 KOLOM DI MOBILE - PB-0 AGAR MENTOK BAWAH */}
         <div className="animate-fade-in-up w-full pb-0 mb-0" style={{ animationDelay: '0.2s' }}>
-          <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+          <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 pb-0 mb-0">
             {filteredTools.map((tool) => {
-               const isActiveFirst = tool.id === toolkits.find(t => t.status === 'active')?.id;
-               const isLockedFirst = tool.id === toolkits.find(t => t.status !== 'active')?.id;
+               const isActiveFirst = tool.id === filteredTools.find(t => t.status === 'active')?.id;
+               const isLockedFirst = tool.id === filteredTools.find(t => t.status !== 'active')?.id;
 
                return <UnifiedCard 
                   key={tool.id} 
@@ -367,7 +387,6 @@ export default function ToolkitPage() {
 
       </div>
 
-      {/* JENDELA INFO KEAMANAN (KOMPAK, TIDAK PERLU SCROLL DI MOBILE) */}
       {isSecurityModalOpen && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 bg-[#000000]/80 backdrop-blur-sm animate-fade-in">
            <div className="absolute inset-0 cursor-pointer" onClick={() => setIsSecurityModalOpen(false)}></div>
@@ -379,7 +398,7 @@ export default function ToolkitPage() {
                    <Icons.X className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                  </button>
 
-                 <div className="w-10 h-10 sm:w-16 sm:h-16 mx-auto bg-gradient-to-br from-emerald-400 to-cyan-500 rounded-[10px] sm:rounded-2xl flex items-center justify-center shadow-[0_0_30px_rgba(52,211,153,0.3)] mb-2 sm:mb-4">
+                 <div className="w-10 h-10 sm:w-16 sm:h-16 mx-auto bg-gradient-to-br from-blue-500 to-pink-500 rounded-[10px] sm:rounded-2xl flex items-center justify-center shadow-[0_0_30px_rgba(236,72,153,0.3)] mb-2 sm:mb-4">
                     <Icons.ShieldCheck className="w-5 h-5 sm:w-8 sm:h-8 text-white" />
                  </div>
                  <h3 className="text-base sm:text-2xl font-bold text-white tracking-tight">Privasi & Keamanan</h3>
@@ -389,7 +408,7 @@ export default function ToolkitPage() {
               <div className="p-4 sm:p-6 space-y-2.5 sm:space-y-5 bg-white/[0.02]">
                  
                  <div className="flex gap-3 items-start">
-                    <div className="w-5 h-5 sm:w-8 sm:h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center shrink-0 text-emerald-400 font-bold text-[9px] sm:text-xs mt-0.5">1</div>
+                    <div className="w-5 h-5 sm:w-8 sm:h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center shrink-0 text-blue-400 font-bold text-[9px] sm:text-xs mt-0.5">1</div>
                     <div>
                        <h4 className="text-white text-[12px] sm:text-[14px] font-bold">Pemrosesan Lokal</h4>
                        <p className="text-slate-400 text-[10px] sm:text-[12px] leading-snug sm:leading-relaxed mt-0.5 sm:mt-1">Berjalan murni di dalam perangkat Anda sendiri.</p>
@@ -397,7 +416,7 @@ export default function ToolkitPage() {
                  </div>
                  
                  <div className="flex gap-3 items-start">
-                    <div className="w-5 h-5 sm:w-8 sm:h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center shrink-0 text-emerald-400 font-bold text-[9px] sm:text-xs mt-0.5">2</div>
+                    <div className="w-5 h-5 sm:w-8 sm:h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center shrink-0 text-pink-400 font-bold text-[9px] sm:text-xs mt-0.5">2</div>
                     <div>
                        <h4 className="text-white text-[12px] sm:text-[14px] font-bold">Tanpa Database Cloud</h4>
                        <p className="text-slate-400 text-[10px] sm:text-[12px] leading-snug sm:leading-relaxed mt-0.5 sm:mt-1">Data sensitif Anda tidak pernah terbang ke internet.</p>
@@ -405,7 +424,7 @@ export default function ToolkitPage() {
                  </div>
 
                  <div className="flex gap-3 items-start">
-                    <div className="w-5 h-5 sm:w-8 sm:h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center shrink-0 text-emerald-400 font-bold text-[9px] sm:text-xs mt-0.5">3</div>
+                    <div className="w-5 h-5 sm:w-8 sm:h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center shrink-0 text-yellow-400 font-bold text-[9px] sm:text-xs mt-0.5">3</div>
                     <div>
                        <h4 className="text-white text-[12px] sm:text-[14px] font-bold">Penyimpanan Cache</h4>
                        <p className="text-slate-400 text-[10px] sm:text-[12px] leading-snug sm:leading-relaxed mt-0.5 sm:mt-1">Hanya dititipkan di browser Anda, dan bisa dihapus kapan saja.</p>
@@ -430,9 +449,15 @@ export default function ToolkitPage() {
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         .animate-fade-in-up { animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
         
-        /* 1. EFEK ANIMASI RGB GAMING SEJATI */
+        /* EFEK ANIMASI RGB COLOR THEORY TRIAD (Blue, Magenta, Yellow) */
         .text-rgb-animated {
-          background: linear-gradient(to right, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8b00ff, #ff0000);
+          background: linear-gradient(
+            to right, 
+            #3b82f6, /* Blue */
+            #ec4899, /* Pink/Magenta */
+            #eab308, /* Yellow */
+            #3b82f6  /* Blue (loop) */
+          );
           background-size: 200% auto;
           color: transparent;
           -webkit-background-clip: text;
@@ -440,8 +465,7 @@ export default function ToolkitPage() {
           animation: rgbFlow 3s linear infinite;
         }
         @keyframes rgbFlow {
-          0% { background-position: 0% center; }
-          100% { background-position: -200% center; }
+          to { background-position: -200% center; }
         }
 
         /* 14 ANIMASI HOVER UNIK */
