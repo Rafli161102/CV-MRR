@@ -91,7 +91,6 @@ const UnifiedCard = ({ tool, cardId }) => {
     
     setTimeout(() => {
       setIsClicked(false);
-      // Navigasi Standar Bebas Bug
       if (tool.link && tool.link.trim() !== '' && tool.link !== '#') {
         if (linkRef.current) {
           linkRef.current.click();
@@ -155,27 +154,25 @@ const UnifiedCard = ({ tool, cardId }) => {
 };
 
 // =========================================================================
-// KOMPONEN: BUBBLE TUTORIAL (GAMING HUD STYLE - MURNI TANPA BUG/FREEZE)
+// KOMPONEN: BUBBLE TUTORIAL (ANTI-CRASH, BEBAS LOOP, RINGAN & PRESISI)
 // =========================================================================
 const GuidedTour = ({ onComplete, activeTools, lockedTools }) => {
   const [step, setStep] = useState(0);
   const [targetRect, setTargetRect] = useState(null);
   const [isScanning, setIsScanning] = useState(true);
-  const [isClicking, setIsClicking] = useState(false); // State Animasi Klik Kursor
+  const [isClicking, setIsClicking] = useState(false); 
   
-  // PEMBENTUKAN LANGKAH TUTORIAL SECARA DINAMIS & AMAN (Menggunakan useMemo)
-  // Menghindari Infinite Loop dari sisi React
+  // Mengunci array panduan menggunakan useMemo agar tidak menyebabkan Infinity Loop
   const TOUR_STEPS = useMemo(() => {
     const steps = [
       { 
         target: 'tut-filter', 
         title: 'Sistem Kategori', 
-        text: 'Gunakan filter panel ini untuk menavigasi utilitas berdasarkan fungsinya. Tersedia kategori khusus untuk Web Developer, Career, dan Design Utility.', 
+        text: 'Gunakan panel ini untuk menyaring fungsi spesifik. Tersedia kategori khusus untuk Web Developer, Career, dan Design Utility.', 
         position: 'bottom' 
       }
     ];
 
-    // Mengambil 1 contoh alat yang sudah Aktif dari Database
     const firstActive = activeTools[0];
     if (firstActive) {
       steps.push({
@@ -186,13 +183,12 @@ const GuidedTour = ({ onComplete, activeTools, lockedTools }) => {
       });
     }
 
-    // Mengambil 1 contoh alat yang masih Terkunci (Soon) dari Database
     const firstLocked = lockedTools[0];
     if (firstLocked) {
       steps.push({
         target: `tool-${firstLocked.id}`,
         title: 'Tahap Perakitan',
-        text: `Kartu beraksen redup menandakan modul sedang dalam pengembangan. Sistem akan otomatis memperbaruinya saat alat ini siap rilis.`,
+        text: `Kartu redup menandakan modul sedang dalam pengembangan. Sistem akan otomatis memperbaruinya saat alat siap rilis.`,
         position: 'top'
       });
     }
@@ -201,13 +197,13 @@ const GuidedTour = ({ onComplete, activeTools, lockedTools }) => {
       { 
         target: 'tut-security', 
         title: 'Infrastruktur Keamanan', 
-        text: 'Sangat krusial: Sistem ini beroperasi murni secara Client-Side. Seluruh data diproses secara luring di perangkat Anda tanpa campur tangan server backend.', 
+        text: 'Sangat krusial: Sistem ini beroperasi murni secara Client-Side. Seluruh data diproses secara luring di perangkat tanpa server backend.', 
         position: 'bottom' 
       },
       { 
         target: 'tut-collab', 
         title: 'Mari Berkolaborasi', 
-        text: 'Sebagai Graphic Designer & Developer, antarmuka ini saya rancang khusus untuk Anda. Saya siap membantu mewujudkan proyek kreatif Anda selanjutnya!', 
+        text: 'Sebagai Graphic Designer & Developer, antarmuka ini saya rancang khusus untuk Anda. Mari diskusikan proyek kreatif Anda selanjutnya!', 
         position: 'top' 
       }
     );
@@ -215,80 +211,79 @@ const GuidedTour = ({ onComplete, activeTools, lockedTools }) => {
     return steps;
   }, [activeTools, lockedTools]);
 
-  // FUNGSI UPDATE POSISI CERDAS (Event Listener untuk Pasif Scrolling)
-  // Mencegah React re-render terus menerus jika kotak tidak benar-benar bergeser.
-  useEffect(() => {
-    if (isScanning) return;
-
-    const updatePosition = () => {
-      const el = document.getElementById(TOUR_STEPS[step]?.target);
-      if (el) {
-        const rect = el.getBoundingClientRect();
+  // Fungsi kalkulasi posisi secara presisi dan ringan
+  const updateRect = useCallback(() => {
+    const el = document.getElementById(TOUR_STEPS[step]?.target);
+    if (el) {
+      const rect = el.getBoundingClientRect();
+      if (rect.width > 0 && rect.height > 0) {
         setTargetRect(prev => {
-          // Hanya render ulang DOM jika pergeseran > 1 piksel (ANTI-FREEZE!)
-          if (!prev || 
-              Math.abs(prev.top - rect.top) > 1 || 
-              Math.abs(prev.left - rect.left) > 1 ||
-              Math.abs(prev.width - rect.width) > 1 ||
-              Math.abs(prev.height - rect.height) > 1) {
-            return {
-              top: rect.top,
-              bottom: rect.bottom,
-              left: rect.left,
-              right: rect.right,
-              width: rect.width,
-              height: rect.height,
-              radius: window.getComputedStyle(el).borderRadius || '16px'
-            };
+          // ANTI-LOOP: Jangan render ulang jika pergerakannya cuma kurang dari 2 piksel (menghemat memori)
+          if (prev && 
+              Math.abs(prev.top - rect.top) < 2 && 
+              Math.abs(prev.left - rect.left) < 2 &&
+              Math.abs(prev.width - rect.width) < 2 &&
+              Math.abs(prev.height - rect.height) < 2) {
+            return prev;
           }
-          return prev;
+          return {
+            top: rect.top,
+            bottom: rect.bottom,
+            left: rect.left,
+            right: rect.right,
+            width: rect.width,
+            height: rect.height,
+            radius: window.getComputedStyle(el).borderRadius || '16px'
+          };
         });
       }
-    };
+    }
+  }, [step, TOUR_STEPS]);
 
-    updatePosition(); // Jalankan sekali saat efek dimuat
-
-    // Pasang tracker untuk scrolling
-    window.addEventListener('scroll', updatePosition, { passive: true });
-    window.addEventListener('resize', updatePosition);
-
-    return () => {
-      window.removeEventListener('scroll', updatePosition);
-      window.removeEventListener('resize', updatePosition);
-    };
-  }, [step, isScanning, TOUR_STEPS]);
-
-  // FUNGSI PENCARI ELEMENT: Menahan render hingga elemen benar-benar siap (Anti-Gagal Load)
+  // Pencari Target: Berhenti otomatis setelah 2 detik
   useEffect(() => {
+     let retries = 0;
      let timerId;
 
      setIsScanning(true);
      setTargetRect(null);
 
-     const checkAndScroll = () => {
-        const targetId = TOUR_STEPS[step]?.target;
-        const el = document.getElementById(targetId);
-
-        if (el) {
-          const rect = el.getBoundingClientRect();
-          if (rect.width > 0 || rect.height > 0) { 
-             clearInterval(timerId);
-             el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-             setIsScanning(false);
-          }
+     const findTarget = () => {
+        const el = document.getElementById(TOUR_STEPS[step]?.target);
+        if (el && el.getBoundingClientRect().width > 0) {
+           el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+           setIsScanning(false);
+           updateRect();
+        } else {
+           if (retries < 20) { // Coba selama 2 detik (20 x 100ms)
+             retries++;
+             timerId = setTimeout(findTarget, 100);
+           } else {
+             handleNextStep(); // Jika objek hilang, lewati ke step berikutnya
+           }
         }
      };
 
-     // Memindai layar tiap 200ms hingga elemen ketemu
-     timerId = setInterval(checkAndScroll, 200);
-     checkAndScroll(); 
+     findTarget();
+     return () => clearTimeout(timerId);
+  }, [step, TOUR_STEPS, updateRect]); // eslint-disable-line react-hooks/exhaustive-deps
 
-     return () => clearInterval(timerId);
-  }, [step, TOUR_STEPS]);
+  // Tracker Super Ringan: Berjalan 10 kali per detik, dihaluskan oleh transisi CSS
+  useEffect(() => {
+    if (isScanning) return;
+    const intervalId = setInterval(updateRect, 100);
+    window.addEventListener('scroll', updateRect, { passive: true });
+    window.addEventListener('resize', updateRect);
+    
+    return () => {
+      clearInterval(intervalId);
+      window.removeEventListener('scroll', updateRect);
+      window.removeEventListener('resize', updateRect);
+    };
+  }, [isScanning, updateRect]);
 
   const handleNextStep = () => {
     setIsClicking(true); 
-    // Animasi klik kursor Game HUD selama 250ms
     setTimeout(() => {
        setIsClicking(false); 
        if (step < TOUR_STEPS.length - 1) {
@@ -301,21 +296,21 @@ const GuidedTour = ({ onComplete, activeTools, lockedTools }) => {
 
   if (!targetRect && !isScanning) return null;
 
-  const isMobile = window.innerWidth < 640;
+  const isMobile = typeof window !== 'undefined' ? window.innerWidth < 640 : false;
   const padding = 8; 
-  // Lebar Pop-Up dibuat jauh lebih ramping agar manis dilihat
+  // Tooltip Ramping Responsif
   const bubbleWidth = isMobile ? Math.min(window.innerWidth - 32, 280) : 320; 
   
-  // Kalkulasi Auto-Flip untuk mencegah Tooltip menutupi elemen target
-  let bTop = '50%';
+  // Auto-Flip Tooltip
+  let bTop = 'auto';
+  let bBottom = 'auto';
   let bLeft = '50%';
-  let transformCalc = 'translate(-50%, -50%)';
+  let transformCalc = 'translate(-50%, 0)';
 
   if (targetRect && !isScanning) {
       const spaceAbove = targetRect.top;
       const spaceBelow = window.innerHeight - targetRect.bottom;
 
-      // Kunci Horizontal agar tidak tumpah ke pinggir layar HP
       let idealLeft = targetRect.left + (targetRect.width / 2);
       if (idealLeft - (bubbleWidth / 2) < 16) idealLeft = (bubbleWidth / 2) + 16;
       if (idealLeft + (bubbleWidth / 2) > window.innerWidth - 16) idealLeft = window.innerWidth - (bubbleWidth / 2) - 16;
@@ -323,10 +318,11 @@ const GuidedTour = ({ onComplete, activeTools, lockedTools }) => {
       bLeft = isMobile ? '50%' : `${idealLeft}px`;
       const xTransform = isMobile ? '-50%' : '-50%';
 
+      // Memastikan kotak tooltip selalu diletakkan di area yang luas
       if (TOUR_STEPS[step].position === 'top') {
          if (spaceAbove > 200) {
-            bTop = `${targetRect.top - padding - 16}px`;
-            transformCalc = `translate(${xTransform}, -100%)`;
+            bBottom = `${window.innerHeight - targetRect.top + padding + 16}px`;
+            transformCalc = `translate(${xTransform}, 0)`;
          } else {
             bTop = `${targetRect.bottom + padding + 16}px`;
             transformCalc = `translate(${xTransform}, 0)`;
@@ -336,14 +332,14 @@ const GuidedTour = ({ onComplete, activeTools, lockedTools }) => {
             bTop = `${targetRect.bottom + padding + 16}px`;
             transformCalc = `translate(${xTransform}, 0)`;
          } else {
-            bTop = `${targetRect.top - padding - 16}px`;
-            transformCalc = `translate(${xTransform}, -100%)`;
+            bBottom = `${window.innerHeight - targetRect.top + padding + 16}px`;
+            transformCalc = `translate(${xTransform}, 0)`;
          }
       }
   }
 
   return (
-    // Z-Index Absolut Tinggi (999999) mengamankan dari Navbar / Footer utama Anda
+    // Z-INDEX TERTINGGI 
     <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 999999 }} onClick={(e) => e.stopPropagation()} className="pointer-events-none">
       
       {isScanning ? (
@@ -355,9 +351,9 @@ const GuidedTour = ({ onComplete, activeTools, lockedTools }) => {
         </div>
       ) : targetRect && (
         <>
-          {/* 1. MASKING JERNIH 100%: Box-shadow raksasa menggelapkan sekeliling, membiarkan tengahnya terang tanpa efek blur */}
+          {/* MASKING JERNIH 100%: Box-shadow raksasa menggelapkan sekeliling, membiarkan tengahnya terang */}
           <div 
-            className="absolute transition-all duration-300 ease-out pointer-events-none"
+            className="absolute transition-all duration-[300ms] ease-out pointer-events-none"
             style={{
               top: targetRect.top - padding,
               left: targetRect.left - padding,
@@ -369,21 +365,21 @@ const GuidedTour = ({ onComplete, activeTools, lockedTools }) => {
           >
              <div className="absolute inset-0 bg-cyan-400/5 animate-pulse rounded-[inherit]"></div>
 
-             {/* Sudut Bidik (HUD) */}
              <div className="absolute top-[-4px] left-[-4px] w-4 h-4 border-t-[2px] border-l-[2px] border-cyan-400 rounded-tl-md"></div>
              <div className="absolute top-[-4px] right-[-4px] w-4 h-4 border-t-[2px] border-r-[2px] border-cyan-400 rounded-tr-md"></div>
              <div className="absolute bottom-[-4px] left-[-4px] w-4 h-4 border-b-[2px] border-l-[2px] border-cyan-400 rounded-bl-md"></div>
              <div className="absolute bottom-[-4px] right-[-4px] w-4 h-4 border-b-[2px] border-r-[2px] border-cyan-400 rounded-br-md"></div>
              
-             {/* KURSOR HUD PENUNJUK (Dengan Animasi Shrink/Klik saat ditekan) */}
+             {/* KURSOR HUD PENUNJUK (Dengan Animasi Shrink/Klik Game saat ditekan) */}
              <div className="absolute -bottom-2 -right-2 sm:-bottom-3 sm:-right-3 z-[999999]">
+                {isClicking && <div className="absolute inset-0 rounded-full border-2 border-cyan-400 animate-ping opacity-70"></div>}
                 <div className={`transition-all duration-200 ${isClicking ? 'scale-[0.7] -translate-x-2 -translate-y-2 drop-shadow-[0_0_20px_rgba(34,211,238,1)] brightness-[1.5] rotate-[-15deg]' : 'animate-hud-pointer'}`}>
                    <Icons.PointerCursor className="w-8 h-8 sm:w-10 sm:h-10 text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.8)]" />
                 </div>
              </div>
           </div>
 
-          {/* 2. BUBBLE KOTAK TEKS (Lebih Ramping & Elegan) */}
+          {/* BUBBLE KOTAK TEKS */}
           <div 
             className="bg-[#0f172a] border border-cyan-500/50 shadow-[0_20px_40px_rgba(0,0,0,0.5)] rounded-[20px] p-4 sm:p-5 pointer-events-auto"
             style={{
@@ -391,8 +387,9 @@ const GuidedTour = ({ onComplete, activeTools, lockedTools }) => {
               width: `${bubbleWidth}px`,
               left: bLeft,
               top: bTop,
+              bottom: bBottom,
               transform: transformCalc,
-              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+              transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
             }}
           >
              <div className="relative z-10">
@@ -401,7 +398,7 @@ const GuidedTour = ({ onComplete, activeTools, lockedTools }) => {
                     <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
                     Panduan {step + 1} / {TOUR_STEPS.length}
                  </span>
-                 <button onClick={onComplete} className="text-slate-500 hover:text-white transition-colors bg-white/5 hover:bg-white/10 p-1 rounded-full">
+                 <button onClick={onComplete} className="text-slate-500 hover:text-white transition-colors bg-white/5 hover:bg-white/10 p-1.5 rounded-full">
                     <Icons.X className="w-3 h-3" />
                  </button>
                </div>
@@ -430,8 +427,6 @@ const GuidedTour = ({ onComplete, activeTools, lockedTools }) => {
 export default function ToolkitPage() {
   const [activeCat, setActiveCat] = useState('Semua');
   const [isSecurityModalOpen, setIsSecurityModalOpen] = useState(false);
-  
-  // STATE MENGATUR ALUR: 'idle' -> 'welcome' -> 'tour'
   const [tourState, setTourState] = useState('idle');
   
   const categories = useMemo(() => ['Semua', ...new Set(toolkits.map(tool => tool.category))], []);
@@ -444,13 +439,11 @@ export default function ToolkitPage() {
   const lockedToolsRendered = useMemo(() => filteredTools.filter(t => t.status !== 'active'), [filteredTools]);
 
   useEffect(() => {
-    // Pada saat halaman dimuat, panggil "Welcome Modal" di tengah layar
-    // Ini mengunci layar agar TIDAK otomatis ter-scroll turun ke bawah!
     if ('scrollRestoration' in window.history) {
       window.history.scrollRestoration = 'manual';
     }
     
-    const hasSeenWelcome = localStorage.getItem('portfolio_welcome_v4');
+    const hasSeenWelcome = localStorage.getItem('portfolio_welcome_v5');
     if (!hasSeenWelcome) {
        setTourState('welcome');
     }
@@ -463,7 +456,7 @@ export default function ToolkitPage() {
 
   const handleCompleteTour = () => {
     setTourState('idle');
-    localStorage.setItem('portfolio_welcome_v4', 'true');
+    localStorage.setItem('portfolio_welcome_v5', 'true');
     window.scrollTo({ top: 0, behavior: 'smooth' }); 
   };
 
@@ -475,7 +468,7 @@ export default function ToolkitPage() {
         <div className="absolute bottom-[-10%] right-[-10%] w-[80vw] h-[80vw] sm:w-[50vw] sm:h-[50vw] bg-purple-600/10 rounded-full blur-[120px] sm:blur-[150px] mix-blend-screen"></div>
       </div>
 
-      {/* CONTAINER DIPERBAIKI: max-w-7xl px-4 sm:px-6 lg:px-8 Menyesuaikan presisi dengan Navbar standar */}
+      {/* CONTAINER DIPERBAIKI: max-w-7xl presisi dengan Hamburger Navbar Global Tailwind */}
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 sm:pt-28 lg:pt-32 pb-0 flex flex-col flex-grow">
         
         <header className="mb-6 sm:mb-8 lg:mb-12 animate-fade-in-up">
@@ -488,7 +481,7 @@ export default function ToolkitPage() {
                 onClick={() => { window.scrollTo({top: 0, behavior: 'smooth'}); handleStartTour(); }}
               >
                 <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse-fast"></div>
-                <span className="text-[10px] sm:text-[11px] font-bold tracking-wide text-slate-300 uppercase">Mulai Panduan</span>
+                <span className="text-[10px] sm:text-[11px] font-bold tracking-wide text-slate-300 uppercase">Mulai Ulang Panduan</span>
               </button>
               
               <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-black text-white tracking-tight mb-3 sm:mb-4 leading-[1.1]">
@@ -528,8 +521,9 @@ export default function ToolkitPage() {
           </div>
         </div>
 
+        {/* LAYOUT MOBILE 1 KOLOM AGAR RAPI (TIDAK BERDESAKAN) */}
         <div className="animate-fade-in-up w-full" style={{ animationDelay: '0.2s' }}>
-          <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 pb-0 mb-0">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 pb-0 mb-0">
             {filteredTools.map((tool) => {
                return <UnifiedCard 
                   key={tool.id} 
@@ -556,7 +550,7 @@ export default function ToolkitPage() {
            
            <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-3 sm:mb-4 tracking-tight">Karya Visual Terintegrasi</h3>
            <p className="text-slate-400 text-xs sm:text-sm md:text-base max-w-2xl mb-8 sm:mb-10 leading-relaxed px-4">
-             Sebagai seorang <strong>Graphic Designer & Community Developer</strong>, antarmuka ini saya bangun dengan sangat teliti. Seluruh utilitas beroperasi secara <strong>Client-Side (Tanpa Backend)</strong>, memastikan privasi data Anda secara mutlak.
+             Sebagai seorang <strong>Graphic Designer & Community Developer</strong>, antarmuka ini saya bangun dengan sangat teliti. Seluruh utilitas beroperasi secara <strong>Client-Side (Tanpa Backend)</strong>, memastikan keamanan privasi data Anda secara mutlak.
            </p>
            
            <a href="mailto:rafli161102@gmail.com" className="group flex items-center gap-2 px-8 py-3.5 bg-white text-black hover:bg-slate-200 rounded-full text-xs sm:text-sm font-bold transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(255,255,255,0.1)]">
@@ -567,7 +561,7 @@ export default function ToolkitPage() {
 
       </div>
 
-      {/* MODAL SELAMAT DATANG (MENCEGAH SCROLL OTOMATIS KE BAWAH SAAT REFRESH) */}
+      {/* MODAL SELAMAT DATANG (MENCEGAH BUG SCROLL-DOWN) */}
       {tourState === 'welcome' && (
         <div className="fixed inset-0 z-[999999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in touch-none">
            <div className="bg-[#0F1117] border border-cyan-500/30 p-6 rounded-3xl max-w-[320px] w-full shadow-[0_0_60px_rgba(34,211,238,0.15)] text-center relative overflow-hidden ring-1 ring-white/5">
@@ -580,7 +574,7 @@ export default function ToolkitPage() {
                  Sistem ini dirancang khusus untuk mempermudah proses kreatif Anda. Mari ikuti panduan singkat untuk mengenal fitur-fiturnya.
               </p>
               <div className="flex gap-3">
-                 <button onClick={() => { setTourState('idle'); localStorage.setItem('portfolio_welcome_v2', 'true'); }} className="flex-1 py-2.5 rounded-full border border-white/10 text-slate-300 text-[11px] font-bold hover:bg-white/5 transition-colors">
+                 <button onClick={() => { setTourState('idle'); localStorage.setItem('portfolio_welcome_v5', 'true'); }} className="flex-1 py-2.5 rounded-full border border-white/10 text-slate-300 text-[11px] font-bold hover:bg-white/5 transition-colors">
                    Lewati
                  </button>
                  <button onClick={handleStartTour} className="flex-1 py-2.5 rounded-full bg-cyan-500 text-black text-[11px] font-bold hover:bg-cyan-400 transition-colors shadow-[0_0_15px_rgba(34,211,238,0.4)] active:scale-95">
@@ -593,10 +587,10 @@ export default function ToolkitPage() {
 
       {/* JENDELA INFO KEAMANAN (Dengan overflow-y-auto untuk layar HP kecil) */}
       {isSecurityModalOpen && (
-        <div className="fixed inset-0 z-[999999] flex items-center justify-center p-4 sm:p-6 bg-[#000000]/80 backdrop-blur-sm animate-fade-in overflow-y-auto">
+        <div className="fixed inset-0 z-[999999] flex items-center justify-center p-4 sm:p-6 bg-[#000000]/80 backdrop-blur-sm animate-fade-in">
            <div className="absolute inset-0 cursor-pointer" onClick={() => setIsSecurityModalOpen(false)}></div>
            
-           <div className="relative w-full max-w-md my-auto bg-[#0a0a0a]/95 backdrop-blur-2xl border border-white/10 shadow-[0_0_80px_rgba(0,0,0,0.8)] rounded-[24px] sm:rounded-[32px] z-10 flex flex-col mt-10 mb-10">
+           <div className="relative w-full max-w-md my-auto bg-[#0a0a0a]/95 backdrop-blur-2xl border border-white/10 shadow-[0_0_80px_rgba(0,0,0,0.8)] rounded-[24px] sm:rounded-[32px] z-10 flex flex-col max-h-[90vh]">
               
               <div className="p-4 sm:p-6 text-center border-b border-white/5 relative shrink-0">
                  <button onClick={() => setIsSecurityModalOpen(false)} className="absolute top-4 right-4 sm:top-6 sm:right-6 text-slate-500 hover:text-white transition-colors bg-white/5 hover:bg-white/10 p-1.5 sm:p-2 rounded-full">
@@ -610,7 +604,7 @@ export default function ToolkitPage() {
                  <p className="hidden sm:block text-[11px] sm:text-sm text-slate-400 mt-1 sm:mt-2 font-medium">100% Aman. Nol Data di Server.</p>
               </div>
 
-              <div className="p-4 sm:p-6 space-y-3 sm:space-y-5 bg-white/[0.02] overflow-y-auto">
+              <div className="p-4 sm:p-6 space-y-3 sm:space-y-5 bg-white/[0.02] overflow-y-auto no-scrollbar">
                  
                  <div className="flex gap-3 items-start">
                     <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center shrink-0 text-emerald-400 font-bold text-[10px] sm:text-xs">1</div>
