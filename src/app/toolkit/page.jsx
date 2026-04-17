@@ -563,7 +563,7 @@ export default function ToolkitPage() {
              Sebagai seorang <strong>Graphic Designer & Community Developer</strong>, antarmuka ini saya bangun dengan sangat teliti. Seluruh utilitas beroperasi secara <strong>Client-Side (Tanpa Backend)</strong>, memastikan keamanan privasi data Anda secara mutlak.
            </p>
            
-           <a href="mailto:rafli161102@gmail.com" className="group flex items-center gap-2 px-8 py-3.5 bg-white text-black hover:bg-slate-200 rounded-full text-xs sm:text-sm font-bold transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(255,255,255,0.1)]">
+           <a href="mailto:hello@mrr.my.id" className="group flex items-center gap-2 px-8 py-3.5 bg-white text-black hover:bg-slate-200 rounded-full text-xs sm:text-sm font-bold transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(255,255,255,0.1)]">
              Mari Berkolaborasi
              <Icons.ArrowUpRight className="w-4 h-4 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-transform" />
            </a>
