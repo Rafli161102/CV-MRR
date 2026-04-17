@@ -1,214 +1,620 @@
 "use client";
 
-import React, { useState } from 'react';
-import Link from 'next/link';
-import { toolkits } from '../../data/toolkitDB';
+import React, { useState, useEffect, useCallback } from 'react';
 
-// =========================================================================
-// PREMIUM HUD ICONS
-// =========================================================================
-const AppIcons = {
-  Sparkles: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-3.5 h-3.5 text-cyan-400 animate-pulse"><path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" /></svg>,
-  ArrowRight: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4"><path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg>,
-  Lock: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-3.5 h-3.5"><path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg>,
-  Shield: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 text-emerald-400"><path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296a3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043a3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296a3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043a3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z" /></svg>
+// ============================================================================
+// KUMPULAN IKON SVG PREMIUM
+// ============================================================================
+const Icons = {
+  Document: (p) => <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...p}><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" /></svg>,
+  Network: (p) => <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...p}><path strokeLinecap="round" strokeLinejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" /></svg>,
+  Palette: (p) => <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...p}><path strokeLinecap="round" strokeLinejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.876-5.814a1.151 1.151 0 00-1.597-1.597L14.146 6.32a15.996 15.996 0 00-4.649 4.763m3.42 3.42a6.776 6.776 0 00-3.42-3.42" /></svg>,
+  Signature: (p) => <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...p}><path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" /></svg>,
+  Grid: (p) => <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...p}><path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" /></svg>,
+  Receipt: (p) => <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...p}><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m6.75 12l-3-3m0 0l-3 3m3-3v6m-1.5-15H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" /></svg>,
+  Ratio: (p) => <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...p}><path strokeLinecap="round" strokeLinejoin="round" d="M7.5 14.25v2.25m3-4.5v4.5m3-6.75v6.75m3-9v9M6 20.25h12A2.25 2.25 0 0020.25 18V6A2.25 2.25 0 0018 3.75H6A2.25 2.25 0 003.75 6v12A2.25 2.25 0 006 20.25z" /></svg>,
+  Layers: (p) => <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...p}><path strokeLinecap="round" strokeLinejoin="round" d="M6 13.5V3.75m0 9.75a1.5 1.5 0 010 3m0-3a1.5 1.5 0 000 3m0 3.75V16.5m12-3V3.75m0 9.75a1.5 1.5 0 010 3m0-3a1.5 1.5 0 000 3m0 3.75V16.5m-6-9V3.75m0 3.75a1.5 1.5 0 010 3m0-3a1.5 1.5 0 000 3m0 9.75V10.5" /></svg>,
+  Badge: (p) => <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...p}><path strokeLinecap="round" strokeLinejoin="round" d="M15 11.25l1.5 1.5.75-.75V8.758l2.276-.61a3 3 0 10-3.675-3.675l-.61 2.277H12l-.75.75 1.5 1.5M15 11.25l-8.47 8.47c-.34.34-.8.53-1.28.53s-.94-.19-1.28-.53l-.97-.97c-.34-.34-.53-.8-.53-1.28s.19-.94.53-1.28l8.47-8.47m0 0l2.5-2.5" /></svg>,
+  Transform: (p) => <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...p}><path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" /></svg>,
+  Typography: (p) => <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...p}><path strokeLinecap="round" strokeLinejoin="round" d="M10.5 21l5.25-11.25L21 21m-9-3h7.5M3 5.621a48.474 48.474 0 016-.371m0 0c1.12 0 2.233.038 3.334.114M9 5.25V3m3.334 2.364C11.176 10.658 7.69 15.08 3 17.502m9.334-12.138c.896.061 1.785.147 2.666.257m-4.589 8.495a18.023 18.023 0 01-3.827-5.802" /></svg>,
+  Brackets: (p) => <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...p}><path strokeLinecap="round" strokeLinejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5" /></svg>,
+  Markdown: (p) => <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...p}><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25M9 16.5v-6h3v6m-3-3h3m-3-3h-3m10.5-3l-3 3m0 0l-3-3m3 3v-6" /></svg>,
+  Key: (p) => <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...p}><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z" /></svg>,
+  ArrowRight: (p) => <svg fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" {...p}><path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg>,
+  Lock: (p) => <svg fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" {...p}><path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg>,
+  ShieldCheck: (p) => <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...p}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296a3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043a3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296a3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043a3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z" /></svg>,
+  X: (p) => <svg fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" {...p}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+};
+
+// ============================================================================
+// DATA MASTER TOOLKIT
+// ============================================================================
+export const toolkits = [
+  {
+    id: "cv-maker", title: "ATS CV & Cover Letter", description: "Buat Curriculum Vitae dan Surat Lamaran Kerja standar mesin HRD.",
+    iconName: "Document", link: "/cv-maker", status: "active", category: "Career & Freelance", theme: "purple",
+    hoverAnim: "hover-float", clickAnim: "click-paper-fly" 
+  },
+  {
+    id: "css-studio", title: "CSS Visual Studio", description: "Generator visual All-in-One untuk efek Glassmorphism, Neumorphism, dll.",
+    iconName: "Layers", link: "/css-studio", status: "active", category: "Web Developer", theme: "cyan",
+    hoverAnim: "hover-pulse-soft", clickAnim: "click-layer-pop" 
+  },
+  {
+    id: "wa-generator", title: "Premium WA & QR Link", description: "Buat tautan otomatis WhatsApp dan ubah menjadi desain QR Code.",
+    iconName: "Network", link: "/wa-generator", status: "coming_soon", category: "Community Tool", theme: "emerald",
+    hoverAnim: "hover-connect", clickAnim: "click-send-msg" 
+  },
+  {
+    id: "color-extractor", title: "Brand Color Extractor", description: "Unggah gambar referensi dan ekstrak 5 palet warna dominan.",
+    iconName: "Palette", link: "/color-extractor", status: "coming_soon", category: "Design Utility", theme: "pink",
+    hoverAnim: "hover-rainbow", clickAnim: "click-color-splash" 
+  },
+  {
+    id: "email-signature", title: "Email Signature Builder", description: "Rakit desain tanda tangan email HTML profesional yang elegan.",
+    iconName: "Signature", link: "/email-signature", status: "coming_soon", category: "Career & Freelance", theme: "orange",
+    hoverAnim: "hover-draw", clickAnim: "click-sign-done" 
+  },
+  {
+    id: "ig-splitter", title: "Seamless IG Splitter", description: "Potong gambar panorama memanjang menjadi 2-10 kotak presisi.",
+    iconName: "Grid", link: "/ig-splitter", status: "coming_soon", category: "Design Utility", theme: "rose",
+    hoverAnim: "hover-split", clickAnim: "click-slice-apart" 
+  },
+  {
+    id: "freelance-invoice", title: "Freelance Rate & Invoice", description: "Kalkulator pintar harga per-jam dan generator dokumen Invoice PDF.",
+    iconName: "Receipt", link: "/freelance-invoice", status: "active", category: "Career & Freelance", theme: "green",
+    hoverAnim: "hover-wiggle", clickAnim: "click-receipt-print" 
+  },
+  {
+    id: "golden-ratio", title: "Golden Ratio Calculator", description: "Dapatkan pembagian proporsi matematis (1:1.618) untuk layout.",
+    iconName: "Ratio", link: "/golden-ratio", status: "coming_soon", category: "Design Utility", theme: "yellow",
+    hoverAnim: "hover-spin-slow", clickAnim: "click-spiral-in" 
+  },
+  {
+    id: "event-ticket", title: "Event Badge Generator", description: "Render otomatis daftar peserta menjadi desain Name Badge.",
+    iconName: "Badge", link: "/event-ticket", status: "coming_soon", category: "Community Tool", theme: "blue",
+    hoverAnim: "hover-badge-swing", clickAnim: "click-stamp-approve" 
+  },
+  {
+    id: "image-converter", title: "Fast Image to WebP", description: "Kompres dan ubah format gambar (JPG/PNG) menjadi WebP.",
+    iconName: "Transform", link: "/image-converter", status: "coming_soon", category: "Web Developer", theme: "indigo",
+    hoverAnim: "hover-flip", clickAnim: "click-compress-poof" 
+  },
+  {
+    id: "type-scale", title: "Typographic Scale", description: "Dapatkan hirarki ukuran font (H1, H2, Paragraf) yang harmonis.",
+    iconName: "Typography", link: "/type-scale", status: "coming_soon", category: "Design Utility", theme: "slate",
+    hoverAnim: "hover-typewriter", clickAnim: "click-text-grow" 
+  },
+  {
+    id: "json-visual", title: "JSON Visualizer Tree", description: "Format dan visualisasikan data JSON rumit dalam bentuk cabang diagram.",
+    iconName: "Brackets", link: "/json-visual", status: "coming_soon", category: "Web Developer", theme: "red",
+    hoverAnim: "hover-expand", clickAnim: "click-node-branch" 
+  },
+  {
+    id: "markdown-pad", title: "Live Markdown Pad", description: "Editor teks Markdown dengan layar ganda (mengetik dan melihat hasil).",
+    iconName: "Markdown", link: "/markdown-pad", status: "coming_soon", category: "Career & Freelance", theme: "teal",
+    hoverAnim: "hover-slide-up", clickAnim: "click-page-turn" 
+  },
+  {
+    id: "jwt-decoder", title: "Offline JWT Decoder", description: "Bongkar dan lihat isi data dari JSON Web Token (JWT) secara aman.",
+    iconName: "Key", link: "/jwt-decoder", status: "coming_soon", category: "Web Developer", theme: "yellow",
+    hoverAnim: "hover-unlock", clickAnim: "click-key-turn" 
+  }
+];
+
+const toolThemes = {
+  blue: { bg: 'from-blue-500/20 to-indigo-500/20', iconBg: 'from-blue-500 to-indigo-600', glow: 'group-hover:shadow-[0_0_30px_-5px_rgba(59,130,246,0.4)]', text: 'text-blue-400', border: 'group-hover:border-blue-500/40' },
+  purple: { bg: 'from-purple-500/20 to-fuchsia-500/20', iconBg: 'from-purple-500 to-fuchsia-600', glow: 'group-hover:shadow-[0_0_30px_-5px_rgba(168,85,247,0.4)]', text: 'text-purple-400', border: 'group-hover:border-purple-500/40' },
+  green: { bg: 'from-emerald-500/20 to-teal-500/20', iconBg: 'from-emerald-500 to-teal-600', glow: 'group-hover:shadow-[0_0_30px_-5px_rgba(16,185,129,0.4)]', text: 'text-emerald-400', border: 'group-hover:border-emerald-500/40' },
+  orange: { bg: 'from-orange-500/20 to-amber-500/20', iconBg: 'from-orange-500 to-amber-600', glow: 'group-hover:shadow-[0_0_30px_-5px_rgba(249,115,22,0.4)]', text: 'text-orange-400', border: 'group-hover:border-orange-500/40' },
+  rose: { bg: 'from-rose-500/20 to-pink-500/20', iconBg: 'from-rose-500 to-pink-600', glow: 'group-hover:shadow-[0_0_30px_-5px_rgba(244,63,94,0.4)]', text: 'text-rose-400', border: 'group-hover:border-rose-500/40' },
+  yellow: { bg: 'from-yellow-400/20 to-amber-400/20', iconBg: 'from-yellow-400 to-amber-500', glow: 'group-hover:shadow-[0_0_30px_-5px_rgba(250,204,21,0.4)]', text: 'text-yellow-400', border: 'group-hover:border-yellow-500/40' },
+  cyan: { bg: 'from-cyan-500/20 to-sky-500/20', iconBg: 'from-cyan-500 to-sky-600', glow: 'group-hover:shadow-[0_0_30px_-5px_rgba(6,182,212,0.4)]', text: 'text-cyan-400', border: 'group-hover:border-cyan-500/40' },
+  pink: { bg: 'from-pink-500/20 to-rose-400/20', iconBg: 'from-pink-500 to-rose-500', glow: 'group-hover:shadow-[0_0_30px_-5px_rgba(236,72,153,0.4)]', text: 'text-pink-400', border: 'group-hover:border-pink-500/40' },
+  red: { bg: 'from-red-500/20 to-rose-600/20', iconBg: 'from-red-500 to-rose-600', glow: 'group-hover:shadow-[0_0_30px_-5px_rgba(239,68,68,0.4)]', text: 'text-red-400', border: 'group-hover:border-red-500/40' },
+  indigo: { bg: 'from-indigo-500/20 to-blue-600/20', iconBg: 'from-indigo-500 to-blue-600', glow: 'group-hover:shadow-[0_0_30px_-5px_rgba(99,102,241,0.4)]', text: 'text-indigo-400', border: 'group-hover:border-indigo-500/40' },
+  teal: { bg: 'from-teal-500/20 to-cyan-600/20', iconBg: 'from-teal-500 to-cyan-600', glow: 'group-hover:shadow-[0_0_30px_-5px_rgba(20,184,166,0.4)]', text: 'text-teal-400', border: 'group-hover:border-teal-500/40' },
+  emerald: { bg: 'from-emerald-400/20 to-green-500/20', iconBg: 'from-emerald-400 to-green-500', glow: 'group-hover:shadow-[0_0_30px_-5px_rgba(52,211,153,0.4)]', text: 'text-emerald-400', border: 'group-hover:border-emerald-400/40' },
+  slate: { bg: 'from-slate-500/20 to-gray-500/20', iconBg: 'from-slate-500 to-gray-600', glow: 'group-hover:shadow-[0_0_30px_-5px_rgba(100,116,139,0.4)]', text: 'text-slate-400', border: 'group-hover:border-slate-500/40' },
 };
 
 // =========================================================================
-// COMPONENT: UNIFIED MODULE CARD 
+// KOMPONEN: KARTU MODUL
 // =========================================================================
-const UnifiedCard = ({ tool }) => {
-  const isActive = tool.status === 'active';
-  const isFlagship = tool.id === 'css-studio';
-  const CardWrapper = isActive ? Link : 'div';
-  const hrefProp = isActive ? { href: tool.link } : {};
+const UnifiedCard = ({ tool, cardId }) => {
+  const [isClicked, setIsClicked] = useState(false);
+  const isActive = tool.status === 'active'; 
+  const theme = toolThemes[tool.theme] || toolThemes.blue;
+  const IconComponent = Icons[tool.iconName] || Icons.Document;
+
+  const handleClick = (e) => {
+    e.preventDefault(); 
+    setIsClicked(true); 
+    setTimeout(() => {
+      setIsClicked(false);
+      if(isActive) {
+        console.log(`Pindah ke: ${tool.link}`);
+      }
+    }, 600);
+  };
 
   return (
-    <CardWrapper 
-      {...hrefProp} 
-      className={`group relative flex items-center gap-4 p-4 transition-all duration-300 rounded-2xl ${
-        isActive 
-          ? isFlagship 
-            ? 'bg-[#0a101a] border border-cyan-500/30 hover:border-cyan-400/60 shadow-[0_0_20px_rgba(6,182,212,0.1)] active:scale-[0.98]' 
-            : 'bg-[#0a0a0a] border border-white/5 hover:bg-[#111] hover:border-white/20 active:scale-[0.98]'
-          : 'bg-[#050505] border border-white/5 opacity-50 grayscale cursor-not-allowed'
-      }`}
+    <div 
+      id={cardId} 
+      onClick={handleClick}
+      className={`group relative flex flex-col justify-between p-[26px] transition-all duration-500 rounded-[26px] overflow-hidden min-h-[160px] lg:aspect-[1.618/1]
+        ${isActive 
+          ? `bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] backdrop-blur-xl ${theme.border} ${theme.glow} hover:-translate-y-1 cursor-pointer` 
+          : `bg-white/[0.01] border border-white/[0.02] backdrop-blur-md opacity-70 grayscale-[50%] ${theme.border} hover:grayscale-0 hover:opacity-100 hover:-translate-y-0.5 transition-all cursor-pointer`
+      } ${isClicked ? 'scale-[0.96] border-white/20' : ''}`}
     >
-      <div className={`w-12 h-12 sm:w-14 sm:h-14 shrink-0 rounded-xl flex items-center justify-center transition-all duration-300 shadow-inner ${
-        isActive 
-          ? isFlagship 
-            ? 'bg-gradient-to-tr from-cyan-600 to-blue-600 text-white group-hover:rotate-3 group-hover:scale-105' 
-            : 'bg-gradient-to-tr from-slate-800 to-slate-900 text-cyan-400 border border-white/5 group-hover:text-cyan-300 group-hover:border-white/10'
-          : 'bg-[#111] text-slate-500 border border-white/5'
-      }`}>
-         <div className="flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 z-10 [&>svg]:w-full [&>svg]:h-full [&>svg]:stroke-[1.5] [&>svg]:fill-none [&>path]:stroke-current">
-            {tool.icon}
-         </div>
-      </div>
-      
-      <div className="flex-1 min-w-0 pr-2">
-        <div className="flex items-center gap-2 mb-1">
-          <h3 className={`text-sm sm:text-base font-bold tracking-tight truncate ${isActive ? 'text-white' : 'text-slate-500'}`}>
-            {tool.title}
-          </h3>
-          {isFlagship && (
-             <div className="flex items-center gap-1 bg-cyan-500/10 px-1.5 py-[2px] border border-cyan-500/20 rounded-sm">
-                 <span className="text-[7px] font-black text-cyan-400 tracking-[0.2em]">CORE</span>
-             </div>
+      <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl ${theme.bg} rounded-full blur-[40px] opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none`}></div>
+
+      <div className="flex items-start justify-between mb-6 relative z-10">
+        <div className={`w-[58px] h-[58px] rounded-[16px] flex items-center justify-center transition-all duration-500 shadow-lg 
+          ${!isClicked ? `group-hover:${tool.hoverAnim}` : ''} 
+          ${isClicked && tool.clickAnim ? tool.clickAnim : ''} 
+          ${isActive ? `bg-gradient-to-tr ${theme.iconBg} text-white` : `bg-white/5 text-slate-400 border border-white/10 group-hover:bg-gradient-to-tr group-hover:${theme.iconBg} group-hover:text-white group-hover:border-transparent`}
+        `}>
+           <IconComponent className="w-[36px] h-[36px]" />
+        </div>
+
+        <div className="shrink-0">
+          {isActive ? (
+            <div className={`flex items-center justify-center w-8 h-8 rounded-full transition-all duration-300 bg-white/5 text-slate-400 group-hover:bg-white/10 ${theme.text} ${isClicked ? 'translate-x-2 opacity-0' : ''}`}>
+              <Icons.ArrowRight className="w-4 h-4" />
+            </div>
+          ) : (
+            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-black/40 border border-white/5 rounded-full backdrop-blur-md transition-all group-hover:bg-white/5">
+               <Icons.Lock className="w-[14px] h-[14px] text-slate-400 group-hover:text-white" />
+               <span className="text-[10px] font-bold tracking-widest text-slate-400 group-hover:text-white transition-colors">SOON</span>
+            </div>
           )}
         </div>
-        <p className="text-[10px] sm:text-xs text-slate-400 font-medium line-clamp-1 group-hover:text-slate-300 transition-colors">
+      </div>
+      
+      <div className="relative z-10 flex-1 flex flex-col justify-end">
+        <h3 className={`text-[20px] font-bold tracking-tight mb-2 transition-colors ${isActive ? 'text-slate-100 group-hover:text-white' : 'text-slate-400 group-hover:text-slate-200'}`}>
+          {tool.title}
+        </h3>
+        <p className="text-[13px] text-slate-400/80 font-medium line-clamp-2 leading-relaxed group-hover:text-slate-400 transition-colors">
           {tool.description}
         </p>
       </div>
-
-      <div className="shrink-0">
-        {isActive ? (
-          <div className={`flex items-center justify-center w-8 h-8 rounded-full transition-all duration-300 ${
-            isFlagship 
-            ? 'bg-cyan-500/10 text-cyan-400 group-hover:bg-cyan-500 group-hover:text-black' 
-            : 'text-slate-500 group-hover:text-cyan-400 group-hover:bg-cyan-500/10'
-          }`}>
-            <AppIcons.ArrowRight />
-          </div>
-        ) : (
-          <div className="flex items-center gap-1.5 px-2 py-1 bg-black border border-white/5 rounded-md shadow-inner">
-             <AppIcons.Lock />
-             <span className="text-[8px] font-black tracking-[0.2em] text-slate-500">LOCK</span>
-          </div>
-        )}
-      </div>
-    </CardWrapper>
+    </div>
   );
 };
 
-export default function ToolkitPage() {
-  const categories = ['All', ...new Set(toolkits.map(tool => tool.category))];
-  const [activeCat, setActiveCat] = useState('All');
-  const [isSecurityModalOpen, setIsSecurityModalOpen] = useState(false);
+// =========================================================================
+// DATA LANGKAH TUTORIAL (MENGGUNAKAN JSX UNTUK FORMATTING)
+// =========================================================================
+const TOUR_STEPS = [
+  { 
+    target: 'tut-start', 
+    title: 'Mulai dari Sini', 
+    text: <>Ini adalah meja kerja digital Anda. <br/><br/>Kapanpun Anda merasa kebingungan, klik tombol <strong>"Mulai Ulang Panduan"</strong> ini untuk memanggil saya kembali.</>, 
+    position: 'bottom' 
+  },
+  { 
+    target: 'tut-filter', 
+    title: 'Pencarian Cepat', 
+    text: <>Gunakan tombol ini untuk menyaring alat. <br/><br/>Contoh: Klik <strong>"Design Utility"</strong> jika Anda hanya ingin melihat alat untuk keperluan memotong gambar atau mengatur warna.</>, 
+    position: 'bottom' 
+  },
+  { 
+    target: 'tut-active', 
+    title: 'Alat Siap Pakai', 
+    text: <><ul className="list-disc pl-4 space-y-1"><li>Berwarna cerah</li><li>Memiliki ikon panah di kanan bawah</li><li>Bisa langsung diklik sekarang juga!</li></ul><br/>Ini berarti alat tersebut sudah 100% siap membantu pekerjaan Anda.</>, 
+    position: 'bottom' 
+  },
+  { 
+    target: 'tut-locked', 
+    title: 'Segera Hadir', 
+    text: <>Kartu abu-abu dengan label <strong>"SOON"</strong> (Segera) berarti alatnya masih dalam tahap perakitan oleh tim pemrogram kami. <br/><br/>Harap bersabar ya!</>, 
+    position: 'top' 
+  },
+  { 
+    target: 'tut-security', 
+    title: 'Privasi Terjamin', 
+    text: <>Sangat penting: Semua alat di website ini bekerja langsung di dalam memori komputer Anda sendiri.<br/><br/>Kami <strong>tidak pernah mencuri atau mengirim data sensitif Anda</strong> ke server internet manapun.</>, 
+    position: 'bottom' 
+  }
+];
+
+// =========================================================================
+// KOMPONEN: BUBBLE TUTORIAL DENGAN SVG SPOTLIGHT MASKING
+// =========================================================================
+const GuidedTour = ({ onComplete }) => {
+  const [step, setStep] = useState(0);
+  const [targetRect, setTargetRect] = useState(null);
+
+  const recalculateRect = useCallback(() => {
+    const targetId = TOUR_STEPS[step].target;
+    const el = document.getElementById(targetId);
+    
+    if (el) {
+      const newRect = el.getBoundingClientRect();
+      setTargetRect({
+        top: newRect.top,
+        bottom: newRect.bottom,
+        left: newRect.left,
+        right: newRect.right,
+        width: newRect.width,
+        height: newRect.height,
+        radius: window.getComputedStyle(el).borderRadius || '16px'
+      });
+    } else {
+      setTargetRect(null);
+    }
+  }, [step]);
+
+  useEffect(() => {
+    const targetId = TOUR_STEPS[step].target;
+    const el = document.getElementById(targetId);
+
+    if (el) {
+      const y = el.getBoundingClientRect().top + window.scrollY - (window.innerHeight / 2) + (el.getBoundingClientRect().height / 2);
+      window.scrollTo({ top: y, behavior: 'smooth' });
+
+      const timer = setTimeout(recalculateRect, 400); 
+      return () => clearTimeout(timer);
+    } else {
+      if (step < TOUR_STEPS.length - 1) {
+        setStep(s => s + 1);
+      } else {
+        onComplete();
+      }
+    }
+  }, [step, recalculateRect, onComplete]);
+
+  useEffect(() => {
+    window.addEventListener('resize', recalculateRect);
+    window.addEventListener('scroll', recalculateRect);
+    return () => {
+      window.removeEventListener('resize', recalculateRect);
+      window.removeEventListener('scroll', recalculateRect);
+    };
+  }, [recalculateRect]);
+
+  if (!targetRect) return null;
+
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
   
-  const filteredTools = activeCat === 'All' 
-    ? [...toolkits].sort((a, b) => (a.id === 'css-studio' ? -1 : b.id === 'css-studio' ? 1 : 0))
-    : toolkits.filter(tool => tool.category === activeCat);
+  let bubbleStyle = {
+    position: 'absolute',
+    left: isMobile ? '50%' : `${targetRect.left + (targetRect.width / 2)}px`,
+    transform: isMobile ? 'translateX(-50%)' : 'translateX(-50%)',
+    zIndex: 210,
+    width: '90%',
+    maxWidth: '340px'
+  };
+
+  const spaceBelow = window.innerHeight - targetRect.bottom;
+  const spaceAbove = targetRect.top;
+  const prefPosition = TOUR_STEPS[step].position;
+
+  if (prefPosition === 'bottom' && spaceBelow < 250 && spaceAbove > 250) {
+     bubbleStyle.bottom = `${window.innerHeight - targetRect.top + 20}px`; 
+  } else if (prefPosition === 'top' && spaceAbove < 250 && spaceBelow > 250) {
+     bubbleStyle.top = `${targetRect.bottom + 20}px`; 
+  } else if (prefPosition === 'top') {
+     bubbleStyle.bottom = `${window.innerHeight - targetRect.top + 20}px`;
+  } else {
+     bubbleStyle.top = `${targetRect.bottom + 20}px`;
+  }
 
   return (
-    // FIX PWA: Hapus pb-[calc(...)] yang rawan gagal compile, gunakan tinggi standar
-    <div className="min-h-screen bg-[#030712] text-slate-200 font-sans pt-4 relative selection:bg-cyan-500/30 selection:text-cyan-300">
-      
-      <div className="fixed top-[-10%] right-[-10%] w-[70vw] h-[70vw] bg-cyan-600/10 rounded-full blur-[120px] pointer-events-none z-0"></div>
-
-      <div className="max-w-2xl mx-auto px-6 relative z-10">
+    <div className="fixed inset-0 z-[200]">
+      <svg width="100%" height="100%" className="absolute inset-0 pointer-events-none">
+        <defs>
+          <mask id="spotlight">
+            <rect width="100%" height="100%" fill="white" />
+            <rect
+              x={targetRect.left - 10}
+              y={targetRect.top - 10}
+              width={targetRect.width + 20}
+              height={targetRect.height + 20}
+              rx="20" 
+              fill="black" 
+            />
+          </mask>
+        </defs>
+        <rect width="100%" height="100%" fill="rgba(3, 7, 18, 0.85)" mask="url(#spotlight)" />
         
-        <div className="mb-6 mt-4 animate-fade-in relative border-l-[3px] border-cyan-400 pl-4">
-          <div className="flex items-center justify-between mb-3">
-            <div className="text-[10px] text-cyan-400 font-black tracking-[0.3em] uppercase flex items-center gap-2">
-              <span>//</span> TERMINAL INIT
+        <rect
+          x={targetRect.left - 10}
+          y={targetRect.top - 10}
+          width={targetRect.width + 20}
+          height={targetRect.height + 20}
+          rx="20"
+          fill="none"
+          stroke="#22d3ee"
+          strokeWidth="3"
+          className="animate-pulse"
+        />
+      </svg>
+
+      <div style={bubbleStyle} className="bg-[#0f172a] border-2 border-cyan-500/50 shadow-[0_0_40px_rgba(34,211,238,0.25)] rounded-[24px] p-6 transition-all duration-300">
+         <div className="relative z-10">
+           <div className="flex justify-between items-center mb-4">
+             <span className="text-[10px] font-black tracking-widest text-cyan-400 uppercase">Langkah {step + 1} dari {TOUR_STEPS.length}</span>
+             <button onClick={onComplete} className="text-slate-500 hover:text-white transition-colors bg-white/5 hover:bg-white/10 p-1.5 rounded-full">
+                <Icons.X className="w-3.5 h-3.5" />
+             </button>
+           </div>
+           
+           <h4 className="text-[18px] font-bold text-white mb-3">{TOUR_STEPS[step].title}</h4>
+           <div className="text-[13.5px] text-slate-300 leading-relaxed font-medium mb-6">{TOUR_STEPS[step].text}</div>
+           
+           <div className="flex justify-between items-center">
+             <button onClick={onComplete} className="text-[12px] font-bold text-slate-500 hover:text-white transition-colors px-2 py-2">Akhiri Tur</button>
+             <button onClick={() => step < TOUR_STEPS.length - 1 ? setStep(s => s + 1) : onComplete()} className="bg-cyan-500 hover:bg-cyan-400 text-black px-6 py-2.5 rounded-full text-[13px] font-bold transition-all shadow-[0_0_15px_rgba(34,211,238,0.4)] hover:scale-105 active:scale-95">
+               {step < TOUR_STEPS.length - 1 ? 'Lanjut Mengerti' : 'Selesai!'}
+             </button>
+           </div>
+         </div>
+      </div>
+    </div>
+  );
+}
+
+// =========================================================================
+// MAIN PAGE COMPONENT
+// =========================================================================
+export default function ToolkitPage() {
+  const categories = ['Semua', ...new Set(toolkits.map(tool => tool.category))];
+  const [activeCat, setActiveCat] = useState('Semua');
+  const [isSecurityModalOpen, setIsSecurityModalOpen] = useState(false);
+  const [showTutorial, setShowTutorial] = useState(false);
+  
+  useEffect(() => {
+    const hasSeenTutorial = localStorage.getItem('override_tutorial_seen_v8');
+    if (!hasSeenTutorial) {
+      setTimeout(() => setShowTutorial(true), 1000);
+    }
+  }, []);
+
+  const handleCompleteTutorial = () => {
+    setShowTutorial(false);
+    localStorage.setItem('override_tutorial_seen_v8', 'true');
+    window.scrollTo({ top: 0, behavior: 'smooth' }); 
+  };
+
+  const filteredTools = activeCat === 'Semua' ? [...toolkits] : toolkits.filter(tool => tool.category === activeCat);
+
+  return (
+    <div className="min-h-screen bg-[#05050A] text-slate-200 font-sans relative selection:bg-cyan-500/30 selection:text-cyan-300 overflow-x-hidden">
+      
+      <div className="fixed top-[-20%] left-[-10%] w-[50vw] h-[50vw] bg-blue-600/10 rounded-full blur-[150px] pointer-events-none z-0 mix-blend-screen"></div>
+      <div className="fixed bottom-[-20%] right-[-10%] w-[50vw] h-[50vw] bg-purple-600/10 rounded-full blur-[150px] pointer-events-none z-0 mix-blend-screen"></div>
+
+      <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-12 relative z-10 pt-12 sm:pt-20 pb-32">
+        
+        {/* HEADER */}
+        <header className="mb-[42px] animate-fade-in-up">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-8 mb-8">
+            <div className="lg:w-[61.8%]">
+              
+              <div 
+                id="tut-start"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-6 backdrop-blur-md cursor-pointer hover:bg-white/10 transition-colors" 
+                onClick={() => { window.scrollTo({top: 0, behavior: 'smooth'}); setShowTutorial(true); }}
+              >
+                <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
+                <span className="text-[13px] font-bold tracking-wide text-slate-300">Mulai Ulang Panduan</span>
+              </div>
+              
+              <h1 className="text-[42px] sm:text-[56px] lg:text-[68px] font-black text-white tracking-tight mb-4 leading-[1.1]">
+                Creative <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500">Override.</span>
+              </h1>
+              <p className="text-slate-400 text-[16px] sm:text-[18px] font-medium leading-relaxed max-w-xl">
+                Koleksi utilitas canggih. Semuanya bekerja langsung di dalam browser Anda dengan privasi terjamin sepenuhnya.
+              </p>
             </div>
-            
+
             <button 
+              id="tut-security" 
               onClick={() => setIsSecurityModalOpen(true)}
-              className="group flex items-center gap-2 bg-emerald-950/60 hover:bg-emerald-900 border border-emerald-500/50 px-3 py-1.5 rounded shadow-[0_0_15px_rgba(16,185,129,0.15)] active:scale-95 transition-all"
+              className="group flex items-center gap-3 bg-white/5 hover:bg-white/10 border border-white/10 px-5 py-3 rounded-2xl shadow-lg backdrop-blur-md transition-all hover:scale-105 active:scale-95 shrink-0"
             >
-               <div className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse group-hover:scale-125 transition-transform"></div>
-               <span className="text-[8px] font-black text-emerald-400 tracking-[0.2em] uppercase">SYS.ONLINE</span>
+               <Icons.ShieldCheck className="w-5 h-5 text-emerald-400" />
+               <span className="text-[15px] font-bold text-slate-200">Info Keamanan</span>
             </button>
           </div>
+        </header>
 
-          <h2 className="text-[36px] sm:text-[44px] font-black text-white tracking-tighter mb-2 leading-[1.05] uppercase">
-            Creative <br/> <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Override.</span>
-          </h2>
-          <p className="text-slate-400 text-sm leading-relaxed max-w-[290px] font-medium">
-            Sistem utilitas Micro-SaaS terenkripsi untuk optimalisasi workflow.
-          </p>
-        </div>
-
-        <div className="flex overflow-x-auto no-scrollbar gap-6 py-4 -mx-6 px-6 snap-x sticky top-[60px] md:top-[70px] z-30 bg-[#030712]/95 backdrop-blur-md border-b border-white/5 animate-fade-in" style={{ animationDelay: '0.1s' }}>
-          {categories.map(cat => (
-            <button 
-              key={cat} onClick={() => setActiveCat(cat)}
-              className={`shrink-0 pb-3 text-[10px] font-black tracking-[0.15em] uppercase transition-all duration-300 snap-center relative ${
-                activeCat === cat ? 'text-cyan-400' : 'text-slate-500 hover:text-slate-300'
-              }`}
-            >
-              {cat}
-              {activeCat === cat && (
-                <div className="absolute bottom-0 left-0 w-full h-[2px] bg-cyan-400 shadow-[0_0_8px_rgba(6,182,212,0.8)]"></div>
-              )}
-            </button>
-          ))}
-        </div>
-
-        <div className="animate-fade-in" style={{ animationDelay: '0.2s' }}>
-          <div className="space-y-3 pt-6">
-            {filteredTools.map(tool => (
-              <UnifiedCard key={tool.id} tool={tool} />
+        {/* TAB FILTER */}
+        <div id="tut-filter" className="flex overflow-x-auto no-scrollbar py-2 mb-[42px] sticky top-4 z-30 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
+          <div className="flex items-center gap-2 bg-white/[0.03] p-2 rounded-[20px] border border-white/5 backdrop-blur-xl">
+            {categories.map(cat => (
+              <button 
+                key={cat} onClick={() => setActiveCat(cat)}
+                className={`relative px-6 py-2.5 text-[14px] font-bold transition-all duration-300 rounded-xl whitespace-nowrap ${
+                  activeCat === cat ? 'text-white shadow-md' : 'text-slate-500 hover:text-slate-300 hover:bg-white/5'
+                }`}
+              >
+                {activeCat === cat && <div className="absolute inset-0 bg-white/10 rounded-xl pointer-events-none border border-white/10"></div>}
+                <span className="relative z-10">{cat}</span>
+              </button>
             ))}
-            
-            {filteredTools.length === 0 && (
-                <div className="flex flex-col items-center justify-center text-center py-16 px-6 bg-[#050505] border border-dashed border-white/10 rounded-2xl">
-                   <span className="text-[10px] uppercase tracking-[0.3em] text-slate-500 font-bold">ERR: MODULE NOT FOUND</span>
-                </div>
-            )}
           </div>
         </div>
 
-        {/* ========================================================= */}
-        {/* BULLETPROOF PWA SPACER - Ini solusi mutlaknya             */}
-        {/* ========================================================= */}
-        <div className="h-36 sm:h-44 w-full shrink-0 pointer-events-none"></div>
+        {/* GRID KARTU */}
+        <div className="animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-[26px]">
+            {filteredTools.map((tool) => {
+               const isActiveFirst = tool.id === toolkits.find(t => t.status === 'active')?.id;
+               const isLockedFirst = tool.id === toolkits.find(t => t.status !== 'active')?.id;
+
+               return <UnifiedCard 
+                  key={tool.id} 
+                  tool={tool} 
+                  cardId={isActiveFirst ? 'tut-active' : isLockedFirst ? 'tut-locked' : undefined} 
+               />;
+            })}
+          </div>
+        </div>
 
       </div>
 
+      {/* JENDELA (MODAL) INFO KEAMANAN SPESIFIK */}
       {isSecurityModalOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/80 backdrop-blur-sm animate-fade-in touch-none">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-black/40 backdrop-blur-xl animate-fade-in touch-none">
            <div className="absolute inset-0" onClick={() => setIsSecurityModalOpen(false)}></div>
-           <div className="relative w-full max-w-sm bg-[#050b14] border border-emerald-500/50 shadow-[0_0_40px_rgba(16,185,129,0.15)] rounded-2xl overflow-hidden z-10">
-              <div className="bg-emerald-950/50 border-b border-emerald-500/30 px-5 py-4 flex items-center justify-between">
-                 <div className="flex items-center gap-3">
-                    <AppIcons.Shield />
-                    <span className="text-emerald-400 text-[10px] font-black tracking-[0.2em] uppercase">Security Protocol</span>
+           
+           <div className="relative w-full max-w-[540px] bg-[#0F1117]/95 border border-emerald-500/20 shadow-[0_20px_60px_rgba(16,185,129,0.15)] rounded-[34px] overflow-hidden z-10 ring-1 ring-white/5">
+              <div className="bg-emerald-950/30 border-b border-emerald-500/10 px-6 py-4 flex items-center justify-between">
+                 <div className="flex items-center gap-2">
+                    <button onClick={() => setIsSecurityModalOpen(false)} className="w-3.5 h-3.5 rounded-full bg-red-500/80 hover:bg-red-400"></button>
+                    <button className="w-3.5 h-3.5 rounded-full bg-yellow-500/80 hover:bg-yellow-400"></button>
+                    <button className="w-3.5 h-3.5 rounded-full bg-green-500/80 hover:bg-green-400"></button>
                  </div>
-                 <button onClick={() => setIsSecurityModalOpen(false)} className="text-emerald-500 hover:text-white transition-colors text-xs font-black px-2">
-                    [ X ]
-                 </button>
+                 <span className="text-emerald-400/80 text-[12px] font-bold uppercase tracking-widest">Sistem Keamanan Aktif</span>
+                 <div className="w-10"></div>
               </div>
 
-              <div className="p-5 sm:p-6 space-y-5">
-                 <div className="space-y-1.5 border-l-2 border-emerald-500/30 pl-3">
-                    <h4 className="text-white text-[10px] font-black tracking-widest uppercase">1. Zero Data Storage</h4>
-                    <p className="text-slate-400 text-[11px] leading-relaxed">
-                      Sistem beroperasi via <strong>Client-Side Logic</strong>. Seluruh data (Nama, CV, Invoice, Desain) <strong>TIDAK PERNAH</strong> dikirim atau disimpan di server kami.
-                    </p>
+              <div className="p-8">
+                 <div className="flex items-center gap-5 mb-8">
+                    <div className="p-4 bg-emerald-500/10 text-emerald-400 rounded-2xl border border-emerald-500/20 shadow-inner">
+                      <Icons.ShieldCheck className="w-8 h-8" />
+                    </div>
+                    <div>
+                      <h3 className="text-[24px] font-bold text-white tracking-tight">Privasi 100% Terjamin</h3>
+                      <p className="text-[14px] text-slate-400 mt-1">Kami menghargai privasi Anda melebihi apapun.</p>
+                    </div>
                  </div>
-                 <div className="space-y-1.5 border-l-2 border-emerald-500/30 pl-3">
-                    <h4 className="text-white text-[10px] font-black tracking-widest uppercase">2. Local Environment</h4>
-                    <p className="text-slate-400 text-[11px] leading-relaxed">
-                      Render PDF, kalkulasi, dan manipulasi kanvas diproses langsung oleh RAM/CPU <em>browser</em> perangkat Anda sendiri.
-                    </p>
-                 </div>
-                 <div className="space-y-1.5 border-l-2 border-emerald-500/30 pl-3">
-                    <h4 className="text-white text-[10px] font-black tracking-widest uppercase">3. Cache Memory</h4>
-                    <p className="text-slate-400 text-[11px] leading-relaxed">
-                      Data profil hanya disimpan sementara sebagai <span className="text-emerald-400 font-mono bg-emerald-950/50 px-1 rounded">localStorage</span> di HP Anda agar sinkron otomatis.
-                    </p>
+
+                 <div className="space-y-4">
+                   <div className="bg-white/[0.02] border border-white/5 p-5 rounded-[20px] transition-colors hover:bg-white/[0.04]">
+                      <div className="flex items-center gap-3 mb-2.5">
+                        <div className="w-6 h-6 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 font-bold text-[11px]">1</div>
+                        <h4 className="text-white text-[15px] font-bold">Pemrosesan Lokal (Client-Side)</h4>
+                      </div>
+                      <p className="text-slate-400 text-[13.5px] leading-relaxed pl-9">
+                        Saat Anda membuat <strong>CV</strong>, menyusun <strong>Invoice</strong>, atau mengompres <strong>gambar</strong>, RAM komputer atau HP Anda sendirilah yang bekerja keras memprosesnya, bukan server jarak jauh kami.
+                      </p>
+                   </div>
+                   
+                   <div className="bg-white/[0.02] border border-white/5 p-5 rounded-[20px] transition-colors hover:bg-white/[0.04]">
+                      <div className="flex items-center gap-3 mb-2.5">
+                        <div className="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400 font-bold text-[11px]">2</div>
+                        <h4 className="text-white text-[15px] font-bold">Tanpa Database Cloud</h4>
+                      </div>
+                      <p className="text-slate-400 text-[13.5px] leading-relaxed pl-9">
+                        Karena alat ini tidak menggunakan database rahasia, maka informasi sensitif Anda seperti <strong>nama lengkap, nomor rekening bank, email, atau desain klien</strong> tidak akan pernah terkirim ke internet.
+                      </p>
+                   </div>
+
+                   <div className="bg-white/[0.02] border border-white/5 p-5 rounded-[20px] transition-colors hover:bg-white/[0.04]">
+                      <div className="flex items-center gap-3 mb-2.5">
+                        <div className="w-6 h-6 rounded-full bg-orange-500/20 flex items-center justify-center text-orange-400 font-bold text-[11px]">3</div>
+                        <h4 className="text-white text-[15px] font-bold">Penyimpanan Tembolok (Cache)</h4>
+                      </div>
+                      <p className="text-slate-400 text-[13.5px] leading-relaxed pl-9">
+                        Jika ada data yang tersimpan agar Anda tidak perlu mengetik ulang esok hari, data itu hanya dititipkan di memori browser Anda sendiri (<i>LocalStorage</i>). Anda dapat membersihkannya kapan saja Anda mau.
+                      </p>
+                   </div>
                  </div>
               </div>
 
-              <div className="bg-black/50 px-6 py-4 border-t border-white/5">
-                 <button onClick={() => setIsSecurityModalOpen(false)} className="w-full py-3 bg-emerald-500/20 hover:bg-emerald-500/40 border border-emerald-500/50 text-emerald-400 text-[10px] font-black uppercase tracking-widest rounded-lg transition-colors active:scale-95">
-                    Acknowledge
+              <div className="bg-black/20 px-8 py-6 border-t border-white/5 flex justify-end">
+                 <button onClick={() => setIsSecurityModalOpen(false)} className="px-8 py-3 bg-emerald-500 hover:bg-emerald-400 text-emerald-950 text-[14px] font-bold rounded-full transition-all active:scale-95 shadow-[0_0_15px_rgba(16,185,129,0.3)]">
+                    Saya Mengerti
                  </button>
               </div>
            </div>
         </div>
       )}
 
-      <style>{`
+      {showTutorial && <GuidedTour onComplete={handleCompleteTutorial} />}
+
+      <style dangerouslySetInnerHTML={{__html: `
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        .animate-fade-in { animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-      `}</style>
+        
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in-up { animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
+        
+        /* ============================================================== */
+        /* 14 ANIMASI HOVER UNIK (KONDISI NORMAL)                         */
+        /* ============================================================== */
+        .hover-pulse-soft { animation: pulseSoft 1.5s infinite; }
+        @keyframes pulseSoft { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+
+        .hover-float { animation: float 2s ease-in-out infinite; }
+        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-6px); } }
+
+        .hover-wiggle { animation: wiggle 0.5s ease-in-out infinite; }
+        @keyframes wiggle { 0%, 100% { transform: rotate(-3deg); } 50% { transform: rotate(3deg); } }
+
+        .group:hover .hover-draw { transform: rotate(-10deg) translate(2px, -2px) scale(1.1); }
+        .group:hover .hover-expand { transform: scaleX(1.15) scaleY(0.9); }
+        .group:hover .hover-slide-up { transform: translateY(-5px); }
+        .group:hover .hover-unlock { transform: rotate(25deg) scale(1.1); }
+        .group:hover .hover-flip { transform: perspective(400px) rotateY(25deg); }
+        .group:hover .hover-split { transform: skewX(-10deg) translateX(4px); }
+        
+        .hover-rainbow { animation: rainbow 3s linear infinite; }
+        @keyframes rainbow { 0% { filter: hue-rotate(0deg) saturate(1.5); } 100% { filter: hue-rotate(360deg) saturate(1.5); } }
+
+        .hover-typewriter { animation: typewriter 0.3s infinite; }
+        @keyframes typewriter { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(2px); } }
+
+        .hover-connect { animation: connectPulse 1s infinite; }
+        @keyframes connectPulse { 0% { transform: scale(1); filter: brightness(1); } 50% { transform: scale(1.15); filter: brightness(1.4); } 100% { transform: scale(1); filter: brightness(1); } }
+
+        .hover-spin-slow { animation: spinSlow 4s linear infinite; }
+        @keyframes spinSlow { 100% { transform: rotate(360deg); } }
+
+        .hover-badge-swing { transform-origin: top center; animation: swing 1.5s ease-in-out infinite; }
+        @keyframes swing { 0%, 100% { transform: rotate(-10deg); } 50% { transform: rotate(10deg); } }
+
+        /* ============================================================== */
+        /* 14 ANIMASI KLIK (DILAKUKAN SEBELUM PINDAH HALAMAN)             */
+        /* ============================================================== */
+        .click-paper-fly { animation: paperFly 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards !important; }
+        @keyframes paperFly { 0% { transform: translateY(0) scale(1); opacity: 1; } 50% { transform: translateY(-20px) scale(1.1) rotate(5deg); opacity: 0.8; } 100% { transform: translateY(-100px) scale(0.5) rotate(15deg); opacity: 0; } }
+
+        .click-layer-pop { animation: layerPop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards !important; }
+        @keyframes layerPop { 0% { transform: scale(1); } 40% { transform: scale(1.4); filter: brightness(1.5); } 100% { transform: scale(0); opacity: 0; } }
+
+        .click-send-msg { animation: sendMsg 0.6s ease-in forwards !important; }
+        @keyframes sendMsg { 0% { transform: translateX(0); opacity: 1; } 30% { transform: translateX(-10px); } 100% { transform: translateX(100px); opacity: 0; } }
+
+        .click-color-splash { animation: colorSplash 0.6s ease-out forwards !important; }
+        @keyframes colorSplash { 0% { transform: scale(1); } 50% { transform: scale(1.5); filter: drop-shadow(0 0 10px pink) drop-shadow(0 0 20px cyan); } 100% { transform: scale(3); opacity: 0; } }
+
+        .click-sign-done { animation: signDone 0.6s ease-in-out forwards !important; }
+        @keyframes signDone { 0% { transform: translateX(0) skewX(0); } 100% { transform: translateX(50px) skewX(-30deg); opacity: 0; } }
+
+        .click-slice-apart { animation: sliceApart 0.6s ease-out forwards !important; }
+        @keyframes sliceApart { 0% { transform: scaleY(1); } 50% { transform: scaleY(1.2); } 100% { transform: scaleY(0); opacity: 0; } }
+
+        .click-receipt-print { animation: receiptPrint 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards !important; }
+        @keyframes receiptPrint { 0% { transform: translateY(0); clip-path: inset(0 0 0 0); } 40% { transform: translateY(10px); } 100% { transform: translateY(80px); opacity: 0; clip-path: inset(100% 0 0 0); } }
+
+        .click-spiral-in { animation: spiralIn 0.6s ease-in forwards !important; }
+        @keyframes spiralIn { 0% { transform: scale(1) rotate(0deg); } 100% { transform: scale(0) rotate(360deg); opacity: 0; } }
+
+        .click-stamp-approve { animation: stampApprove 0.5s ease-out forwards !important; }
+        @keyframes stampApprove { 0% { transform: scale(1); } 30% { transform: scale(2); opacity: 0.5; } 100% { transform: scale(0.9); opacity: 0; } }
+
+        .click-compress-poof { animation: compressPoof 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards !important; }
+        @keyframes compressPoof { 0% { transform: scale(1); } 10% { transform: scale(1.1); } 100% { transform: scale(0); opacity: 0; } }
+
+        .click-text-grow { animation: textGrow 0.6s ease-out forwards !important; }
+        @keyframes textGrow { 0% { transform: scale(1); } 100% { transform: scale(5); opacity: 0; } }
+
+        .click-node-branch { animation: nodeBranch 0.6s ease-out forwards !important; }
+        @keyframes nodeBranch { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(40px, -40px) scale(0); opacity: 0; } }
+
+        .click-page-turn { animation: pageTurn 0.6s ease-in forwards !important; transform-style: preserve-3d; }
+        @keyframes pageTurn { 0% { transform: rotateY(0deg); } 100% { transform: rotateY(-180deg); opacity: 0; } }
+
+        .click-key-turn { animation: keyTurn 0.6s ease-in-out forwards !important; }
+        @keyframes keyTurn { 0% { transform: rotate(0deg); } 50% { transform: rotate(90deg); } 100% { transform: rotate(90deg) scale(0); opacity: 0; } }
+      `}} />
     </div>
   );
 }
