@@ -322,7 +322,7 @@ const TemplateModern = ({ invoiceData, items, logo, stamp, themeColor, currency,
         </div>
 
         <div className="flex flex-col gap-4" style={{ flex: 1 }}>
-          <div className="w-full space-y-1.5 bg-slate-50 p-4 rounded-2xl border border-slate-100 shadow-sm">
+          <div className="w-full space-y-1.5 bg-slate-50 p-3 rounded-2xl border border-slate-100 shadow-sm">
             <div className="flex justify-between items-center text-[10px]">
               <span className="text-slate-500 font-bold">{t.subtotal}</span>
               <span className="text-slate-800 font-bold">{formatCurrency(subtotal, currency)}</span>
@@ -441,7 +441,7 @@ const TemplateMinimal = ({ invoiceData, items, logo, stamp, themeColor, currency
       </tbody>
     </table>
 
-    <div className="flex flex-row items-start gap-6 mt-auto pt-4 break-inside-avoid pb-6">
+    <div className="flex flex-row items-start gap-6 mt-auto pt-4 break-inside-avoid pb-4">
       <div className="space-y-4" style={{ flex: 1.618 }}>
         {(invoiceData.bankName || invoiceData.accNumber || invoiceData.accName || invoiceData.bankCode) && (
           <div>
@@ -481,7 +481,7 @@ const TemplateMinimal = ({ invoiceData, items, logo, stamp, themeColor, currency
             </div>
           )}
         </div>
-        <div className="w-full flex flex-col gap-1 mb-8 text-right">
+        <div className="w-full flex flex-col gap-1 mb-6 text-right">
           <span className="text-[9px] font-black uppercase tracking-widest text-slate-500">{t.grandTotal}</span>
           <span className="text-[20px] font-black transition-colors duration-300 print:!text-current" style={{ color: themeColor }}>{formatCurrency(total, currency)}</span>
         </div>
@@ -564,7 +564,7 @@ const TemplateClassic = ({ invoiceData, items, logo, stamp, themeColor, currency
             </td>
             <td className="py-2 px-2 text-[10px] text-slate-900 text-center border border-slate-800 align-top pt-2.5">{item.qty || 0}</td>
             <td className="py-2 px-3 text-[10px] text-slate-900 text-right border border-slate-800 align-top pt-2.5">{formatCurrency(item.price || 0, currency)}</td>
-            <td className="py-2 px-3 text-[10px] text-slate-900 font-bold text-right border border-slate-800 align-top pt-2.5">{formatCurrency((item.qty || 0) * (item.price || 0), currency)}</td>
+            <td className="py-2 px-3 text-[11px] text-slate-900 font-bold text-right border border-slate-800 align-top pt-2.5">{formatCurrency((item.qty || 0) * (item.price || 0), currency)}</td>
           </tr>
         ))}
       </tbody>
@@ -752,7 +752,7 @@ export default function InvoiceTab() {
     }
   };
 
-  // Safe Calculation (Mencegah Bug NaN jika field kosong)
+  // Safe Calculation
   const subtotal = items.reduce((sum, item) => sum + (parseFloat(item.qty) || 0) * (parseFloat(item.price) || 0), 0);
   
   let discountAmount = 0;
@@ -768,13 +768,13 @@ export default function InvoiceTab() {
   const taxAmount = subtotalAfterDiscount * (numTaxRate / 100);
   const total = subtotalAfterDiscount + taxAmount;
 
-  // Ukuran Kertas Statis (A4 Standard) menjamin print tidak cacat
+  // Ukuran Pixel Fisik Konversi
   const PAPER_WIDTH = 794; 
   const PAPER_MIN_HEIGHT = 1123; 
 
   const [actualHeight, setActualHeight] = useState(PAPER_MIN_HEIGHT);
 
-  // ResizeObserver Tinggi Dinamis Kertas (Untuk menampung item banyak tanpa potong)
+  // Observer untuk mendeteksi penambahan konten melebihi batas 1 halaman
   useEffect(() => {
     if (!printAreaRef.current) return;
     const observer = new ResizeObserver((entries) => {
@@ -786,7 +786,7 @@ export default function InvoiceTab() {
     return () => observer.disconnect();
   }, [items, template]);
 
-  // ResizeObserver untuk menyesuaikan Skala Lebar Kertas vs Layar secara responsif
+  // Observer untuk auto-scale di desktop / mobile (Hanya Lebar)
   useEffect(() => {
     const container = previewContainerRef.current;
     if (!container) return;
@@ -821,7 +821,7 @@ export default function InvoiceTab() {
         input[type=range].custom-color-slider::-webkit-slider-runnable-track { width: 100%; height: 8px; cursor: pointer; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); }
         .track-hue::-webkit-slider-runnable-track { background: linear-gradient(to right, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%); }
         
-        /* ISOLASI PRINT MUTLAK - MENJAMIN 100% WYSIWYG WARNA DAN LAYOUT */
+        /* ISOLASI PRINT MUTLAK WYSIWYG A4 */
         @media print {
           @page { size: A4; margin: 0; }
           html, body { 
@@ -830,43 +830,43 @@ export default function InvoiceTab() {
             margin: 0 !important; 
             padding: 0 !important; 
             background: white !important; 
-            overflow: visible !important;
-          }
-          
-          /* FORCE WARNA CUSTOM AGAR TIDAK DIHAPUS BROWSER SAAT PRINT */
-          * {
             -webkit-print-color-adjust: exact !important; 
-            color-adjust: exact !important;
-            print-color-adjust: exact !important;
+            print-color-adjust: exact !important; 
           }
           
-          /* Sembunyikan SEMUA elemen web dari level root menggunakan display: none (mencegah ruang kosong) */
+          /* Sembunyikan elemen website luar KECUALI area cetak */
+          body *:not(#print-area):not(#print-area *) { 
+             background: transparent !important; 
+             color: transparent !important; 
+             box-shadow: none !important;
+             border: none !important;
+          }
+          
           .no-print, header, nav, footer, aside, .sidebar { display: none !important; }
           
-          /* Reset Wrapper Kertas untuk mematikan skala dari React */
+          /* Reset Wrapper Kertas Skala (Penting untuk mengatasi bug margin/background luar) */
           .print-reset-layout {
              display: block !important;
              width: 100% !important;
              height: auto !important;
-             min-height: auto !important;
              margin: 0 !important;
              padding: 0 !important;
              transform: none !important;
              position: static !important;
              overflow: visible !important;
+             background: transparent !important;
           }
           
-          /* Kertas Invoice Area (Kembali ke flow normal dengan lebar paksa agar page-break jalan) */
+          /* Fokus mutlak pada Kertas (Print Area) ke Arus Dokumen Normal */
           #print-area { 
-             position: relative !important;
-             left: auto !important;
-             top: auto !important;
-             width: 100% !important; 
-             max-width: 210mm !important; 
-             box-shadow: none !important;
+             position: relative !important; 
+             width: 794px !important; /* Presisi lebar kertas A4 (96DPI) */
              margin: 0 auto !important; 
              padding: 0 !important; 
-             transform: none !important;
+             transform: none !important; /* Hancurkan skala dari layar web */
+             box-shadow: none !important;
+             background-color: white !important;
+             color: black !important;
           }
           
           .break-inside-avoid { break-inside: avoid !important; page-break-inside: avoid !important; }
@@ -874,7 +874,7 @@ export default function InvoiceTab() {
           .page-indicator { background-image: none !important; }
         }
         
-        /* Garis Putus-putus pembatas halaman 1, 2, 3 di UI Preview */
+        /* Garis Putus-putus pembatas halaman (1123px = 1 A4) */
         .page-indicator {
            background-image: repeating-linear-gradient(to bottom, transparent, transparent 1121px, #ef4444 1121px, #ef4444 1123px);
            background-size: 100% 1123px;
@@ -889,7 +889,7 @@ export default function InvoiceTab() {
             <div className="p-3 bg-cyan-500/20 text-cyan-400 rounded-xl border border-cyan-500/30"><Icons.Document /></div>
             Invoice <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Generator</span>
           </h2>
-          <p className="text-sm text-slate-400 mt-2 max-w-xl">Buat tagihan digital profesional untuk klien Anda secara instan dengan tata letak padat, WYSIWYG A4 presisi tinggi, dan multi-bahasa terintegrasi.</p>
+          <p className="text-sm text-slate-400 mt-2 max-w-xl">Buat tagihan digital profesional untuk klien Anda secara instan dengan tata letak padat, standar cetak A4 presisi, dan mode bilingual.</p>
         </div>
         <button onClick={() => window.print()} className="w-full sm:w-auto bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold py-3.5 px-8 rounded-xl flex items-center justify-center gap-3 shadow-[0_0_20px_rgba(6,182,212,0.3)] transition-all hover:-translate-y-1 z-10">
           <Icons.Print /> Simpan PDF / Cetak
@@ -912,7 +912,7 @@ export default function InvoiceTab() {
                 <span className="transition-colors duration-300" style={{ color: themeColor }}>
                   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
                 </span>
-                Pengaturan Desain
+                Pengaturan Desain (Standar A4)
                </h3>
                {/* AI Translate Toggle */}
                <div className="flex bg-[#1e293b] p-1 rounded-lg border border-white/10 shadow-inner">
