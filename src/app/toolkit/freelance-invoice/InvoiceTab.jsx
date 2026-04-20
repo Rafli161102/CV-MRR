@@ -183,7 +183,7 @@ const bankOptions = [
   { value: "ShopeePay", label: "ShopeePay (E-Wallet)" }
 ];
 
-// --- TEMPLATES COMPONENTS (KONSISTEN FIXED SCALING & COMPACT 1 PAGE) ---
+// --- TEMPLATES COMPONENTS (KONSISTEN FIXED SCALING & COMPACT 1 PAGE A4) ---
 
 const SignatureBlock = ({ invoiceData, stamp, themeColor, t }) => (
   <div className="relative inline-flex flex-col items-center justify-end pt-2 min-w-[200px] page-break-inside-avoid">
@@ -356,10 +356,10 @@ const TemplateModern = ({ invoiceData, items, logo, stamp, themeColor, currency,
 
 // 2. Template Minimalis
 const TemplateMinimal = ({ invoiceData, items, logo, stamp, themeColor, currency, subtotal, taxAmount, discountAmount, total, t }) => (
-  <div className="relative bg-white text-slate-900 overflow-hidden w-full h-full p-8 font-sans flex flex-col shadow-[0_10px_40px_rgba(0,0,0,0.15)] print:shadow-none">
+  <div className="relative bg-white text-slate-900 overflow-hidden w-full h-full p-10 font-sans flex flex-col shadow-[0_10px_40px_rgba(0,0,0,0.15)] print:shadow-none">
     {invoiceData.status === 'PAID' && (
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.03] pointer-events-none transform -rotate-12 z-0">
-        <div className="border-[12px] border-black text-black text-[120px] font-black p-6 uppercase tracking-widest leading-none">{t.paid}</div>
+        <div className="border-[12px] border-black text-black text-[140px] font-black p-6 uppercase tracking-widest leading-none">{t.paid}</div>
       </div>
     )}
     
@@ -372,7 +372,7 @@ const TemplateMinimal = ({ invoiceData, items, logo, stamp, themeColor, currency
         {logo ? (
           <img src={logo} alt="Logo" className="max-h-14 object-contain" />
         ) : (
-          <h2 className="text-xl font-black tracking-tight transition-colors duration-300 uppercase" style={{ color: themeColor }}>
+          <h2 className="text-2xl font-black tracking-tight transition-colors duration-300 uppercase" style={{ color: themeColor }}>
              {invoiceData.myName || t.companyPlaceholder}
           </h2>
         )}
@@ -652,7 +652,7 @@ export default function InvoiceTab() {
   const [language, setLanguage] = useState("id");
   const [currency, setCurrency] = useState("IDR");
   const [template, setTemplate] = useState("modern"); 
-  const [paperSize, setPaperSize] = useState("A4"); 
+  const paperSize = "A4"; // Dihardcode 100% menggunakan kertas A4 tanpa selector
   
   const [logo, setLogo] = useState(null);
   const fileInputRef = useRef(null);
@@ -768,27 +768,26 @@ export default function InvoiceTab() {
   const taxAmount = subtotalAfterDiscount * (numTaxRate / 100);
   const total = subtotalAfterDiscount + taxAmount;
 
-  const paperDimensionsPx = {
-    A4: { width: 794, height: 1123 }, // 210mm x 297mm
-    Letter: { width: 816, height: 1056 }, // 215.9mm x 279.4mm
-    Folio: { width: 816, height: 1248 } // 215.9mm x 330.2mm
-  };
+  // Ukuran Pixel Fisik Konversi (Hanya menggunakan A4 Fix 794px lebar)
+  const PAPER_WIDTH = 794;
+  const PAPER_MIN_HEIGHT = 1123;
 
   // Tinggi Dinamis Preview
-  const [actualHeight, setActualHeight] = useState(paperDimensionsPx[paperSize].height);
+  const [actualHeight, setActualHeight] = useState(PAPER_MIN_HEIGHT);
 
   useEffect(() => {
     if (!printAreaRef.current) return;
     const observer = new ResizeObserver((entries) => {
       for(let entry of entries) {
-        // Ambil tinggi asli dari kertas untuk menghindari potong bawah saat scale
-        setActualHeight(Math.max(entry.contentRect.height, paperDimensionsPx[paperSize].height));
+        // Ambil tinggi asli dari kertas untuk menghindari potong bawah saat item bertambah
+        setActualHeight(Math.max(entry.contentRect.height, PAPER_MIN_HEIGHT));
       }
     });
     observer.observe(printAreaRef.current);
     return () => observer.disconnect();
-  }, [paperSize, items]);
+  }, [items, template]);
 
+  // ResizeObserver untuk menyesuaikan Skala Lebar saja (mencegah bug whitespace)
   useEffect(() => {
     const container = previewContainerRef.current;
     if (!container) return;
@@ -796,10 +795,8 @@ export default function InvoiceTab() {
     const resizeObserver = new ResizeObserver(entries => {
       for (let entry of entries) {
         const containerWidth = entry.contentRect.width;
-        const targetWidth = paperDimensionsPx[paperSize].width;
-        
-        if (containerWidth < targetWidth) {
-          setPreviewScale(containerWidth / targetWidth);
+        if (containerWidth < PAPER_WIDTH) {
+          setPreviewScale(containerWidth / PAPER_WIDTH);
         } else {
           setPreviewScale(1);
         }
@@ -808,7 +805,7 @@ export default function InvoiceTab() {
 
     resizeObserver.observe(container);
     return () => resizeObserver.disconnect();
-  }, [paperSize]);
+  }, []);
 
   const t = dict[language];
 
@@ -830,22 +827,41 @@ export default function InvoiceTab() {
         input[type=range].custom-color-slider::-webkit-slider-runnable-track { width: 100%; height: 8px; cursor: pointer; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); }
         .track-hue::-webkit-slider-runnable-track { background: linear-gradient(to right, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%); }
         
-        /* PRINT ISOLATION MASTER CLASS */
+        /* PRINT ISOLATION MASTER CLASS - FIX 100% WYSIWYG */
         @media print {
-          @page { size: ${paperSize === 'A4' ? '210mm 297mm' : paperSize === 'Letter' ? '215.9mm 279.4mm' : '215.9mm 330.2mm'}; margin: 0; }
-          body, html { width: 100% !important; height: auto !important; overflow: visible !important; margin: 0 !important; padding: 0 !important; background: white !important; }
-          body * { visibility: hidden; }
-          #print-area, #print-area * { visibility: visible; }
-          #print-area { 
-             position: absolute !important; 
-             left: 0 !important; 
-             top: 0 !important; 
-             width: ${paperDimensionsPx[paperSize].width}px !important;
-             margin: 0 !important; 
-             padding: 0 !important; 
-             transform: scale(1) !important;
-             box-shadow: none !important;
+          @page { size: A4; margin: 0; }
+          body, html { 
+            width: 100% !important; 
+            height: auto !important; 
+            overflow: visible !important; 
+            margin: 0 !important; 
+            padding: 0 !important; 
+            background: white !important; 
           }
+          /* Hilangkan semua elemen web, menu, navbar, dsb */
+          .print\\:hidden { display: none !important; }
+          
+          /* Mereset seluruh container preview dari React CSS (Scale) */
+          .print-wrapper {
+             transform: none !important;
+             width: 100% !important;
+             height: auto !important;
+             margin: 0 !important;
+             padding: 0 !important;
+             overflow: visible !important;
+          }
+          
+          /* Fokus mutlak pada Kertas (Print Area) */
+          #print-area { 
+             position: relative !important; 
+             width: 210mm !important; /* Memaksa printer merender exactly selebar A4 */
+             min-height: 297mm !important; 
+             transform: none !important;
+             box-shadow: none !important;
+             margin: 0 auto !important; 
+             padding: 0 !important; 
+          }
+          
           .break-inside-avoid { break-inside: avoid; page-break-inside: avoid; }
           .page-break-inside-avoid { page-break-inside: avoid; }
         }
@@ -859,7 +875,7 @@ export default function InvoiceTab() {
             <div className="p-3 bg-cyan-500/20 text-cyan-400 rounded-xl border border-cyan-500/30"><Icons.Document /></div>
             Invoice <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Generator</span>
           </h2>
-          <p className="text-sm text-slate-400 mt-2 max-w-xl">Buat tagihan digital profesional untuk klien Anda secara instan dengan tata letak Golden Ratio dinamis.</p>
+          <p className="text-sm text-slate-400 mt-2 max-w-xl">Buat tagihan digital profesional untuk klien Anda secara instan dengan tata letak padat (A4) dan mode bilingual.</p>
         </div>
         <button onClick={() => window.print()} className="w-full sm:w-auto bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold py-3.5 px-8 rounded-xl flex items-center justify-center gap-3 shadow-[0_0_20px_rgba(6,182,212,0.3)] transition-all hover:-translate-y-1 z-10">
           <Icons.Print /> Simpan PDF / Print
@@ -882,7 +898,7 @@ export default function InvoiceTab() {
                 <span className="transition-colors duration-300" style={{ color: themeColor }}>
                   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
                 </span>
-                Pengaturan Desain
+                Pengaturan Desain (Kertas A4)
                </h3>
                {/* AI Translate Toggle */}
                <div className="flex bg-[#1e293b] p-1 rounded-lg border border-white/10 shadow-inner">
@@ -912,41 +928,20 @@ export default function InvoiceTab() {
                   </div>
                </div>
 
-               <div className="grid grid-cols-2 gap-4">
-                 <div>
-                    <p className="text-[10px] text-slate-400 font-bold mb-2 uppercase tracking-widest flex justify-between">Ukuran Kertas</p>
-                    <div className="flex p-1 bg-white/5 border border-white/10 rounded-xl">
-                      {[
-                        { id: 'A4', name: 'A4' },
-                        { id: 'Letter', name: 'Letter' },
-                        { id: 'Folio', name: 'Folio' }
-                      ].map(p => (
-                        <button
-                          key={p.id}
-                          onClick={() => setPaperSize(p.id)}
-                          className={`flex-1 py-2.5 rounded-lg text-[11px] font-bold uppercase tracking-widest transition-all ${paperSize === p.id ? 'bg-opacity-20 text-white shadow-md' : 'text-slate-500 hover:text-slate-300 hover:bg-white/5'}`}
-                          style={paperSize === p.id ? { backgroundColor: `${themeColor}40`, color: themeColor } : {}}
-                        >
-                          {p.name}
-                        </button>
-                      ))}
-                    </div>
-                 </div>
-                 <div>
-                    <CustomDropdown 
-                      label="Mata Uang (Currency)" 
-                      value={currency} 
-                      onChange={setCurrency} 
-                      options={[
-                        { value: 'IDR', label: 'Rupiah (IDR)' },
-                        { value: 'USD', label: 'US Dollar (USD)' },
-                        { value: 'EUR', label: 'Euro (EUR)' },
-                        { value: 'GBP', label: 'Pound Sterling (GBP)' },
-                        { value: 'SGD', label: 'Singapore Dollar (SGD)' }
-                      ]} 
-                      placeholder="Pilih Mata Uang"
-                    />
-                 </div>
+               <div>
+                  <CustomDropdown 
+                    label="Pilih Mata Uang (Currency)" 
+                    value={currency} 
+                    onChange={setCurrency} 
+                    options={[
+                      { value: 'IDR', label: 'Rupiah (IDR)' },
+                      { value: 'USD', label: 'US Dollar (USD)' },
+                      { value: 'EUR', label: 'Euro (EUR)' },
+                      { value: 'GBP', label: 'Pound Sterling (GBP)' },
+                      { value: 'SGD', label: 'Singapore Dollar (SGD)' }
+                    ]} 
+                    placeholder="Pilih Mata Uang"
+                  />
                </div>
             </div>
 
@@ -1263,6 +1258,10 @@ export default function InvoiceTab() {
               />
             </div>
           </div>
+
+          <button onClick={() => window.print()} className="w-full py-4 bg-gradient-to-r hover:bg-gradient-to-l from-cyan-600 to-blue-500 text-white font-bold rounded-xl shadow-[0_0_20px_rgba(6,182,212,0.3)] hover:shadow-[0_0_25px_rgba(6,182,212,0.5)] hover:-translate-y-1 transition-all flex justify-center items-center gap-2 text-lg">
+            <Icons.Print /> Cetak Dokumen PDF
+          </button>
         </div>
 
         {/* ======================= */}
@@ -1273,29 +1272,26 @@ export default function InvoiceTab() {
           {/* Ref untuk wrapper sticky web */}
           <div className="sticky top-6 w-full flex justify-center h-fit print:relative print:top-0 print:block print:w-full" ref={previewContainerRef}>
             
-            {/* Auto Scale Wrapper: 
-              Tinggi dibungkus dinamis menggunakan ResizeObserver inner content. 
-              Ini mengatasi bug whitespace secara permanen. 
-            */}
+            {/* Auto Scale Wrapper */}
             <div 
-               className="w-full flex justify-center overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)]"
+               className="w-full flex justify-center overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] print-wrapper"
                style={{ 
                   height: actualHeight * previewScale 
                }}
             >
               <div 
-                className="relative transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)]"
+                className="relative transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] print-wrapper"
                 style={{ 
-                  width: paperDimensionsPx[paperSize].width * previewScale, 
+                  width: PAPER_WIDTH * previewScale, 
                   height: actualHeight * previewScale 
                 }}
               >
-                {/* Kertas Render Area */}
+                {/* Kertas Render Area (Scale Realistis & Stabil) */}
                 <div id="print-area" ref={printAreaRef}
                   className="bg-white print:bg-transparent shadow-[0_20px_60px_rgba(0,0,0,0.15)] print:shadow-none transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] print-scale-reset absolute top-0 left-0 origin-top-left"
                   style={{ 
-                    width: `${paperDimensionsPx[paperSize].width}px`,
-                    minHeight: `${paperDimensionsPx[paperSize].height}px`,
+                    width: `${PAPER_WIDTH}px`,
+                    minHeight: `${PAPER_MIN_HEIGHT}px`,
                     transform: `scale(${previewScale})`
                   }}
                 >
