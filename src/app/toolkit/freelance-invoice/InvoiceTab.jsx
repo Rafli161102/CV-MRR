@@ -183,7 +183,7 @@ const bankOptions = [
   { value: "ShopeePay", label: "ShopeePay (E-Wallet)" }
 ];
 
-// --- TEMPLATES COMPONENTS ---
+// --- TEMPLATES COMPONENTS (KONSISTEN FIXED SCALING & COMPACT 1 PAGE A4) ---
 
 const SignatureBlock = ({ invoiceData, stamp, themeColor, t }) => (
   <div className="relative inline-flex flex-col items-center justify-end pt-2 min-w-[200px] page-break-inside-avoid">
@@ -197,7 +197,7 @@ const SignatureBlock = ({ invoiceData, stamp, themeColor, t }) => (
          <img 
            src={stamp} 
            alt="Stamp" 
-           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-24 object-contain opacity-90 mix-blend-multiply pointer-events-none transform -rotate-[15deg] z-20" 
+           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-28 h-28 object-contain opacity-90 mix-blend-multiply pointer-events-none transform -rotate-[15deg] z-20" 
          />
       )}
     </div>
@@ -211,7 +211,7 @@ const SignatureBlock = ({ invoiceData, stamp, themeColor, t }) => (
 // 1. Template Modern
 const TemplateModern = ({ invoiceData, items, logo, stamp, themeColor, currency, subtotal, taxAmount, discountAmount, total, t }) => (
   <div className="relative bg-white text-slate-900 overflow-hidden w-full h-full flex flex-col font-sans">
-    <div className="absolute top-0 left-0 w-full h-2.5 transition-colors duration-300" style={{ backgroundColor: themeColor }}></div>
+    <div className="absolute top-0 left-0 w-full h-2.5 transition-colors duration-300 print:!bg-current" style={{ backgroundColor: themeColor }}></div>
     {invoiceData.status === 'PAID' && (
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.05] pointer-events-none transform -rotate-12 z-0">
         <div className="border-[12px] border-emerald-600 text-emerald-600 text-[140px] font-black p-6 rounded-3xl uppercase tracking-widest leading-none shadow-2xl">{t.paid}</div>
@@ -225,7 +225,7 @@ const TemplateModern = ({ invoiceData, items, logo, stamp, themeColor, currency,
           {logo ? (
             <img src={logo} alt="Logo" className="max-h-16 object-contain mb-2" />
           ) : (
-            <h2 className="text-2xl font-black tracking-tight mb-2 transition-colors duration-300 uppercase" style={{ color: themeColor }}>
+            <h2 className="text-2xl font-black tracking-tight mb-2 transition-colors duration-300 uppercase print:!text-current" style={{ color: themeColor }}>
               {invoiceData.myName || t.companyPlaceholder}
             </h2>
           )}
@@ -237,8 +237,8 @@ const TemplateModern = ({ invoiceData, items, logo, stamp, themeColor, currency,
           )}
         </div>
         <div className="text-right" style={{ flex: 1 }}>
-          <h1 className="text-4xl font-black uppercase tracking-widest mb-1 transition-colors duration-300" style={{ color: themeColor }}>{t.invoice}</h1>
-          <p className="text-slate-500 font-bold tracking-wider mb-2 text-base">#{invoiceData.invoiceNo || "INV-XXXX"}</p>
+          <h1 className="text-3xl font-black uppercase tracking-widest mb-1 transition-colors duration-300 print:!text-current" style={{ color: themeColor }}>{t.invoice}</h1>
+          <p className="text-slate-500 font-bold tracking-wider mb-2 text-sm">#{invoiceData.invoiceNo || "INV-XXXX"}</p>
           <div className="flex flex-col items-end gap-1 text-[9px] mt-2 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
             <div className="flex justify-between w-full">
               <p className="text-slate-400 font-bold uppercase tracking-widest">{t.date}</p>
@@ -256,7 +256,7 @@ const TemplateModern = ({ invoiceData, items, logo, stamp, themeColor, currency,
       {/* Address Block */}
       <div className="flex flex-row gap-6 mb-6 bg-slate-50/70 p-4 rounded-2xl border border-slate-100/80 shrink-0">
         <div className="border-r border-slate-200/60 pr-5" style={{ flex: 1 }}>
-          <h3 className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5 border-b-2 inline-block pb-1 transition-colors duration-300" style={{ borderColor: themeColor }}>{t.from}</h3>
+          <h3 className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5 border-b-2 inline-block pb-1 transition-colors duration-300 print:!border-current" style={{ borderColor: themeColor }}>{t.from}</h3>
           <p className="text-[12px] font-bold text-slate-800 mb-1 leading-tight">{invoiceData.myName || "Nama Pengirim"}</p>
           {invoiceData.myRole && <p className="text-[10px] font-medium text-slate-500 mb-1">{invoiceData.myRole}</p>}
           {invoiceData.myEmail && <p className="text-[10px] text-slate-600 mb-0.5">{invoiceData.myEmail}</p>}
@@ -264,27 +264,27 @@ const TemplateModern = ({ invoiceData, items, logo, stamp, themeColor, currency,
           {invoiceData.myTaxId && <p className="text-[9px] font-bold text-slate-500 bg-slate-200/50 px-2 py-0.5 rounded-md inline-block">Tax ID: {invoiceData.myTaxId}</p>}
         </div>
         <div className="pl-1" style={{ flex: 1.618 }}>
-          <h3 className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5 border-b-2 inline-block pb-1 transition-colors duration-300" style={{ borderColor: themeColor }}>{t.to}</h3>
+          <h3 className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5 border-b-2 inline-block pb-1 transition-colors duration-300 print:!border-current" style={{ borderColor: themeColor }}>{t.to}</h3>
           <p className="text-[12px] font-bold text-slate-800 mb-1 leading-tight">{invoiceData.clientName || "Nama Klien / Perusahaan"}</p>
           {invoiceData.clientAddress && <p className="text-[11px] text-slate-600 whitespace-pre-wrap leading-relaxed mb-1.5">{invoiceData.clientAddress}</p>}
           {invoiceData.clientTaxId && <p className="text-[9px] font-bold text-slate-500 bg-slate-200/50 px-2 py-0.5 rounded-md inline-block">Tax ID: {invoiceData.clientTaxId}</p>}
         </div>
       </div>
 
-      {/* Table Item */}
+      {/* Table Item (Super Padat) */}
       <div className="mb-6 overflow-hidden rounded-xl border border-slate-200/80 shadow-sm shrink-0">
         <table className="w-full text-left border-collapse table-fixed">
           <thead>
             <tr className="transition-colors duration-300" style={{ backgroundColor: themeColor + '15' }}>
-              <th className="py-2.5 px-4 text-[9px] font-black uppercase tracking-widest transition-colors duration-300 w-[55%]" style={{ color: themeColor }}>{t.desc}</th>
-              <th className="py-2.5 px-3 text-[9px] font-black uppercase tracking-widest text-center transition-colors duration-300 w-[10%]" style={{ color: themeColor }}>{t.qty}</th>
-              <th className="py-2.5 px-4 text-[9px] font-black uppercase tracking-widest text-right transition-colors duration-300 w-[17.5%]" style={{ color: themeColor }}>{t.price}</th>
-              <th className="py-2.5 px-4 text-[9px] font-black uppercase tracking-widest text-right transition-colors duration-300 w-[17.5%]" style={{ color: themeColor }}>{t.total}</th>
+              <th className="py-2.5 px-4 text-[9px] font-black uppercase tracking-widest transition-colors duration-300 w-[55%] print:!text-current" style={{ color: themeColor }}>{t.desc}</th>
+              <th className="py-2.5 px-3 text-[9px] font-black uppercase tracking-widest text-center transition-colors duration-300 w-[10%] print:!text-current" style={{ color: themeColor }}>{t.qty}</th>
+              <th className="py-2.5 px-4 text-[9px] font-black uppercase tracking-widest text-right transition-colors duration-300 w-[17.5%] print:!text-current" style={{ color: themeColor }}>{t.price}</th>
+              <th className="py-2.5 px-4 text-[9px] font-black uppercase tracking-widest text-right transition-colors duration-300 w-[17.5%] print:!text-current" style={{ color: themeColor }}>{t.total}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
             {items.map((item, index) => (
-              <tr key={item.id} className="transition-colors break-inside-avoid">
+              <tr key={item.id} className="hover:bg-slate-50/50 transition-colors break-inside-avoid">
                 <td className="py-2.5 px-4">
                   <p className="text-[11px] text-slate-800 font-bold leading-tight">{item.description || `Item Tagihan #${index + 1}`}</p>
                   {item.details && <p className="text-[9px] text-slate-500 mt-0.5 whitespace-pre-wrap leading-relaxed border-l-2 pl-1.5" style={{ borderColor: themeColor + '40' }}>{item.details}</p>}
@@ -303,9 +303,9 @@ const TemplateModern = ({ invoiceData, items, logo, stamp, themeColor, currency,
         <div className="space-y-4" style={{ flex: 1.618 }}>
           {(invoiceData.bankName || invoiceData.accNumber || invoiceData.accName || invoiceData.bankCode) && (
             <div>
-              <h3 className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5 border-b-2 inline-block pb-1 transition-colors duration-300" style={{ borderColor: themeColor }}>{t.payment}</h3>
+              <h3 className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5 border-b-2 inline-block pb-1 transition-colors duration-300 print:!border-current" style={{ borderColor: themeColor }}>{t.payment}</h3>
               <div className="bg-slate-50 rounded-xl p-3 border border-slate-100 shadow-sm relative overflow-hidden">
-                <div className="absolute left-0 top-0 bottom-0 w-1 transition-colors duration-300" style={{ backgroundColor: themeColor }}></div>
+                <div className="absolute left-0 top-0 bottom-0 w-1 transition-colors duration-300 print:!bg-current" style={{ backgroundColor: themeColor }}></div>
                 {invoiceData.bankName && <p className="text-[10px] font-bold text-slate-800 mb-0.5">{invoiceData.bankName}</p>}
                 {invoiceData.accNumber && <p className="text-[13px] font-mono font-black text-slate-700 mb-1 tracking-widest">{invoiceData.accNumber}</p>}
                 {invoiceData.accName && <p className="text-[9px] text-slate-500 font-bold uppercase tracking-wider mb-1">{t.accName}: {invoiceData.accName}</p>}
@@ -315,7 +315,7 @@ const TemplateModern = ({ invoiceData, items, logo, stamp, themeColor, currency,
           )}
           {invoiceData.notes && (
             <div>
-              <h3 className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5 border-b-2 inline-block pb-1 transition-colors duration-300" style={{ borderColor: themeColor }}>{t.notes}</h3>
+              <h3 className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5 border-b-2 inline-block pb-1 transition-colors duration-300 print:!border-current" style={{ borderColor: themeColor }}>{t.notes}</h3>
               <p className="text-[9px] text-slate-600 font-medium whitespace-pre-wrap leading-relaxed bg-slate-50/50 p-3 rounded-xl border border-slate-100/80">{invoiceData.notes}</p>
             </div>
           )}
@@ -342,7 +342,7 @@ const TemplateModern = ({ invoiceData, items, logo, stamp, themeColor, currency,
             <div className="h-px w-full bg-slate-200/80 my-1.5"></div>
             <div className="flex flex-col gap-0.5">
               <span className="text-[9px] font-black uppercase tracking-widest text-slate-500">{t.grandTotal}</span>
-              <span className="text-[18px] font-black leading-tight transition-colors duration-300" style={{ color: themeColor }}>{formatCurrency(total, currency)}</span>
+              <span className="text-[18px] font-black leading-tight transition-colors duration-300 print:!text-current" style={{ color: themeColor }}>{formatCurrency(total, currency)}</span>
             </div>
           </div>
 
@@ -364,7 +364,7 @@ const TemplateMinimal = ({ invoiceData, items, logo, stamp, themeColor, currency
       </div>
     )}
     
-    <div className="flex flex-row justify-between items-end border-b-[2px] pb-4 mb-6 transition-colors duration-300 shrink-0" style={{ borderColor: themeColor }}>
+    <div className="flex flex-row justify-between items-end border-b-[2px] pb-4 mb-6 transition-colors duration-300 shrink-0 print:!border-current" style={{ borderColor: themeColor }}>
       <div style={{ flex: 1.618 }}>
         <h1 className="text-4xl font-light tracking-widest mb-1.5 text-slate-900">{t.invoice}</h1>
         <p className="text-slate-500 font-bold tracking-widest text-sm">#{invoiceData.invoiceNo || "INV-XXXX"}</p>
@@ -373,7 +373,7 @@ const TemplateMinimal = ({ invoiceData, items, logo, stamp, themeColor, currency
         {logo ? (
           <img src={logo} alt="Logo" className="max-h-14 object-contain" />
         ) : (
-          <h2 className="text-2xl font-black tracking-tight transition-colors duration-300 uppercase" style={{ color: themeColor }}>
+          <h2 className="text-2xl font-black tracking-tight transition-colors duration-300 uppercase print:!text-current" style={{ color: themeColor }}>
              {invoiceData.myName || t.companyPlaceholder}
           </h2>
         )}
@@ -386,7 +386,7 @@ const TemplateMinimal = ({ invoiceData, items, logo, stamp, themeColor, currency
           <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">{t.to}:</p>
           <p className="text-[13px] font-bold text-slate-800 leading-tight mb-1">{invoiceData.clientName || "Nama Klien / Perusahaan"}</p>
           {invoiceData.clientAddress && <p className="text-[11px] text-slate-600 whitespace-pre-wrap leading-relaxed">{invoiceData.clientAddress}</p>}
-          {invoiceData.clientTaxId && <p className="text-[9px] text-slate-500 mt-1 font-medium">Tax ID: {invoiceData.clientTaxId}</p>}
+          {invoiceData.clientTaxId && <p className="text-[9px] text-slate-500 mt-1.5 font-medium">Tax ID: {invoiceData.clientTaxId}</p>}
         </div>
         {invoiceData.projectName && (
           <div>
@@ -430,18 +430,18 @@ const TemplateMinimal = ({ invoiceData, items, logo, stamp, themeColor, currency
         {items.map((item, index) => (
           <tr key={item.id} className="break-inside-avoid">
             <td className="py-2.5 px-2">
-              <p className="text-[12px] text-slate-800 font-bold">{item.description || `Item #${index + 1}`}</p>
-              {item.details && <p className="text-[10px] text-slate-500 mt-1 whitespace-pre-wrap leading-relaxed">{item.details}</p>}
+              <p className="text-[11px] text-slate-800 font-bold">{item.description || `Item #${index + 1}`}</p>
+              {item.details && <p className="text-[9px] text-slate-500 mt-1 whitespace-pre-wrap leading-relaxed">{item.details}</p>}
             </td>
-            <td className="py-2.5 px-2 text-[11px] text-slate-700 text-center align-top pt-3">{item.qty || 0}</td>
-            <td className="py-2.5 px-2 text-[11px] text-slate-700 text-right align-top pt-3">{formatCurrency(item.price || 0, currency)}</td>
-            <td className="py-2.5 px-2 text-[12px] text-slate-800 font-black text-right align-top pt-3">{formatCurrency((item.qty || 0) * (item.price || 0), currency)}</td>
+            <td className="py-2.5 px-2 text-[10px] text-slate-700 text-center align-top pt-2.5">{item.qty || 0}</td>
+            <td className="py-2.5 px-2 text-[10px] text-slate-700 text-right align-top pt-2.5">{formatCurrency(item.price || 0, currency)}</td>
+            <td className="py-2.5 px-2 text-[11px] text-slate-800 font-black text-right align-top pt-2.5">{formatCurrency((item.qty || 0) * (item.price || 0), currency)}</td>
           </tr>
         ))}
       </tbody>
     </table>
 
-    <div className="flex flex-row items-start gap-6 mt-auto pt-4 break-inside-avoid pb-4">
+    <div className="flex flex-row items-start gap-6 mt-auto pt-4 break-inside-avoid pb-6">
       <div className="space-y-4" style={{ flex: 1.618 }}>
         {(invoiceData.bankName || invoiceData.accNumber || invoiceData.accName || invoiceData.bankCode) && (
           <div>
@@ -481,9 +481,9 @@ const TemplateMinimal = ({ invoiceData, items, logo, stamp, themeColor, currency
             </div>
           )}
         </div>
-        <div className="w-full flex flex-col gap-1 mb-6 text-right">
+        <div className="w-full flex flex-col gap-1 mb-8 text-right">
           <span className="text-[9px] font-black uppercase tracking-widest text-slate-500">{t.grandTotal}</span>
-          <span className="text-[20px] font-black transition-colors duration-300" style={{ color: themeColor }}>{formatCurrency(total, currency)}</span>
+          <span className="text-[20px] font-black transition-colors duration-300 print:!text-current" style={{ color: themeColor }}>{formatCurrency(total, currency)}</span>
         </div>
 
         <div className="flex justify-end w-full">
@@ -501,7 +501,7 @@ const TemplateClassic = ({ invoiceData, items, logo, stamp, themeColor, currency
       {logo ? (
         <img src={logo} alt="Logo" className="max-h-16 mx-auto mb-3" />
       ) : (
-        <h2 className="text-3xl font-bold tracking-tight mb-2 transition-colors duration-300 uppercase" style={{ color: themeColor }}>
+        <h2 className="text-3xl font-bold tracking-tight mb-2 transition-colors duration-300 uppercase print:!text-current" style={{ color: themeColor }}>
           {invoiceData.myName || t.companyPlaceholder}
         </h2>
       )}
@@ -548,7 +548,7 @@ const TemplateClassic = ({ invoiceData, items, logo, stamp, themeColor, currency
 
     <table className="w-full text-left mb-6 border-collapse border border-slate-800 table-fixed shrink-0">
       <thead>
-        <tr className="transition-colors duration-300" style={{ backgroundColor: themeColor, color: '#ffffff' }}>
+        <tr className="transition-colors duration-300 print:!bg-slate-800 print:!text-white" style={{ backgroundColor: themeColor, color: '#ffffff' }}>
           <th className="py-2 px-3 text-[10px] font-bold uppercase tracking-widest border border-slate-800 w-[55%]">{t.desc}</th>
           <th className="py-2 px-2 text-[10px] font-bold uppercase tracking-widest text-center border border-slate-800 w-[10%]">{t.qty}</th>
           <th className="py-2 px-3 text-[10px] font-bold uppercase tracking-widest text-right border border-slate-800 w-[17.5%]">{t.price}</th>
@@ -559,12 +559,12 @@ const TemplateClassic = ({ invoiceData, items, logo, stamp, themeColor, currency
         {items.map((item, index) => (
           <tr key={item.id} className="break-inside-avoid">
             <td className="py-2 px-3 border border-slate-800">
-              <p className="text-[12px] text-slate-900 font-bold">{item.description || `Deskripsi Item Ke-${index + 1}`}</p>
-              {item.details && <p className="text-[10px] text-slate-700 mt-1 whitespace-pre-wrap leading-relaxed">{item.details}</p>}
+              <p className="text-[11px] text-slate-900 font-bold">{item.description || `Deskripsi Item Ke-${index + 1}`}</p>
+              {item.details && <p className="text-[9px] text-slate-700 mt-1 whitespace-pre-wrap leading-relaxed">{item.details}</p>}
             </td>
-            <td className="py-2 px-2 text-[11px] text-slate-900 text-center border border-slate-800 align-top pt-2.5">{item.qty || 0}</td>
-            <td className="py-2 px-3 text-[11px] text-slate-900 text-right border border-slate-800 align-top pt-2.5">{formatCurrency(item.price || 0, currency)}</td>
-            <td className="py-2 px-3 text-[11px] text-slate-900 font-bold text-right border border-slate-800 align-top pt-2.5">{formatCurrency((item.qty || 0) * (item.price || 0), currency)}</td>
+            <td className="py-2 px-2 text-[10px] text-slate-900 text-center border border-slate-800 align-top pt-2.5">{item.qty || 0}</td>
+            <td className="py-2 px-3 text-[10px] text-slate-900 text-right border border-slate-800 align-top pt-2.5">{formatCurrency(item.price || 0, currency)}</td>
+            <td className="py-2 px-3 text-[10px] text-slate-900 font-bold text-right border border-slate-800 align-top pt-2.5">{formatCurrency((item.qty || 0) * (item.price || 0), currency)}</td>
           </tr>
         ))}
       </tbody>
@@ -575,23 +575,23 @@ const TemplateClassic = ({ invoiceData, items, logo, stamp, themeColor, currency
         <table className="w-full border-collapse border border-slate-800">
           <tbody>
             <tr>
-              <td className="py-1.5 px-3 border border-slate-800 text-[11px] text-slate-800 font-bold bg-slate-50">{t.subtotal}</td>
-              <td className="py-1.5 px-3 border border-slate-800 text-[11px] text-slate-900 font-bold text-right">{formatCurrency(subtotal, currency)}</td>
+              <td className="py-1.5 px-3 border border-slate-800 text-[10px] text-slate-800 font-bold bg-slate-50">{t.subtotal}</td>
+              <td className="py-1.5 px-3 border border-slate-800 text-[10px] text-slate-900 font-bold text-right">{formatCurrency(subtotal, currency)}</td>
             </tr>
             {Number(invoiceData.discount) > 0 && (
               <tr>
-                <td className="py-1.5 px-3 border border-slate-800 text-[11px] text-slate-800 font-bold bg-slate-50">{t.discount} {invoiceData.discountType === 'percent' ? `(${invoiceData.discount}%)` : ''}</td>
-                <td className="py-1.5 px-3 border border-slate-800 text-[11px] text-red-700 font-bold text-right">-{formatCurrency(discountAmount, currency)}</td>
+                <td className="py-1.5 px-3 border border-slate-800 text-[10px] text-slate-800 font-bold bg-slate-50">{t.discount} {invoiceData.discountType === 'percent' ? `(${invoiceData.discount}%)` : ''}</td>
+                <td className="py-1.5 px-3 border border-slate-800 text-[10px] text-red-700 font-bold text-right">-{formatCurrency(discountAmount, currency)}</td>
               </tr>
             )}
             {Number(invoiceData.taxRate) > 0 && (
               <tr>
-                <td className="py-1.5 px-3 border border-slate-800 text-[11px] text-slate-800 font-bold bg-slate-50">{t.tax} ({invoiceData.taxRate}%)</td>
-                <td className="py-1.5 px-3 border border-slate-800 text-[11px] text-slate-900 font-bold text-right">{formatCurrency(taxAmount, currency)}</td>
+                <td className="py-1.5 px-3 border border-slate-800 text-[10px] text-slate-800 font-bold bg-slate-50">{t.tax} ({invoiceData.taxRate}%)</td>
+                <td className="py-1.5 px-3 border border-slate-800 text-[10px] text-slate-900 font-bold text-right">{formatCurrency(taxAmount, currency)}</td>
               </tr>
             )}
-            <tr className="transition-colors duration-300">
-              <td className="py-2.5 px-3 border border-slate-800 text-[12px] font-bold uppercase tracking-widest text-white transition-colors duration-300" style={{ backgroundColor: themeColor }}>{t.grandTotal}</td>
+            <tr className="transition-colors duration-300 print:!bg-slate-800 print:!text-white">
+              <td className="py-2.5 px-3 border border-slate-800 text-[11px] font-bold uppercase tracking-widest text-white transition-colors duration-300" style={{ backgroundColor: themeColor }}>{t.grandTotal}</td>
               <td className="py-2.5 px-3 border border-slate-800 text-[14px] font-bold text-right text-slate-900 bg-slate-100">{formatCurrency(total, currency)}</td>
             </tr>
           </tbody>
@@ -604,7 +604,7 @@ const TemplateClassic = ({ invoiceData, items, logo, stamp, themeColor, currency
         {(invoiceData.bankName || invoiceData.accNumber || invoiceData.accName || invoiceData.bankCode) && (
           <div className="mb-4">
             <h3 className="text-[10px] font-bold text-slate-900 uppercase tracking-widest border-b border-slate-800 pb-1 mb-1.5">{t.payment}</h3>
-            <div className="text-[11px] text-slate-800 leading-relaxed bg-slate-50 p-2.5 border border-slate-200">
+            <div className="text-[10px] text-slate-800 leading-relaxed bg-slate-50 p-2.5 border border-slate-200">
               {invoiceData.bankName && <p><strong>{t.bank}:</strong> {invoiceData.bankName}</p>}
               {invoiceData.accNumber && <p><strong>{t.accNum}:</strong> <span className="font-mono">{invoiceData.accNumber}</span></p>}
               {invoiceData.accName && <p><strong>{t.accName}:</strong> {invoiceData.accName}</p>}
@@ -615,7 +615,7 @@ const TemplateClassic = ({ invoiceData, items, logo, stamp, themeColor, currency
         {invoiceData.notes && (
           <div>
             <h3 className="text-[10px] font-bold text-slate-900 uppercase tracking-widest border-b border-slate-800 pb-1 mb-1.5">{t.notes}</h3>
-            <p className="text-[10px] text-slate-800 whitespace-pre-wrap leading-relaxed">{invoiceData.notes}</p>
+            <p className="text-[9px] text-slate-800 whitespace-pre-wrap leading-relaxed">{invoiceData.notes}</p>
           </div>
         )}
       </div>
@@ -824,7 +824,14 @@ export default function InvoiceTab() {
         /* ISOLASI PRINT MUTLAK - MENJAMIN 100% WYSIWYG WARNA DAN LAYOUT */
         @media print {
           @page { size: A4; margin: 0; }
-          body { background: white !important; }
+          html, body { 
+            width: 100% !important; 
+            height: auto !important; 
+            margin: 0 !important; 
+            padding: 0 !important; 
+            background: white !important; 
+            overflow: visible !important;
+          }
           
           /* FORCE WARNA CUSTOM AGAR TIDAK DIHAPUS BROWSER SAAT PRINT */
           * {
@@ -833,14 +840,15 @@ export default function InvoiceTab() {
             print-color-adjust: exact !important;
           }
           
-          /* Sembunyikan SEMUA elemen web dari level root body */
+          /* Sembunyikan SEMUA elemen web dari level root menggunakan display: none (mencegah ruang kosong) */
           .no-print, header, nav, footer, aside, .sidebar { display: none !important; }
           
-          /* Reset Wrapper Kertas */
+          /* Reset Wrapper Kertas untuk mematikan skala dari React */
           .print-reset-layout {
              display: block !important;
              width: 100% !important;
              height: auto !important;
+             min-height: auto !important;
              margin: 0 !important;
              padding: 0 !important;
              transform: none !important;
@@ -848,14 +856,15 @@ export default function InvoiceTab() {
              overflow: visible !important;
           }
           
-          /* Kertas Invoice Area */
+          /* Kertas Invoice Area (Kembali ke flow normal dengan lebar paksa agar page-break jalan) */
           #print-area { 
-             position: absolute !important;
-             left: 0 !important;
-             top: 0 !important;
-             width: 210mm !important; 
+             position: relative !important;
+             left: auto !important;
+             top: auto !important;
+             width: 100% !important; 
+             max-width: 210mm !important; 
              box-shadow: none !important;
-             margin: 0 !important; 
+             margin: 0 auto !important; 
              padding: 0 !important; 
              transform: none !important;
           }
@@ -883,7 +892,7 @@ export default function InvoiceTab() {
           <p className="text-sm text-slate-400 mt-2 max-w-xl">Buat tagihan digital profesional untuk klien Anda secara instan dengan tata letak padat, WYSIWYG A4 presisi tinggi, dan multi-bahasa terintegrasi.</p>
         </div>
         <button onClick={() => window.print()} className="w-full sm:w-auto bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold py-3.5 px-8 rounded-xl flex items-center justify-center gap-3 shadow-[0_0_20px_rgba(6,182,212,0.3)] transition-all hover:-translate-y-1 z-10">
-          <Icons.Print /> Simpan PDF / Print
+          <Icons.Print /> Simpan PDF / Cetak
         </button>
       </div>
 
@@ -903,7 +912,7 @@ export default function InvoiceTab() {
                 <span className="transition-colors duration-300" style={{ color: themeColor }}>
                   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
                 </span>
-                Pengaturan Desain (Standar A4)
+                Pengaturan Desain
                </h3>
                {/* AI Translate Toggle */}
                <div className="flex bg-[#1e293b] p-1 rounded-lg border border-white/10 shadow-inner">
