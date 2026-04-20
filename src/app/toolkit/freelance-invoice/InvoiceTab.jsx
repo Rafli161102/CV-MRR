@@ -3,42 +3,56 @@
 import React, { useState, useRef, useEffect } from 'react';
 
 // --- Komponen Pendukung Terintegrasi ---
+const Icons = {
+  Document: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></svg>,
+  Print: () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>,
+  Trash: () => <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>,
+  Plus: () => <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>,
+  Image: () => <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>,
+  Stamp: () => <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M14.31 8l5.74 9.94M9.69 8h11.48M7.38 12l5.74-9.94M9.69 16L3.95 6.06M14.31 16H2.83m13.79-4l-5.74 9.94"/></svg>,
+};
+
 const formatCurrency = (value, currency = "IDR") => {
   const isIDR = currency === "IDR";
+  const numValue = Number(value) || 0;
   return new Intl.NumberFormat(isIDR ? 'id-ID' : 'en-US', {
     style: 'currency',
     currency: currency,
     minimumFractionDigits: isIDR ? 0 : 2,
     maximumFractionDigits: isIDR ? 0 : 2
-  }).format(value || 0);
+  }).format(numValue);
 };
 
-const CleanInput = ({ label, type = "text", name, value, onChange, placeholder, hint, maxLength }) => (
+const CleanInput = ({ label, type = "text", name, value, onChange, placeholder, hint, maxLength, prefix, suffix }) => (
   <div className="flex flex-col gap-1.5 w-full">
     {label && (
-      <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest flex justify-between">
-        {label}
-        {hint && <span className="text-slate-500 normal-case tracking-normal font-normal">{hint}</span>}
+      <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest flex justify-between items-center">
+        <span>{label}</span>
+        {hint && <span className="text-slate-500 normal-case tracking-normal font-normal text-[10px]">{hint}</span>}
       </label>
     )}
-    <input
-      type={type}
-      name={name}
-      value={value}
-      onChange={onChange}
-      placeholder={placeholder}
-      maxLength={maxLength}
-      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
-    />
+    <div className="relative flex items-center w-full">
+      {prefix && <span className="absolute left-4 text-slate-500 font-medium text-sm z-10 pointer-events-none">{prefix}</span>}
+      <input
+        type={type}
+        name={name}
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        maxLength={maxLength}
+        className={`w-full bg-white/5 border border-white/10 rounded-xl py-3 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all ${prefix ? 'pl-10' : 'pl-4'} ${suffix ? 'pr-14' : 'pr-4'}`}
+      />
+      {suffix && <span className="absolute right-4 text-slate-500 font-bold text-sm z-10 pointer-events-none">{suffix}</span>}
+    </div>
   </div>
 );
 
 const CleanTextarea = ({ label, name, value, onChange, placeholder, rows = 2, hint }) => (
   <div className="flex flex-col gap-1.5 w-full">
     {label && (
-      <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest flex justify-between">
-        {label}
-        {hint && <span className="text-slate-500 normal-case tracking-normal font-normal">{hint}</span>}
+      <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest flex justify-between items-center">
+        <span>{label}</span>
+        {hint && <span className="text-slate-500 normal-case tracking-normal font-normal text-[10px]">{hint}</span>}
       </label>
     )}
     <textarea
@@ -52,7 +66,6 @@ const CleanTextarea = ({ label, name, value, onChange, placeholder, rows = 2, hi
   </div>
 );
 
-// Custom Dropdown (Menggantikan Select Native OS)
 const CustomDropdown = ({ label, value, onChange, options, placeholder }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -75,10 +88,10 @@ const CustomDropdown = ({ label, value, onChange, options, placeholder }) => {
       <div className="relative">
         <div 
           onClick={() => setIsOpen(!isOpen)}
-          className={`w-full bg-white/5 border rounded-xl px-4 py-3 text-sm flex justify-between items-center cursor-pointer transition-all ${isOpen ? 'border-indigo-500 ring-1 ring-indigo-500 text-white' : 'border-white/10 text-slate-300 hover:border-white/30'}`}
+          className={`w-full bg-white/5 border rounded-xl px-4 py-3 text-sm flex justify-between items-center cursor-pointer transition-all ${isOpen ? 'border-cyan-500 ring-1 ring-cyan-500 text-white' : 'border-white/10 text-slate-300 hover:border-white/30'}`}
         >
           <span className="truncate">{selectedLabel}</span>
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`transition-transform duration-300 ${isOpen ? 'rotate-180 text-indigo-400' : 'text-slate-500'}`}><polyline points="6 9 12 15 18 9"></polyline></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`transition-transform duration-300 ${isOpen ? 'rotate-180 text-cyan-400' : 'text-slate-500'}`}><polyline points="6 9 12 15 18 9"></polyline></svg>
         </div>
 
         {isOpen && (
@@ -89,7 +102,7 @@ const CustomDropdown = ({ label, value, onChange, options, placeholder }) => {
                 placeholder="Cari Bank/Platform..." 
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500"
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-500"
                 onClick={(e) => e.stopPropagation()}
               />
             </div>
@@ -98,7 +111,7 @@ const CustomDropdown = ({ label, value, onChange, options, placeholder }) => {
                 <div 
                   key={i} 
                   onClick={() => { onChange(opt.value); setIsOpen(false); setSearchTerm(""); }}
-                  className={`px-4 py-2.5 text-sm cursor-pointer transition-colors ${value === opt.value ? 'bg-indigo-500/20 text-indigo-300 font-bold border-l-2 border-indigo-500' : 'text-slate-300 hover:bg-white/5 border-l-2 border-transparent'}`}
+                  className={`px-4 py-2.5 text-sm cursor-pointer transition-colors ${value === opt.value ? 'bg-cyan-500/20 text-cyan-300 font-bold border-l-2 border-cyan-500' : 'text-slate-300 hover:bg-white/5 border-l-2 border-transparent'}`}
                 >
                   {opt.label}
                 </div>
@@ -111,13 +124,32 @@ const CustomDropdown = ({ label, value, onChange, options, placeholder }) => {
   );
 };
 
-// --- DAFTAR BANK & PLATFORM GLOBAL LENGKAP ---
+// --- KAMUS TRANSLATE (AI MULTI-LANGUAGE) ---
+const dict = {
+  id: {
+    invoice: "INVOICE", ref: "Referensi Proyek", date: "Tanggal Terbit", dueDate: "Jatuh Tempo",
+    from: "Informasi Pengirim", to: "Ditagihkan Kepada",
+    desc: "Deskripsi Layanan / Item", qty: "Qty", price: "Harga Satuan", total: "Jumlah",
+    subtotal: "Subtotal", discount: "Diskon", tax: "Pajak", grandTotal: "Total Keseluruhan",
+    payment: "Instruksi Pembayaran", bank: "Bank/Platform", accNum: "No. Rekening/Akun", accName: "Atas Nama", swift: "SWIFT / Routing",
+    notes: "Catatan & Syarat", signature: "Hormat Kami,", paid: "LUNAS", companyPlaceholder: "NAMA PERUSAHAAN"
+  },
+  en: {
+    invoice: "INVOICE", ref: "Project Reference", date: "Date of Issue", dueDate: "Due Date",
+    from: "Sender Information", to: "Billed To",
+    desc: "Service Description", qty: "Qty", price: "Unit Price", total: "Amount",
+    subtotal: "Subtotal", discount: "Discount", tax: "Tax", grandTotal: "Grand Total",
+    payment: "Payment Instructions", bank: "Bank/Platform", accNum: "Account Number", accName: "Account Name", swift: "SWIFT / Routing",
+    notes: "Notes & Terms", signature: "Sincerely,", paid: "PAID", companyPlaceholder: "COMPANY NAME"
+  }
+};
+
+// --- DAFTAR BANK & PLATFORM GLOBAL SUPER LENGKAP ---
 const bankOptions = [
   { value: "", label: "-- Pilih Metode Pembayaran / Bank --" },
-  // Global & Payment Gateways
   { value: "PayPal", label: "PayPal" },
   { value: "Stripe", label: "Stripe" },
-  { value: "Wise", label: "Wise (TransferWise)" },
+  { value: "Wise (TransferWise)", label: "Wise (TransferWise)" },
   { value: "Payoneer", label: "Payoneer" },
   { value: "JPMorgan Chase", label: "JPMorgan Chase" },
   { value: "Bank of America", label: "Bank of America" },
@@ -128,7 +160,6 @@ const bankOptions = [
   { value: "DBS Bank", label: "DBS Bank" },
   { value: "OCBC", label: "OCBC Bank" },
   { value: "Revolut", label: "Revolut" },
-  // National Banks (Indonesia)
   { value: "Bank Central Asia (BCA)", label: "BCA (Bank Central Asia)" },
   { value: "Bank Mandiri", label: "Bank Mandiri" },
   { value: "Bank Negara Indonesia (BNI)", label: "BNI (Bank Negara Indonesia)" },
@@ -139,40 +170,34 @@ const bankOptions = [
   { value: "Bank Danamon", label: "Bank Danamon" },
   { value: "Bank Mega", label: "Bank Mega" },
   { value: "Bank OCBC NISP", label: "Bank OCBC NISP" },
-  { value: "Bank BTN", label: "Bank BTPN / Jenius" },
-  // Digital Banks (Indonesia)
+  { value: "Bank BTN", label: "Bank BTN" },
+  { value: "Bank BTPN", label: "Bank BTPN" },
   { value: "BCA Digital (Blu)", label: "BCA Digital (Blu)" },
   { value: "Bank Jago", label: "Bank Jago" },
-  { value: "Bank Seabank", label: "SeaBank" },
-  { value: "Bank Neo Commerce", label: "Bank Neo Commerce (BNC)" },
-  { value: "Allo Bank", label: "Allo Bank" },
-  // E-Wallets
-  { value: "GoPay", label: "GoPay" },
-  { value: "OVO", label: "OVO" },
-  { value: "DANA", label: "DANA" },
-  { value: "ShopeePay", label: "ShopeePay" },
-  { value: "LinkAja", label: "LinkAja" },
+  { value: "SeaBank", label: "SeaBank" },
+  { value: "Bank Neo Commerce (BNC)", label: "Bank Neo Commerce (BNC)" },
+  { value: "GoPay", label: "GoPay (E-Wallet)" },
+  { value: "OVO", label: "OVO (E-Wallet)" },
+  { value: "DANA", label: "DANA (E-Wallet)" },
+  { value: "ShopeePay", label: "ShopeePay (E-Wallet)" }
 ];
 
+// --- TEMPLATES COMPONENTS (Dynamic Golden Ratio Flexbox) ---
 
-// --- TEMPLATES COMPONENTS ---
-
-const SignatureBlock = ({ invoiceData, stamp, themeColor }) => (
-  <div className="relative inline-flex flex-col items-center justify-end pt-4 min-w-[220px]">
-    <p className="text-[12px] md:text-[14px] text-slate-600 font-bold mb-4 relative z-10 w-full text-center">Hormat Kami,</p>
+const SignatureBlock = ({ invoiceData, stamp, themeColor, t }) => (
+  <div className="relative inline-flex flex-col items-center justify-end pt-6 min-w-[220px]">
+    <p className="text-[12px] md:text-[14px] text-slate-600 font-bold mb-4 relative z-10 w-full text-center">{t.signature}</p>
     
     <div className="relative h-24 md:h-32 flex items-center justify-center w-full">
-      {/* Tanda Tangan */}
       <span className="text-4xl md:text-[56px] opacity-80 z-10 whitespace-nowrap" style={{ color: themeColor, fontFamily: "'Brush Script MT', 'Lucida Handwriting', cursive" }}>
         {invoiceData.signatureName || invoiceData.myName || "Signature"}
       </span>
       
-      {/* Cap Basah (Menimpa Tanda Tangan persis di tengah) */}
       {stamp && (
          <img 
            src={stamp} 
            alt="Stamp" 
-           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-28 h-28 md:w-36 md:h-36 object-contain opacity-85 mix-blend-multiply pointer-events-none transform -rotate-[15deg] z-20" 
+           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-28 h-28 md:w-36 md:h-36 object-contain opacity-90 mix-blend-multiply pointer-events-none transform -rotate-[15deg] z-20" 
          />
       )}
     </div>
@@ -184,63 +209,63 @@ const SignatureBlock = ({ invoiceData, stamp, themeColor }) => (
 );
 
 // 1. Template Modern
-const TemplateModern = ({ invoiceData, items, logo, stamp, themeColor, currency, subtotal, taxAmount, discountAmount, total }) => (
-  <div className="relative bg-white text-slate-900 overflow-hidden h-full">
+const TemplateModern = ({ invoiceData, items, logo, stamp, themeColor, currency, subtotal, taxAmount, discountAmount, total, t }) => (
+  <div className="relative bg-white text-slate-900 overflow-hidden w-full h-full shadow-[0_10px_40px_rgba(0,0,0,0.15)] print:shadow-none flex flex-col">
     <div className="absolute top-0 left-0 w-full h-3 transition-colors duration-300" style={{ backgroundColor: themeColor }}></div>
     {invoiceData.status === 'PAID' && (
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.05] pointer-events-none transform -rotate-12 z-0">
-        <div className="border-[12px] border-emerald-600 text-emerald-600 text-[140px] md:text-[180px] font-black p-4 md:p-8 rounded-3xl uppercase tracking-widest leading-none shadow-2xl">PAID</div>
+        <div className="border-[12px] border-emerald-600 text-emerald-600 text-[140px] md:text-[180px] font-black p-4 md:p-8 rounded-3xl uppercase tracking-widest leading-none shadow-2xl">{t.paid}</div>
       </div>
     )}
     
-    <div className="p-8 sm:p-10 md:p-14 relative z-10">
-      <div className="flex flex-col md:flex-row justify-between items-start mb-12 gap-6 md:gap-8">
-        <div className="w-full md:w-[61.8%]">
+    <div className="p-8 sm:p-10 md:p-14 relative z-10 flex-grow">
+      <div className="flex flex-row justify-between items-start mb-12 gap-8">
+        <div style={{ flex: 1.618 }}>
           {logo ? (
-            <img src={logo} alt="Logo" className="max-h-20 md:max-h-24 object-contain mb-4" />
+            <img src={logo} alt="Logo" className="max-h-24 object-contain mb-4" />
           ) : (
-            <div className="w-14 h-14 md:w-16 md:h-16 rounded-2xl mb-4 flex items-center justify-center text-white font-black text-2xl md:text-3xl shadow-lg transition-colors duration-300" style={{ backgroundColor: themeColor }}>
-              {invoiceData.myName ? invoiceData.myName.charAt(0).toUpperCase() : "I"}
-            </div>
+            <h2 className="text-3xl font-black tracking-tight mb-4 transition-colors duration-300 uppercase" style={{ color: themeColor }}>
+              {invoiceData.myName || t.companyPlaceholder}
+            </h2>
           )}
           {invoiceData.projectName && (
-            <div className="mt-2 md:mt-4 inline-block bg-slate-50 border border-slate-200 px-3 py-1.5 md:px-4 md:py-2 rounded-xl">
-              <p className="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Referensi Proyek</p>
-              <p className="text-xs md:text-sm font-bold text-slate-800">{invoiceData.projectName}</p>
+            <div className="mt-4 inline-block bg-slate-50 border border-slate-200 px-4 py-2 rounded-xl">
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">{t.ref}</p>
+              <p className="text-sm font-bold text-slate-800">{invoiceData.projectName}</p>
             </div>
           )}
         </div>
-        <div className="w-full md:w-[38.2%] md:text-right">
-          <h1 className="text-4xl md:text-5xl font-black uppercase tracking-widest mb-1 md:mb-2 transition-colors duration-300" style={{ color: themeColor }}>Invoice</h1>
-          <p className="text-slate-500 font-bold tracking-wider mb-3 md:mb-4 text-lg md:text-xl">#{invoiceData.invoiceNo || "INV-XXXX"}</p>
-          <div className="flex flex-col md:items-end gap-1 md:gap-2 text-[10px] md:text-xs mt-2 md:mt-4 bg-slate-50 p-3 md:p-4 rounded-xl border border-slate-100">
+        <div className="text-right" style={{ flex: 1 }}>
+          <h1 className="text-4xl md:text-5xl font-black uppercase tracking-widest mb-2 transition-colors duration-300" style={{ color: themeColor }}>{t.invoice}</h1>
+          <p className="text-slate-500 font-bold tracking-wider mb-4 text-lg md:text-xl">#{invoiceData.invoiceNo || "INV-XXXX"}</p>
+          <div className="flex flex-col items-end gap-2 text-xs mt-4 bg-slate-50 p-4 rounded-xl border border-slate-100">
             <div className="flex justify-between w-full">
-              <p className="text-slate-400 font-bold uppercase tracking-widest">Tanggal</p>
+              <p className="text-slate-400 font-bold uppercase tracking-widest">{t.date}</p>
               <p className="text-slate-800 font-semibold">{invoiceData.date || "-"}</p>
             </div>
-            <div className="w-full h-px bg-slate-200 my-0.5 md:my-1"></div>
+            <div className="w-full h-px bg-slate-200 my-1"></div>
             <div className="flex justify-between w-full">
-              <p className="text-slate-400 font-bold uppercase tracking-widest">Jatuh Tempo</p>
+              <p className="text-slate-400 font-bold uppercase tracking-widest">{t.dueDate}</p>
               <p className="text-slate-800 font-semibold">{invoiceData.dueDate || "-"}</p>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="flex flex-col md:flex-row justify-between gap-6 md:gap-10 mb-12 bg-slate-50/70 p-6 md:p-8 rounded-3xl border border-slate-100/80">
-        <div className="w-full md:w-[38.2%] md:border-r border-slate-200/60 md:pr-8 border-b md:border-b-0 pb-6 md:pb-0">
-          <h3 className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 md:mb-4 border-b-2 inline-block pb-1.5 transition-colors duration-300" style={{ borderColor: themeColor }}>Dari (Pengirim)</h3>
-          <p className="text-[14px] md:text-base font-bold text-slate-800 mb-1 leading-tight">{invoiceData.myName || "Nama Pengirim"}</p>
-          {invoiceData.myRole && <p className="text-xs md:text-sm font-medium text-slate-500 mb-1 md:mb-2">{invoiceData.myRole}</p>}
-          {invoiceData.myEmail && <p className="text-[11px] md:text-sm text-slate-600 mb-0.5">{invoiceData.myEmail}</p>}
-          {invoiceData.myPhone && <p className="text-[11px] md:text-sm text-slate-600 mb-2 md:mb-3">{invoiceData.myPhone}</p>}
-          {invoiceData.myTaxId && <p className="text-[9px] md:text-[11px] font-bold text-slate-500 bg-slate-200/50 px-2 md:px-2.5 py-1 rounded-md inline-block">Tax ID: {invoiceData.myTaxId}</p>}
+      <div className="flex flex-row gap-10 mb-12 bg-slate-50/70 p-8 rounded-3xl border border-slate-100/80">
+        <div className="border-r border-slate-200/60 pr-8" style={{ flex: 1 }}>
+          <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 border-b-2 inline-block pb-1.5 transition-colors duration-300" style={{ borderColor: themeColor }}>{t.from}</h3>
+          <p className="text-base font-bold text-slate-800 mb-1 leading-tight">{invoiceData.myName || "Nama Pengirim"}</p>
+          {invoiceData.myRole && <p className="text-sm font-medium text-slate-500 mb-2">{invoiceData.myRole}</p>}
+          {invoiceData.myEmail && <p className="text-sm text-slate-600 mb-0.5">{invoiceData.myEmail}</p>}
+          {invoiceData.myPhone && <p className="text-sm text-slate-600 mb-3">{invoiceData.myPhone}</p>}
+          {invoiceData.myTaxId && <p className="text-[11px] font-bold text-slate-500 bg-slate-200/50 px-2.5 py-1 rounded-md inline-block">Tax ID: {invoiceData.myTaxId}</p>}
         </div>
-        <div className="w-full md:w-[61.8%] md:pl-2">
-          <h3 className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 md:mb-4 border-b-2 inline-block pb-1.5 transition-colors duration-300" style={{ borderColor: themeColor }}>Ditagihkan Kepada (Klien)</h3>
-          <p className="text-[15px] md:text-lg font-bold text-slate-800 mb-1.5 md:mb-2 leading-tight">{invoiceData.clientName || "Nama Klien / Perusahaan"}</p>
-          {invoiceData.clientAddress && <p className="text-xs md:text-sm text-slate-600 whitespace-pre-wrap leading-relaxed mb-2 md:mb-3">{invoiceData.clientAddress}</p>}
-          {invoiceData.clientTaxId && <p className="text-[9px] md:text-[11px] font-bold text-slate-500 bg-slate-200/50 px-2 md:px-2.5 py-1 rounded-md inline-block">Tax ID: {invoiceData.clientTaxId}</p>}
+        <div className="pl-2" style={{ flex: 1.618 }}>
+          <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 border-b-2 inline-block pb-1.5 transition-colors duration-300" style={{ borderColor: themeColor }}>{t.to}</h3>
+          <p className="text-lg font-bold text-slate-800 mb-2 leading-tight">{invoiceData.clientName || "Nama Klien / Perusahaan"}</p>
+          {invoiceData.clientAddress && <p className="text-sm text-slate-600 whitespace-pre-wrap leading-relaxed mb-3">{invoiceData.clientAddress}</p>}
+          {invoiceData.clientTaxId && <p className="text-[11px] font-bold text-slate-500 bg-slate-200/50 px-2.5 py-1 rounded-md inline-block">Tax ID: {invoiceData.clientTaxId}</p>}
         </div>
       </div>
 
@@ -248,76 +273,78 @@ const TemplateModern = ({ invoiceData, items, logo, stamp, themeColor, currency,
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="transition-colors duration-300" style={{ backgroundColor: themeColor + '15' }}>
-              <th className="py-3 px-4 md:py-4 md:px-6 text-[9px] md:text-[11px] font-black uppercase tracking-widest transition-colors duration-300 w-[55%]" style={{ color: themeColor }}>Deskripsi Layanan / Item</th>
-              <th className="py-3 px-2 md:py-4 md:px-6 text-[9px] md:text-[11px] font-black uppercase tracking-widest text-center w-[10%] transition-colors duration-300" style={{ color: themeColor }}>Qty</th>
-              <th className="py-3 px-4 md:py-4 md:px-6 text-[9px] md:text-[11px] font-black uppercase tracking-widest text-right w-[17.5%] transition-colors duration-300" style={{ color: themeColor }}>Harga</th>
-              <th className="py-3 px-4 md:py-4 md:px-6 text-[9px] md:text-[11px] font-black uppercase tracking-widest text-right w-[17.5%] transition-colors duration-300" style={{ color: themeColor }}>Total</th>
+              <th className="py-4 px-6 text-[11px] font-black uppercase tracking-widest transition-colors duration-300 w-[55%]" style={{ color: themeColor }}>{t.desc}</th>
+              <th className="py-4 px-6 text-[11px] font-black uppercase tracking-widest text-center transition-colors duration-300 w-[10%]" style={{ color: themeColor }}>{t.qty}</th>
+              <th className="py-4 px-6 text-[11px] font-black uppercase tracking-widest text-right transition-colors duration-300 w-[17.5%]" style={{ color: themeColor }}>{t.price}</th>
+              <th className="py-4 px-6 text-[11px] font-black uppercase tracking-widest text-right transition-colors duration-300 w-[17.5%]" style={{ color: themeColor }}>{t.total}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
             {items.map((item, index) => (
               <tr key={item.id} className="hover:bg-slate-50/50 transition-colors">
-                <td className="py-4 px-4 md:py-5 md:px-6">
-                  <p className="text-xs md:text-sm text-slate-800 font-bold leading-tight">{item.description || `Item Tagihan #${index + 1}`}</p>
-                  {item.details && <p className="text-[10px] md:text-[12.5px] text-slate-500 mt-1.5 md:mt-2 whitespace-pre-wrap leading-relaxed border-l-2 pl-2 md:pl-3" style={{ borderColor: themeColor + '40' }}>{item.details}</p>}
+                <td className="py-5 px-6">
+                  <p className="text-sm text-slate-800 font-bold leading-tight">{item.description || `Item Tagihan #${index + 1}`}</p>
+                  {item.details && <p className="text-[12.5px] text-slate-500 mt-2 whitespace-pre-wrap leading-relaxed border-l-2 pl-3" style={{ borderColor: themeColor + '40' }}>{item.details}</p>}
                 </td>
-                <td className="py-4 px-2 md:py-5 md:px-6 text-xs md:text-sm text-slate-600 font-medium text-center align-top pt-4 md:pt-5">{item.qty || 0}</td>
-                <td className="py-4 px-4 md:py-5 md:px-6 text-xs md:text-sm text-slate-600 font-medium text-right align-top pt-4 md:pt-5">{formatCurrency(item.price || 0, currency)}</td>
-                <td className="py-4 px-4 md:py-5 md:px-6 text-xs md:text-sm text-slate-800 font-bold text-right align-top bg-slate-50/40 pt-4 md:pt-5">{formatCurrency((item.qty || 0) * (item.price || 0), currency)}</td>
+                <td className="py-5 px-6 text-sm text-slate-600 font-medium text-center align-top pt-5">{item.qty || 0}</td>
+                <td className="py-5 px-6 text-sm text-slate-600 font-medium text-right align-top pt-5">{formatCurrency(item.price || 0, currency)}</td>
+                <td className="py-5 px-6 text-sm text-slate-800 font-bold text-right align-top bg-slate-50/40 pt-5">{formatCurrency((item.qty || 0) * (item.price || 0), currency)}</td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
 
-      <div className="flex flex-col md:flex-row justify-between items-start gap-8 md:gap-12 mt-10">
-        <div className="w-full md:w-[50%] space-y-6 md:space-y-8">
+      <div className="flex flex-row items-start gap-12 mt-10 pb-10">
+        <div className="space-y-8" style={{ flex: 1.618 }}>
           {(invoiceData.bankName || invoiceData.accNumber || invoiceData.accName || invoiceData.bankCode) && (
             <div>
-              <h3 className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 md:mb-3 border-b-2 inline-block pb-1 md:pb-1.5 transition-colors duration-300" style={{ borderColor: themeColor }}>Metode Pembayaran</h3>
-              <div className="bg-slate-50 rounded-2xl p-5 md:p-6 border border-slate-100 shadow-sm relative overflow-hidden">
-                <div className="absolute left-0 top-0 bottom-0 w-1 md:w-1.5 transition-colors duration-300" style={{ backgroundColor: themeColor }}></div>
-                {invoiceData.bankName && <p className="text-xs md:text-sm font-bold text-slate-800 mb-1">{invoiceData.bankName}</p>}
-                {invoiceData.accNumber && <p className="text-base md:text-xl font-mono font-black text-slate-700 mb-1.5 tracking-widest">{invoiceData.accNumber}</p>}
-                {invoiceData.accName && <p className="text-[10px] md:text-xs text-slate-500 font-bold uppercase tracking-wider mb-2">A/N: {invoiceData.accName}</p>}
-                {invoiceData.bankCode && <p className="text-[9px] md:text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-2 md:mt-3 pt-2 md:pt-3 border-t border-slate-200">SWIFT / Routing: <span className="font-mono text-slate-700">{invoiceData.bankCode}</span></p>}
+              <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 border-b-2 inline-block pb-1.5 transition-colors duration-300" style={{ borderColor: themeColor }}>{t.payment}</h3>
+              <div className="bg-slate-50 rounded-2xl p-6 border border-slate-100 shadow-sm relative overflow-hidden">
+                <div className="absolute left-0 top-0 bottom-0 w-1.5 transition-colors duration-300" style={{ backgroundColor: themeColor }}></div>
+                {invoiceData.bankName && <p className="text-sm font-bold text-slate-800 mb-1">{invoiceData.bankName}</p>}
+                {invoiceData.accNumber && <p className="text-xl font-mono font-black text-slate-700 mb-1.5 tracking-widest">{invoiceData.accNumber}</p>}
+                {invoiceData.accName && <p className="text-xs text-slate-500 font-bold uppercase tracking-wider mb-2">{t.accName}: {invoiceData.accName}</p>}
+                {invoiceData.bankCode && <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-3 pt-3 border-t border-slate-200">{t.swift}: <span className="font-mono text-slate-700">{invoiceData.bankCode}</span></p>}
               </div>
             </div>
           )}
           {invoiceData.notes && (
             <div>
-              <h3 className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 md:mb-3 border-b-2 inline-block pb-1 md:pb-1.5 transition-colors duration-300" style={{ borderColor: themeColor }}>Syarat & Ketentuan</h3>
-              <p className="text-[11px] md:text-[13px] text-slate-600 font-medium whitespace-pre-wrap leading-relaxed bg-slate-50/50 p-4 md:p-5 rounded-2xl border border-slate-100/80">{invoiceData.notes}</p>
+              <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 border-b-2 inline-block pb-1.5 transition-colors duration-300" style={{ borderColor: themeColor }}>{t.notes}</h3>
+              <p className="text-[13px] text-slate-600 font-medium whitespace-pre-wrap leading-relaxed bg-slate-50/50 p-5 rounded-2xl border border-slate-100/80">{invoiceData.notes}</p>
             </div>
           )}
         </div>
 
-        <div className="w-full md:w-[45%] flex flex-col items-end gap-8 md:gap-10">
-          <div className="w-full space-y-2.5 md:space-y-3 bg-slate-50 p-5 md:p-6 rounded-3xl border border-slate-100 shadow-sm">
-            <div className="flex justify-between items-center text-xs md:text-sm">
-              <span className="text-slate-500 font-bold">Subtotal</span>
+        <div className="flex flex-col gap-10" style={{ flex: 1 }}>
+          <div className="w-full space-y-3 bg-slate-50 p-6 rounded-3xl border border-slate-100 shadow-sm">
+            <div className="flex justify-between items-center text-sm">
+              <span className="text-slate-500 font-bold">{t.subtotal}</span>
               <span className="text-slate-800 font-bold">{formatCurrency(subtotal, currency)}</span>
             </div>
             {Number(invoiceData.discount) > 0 && (
-              <div className="flex justify-between items-center text-xs md:text-sm">
-                <span className="text-slate-500 font-bold">Diskon {invoiceData.discountType === 'percent' ? `(${invoiceData.discount}%)` : ''}</span>
+              <div className="flex justify-between items-center text-sm">
+                <span className="text-slate-500 font-bold">{t.discount} {invoiceData.discountType === 'percent' ? `(${invoiceData.discount}%)` : ''}</span>
                 <span className="text-red-500 font-bold">-{formatCurrency(discountAmount, currency)}</span>
               </div>
             )}
             {Number(invoiceData.taxRate) > 0 && (
-              <div className="flex justify-between items-center text-xs md:text-sm">
-                <span className="text-slate-500 font-bold">Pajak ({invoiceData.taxRate}%)</span>
+              <div className="flex justify-between items-center text-sm">
+                <span className="text-slate-500 font-bold">{t.tax} ({invoiceData.taxRate}%)</span>
                 <span className="text-slate-800 font-bold">{formatCurrency(taxAmount, currency)}</span>
               </div>
             )}
-            <div className="h-px md:h-0.5 w-full bg-slate-200/80 my-3 md:my-4 rounded-full"></div>
-            <div className="flex flex-col gap-1 md:gap-1.5">
-              <span className="text-[9px] md:text-[11px] font-black uppercase tracking-widest text-slate-500">Total Tagihan</span>
-              <span className="text-xl md:text-[26px] font-black leading-tight transition-colors duration-300" style={{ color: themeColor }}>{formatCurrency(total, currency)}</span>
+            <div className="h-0.5 w-full bg-slate-200/80 my-4 rounded-full"></div>
+            <div className="flex flex-col gap-1.5">
+              <span className="text-[11px] font-black uppercase tracking-widest text-slate-500">{t.grandTotal}</span>
+              <span className="text-[26px] font-black leading-tight transition-colors duration-300" style={{ color: themeColor }}>{formatCurrency(total, currency)}</span>
             </div>
           </div>
 
-          <SignatureBlock invoiceData={invoiceData} stamp={stamp} themeColor={themeColor} />
+          <div className="flex justify-end w-full">
+            <SignatureBlock invoiceData={invoiceData} stamp={stamp} themeColor={themeColor} t={t} />
+          </div>
         </div>
       </div>
     </div>
@@ -325,266 +352,272 @@ const TemplateModern = ({ invoiceData, items, logo, stamp, themeColor, currency,
 );
 
 // 2. Template Minimalis
-const TemplateMinimal = ({ invoiceData, items, logo, stamp, themeColor, currency, subtotal, taxAmount, discountAmount, total }) => (
-  <div className="relative bg-white text-slate-900 overflow-hidden h-full p-8 sm:p-10 md:p-14 font-sans">
+const TemplateMinimal = ({ invoiceData, items, logo, stamp, themeColor, currency, subtotal, taxAmount, discountAmount, total, t }) => (
+  <div className="relative bg-white text-slate-900 overflow-hidden w-full h-full p-14 font-sans shadow-[0_10px_40px_rgba(0,0,0,0.15)] print:shadow-none flex flex-col">
     {invoiceData.status === 'PAID' && (
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.03] pointer-events-none transform -rotate-12 z-0">
-        <div className="border-[8px] md:border-[12px] border-black text-black text-[120px] md:text-[180px] font-black p-4 md:p-8 uppercase tracking-widest leading-none">PAID</div>
+        <div className="border-[12px] border-black text-black text-[180px] font-black p-8 uppercase tracking-widest leading-none">{t.paid}</div>
       </div>
     )}
     
-    <div className="flex justify-between items-end border-b-[2px] md:border-b-[3px] pb-6 md:pb-8 mb-8 md:mb-12 transition-colors duration-300" style={{ borderColor: themeColor }}>
-      <div className="w-[61.8%]">
-        <h1 className="text-4xl md:text-6xl font-light tracking-widest mb-1.5 md:mb-3 text-slate-900">INVOICE</h1>
-        <p className="text-slate-500 font-bold tracking-widest text-sm md:text-xl">#{invoiceData.invoiceNo || "INV-XXXX"}</p>
+    <div className="flex flex-row justify-between items-end border-b-[3px] pb-8 mb-12 transition-colors duration-300" style={{ borderColor: themeColor }}>
+      <div style={{ flex: 1.618 }}>
+        <h1 className="text-6xl font-light tracking-widest mb-3 text-slate-900">{t.invoice}</h1>
+        <p className="text-slate-500 font-bold tracking-widest text-xl">#{invoiceData.invoiceNo || "INV-XXXX"}</p>
       </div>
-      <div className="w-[38.2%] text-right flex justify-end">
+      <div className="text-right flex justify-end" style={{ flex: 1 }}>
         {logo ? (
-          <img src={logo} alt="Logo" className="max-h-14 md:max-h-20 object-contain" />
+          <img src={logo} alt="Logo" className="max-h-20 object-contain" />
         ) : (
-          <h2 className="text-xl md:text-3xl font-black tracking-tight transition-colors duration-300" style={{ color: themeColor }}>{invoiceData.myName || "LOGO"}</h2>
+          <h2 className="text-3xl font-black tracking-tight transition-colors duration-300 uppercase" style={{ color: themeColor }}>
+             {invoiceData.myName || t.companyPlaceholder}
+          </h2>
         )}
       </div>
     </div>
 
-    <div className="flex flex-col md:flex-row justify-between mb-10 md:mb-16 gap-6 md:gap-8">
-      <div className="w-full md:w-[61.8%] space-y-6 md:space-y-8">
+    <div className="flex flex-row gap-8 mb-16">
+      <div className="space-y-8" style={{ flex: 1.618 }}>
         <div>
-          <p className="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 md:mb-2">Ditagihkan Kepada:</p>
-          <p className="text-[16px] md:text-xl font-bold text-slate-800 leading-tight mb-1 md:mb-2">{invoiceData.clientName || "Nama Klien / Perusahaan"}</p>
-          {invoiceData.clientAddress && <p className="text-[12px] md:text-sm text-slate-600 whitespace-pre-wrap leading-relaxed">{invoiceData.clientAddress}</p>}
-          {invoiceData.clientTaxId && <p className="text-[10px] md:text-xs text-slate-500 mt-1 md:mt-2 font-medium">Tax ID: {invoiceData.clientTaxId}</p>}
+          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">{t.to}:</p>
+          <p className="text-xl font-bold text-slate-800 leading-tight mb-2">{invoiceData.clientName || "Nama Klien / Perusahaan"}</p>
+          {invoiceData.clientAddress && <p className="text-sm text-slate-600 whitespace-pre-wrap leading-relaxed">{invoiceData.clientAddress}</p>}
+          {invoiceData.clientTaxId && <p className="text-xs text-slate-500 mt-2 font-medium">Tax ID: {invoiceData.clientTaxId}</p>}
         </div>
         {invoiceData.projectName && (
           <div>
-            <p className="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1 md:mb-1.5">Deskripsi Proyek:</p>
-            <p className="text-[12px] md:text-sm font-bold text-slate-800">{invoiceData.projectName}</p>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">{t.ref}:</p>
+            <p className="text-sm font-bold text-slate-800">{invoiceData.projectName}</p>
           </div>
         )}
       </div>
 
-      <div className="w-full md:w-[38.2%] space-y-6 md:space-y-8 md:text-right">
+      <div className="space-y-8 text-right" style={{ flex: 1 }}>
         <div>
-          <p className="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 md:mb-2">Informasi Pengirim:</p>
-          <p className="text-[14px] md:text-base font-bold text-slate-800 mb-0.5 md:mb-1">{invoiceData.myName || "Nama Anda"}</p>
-          {invoiceData.myEmail && <p className="text-[11px] md:text-sm text-slate-600">{invoiceData.myEmail}</p>}
-          {invoiceData.myPhone && <p className="text-[11px] md:text-sm text-slate-600">{invoiceData.myPhone}</p>}
-          {invoiceData.myTaxId && <p className="text-[10px] md:text-xs text-slate-500 mt-1 md:mt-2 font-medium">Tax ID: {invoiceData.myTaxId}</p>}
+          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">{t.from}:</p>
+          <p className="text-base font-bold text-slate-800 mb-1">{invoiceData.myName || "Nama Anda"}</p>
+          {invoiceData.myEmail && <p className="text-sm text-slate-600">{invoiceData.myEmail}</p>}
+          {invoiceData.myPhone && <p className="text-sm text-slate-600">{invoiceData.myPhone}</p>}
+          {invoiceData.myTaxId && <p className="text-xs text-slate-500 mt-2 font-medium">Tax ID: {invoiceData.myTaxId}</p>}
         </div>
-        <div className="grid grid-cols-2 gap-3 md:gap-4 text-left bg-slate-50 p-3 md:p-4 rounded-xl">
+        <div className="grid grid-cols-2 gap-4 text-left bg-slate-50 p-4 rounded-xl">
           <div>
-            <p className="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5 md:mb-1">Tgl Terbit:</p>
-            <p className="text-[11px] md:text-sm font-bold text-slate-800">{invoiceData.date || "-"}</p>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">{t.date}:</p>
+            <p className="text-sm font-bold text-slate-800">{invoiceData.date || "-"}</p>
           </div>
           <div>
-            <p className="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5 md:mb-1">Jatuh Tempo:</p>
-            <p className="text-[11px] md:text-sm font-bold text-slate-800">{invoiceData.dueDate || "-"}</p>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">{t.dueDate}:</p>
+            <p className="text-sm font-bold text-slate-800">{invoiceData.dueDate || "-"}</p>
           </div>
         </div>
       </div>
     </div>
 
-    <table className="w-full text-left mb-10 md:mb-12">
+    <table className="w-full text-left mb-12">
       <thead>
-        <tr className="border-b-[2px] md:border-b-[3px] border-slate-800">
-          <th className="py-2 md:py-3 px-2 text-[9px] md:text-[11px] font-black text-slate-800 uppercase tracking-widest">Deskripsi Layanan</th>
-          <th className="py-2 md:py-3 px-2 text-[9px] md:text-[11px] font-black text-slate-800 uppercase tracking-widest text-center w-12 md:w-20">Qty</th>
-          <th className="py-2 md:py-3 px-2 text-[9px] md:text-[11px] font-black text-slate-800 uppercase tracking-widest text-right w-24 md:w-36">Harga</th>
-          <th className="py-2 md:py-3 px-2 text-[9px] md:text-[11px] font-black text-slate-800 uppercase tracking-widest text-right w-28 md:w-44">Total</th>
+        <tr className="border-b-[3px] border-slate-800">
+          <th className="py-3 px-2 text-[11px] font-black text-slate-800 uppercase tracking-widest w-[55%]">{t.desc}</th>
+          <th className="py-3 px-2 text-[11px] font-black text-slate-800 uppercase tracking-widest text-center w-[10%]">{t.qty}</th>
+          <th className="py-3 px-2 text-[11px] font-black text-slate-800 uppercase tracking-widest text-right w-[17.5%]">{t.price}</th>
+          <th className="py-3 px-2 text-[11px] font-black text-slate-800 uppercase tracking-widest text-right w-[17.5%]">{t.total}</th>
         </tr>
       </thead>
       <tbody className="divide-y divide-slate-200">
         {items.map((item, index) => (
           <tr key={item.id}>
-            <td className="py-3 md:py-5 px-2">
-              <p className="text-[12px] md:text-[15px] text-slate-800 font-bold">{item.description || `Item #${index + 1}`}</p>
-              {item.details && <p className="text-[10px] md:text-[13px] text-slate-500 mt-1 md:mt-2 whitespace-pre-wrap leading-relaxed">{item.details}</p>}
+            <td className="py-5 px-2">
+              <p className="text-[15px] text-slate-800 font-bold">{item.description || `Item #${index + 1}`}</p>
+              {item.details && <p className="text-[13px] text-slate-500 mt-2 whitespace-pre-wrap leading-relaxed">{item.details}</p>}
             </td>
-            <td className="py-3 md:py-5 px-2 text-[11px] md:text-sm text-slate-700 text-center align-top pt-4 md:pt-6">{item.qty || 0}</td>
-            <td className="py-3 md:py-5 px-2 text-[11px] md:text-sm text-slate-700 text-right align-top pt-4 md:pt-6">{formatCurrency(item.price || 0, currency)}</td>
-            <td className="py-3 md:py-5 px-2 text-[12px] md:text-[15px] text-slate-800 font-black text-right align-top pt-4 md:pt-6">{formatCurrency((item.qty || 0) * (item.price || 0), currency)}</td>
+            <td className="py-5 px-2 text-sm text-slate-700 text-center align-top pt-6">{item.qty || 0}</td>
+            <td className="py-5 px-2 text-sm text-slate-700 text-right align-top pt-6">{formatCurrency(item.price || 0, currency)}</td>
+            <td className="py-5 px-2 text-[15px] text-slate-800 font-black text-right align-top pt-6">{formatCurrency((item.qty || 0) * (item.price || 0), currency)}</td>
           </tr>
         ))}
       </tbody>
     </table>
 
-    <div className="flex flex-col md:flex-row justify-between items-start gap-8 md:gap-12">
-      <div className="w-full md:w-[61.8%] space-y-6 md:space-y-8">
+    <div className="flex flex-row items-start gap-12 mt-auto pt-10 pb-10">
+      <div className="space-y-8" style={{ flex: 1.618 }}>
         {(invoiceData.bankName || invoiceData.accNumber || invoiceData.accName || invoiceData.bankCode) && (
           <div>
-            <h3 className="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Instruksi Pembayaran</h3>
-            <div className="p-4 md:p-5 border border-slate-200 bg-slate-50 rounded-xl">
-              {invoiceData.bankName && <p className="text-[11px] md:text-sm font-bold text-slate-800 mb-0.5 md:mb-1">{invoiceData.bankName}</p>}
-              {invoiceData.accNumber && <p className="text-[14px] md:text-lg font-mono font-black text-slate-800 tracking-wider mb-1">{invoiceData.accNumber}</p>}
-              {invoiceData.accName && <p className="text-[9px] md:text-[11px] text-slate-500 font-bold uppercase tracking-widest mt-0.5 md:mt-1">A/N: {invoiceData.accName}</p>}
-              {invoiceData.bankCode && <p className="text-[9px] md:text-[11px] text-slate-500 font-bold uppercase tracking-widest mt-2 md:mt-3 pt-2 md:pt-3 border-t border-slate-200">SWIFT / Routing: <span className="font-mono text-slate-800">{invoiceData.bankCode}</span></p>}
+            <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">{t.payment}</h3>
+            <div className="p-5 border border-slate-200 bg-slate-50 rounded-xl">
+              {invoiceData.bankName && <p className="text-sm font-bold text-slate-800 mb-1">{invoiceData.bankName}</p>}
+              {invoiceData.accNumber && <p className="text-lg font-mono font-black text-slate-800 tracking-wider mb-1">{invoiceData.accNumber}</p>}
+              {invoiceData.accName && <p className="text-[11px] text-slate-500 font-bold uppercase tracking-widest mt-1">{t.accName}: {invoiceData.accName}</p>}
+              {invoiceData.bankCode && <p className="text-[11px] text-slate-500 font-bold uppercase tracking-widest mt-3 pt-3 border-t border-slate-200">{t.swift}: <span className="font-mono text-slate-800">{invoiceData.bankCode}</span></p>}
             </div>
           </div>
         )}
         {invoiceData.notes && (
           <div>
-            <h3 className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-2">Catatan</h3>
-            <p className="text-[11px] md:text-[13px] text-slate-600 whitespace-pre-wrap leading-relaxed">{invoiceData.notes}</p>
+            <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">{t.notes}</h3>
+            <p className="text-[13px] text-slate-600 whitespace-pre-wrap leading-relaxed">{invoiceData.notes}</p>
           </div>
         )}
       </div>
 
-      <div className="w-full md:w-[38.2%] flex flex-col items-end">
-        <div className="w-full space-y-3 md:space-y-4 border-b-[2px] md:border-b-[3px] border-slate-800 pb-4 md:pb-5 mb-4 md:mb-5">
-          <div className="flex justify-between text-[11px] md:text-sm">
-            <span className="text-slate-600 font-bold">Subtotal</span>
+      <div className="flex flex-col items-end" style={{ flex: 1 }}>
+        <div className="w-full space-y-4 border-b-[3px] border-slate-800 pb-5 mb-5">
+          <div className="flex justify-between text-sm">
+            <span className="text-slate-600 font-bold">{t.subtotal}</span>
             <span className="font-black text-slate-800">{formatCurrency(subtotal, currency)}</span>
           </div>
           {Number(invoiceData.discount) > 0 && (
-            <div className="flex justify-between text-[11px] md:text-sm">
-              <span className="text-slate-600 font-bold">Diskon {invoiceData.discountType === 'percent' ? `(${invoiceData.discount}%)` : ''}</span>
+            <div className="flex justify-between text-sm">
+              <span className="text-slate-600 font-bold">{t.discount} {invoiceData.discountType === 'percent' ? `(${invoiceData.discount}%)` : ''}</span>
               <span className="font-black text-red-600">-{formatCurrency(discountAmount, currency)}</span>
             </div>
           )}
           {Number(invoiceData.taxRate) > 0 && (
-            <div className="flex justify-between text-[11px] md:text-sm">
-              <span className="text-slate-600 font-bold">Pajak ({invoiceData.taxRate}%)</span>
+            <div className="flex justify-between text-sm">
+              <span className="text-slate-600 font-bold">{t.tax} ({invoiceData.taxRate}%)</span>
               <span className="font-black text-slate-800">{formatCurrency(taxAmount, currency)}</span>
             </div>
           )}
         </div>
-        <div className="w-full flex flex-col gap-0.5 md:gap-1 mb-10 md:mb-16 text-right">
-          <span className="text-[9px] md:text-xs font-black uppercase tracking-widest text-slate-500">Total Akhir</span>
-          <span className="text-3xl md:text-4xl font-black transition-colors duration-300" style={{ color: themeColor }}>{formatCurrency(total, currency)}</span>
+        <div className="w-full flex flex-col gap-1 mb-16 text-right">
+          <span className="text-xs font-black uppercase tracking-widest text-slate-500">{t.grandTotal}</span>
+          <span className="text-4xl font-black transition-colors duration-300" style={{ color: themeColor }}>{formatCurrency(total, currency)}</span>
         </div>
 
-        <SignatureBlock invoiceData={invoiceData} stamp={stamp} themeColor={themeColor} />
+        <div className="flex justify-end w-full">
+           <SignatureBlock invoiceData={invoiceData} stamp={stamp} themeColor={themeColor} t={t} />
+        </div>
       </div>
     </div>
   </div>
 );
 
 // 3. Template Klasik
-const TemplateClassic = ({ invoiceData, items, logo, stamp, themeColor, currency, subtotal, taxAmount, discountAmount, total }) => (
-  <div className="relative bg-white text-slate-900 overflow-hidden h-full p-10 sm:p-12 md:p-16" style={{ fontFamily: "'Times New Roman', Times, serif" }}>
-    <div className="text-center mb-8 md:mb-12 border-b-2 md:border-b-4 border-slate-800 pb-6 md:pb-10">
+const TemplateClassic = ({ invoiceData, items, logo, stamp, themeColor, currency, subtotal, taxAmount, discountAmount, total, t }) => (
+  <div className="relative bg-white text-slate-900 overflow-hidden w-full h-full p-16 shadow-[0_10px_40px_rgba(0,0,0,0.15)] print:shadow-none flex flex-col" style={{ fontFamily: "'Times New Roman', Times, serif" }}>
+    <div className="text-center mb-12 border-b-4 border-slate-800 pb-10">
       {logo ? (
-        <img src={logo} alt="Logo" className="max-h-20 md:max-h-28 mx-auto mb-4 md:mb-6" />
+        <img src={logo} alt="Logo" className="max-h-28 mx-auto mb-6" />
       ) : (
-        <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-3 md:mb-5 transition-colors duration-300 uppercase" style={{ color: themeColor }}>{invoiceData.myName || "NAMA PERUSAHAAN"}</h2>
+        <h2 className="text-5xl font-bold tracking-tight mb-5 transition-colors duration-300 uppercase" style={{ color: themeColor }}>
+          {invoiceData.myName || t.companyPlaceholder}
+        </h2>
       )}
-      <p className="text-[12px] md:text-[15px] text-slate-700 leading-relaxed max-w-xl mx-auto">{invoiceData.clientAddress || "Gedung Pusat Bisnis Lt. 3, Jl. Protokol No. 1, Jakarta Pusat, Indonesia"}</p>
-      <p className="text-[12px] md:text-[15px] text-slate-700 mt-1">{invoiceData.myEmail} &nbsp;&bull;&nbsp; {invoiceData.myPhone}</p>
-      {invoiceData.myTaxId && <p className="text-[10px] md:text-sm text-slate-600 mt-1.5 md:mt-2">Tax ID: {invoiceData.myTaxId}</p>}
+      <p className="text-[15px] text-slate-700 leading-relaxed max-w-xl mx-auto">{invoiceData.clientAddress || "Gedung Pusat Bisnis Lt. 3, Jl. Protokol No. 1, Jakarta Pusat, Indonesia"}</p>
+      <p className="text-[15px] text-slate-700 mt-1">{invoiceData.myEmail} &nbsp;&bull;&nbsp; {invoiceData.myPhone}</p>
+      {invoiceData.myTaxId && <p className="text-sm text-slate-600 mt-2">Tax ID: {invoiceData.myTaxId}</p>}
     </div>
 
-    <div className="flex flex-col md:flex-row justify-between items-center md:items-start mb-8 md:mb-12 gap-4">
-      <h1 className="text-4xl md:text-5xl font-bold uppercase tracking-[0.2em] md:tracking-[0.3em] text-slate-900 text-center md:text-left">INVOICE</h1>
-      <div className="text-center md:text-right border md:border-2 border-slate-800 p-3 md:p-4 bg-slate-50 min-w-[200px] md:min-w-[250px]">
-        <p className="text-[10px] md:text-xs text-slate-600 font-bold uppercase tracking-widest mb-1 md:mb-1.5">Nomor Referensi</p>
-        <p className="text-lg md:text-xl font-bold text-slate-900">{invoiceData.invoiceNo || "INV-XXXX-001"}</p>
+    <div className="flex flex-row justify-between items-start mb-12 gap-4">
+      <h1 className="text-5xl font-bold uppercase tracking-[0.3em] text-slate-900">{t.invoice}</h1>
+      <div className="text-right border-2 border-slate-800 p-4 bg-slate-50 min-w-[250px]">
+        <p className="text-xs text-slate-600 font-bold uppercase tracking-widest mb-1.5">{t.ref}</p>
+        <p className="text-xl font-bold text-slate-900">{invoiceData.invoiceNo || "INV-XXXX-001"}</p>
       </div>
     </div>
 
-    <div className="flex flex-col md:flex-row justify-between gap-6 md:gap-10 mb-8 md:mb-12">
-      <div className="w-full md:w-[61.8%] border md:border-2 border-slate-800 p-4 md:p-6 relative">
-        <h3 className="absolute -top-2.5 md:-top-3 left-3 md:left-4 bg-white px-1.5 md:px-2 text-[10px] md:text-xs font-bold text-slate-800 uppercase tracking-widest">Kepada Yth:</h3>
-        <p className="text-[15px] md:text-lg font-bold text-slate-900 mb-1 md:mb-2 mt-1 md:mt-2">{invoiceData.clientName || "Nama Klien / Instansi"}</p>
-        {invoiceData.clientAddress && <p className="text-[12px] md:text-[15px] text-slate-700 whitespace-pre-wrap leading-relaxed">{invoiceData.clientAddress}</p>}
-        {invoiceData.clientTaxId && <p className="text-[11px] md:text-sm text-slate-600 mt-2 md:mt-3">Tax ID: {invoiceData.clientTaxId}</p>}
+    <div className="flex flex-row gap-10 mb-12">
+      <div className="border-2 border-slate-800 p-6 relative" style={{ flex: 1.618 }}>
+        <h3 className="absolute -top-3 left-4 bg-white px-2 text-xs font-bold text-slate-800 uppercase tracking-widest">{t.to}:</h3>
+        <p className="text-lg font-bold text-slate-900 mb-2 mt-2">{invoiceData.clientName || "Nama Klien / Instansi"}</p>
+        {invoiceData.clientAddress && <p className="text-[15px] text-slate-700 whitespace-pre-wrap leading-relaxed">{invoiceData.clientAddress}</p>}
+        {invoiceData.clientTaxId && <p className="text-sm text-slate-600 mt-3">Tax ID: {invoiceData.clientTaxId}</p>}
       </div>
-      <div className="w-full md:w-[38.2%] flex flex-col gap-4">
-        <div className="border md:border-2 border-slate-800 p-4 md:p-5 relative flex-1">
-           <h3 className="absolute -top-2.5 md:-top-3 left-3 md:left-4 bg-white px-1.5 md:px-2 text-[10px] md:text-xs font-bold text-slate-800 uppercase tracking-widest">Detail Penagihan</h3>
-           <div className="mt-2 md:mt-3 flex justify-between">
-             <p className="text-[11px] md:text-sm font-bold text-slate-600">Tgl Terbit:</p>
-             <p className="text-[11px] md:text-sm font-bold text-slate-900">{invoiceData.date || "-"}</p>
+      <div className="flex flex-col gap-4" style={{ flex: 1 }}>
+        <div className="border-2 border-slate-800 p-5 relative flex-1">
+           <h3 className="absolute -top-3 left-4 bg-white px-2 text-xs font-bold text-slate-800 uppercase tracking-widest">Detail Penagihan</h3>
+           <div className="mt-3 flex justify-between">
+             <p className="text-sm font-bold text-slate-600">{t.date}:</p>
+             <p className="text-sm font-bold text-slate-900">{invoiceData.date || "-"}</p>
            </div>
-           <div className="mt-1 md:mt-2 flex justify-between">
-             <p className="text-[11px] md:text-sm font-bold text-slate-600">Jatuh Tempo:</p>
-             <p className="text-[11px] md:text-sm font-bold text-slate-900">{invoiceData.dueDate || "-"}</p>
+           <div className="mt-2 flex justify-between">
+             <p className="text-sm font-bold text-slate-600">{t.dueDate}:</p>
+             <p className="text-sm font-bold text-slate-900">{invoiceData.dueDate || "-"}</p>
            </div>
         </div>
         {invoiceData.projectName && (
-          <div className="border md:border-2 border-slate-800 p-4 md:p-5 relative flex-1 bg-slate-50">
-            <h3 className="absolute -top-2.5 md:-top-3 left-3 md:left-4 bg-slate-50 px-1.5 md:px-2 text-[10px] md:text-xs font-bold text-slate-800 uppercase tracking-widest">Proyek</h3>
-            <p className="text-[12px] md:text-[15px] font-bold text-slate-900 mt-2 md:mt-3 leading-tight">{invoiceData.projectName}</p>
+          <div className="border-2 border-slate-800 p-5 relative flex-1 bg-slate-50">
+            <h3 className="absolute -top-3 left-4 bg-slate-50 px-2 text-xs font-bold text-slate-800 uppercase tracking-widest">{t.ref}</h3>
+            <p className="text-[15px] font-bold text-slate-900 mt-3 leading-tight">{invoiceData.projectName}</p>
           </div>
         )}
       </div>
     </div>
 
-    <table className="w-full text-left mb-8 md:mb-12 border-collapse border md:border-2 border-slate-800">
+    <table className="w-full text-left mb-12 border-collapse border-2 border-slate-800">
       <thead>
         <tr className="transition-colors duration-300" style={{ backgroundColor: themeColor, color: '#ffffff' }}>
-          <th className="py-2 px-3 md:py-3 md:px-5 text-[10px] md:text-sm font-bold uppercase tracking-widest border md:border-2 border-slate-800 w-[55%]">Rincian Deskripsi</th>
-          <th className="py-2 px-2 md:py-3 md:px-5 text-[10px] md:text-sm font-bold uppercase tracking-widest text-center w-[15%] border md:border-2 border-slate-800">Qty</th>
-          <th className="py-2 px-3 md:py-3 md:px-5 text-[10px] md:text-sm font-bold uppercase tracking-widest text-right w-[15%] border md:border-2 border-slate-800">Harga Satuan</th>
-          <th className="py-2 px-3 md:py-3 md:px-5 text-[10px] md:text-sm font-bold uppercase tracking-widest text-right w-[15%] border md:border-2 border-slate-800">Jumlah</th>
+          <th className="py-3 px-5 text-sm font-bold uppercase tracking-widest border-2 border-slate-800 w-[55%]">{t.desc}</th>
+          <th className="py-3 px-5 text-sm font-bold uppercase tracking-widest text-center w-[10%] border-2 border-slate-800">{t.qty}</th>
+          <th className="py-3 px-5 text-sm font-bold uppercase tracking-widest text-right w-[17.5%] border-2 border-slate-800">{t.price}</th>
+          <th className="py-3 px-5 text-sm font-bold uppercase tracking-widest text-right w-[17.5%] border-2 border-slate-800">{t.total}</th>
         </tr>
       </thead>
       <tbody>
         {items.map((item, index) => (
           <tr key={item.id}>
-            <td className="py-3 px-3 md:py-4 md:px-5 border md:border-2 border-slate-800">
-              <p className="text-[12px] md:text-[15px] text-slate-900 font-bold">{item.description || `Deskripsi Item Ke-${index + 1}`}</p>
-              {item.details && <p className="text-[11px] md:text-[14px] text-slate-700 mt-1 md:mt-1.5 whitespace-pre-wrap leading-relaxed">{item.details}</p>}
+            <td className="py-4 px-5 border-2 border-slate-800">
+              <p className="text-[15px] text-slate-900 font-bold">{item.description || `Deskripsi Item Ke-${index + 1}`}</p>
+              {item.details && <p className="text-[14px] text-slate-700 mt-1.5 whitespace-pre-wrap leading-relaxed">{item.details}</p>}
             </td>
-            <td className="py-3 px-2 md:py-4 md:px-5 text-[12px] md:text-[15px] text-slate-900 text-center border md:border-2 border-slate-800 align-top">{item.qty || 0}</td>
-            <td className="py-3 px-3 md:py-4 md:px-5 text-[12px] md:text-[15px] text-slate-900 text-right border md:border-2 border-slate-800 align-top">{formatCurrency(item.price || 0, currency)}</td>
-            <td className="py-3 px-3 md:py-4 md:px-5 text-[12px] md:text-[15px] text-slate-900 font-bold text-right border md:border-2 border-slate-800 align-top">{formatCurrency((item.qty || 0) * (item.price || 0), currency)}</td>
+            <td className="py-4 px-5 text-[15px] text-slate-900 text-center border-2 border-slate-800 align-top">{item.qty || 0}</td>
+            <td className="py-4 px-5 text-[15px] text-slate-900 text-right border-2 border-slate-800 align-top">{formatCurrency(item.price || 0, currency)}</td>
+            <td className="py-4 px-5 text-[15px] text-slate-900 font-bold text-right border-2 border-slate-800 align-top">{formatCurrency((item.qty || 0) * (item.price || 0), currency)}</td>
           </tr>
         ))}
       </tbody>
     </table>
 
-    <div className="flex justify-end mb-10 md:mb-16">
-      <div className="w-full sm:w-[60%] md:w-[50%]">
-        <table className="w-full border-collapse border md:border-2 border-slate-800">
+    <div className="flex justify-end mb-16">
+      <div className="w-[50%]">
+        <table className="w-full border-collapse border-2 border-slate-800">
           <tbody>
             <tr>
-              <td className="py-2 px-3 md:py-3 md:px-5 border md:border-2 border-slate-800 text-[12px] md:text-[15px] text-slate-800 font-bold bg-slate-50">Subtotal</td>
-              <td className="py-2 px-3 md:py-3 md:px-5 border md:border-2 border-slate-800 text-[12px] md:text-[15px] text-slate-900 font-bold text-right">{formatCurrency(subtotal, currency)}</td>
+              <td className="py-3 px-5 border-2 border-slate-800 text-[15px] text-slate-800 font-bold bg-slate-50">{t.subtotal}</td>
+              <td className="py-3 px-5 border-2 border-slate-800 text-[15px] text-slate-900 font-bold text-right">{formatCurrency(subtotal, currency)}</td>
             </tr>
             {Number(invoiceData.discount) > 0 && (
               <tr>
-                <td className="py-2 px-3 md:py-3 md:px-5 border md:border-2 border-slate-800 text-[12px] md:text-[15px] text-slate-800 font-bold bg-slate-50">Potongan {invoiceData.discountType === 'percent' ? `(${invoiceData.discount}%)` : ''}</td>
-                <td className="py-2 px-3 md:py-3 md:px-5 border md:border-2 border-slate-800 text-[12px] md:text-[15px] text-red-700 font-bold text-right">-{formatCurrency(discountAmount, currency)}</td>
+                <td className="py-3 px-5 border-2 border-slate-800 text-[15px] text-slate-800 font-bold bg-slate-50">{t.discount} {invoiceData.discountType === 'percent' ? `(${invoiceData.discount}%)` : ''}</td>
+                <td className="py-3 px-5 border-2 border-slate-800 text-[15px] text-red-700 font-bold text-right">-{formatCurrency(discountAmount, currency)}</td>
               </tr>
             )}
             {Number(invoiceData.taxRate) > 0 && (
               <tr>
-                <td className="py-2 px-3 md:py-3 md:px-5 border md:border-2 border-slate-800 text-[12px] md:text-[15px] text-slate-800 font-bold bg-slate-50">PPN ({invoiceData.taxRate}%)</td>
-                <td className="py-2 px-3 md:py-3 md:px-5 border md:border-2 border-slate-800 text-[12px] md:text-[15px] text-slate-900 font-bold text-right">{formatCurrency(taxAmount, currency)}</td>
+                <td className="py-3 px-5 border-2 border-slate-800 text-[15px] text-slate-800 font-bold bg-slate-50">{t.tax} ({invoiceData.taxRate}%)</td>
+                <td className="py-3 px-5 border-2 border-slate-800 text-[15px] text-slate-900 font-bold text-right">{formatCurrency(taxAmount, currency)}</td>
               </tr>
             )}
             <tr className="transition-colors duration-300">
-              <td className="py-3 px-3 md:py-4 md:px-5 border md:border-2 border-slate-800 text-[13px] md:text-lg font-bold uppercase tracking-widest text-white transition-colors duration-300" style={{ backgroundColor: themeColor }}>Total Keseluruhan</td>
-              <td className="py-3 px-3 md:py-4 md:px-5 border md:border-2 border-slate-800 text-[16px] md:text-2xl font-bold text-right text-slate-900 bg-slate-100">{formatCurrency(total, currency)}</td>
+              <td className="py-4 px-5 border-2 border-slate-800 text-lg font-bold uppercase tracking-widest text-white transition-colors duration-300" style={{ backgroundColor: themeColor }}>{t.grandTotal}</td>
+              <td className="py-4 px-5 border-2 border-slate-800 text-2xl font-bold text-right text-slate-900 bg-slate-100">{formatCurrency(total, currency)}</td>
             </tr>
           </tbody>
         </table>
       </div>
     </div>
 
-    <div className="flex flex-col md:flex-row justify-between gap-8 md:gap-12 mt-8 md:mt-12">
-      <div className="w-full md:w-[61.8%]">
+    <div className="flex flex-row gap-12 mt-auto pt-10 pb-10">
+      <div style={{ flex: 1.618 }}>
         {(invoiceData.bankName || invoiceData.accNumber || invoiceData.accName || invoiceData.bankCode) && (
-          <div className="mb-6 md:mb-8">
-            <h3 className="text-[11px] md:text-sm font-bold text-slate-900 uppercase tracking-widest border-b md:border-b-2 border-slate-800 pb-1.5 md:pb-2 mb-2 md:mb-3">Informasi Rekening Bank</h3>
-            <div className="text-[12px] md:text-[15px] text-slate-800 leading-relaxed bg-slate-50 p-3 md:p-4 border border-slate-200">
-              {invoiceData.bankName && <p><strong>Bank/Platform:</strong> {invoiceData.bankName}</p>}
-              {invoiceData.accNumber && <p><strong>No. Rekening/Akun:</strong> <span className="font-mono">{invoiceData.accNumber}</span></p>}
-              {invoiceData.accName && <p><strong>Atas Nama:</strong> {invoiceData.accName}</p>}
-              {invoiceData.bankCode && <p className="mt-1 md:mt-2 pt-1 md:pt-2 border-t border-slate-300"><strong>SWIFT/BIC Code:</strong> <span className="font-mono">{invoiceData.bankCode}</span></p>}
+          <div className="mb-8">
+            <h3 className="text-sm font-bold text-slate-900 uppercase tracking-widest border-b-2 border-slate-800 pb-2 mb-3">{t.payment}</h3>
+            <div className="text-[15px] text-slate-800 leading-relaxed bg-slate-50 p-4 border border-slate-200">
+              {invoiceData.bankName && <p><strong>{t.bank}:</strong> {invoiceData.bankName}</p>}
+              {invoiceData.accNumber && <p><strong>{t.accNum}:</strong> <span className="font-mono">{invoiceData.accNumber}</span></p>}
+              {invoiceData.accName && <p><strong>{t.accName}:</strong> {invoiceData.accName}</p>}
+              {invoiceData.bankCode && <p className="mt-2 pt-2 border-t border-slate-300"><strong>{t.swift}:</strong> <span className="font-mono">{invoiceData.bankCode}</span></p>}
             </div>
           </div>
         )}
         {invoiceData.notes && (
           <div>
-            <h3 className="text-[11px] md:text-sm font-bold text-slate-900 uppercase tracking-widest border-b md:border-b-2 border-slate-800 pb-1.5 md:pb-2 mb-2 md:mb-3">Catatan / Syarat Ketentuan</h3>
-            <p className="text-[11px] md:text-[14px] text-slate-800 whitespace-pre-wrap leading-relaxed">{invoiceData.notes}</p>
+            <h3 className="text-sm font-bold text-slate-900 uppercase tracking-widest border-b-2 border-slate-800 pb-2 mb-3">{t.notes}</h3>
+            <p className="text-[14px] text-slate-800 whitespace-pre-wrap leading-relaxed">{invoiceData.notes}</p>
           </div>
         )}
       </div>
       
-      <div className="w-full md:w-[38.2%] text-center flex flex-col items-center justify-end pt-4">
-        <SignatureBlock invoiceData={invoiceData} stamp={stamp} themeColor={themeColor} />
+      <div className="flex flex-col items-center justify-end pt-4" style={{ flex: 1 }}>
+        <SignatureBlock invoiceData={invoiceData} stamp={stamp} themeColor={themeColor} t={t} />
       </div>
     </div>
   </div>
@@ -613,6 +646,7 @@ export default function InvoiceTab() {
     }));
   }, []);
 
+  const [language, setLanguage] = useState("id");
   const [currency, setCurrency] = useState("IDR");
   const [template, setTemplate] = useState("modern"); 
   const [paperSize, setPaperSize] = useState("A4"); 
@@ -708,95 +742,82 @@ export default function InvoiceTab() {
     }
   };
 
-  const subtotal = items.reduce((sum, item) => sum + (Number(item.qty) * Number(item.price)), 0);
+  // Safe Calculation (Mencegah Bug NaN)
+  const subtotal = items.reduce((sum, item) => sum + (parseFloat(item.qty) || 0) * (parseFloat(item.price) || 0), 0);
   
   let discountAmount = 0;
+  const numDiscount = parseFloat(invoiceData.discount) || 0;
   if (invoiceData.discountType === 'percent') {
-    discountAmount = subtotal * (Number(invoiceData.discount) / 100);
+    discountAmount = subtotal * (numDiscount / 100);
   } else {
-    discountAmount = Number(invoiceData.discount) || 0;
+    discountAmount = numDiscount;
   }
   
   const subtotalAfterDiscount = subtotal - discountAmount;
-  const taxAmount = subtotalAfterDiscount * (Number(invoiceData.taxRate) / 100);
+  const numTaxRate = parseFloat(invoiceData.taxRate) || 0;
+  const taxAmount = subtotalAfterDiscount * (numTaxRate / 100);
   const total = subtotalAfterDiscount + taxAmount;
 
-  // Ukuran Pixel Fisik Konversi @96DPI (Lebih presisi dari MM pada web display)
+  // Ukuran Pixel Fisik Konversi @96DPI
   const paperDimensionsPx = {
-    A4: { width: 794, height: 1123 }, // A4
-    Letter: { width: 816, height: 1056 }, // US Letter
-    Folio: { width: 816, height: 1248 } // F4 / Folio
+    A4: { width: 794, height: 1123 }, // 210mm x 297mm
+    Letter: { width: 816, height: 1056 }, // 215.9mm x 279.4mm
+    Folio: { width: 816, height: 1248 } // 215.9mm x 330.2mm
   };
 
+  // Real-time Auto-Scale Menggunakan ResizeObserver (Super Presisi Tanpa Bug Whitespace)
   useEffect(() => {
-    const updateScale = () => {
-      if (previewContainerRef.current) {
-        const containerWidth = previewContainerRef.current.offsetWidth;
+    const container = previewContainerRef.current;
+    if (!container) return;
+
+    const resizeObserver = new ResizeObserver(entries => {
+      for (let entry of entries) {
+        const containerWidth = entry.contentRect.width;
         const targetWidth = paperDimensionsPx[paperSize].width;
-        // Memberi jarak margin agar preview tidak nempel mentok
-        const availableWidth = containerWidth - 32; 
         
-        if (availableWidth < targetWidth) {
-          setPreviewScale(availableWidth / targetWidth);
+        if (containerWidth < targetWidth) {
+          setPreviewScale(containerWidth / targetWidth);
         } else {
           setPreviewScale(1);
         }
       }
-    };
-    
-    updateScale();
-    window.addEventListener('resize', updateScale);
-    return () => window.removeEventListener('resize', updateScale);
+    });
+
+    resizeObserver.observe(container);
+    return () => resizeObserver.disconnect();
   }, [paperSize]);
 
+  const t = dict[language];
+
   return (
-    <div className="w-full relative">
+    <div className="w-full relative pb-20">
       
       <style dangerouslySetInnerHTML={{__html: `
-        input[type=range].custom-color-slider {
-          -webkit-appearance: none;
-          width: 100%;
-          background: transparent;
-        }
-        input[type=range].custom-color-slider::-webkit-slider-thumb {
-          -webkit-appearance: none;
-          height: 22px;
-          width: 22px;
-          border-radius: 50%;
-          background: white;
-          border: 4px solid white;
-          box-shadow: 0 2px 6px rgba(0,0,0,0.4);
-          cursor: pointer;
-          margin-top: -7px;
-        }
-        input[type=range].custom-color-slider::-webkit-slider-runnable-track {
-          width: 100%;
-          height: 8px;
-          cursor: pointer;
-          border-radius: 8px;
-          border: 1px solid rgba(255,255,255,0.1);
-        }
-        .track-hue::-webkit-slider-runnable-track {
-          background: linear-gradient(to right, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%);
-        }
+        input[type=range].custom-color-slider { -webkit-appearance: none; width: 100%; background: transparent; }
+        input[type=range].custom-color-slider::-webkit-slider-thumb { -webkit-appearance: none; height: 22px; width: 22px; border-radius: 50%; background: white; border: 4px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.4); cursor: pointer; margin-top: -7px; }
+        input[type=range].custom-color-slider::-webkit-slider-runnable-track { width: 100%; height: 8px; cursor: pointer; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); }
+        .track-hue::-webkit-slider-runnable-track { background: linear-gradient(to right, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%); }
         @media print {
-          @page {
-            size: ${paperSize === 'A4' ? 'A4' : paperSize === 'Letter' ? 'letter' : 'legal'};
-            margin: 0;
-          }
-          body {
-             -webkit-print-color-adjust: exact !important;
-             print-color-adjust: exact !important;
-          }
-          .print-scale-reset {
-             transform: scale(1) !important;
-             transform-origin: top left !important;
-             width: 100% !important;
-             height: auto !important;
-             margin: 0 !important;
-          }
+          @page { size: ${paperSize === 'A4' ? 'A4' : paperSize === 'Letter' ? 'letter' : 'legal'}; margin: 0; }
+          body { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+          .print-scale-reset { transform: none !important; width: 100% !important; height: auto !important; margin: 0 !important; }
         }
       `}} />
+
+      {/* HEADER / JUDUL UTAMA (Gradient Style RAB Tab) */}
+      <div className="print:hidden flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-10 bg-[#0a0a0a] border border-white/5 rounded-[2rem] p-6 sm:p-8 shadow-xl relative overflow-hidden">
+        <div className="absolute right-0 top-0 w-64 h-64 bg-cyan-500/10 rounded-full blur-[80px] pointer-events-none"></div>
+        <div className="relative z-10">
+          <h2 className="text-2xl font-black text-white tracking-tight flex items-center gap-3">
+            <div className="p-3 bg-cyan-500/20 text-cyan-400 rounded-xl border border-cyan-500/30"><Icons.Document /></div>
+            Freelance <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Invoice</span>
+          </h2>
+          <p className="text-sm text-slate-400 mt-2 max-w-xl">Buat tagihan digital profesional untuk klien Anda. Sesuaikan warna tema, bahasa, ukuran kertas, dan ekspor langsung ke PDF.</p>
+        </div>
+        <button onClick={() => window.print()} className="w-full sm:w-auto bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold py-3.5 px-8 rounded-xl flex items-center justify-center gap-3 shadow-[0_0_20px_rgba(6,182,212,0.3)] transition-all hover:-translate-y-1 z-10">
+          <Icons.Print /> Simpan PDF / Print
+        </button>
+      </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 lg:gap-10">
         
@@ -805,15 +826,23 @@ export default function InvoiceTab() {
         {/* ======================= */}
         <div className="xl:col-span-5 space-y-6 print:hidden">
           
-          {/* Card: Pengaturan Tampilan */}
+          {/* Card: Pengaturan Tampilan & Bahasa */}
           <div className="bg-[#030712]/80 backdrop-blur-md rounded-2xl p-6 border border-white/5 relative overflow-hidden shadow-xl">
              <div className={`absolute left-0 top-0 w-1.5 h-full transition-colors duration-300`} style={{ background: themeColor }}></div>
-             <h3 className="text-white font-bold mb-6 flex items-center gap-2">
-              <span className="transition-colors duration-300" style={{ color: themeColor }}>
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
-              </span>
-              Personalisasi Desain (No Popup)
-            </h3>
+             
+             <div className="flex justify-between items-center mb-6">
+               <h3 className="text-white font-bold flex items-center gap-2">
+                <span className="transition-colors duration-300" style={{ color: themeColor }}>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+                </span>
+                Pengaturan Desain
+               </h3>
+               {/* AI Translate Toggle */}
+               <div className="flex bg-[#1e293b] p-1 rounded-lg border border-white/10 shadow-inner">
+                  <button onClick={() => setLanguage('id')} className={`px-3 py-1 text-[10px] font-bold rounded-md transition-all ${language === 'id' ? 'bg-cyan-500 text-white shadow-sm' : 'text-slate-500 hover:text-slate-300'}`}>ID</button>
+                  <button onClick={() => setLanguage('en')} className={`px-3 py-1 text-[10px] font-bold rounded-md transition-all ${language === 'en' ? 'bg-cyan-500 text-white shadow-sm' : 'text-slate-500 hover:text-slate-300'}`}>EN</button>
+               </div>
+             </div>
 
             <div className="grid grid-cols-1 gap-5 mb-6">
                <div>
@@ -823,14 +852,14 @@ export default function InvoiceTab() {
                       { id: 'modern', name: 'Modern' },
                       { id: 'minimal', name: 'Minimalis' },
                       { id: 'classic', name: 'Klasik' }
-                    ].map(t => (
+                    ].map(tpl => (
                       <button
-                        key={t.id}
-                        onClick={() => setTemplate(t.id)}
-                        className={`flex-1 py-2.5 rounded-lg text-[11px] font-bold uppercase tracking-widest transition-all ${template === t.id ? 'bg-opacity-20 text-white shadow-md' : 'text-slate-500 hover:text-slate-300 hover:bg-white/5'}`}
-                        style={template === t.id ? { backgroundColor: `${themeColor}40`, color: themeColor } : {}}
+                        key={tpl.id}
+                        onClick={() => setTemplate(tpl.id)}
+                        className={`flex-1 py-2.5 rounded-lg text-[11px] font-bold uppercase tracking-widest transition-all ${template === tpl.id ? 'bg-opacity-20 text-white shadow-md' : 'text-slate-500 hover:text-slate-300 hover:bg-white/5'}`}
+                        style={template === tpl.id ? { backgroundColor: `${themeColor}40`, color: themeColor } : {}}
                       >
-                        {t.name}
+                        {tpl.name}
                       </button>
                     ))}
                   </div>
@@ -856,24 +885,19 @@ export default function InvoiceTab() {
                     </div>
                  </div>
                  <div>
-                    <p className="text-[10px] text-slate-400 font-bold mb-2 uppercase tracking-widest flex justify-between">Mata Uang</p>
-                    <div className="flex flex-col gap-1 bg-white/5 p-1.5 border border-white/10 rounded-xl max-h-[110px] overflow-y-auto no-scrollbar">
-                      {[
-                        { id: 'IDR', name: 'Rupiah (IDR)' },
-                        { id: 'USD', name: 'US Dollar (USD)' },
-                        { id: 'EUR', name: 'Euro (EUR)' },
-                        { id: 'GBP', name: 'Pound (GBP)' },
-                        { id: 'SGD', name: 'SGD Dollar' }
-                      ].map(c => (
-                        <button
-                          key={c.id}
-                          onClick={() => setCurrency(c.id)}
-                          className={`py-2 px-3 text-left rounded-lg text-xs font-semibold transition-all ${currency === c.id ? 'bg-white/10 text-white shadow-sm' : 'text-slate-500 hover:text-slate-300 hover:bg-white/5'}`}
-                        >
-                          {c.name}
-                        </button>
-                      ))}
-                    </div>
+                    <CustomDropdown 
+                      label="Mata Uang (Currency)" 
+                      value={currency} 
+                      onChange={setCurrency} 
+                      options={[
+                        { value: 'IDR', label: 'Rupiah (IDR)' },
+                        { value: 'USD', label: 'US Dollar (USD)' },
+                        { value: 'EUR', label: 'Euro (EUR)' },
+                        { value: 'GBP', label: 'Pound (GBP)' },
+                        { value: 'SGD', label: 'SGD Dollar' }
+                      ]} 
+                      placeholder="Pilih Mata Uang"
+                    />
                  </div>
                </div>
             </div>
@@ -923,7 +947,7 @@ export default function InvoiceTab() {
                   className="w-7 h-7 rounded-full border border-dashed border-white/40 flex items-center justify-center text-white/50 hover:text-white hover:border-white hover:bg-white/10 transition-all"
                   title="Simpan Warna Ini"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+                  <Icons.Plus />
                 </button>
               </div>
 
@@ -965,8 +989,7 @@ export default function InvoiceTab() {
                       </div>
                     ) : (
                       <button onClick={() => fileInputRef.current?.click()} className="flex items-center justify-center gap-2 px-4 py-0 h-14 bg-white/5 border border-dashed border-white/20 rounded-xl text-[11px] text-slate-300 hover:bg-white/10 hover:border-white/40 transition-colors w-full font-medium">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
-                        Upload Logo
+                        <Icons.Image /> Upload Logo
                       </button>
                     )}
                     <input type="file" ref={fileInputRef} onChange={handleLogoUpload} accept="image/*" className="hidden" />
@@ -984,8 +1007,7 @@ export default function InvoiceTab() {
                       </div>
                     ) : (
                       <button onClick={() => stampInputRef.current?.click()} className="flex items-center justify-center gap-2 px-4 py-0 h-14 bg-white/5 border border-dashed border-white/20 rounded-xl text-[11px] text-slate-300 hover:bg-white/10 hover:border-white/40 transition-colors w-full font-medium">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M14.31 8l5.74 9.94M9.69 8h11.48M7.38 12l5.74-9.94M9.69 16L3.95 6.06M14.31 16H2.83m13.79-4l-5.74 9.94"/></svg>
-                        Upload Stempel
+                        <Icons.Stamp /> Upload Stempel
                       </button>
                     )}
                     <input type="file" ref={stampInputRef} onChange={handleStampUpload} accept="image/*" className="hidden" />
@@ -1007,7 +1029,7 @@ export default function InvoiceTab() {
                 placeholder="Misal: INV/2026/04/001" 
               />
               <div className="flex flex-col gap-1.5 w-full">
-                <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Status Invoice</label>
+                <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Status Tagihan</label>
                 <div className="flex bg-[#1e293b] sm:bg-white/5 border border-white/10 rounded-xl p-1">
                     <button onClick={() => setInvoiceData({...invoiceData, status: 'UNPAID'})} className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${invoiceData.status === 'UNPAID' ? 'bg-rose-500/20 text-rose-400 border border-rose-500/30' : 'text-slate-500 hover:text-slate-300'}`}>UNPAID</button>
                     <button onClick={() => setInvoiceData({...invoiceData, status: 'PAID'})} className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${invoiceData.status === 'PAID' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'text-slate-500 hover:text-slate-300'}`}>PAID</button>
@@ -1070,7 +1092,7 @@ export default function InvoiceTab() {
                 <div key={item.id} className="p-5 bg-white/5 border border-white/10 rounded-xl relative group">
                   <div className="absolute top-3 left-4 text-[10px] font-bold text-slate-500 bg-[#030712] px-2 py-0.5 rounded-md border border-white/10">Item #{index + 1}</div>
                   <button onClick={() => removeItem(item.id)} className="absolute -top-3 -right-3 bg-red-500/80 hover:bg-red-500 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-lg" title="Hapus Item">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                    <Icons.Trash />
                   </button>
                   
                   <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 mt-4">
@@ -1097,9 +1119,8 @@ export default function InvoiceTab() {
                 </div>
               ))}
               
-              <button onClick={addItem} className="w-full py-3.5 rounded-xl border border-dashed border-white/20 text-indigo-300 hover:bg-indigo-500/10 hover:border-indigo-500/50 hover:text-indigo-200 transition-all flex items-center justify-center gap-2 text-sm font-bold bg-[#030712]/50">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
-                Tambah Item / Layanan
+              <button onClick={addItem} className="w-full py-3.5 rounded-xl border border-dashed border-white/20 text-cyan-400 hover:bg-cyan-500/10 hover:border-cyan-500/50 hover:text-cyan-300 transition-all flex items-center justify-center gap-2 text-sm font-bold bg-[#030712]/50">
+                <Icons.Plus /> Tambah Item / Layanan
               </button>
             </div>
             
@@ -1113,30 +1134,28 @@ export default function InvoiceTab() {
                     <button onClick={() => setInvoiceData(prev => ({...prev, discountType: 'fixed'}))} className={`flex-1 text-[10px] py-1.5 rounded-md transition-all font-bold uppercase tracking-widest ${invoiceData.discountType === 'fixed' ? 'bg-white/10 text-white shadow-sm' : 'text-slate-500 hover:text-slate-300'}`}>Nominal</button>
                     <button onClick={() => setInvoiceData(prev => ({...prev, discountType: 'percent'}))} className={`flex-1 text-[10px] py-1.5 rounded-md transition-all font-bold uppercase tracking-widest ${invoiceData.discountType === 'percent' ? 'bg-white/10 text-white shadow-sm' : 'text-slate-500 hover:text-slate-300'}`}>Persen (%)</button>
                  </div>
-                 <div className="relative">
-                    <CleanInput 
-                      type="number" 
-                      name="discount" 
-                      value={invoiceData.discount} 
-                      onChange={handleInvoiceChange} 
-                      placeholder={invoiceData.discountType === 'fixed' ? "Misal: 50000" : "Misal: 10"} 
-                    />
-                    <span className="absolute right-4 top-[38px] text-slate-500 text-sm font-bold">{invoiceData.discountType === 'percent' ? '%' : currency}</span>
-                 </div>
+                 <CleanInput 
+                   type="number" 
+                   name="discount" 
+                   value={invoiceData.discount} 
+                   onChange={handleInvoiceChange} 
+                   placeholder={invoiceData.discountType === 'fixed' ? "Misal: 50000" : "Misal: 10"} 
+                   suffix={invoiceData.discountType === 'percent' ? '%' : currency}
+                 />
               </div>
 
               {/* Modul Pajak */}
               <div className="bg-white/5 p-4 rounded-xl border border-white/10">
                  <p className="text-[10px] text-slate-400 font-bold mb-3 uppercase tracking-widest">Pengaturan Pajak</p>
-                 <div className="relative mb-3">
+                 <div className="mb-3">
                     <CleanInput 
                       type="number" 
                       name="taxRate" 
                       value={invoiceData.taxRate} 
                       onChange={handleInvoiceChange} 
                       placeholder="Misal: 11" 
+                      suffix="%"
                     />
-                    <span className="absolute right-4 top-[38px] text-slate-500 text-sm font-bold">%</span>
                  </div>
                 <div className="flex flex-wrap gap-2">
                   <button onClick={() => setInvoiceData(prev => ({...prev, taxRate: "11"}))} className="text-[10px] font-bold bg-[#030712] border border-white/10 hover:bg-white/10 text-slate-300 px-2.5 py-1.5 rounded-lg transition-colors shadow-sm">PPN 11%</button>
@@ -1195,36 +1214,44 @@ export default function InvoiceTab() {
             </div>
           </div>
 
-          <button onClick={() => window.print()} className="w-full py-4 bg-gradient-to-r hover:bg-gradient-to-l from-indigo-600 to-cyan-500 text-white font-bold rounded-xl shadow-[0_0_20px_rgba(79,70,229,0.3)] hover:shadow-[0_0_25px_rgba(79,70,229,0.5)] hover:-translate-y-1 transition-all flex justify-center items-center gap-2 text-lg">
-            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
-            Cetak Dokumen PDF
-          </button>
         </div>
 
         {/* ======================= */}
         {/* PREVIEW PANEL (KANAN)   */}
         {/* ======================= */}
         <div className="xl:col-span-7 print:col-span-12 print:w-full print:m-0 print:p-0 flex justify-center">
-          <div className="sticky top-6 w-full flex justify-center" ref={previewContainerRef}>
-            {/* Scrollable Container */}
-            <div className="overflow-hidden w-full print:overflow-visible flex justify-center items-start">
-              
-              {/* Kertas Render Area (Scale Realistis & Responsif) */}
+          <div className="sticky top-6 w-full flex justify-center h-fit" ref={previewContainerRef}>
+            
+            {/* Auto Scale Wrapper: membungkus area render agar scale berjalan mulus tanpa whitespace bug */}
+            <div 
+               className="w-full flex justify-center overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)]"
+               style={{ 
+                  height: paperDimensionsPx[paperSize].height * previewScale 
+               }}
+            >
               <div 
-                className="bg-white print:bg-transparent shadow-[0_10px_40px_rgba(0,0,0,0.15)] print:shadow-none transition-all duration-300 print-scale-reset transform-origin-top shrink-0"
+                className="relative transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)]"
                 style={{ 
-                  width: `${paperDimensionsPx[paperSize].width}px`,
-                  minHeight: `${paperDimensionsPx[paperSize].height}px`,
-                  transform: `scale(${previewScale})`,
-                  marginBottom: `-${paperDimensionsPx[paperSize].height * (1 - previewScale)}px`
+                  width: paperDimensionsPx[paperSize].width * previewScale, 
+                  height: paperDimensionsPx[paperSize].height * previewScale 
                 }}
               >
-                {template === 'modern' && <TemplateModern invoiceData={invoiceData} items={items} logo={logo} stamp={stamp} themeColor={themeColor} currency={currency} subtotal={subtotal} taxAmount={taxAmount} discountAmount={discountAmount} total={total} />}
-                {template === 'minimal' && <TemplateMinimal invoiceData={invoiceData} items={items} logo={logo} stamp={stamp} themeColor={themeColor} currency={currency} subtotal={subtotal} taxAmount={taxAmount} discountAmount={discountAmount} total={total} />}
-                {template === 'classic' && <TemplateClassic invoiceData={invoiceData} items={items} logo={logo} stamp={stamp} themeColor={themeColor} currency={currency} subtotal={subtotal} taxAmount={taxAmount} discountAmount={discountAmount} total={total} />}
+                {/* Kertas Render Area (Scale Realistis & Responsif) */}
+                <div 
+                  className="bg-white print:bg-transparent shadow-[0_20px_60px_rgba(0,0,0,0.15)] print:shadow-none transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] print-scale-reset absolute top-0 left-0 origin-top-left"
+                  style={{ 
+                    width: `${paperDimensionsPx[paperSize].width}px`,
+                    height: `${paperDimensionsPx[paperSize].height}px`,
+                    transform: `scale(${previewScale})`
+                  }}
+                >
+                  {template === 'modern' && <TemplateModern invoiceData={invoiceData} items={items} logo={logo} stamp={stamp} themeColor={themeColor} currency={currency} subtotal={subtotal} taxAmount={taxAmount} discountAmount={discountAmount} total={total} t={t} />}
+                  {template === 'minimal' && <TemplateMinimal invoiceData={invoiceData} items={items} logo={logo} stamp={stamp} themeColor={themeColor} currency={currency} subtotal={subtotal} taxAmount={taxAmount} discountAmount={discountAmount} total={total} t={t} />}
+                  {template === 'classic' && <TemplateClassic invoiceData={invoiceData} items={items} logo={logo} stamp={stamp} themeColor={themeColor} currency={currency} subtotal={subtotal} taxAmount={taxAmount} discountAmount={discountAmount} total={total} t={t} />}
+                </div>
               </div>
-
             </div>
+            
           </div>
         </div>
 
