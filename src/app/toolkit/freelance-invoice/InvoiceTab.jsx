@@ -182,10 +182,7 @@ const bankOptions = [
   { value: "ShopeePay", label: "ShopeePay (E-Wallet)" }
 ];
 
-// --- TEMPLATES COMPONENTS ---
-// Kunci utama: TIDAK MENGGUNAKAN md: atau lg: class di template.
-// Karena lebar kanvas (width) dibuat tetap secara fisik (ex: 794px), 
-// responsivitas terjadi melalui transform: scale() di wrapper.
+// --- TEMPLATES COMPONENTS (KONSISTEN FIXED SCALING - NO RESPONSIVE CLASS INSIDE TEMPLATE) ---
 
 const SignatureBlock = ({ invoiceData, stamp, themeColor, t }) => (
   <div className="relative inline-flex flex-col items-center justify-end pt-4 min-w-[200px] page-break-inside-avoid">
@@ -276,10 +273,10 @@ const TemplateModern = ({ invoiceData, items, logo, stamp, themeColor, currency,
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="transition-colors duration-300" style={{ backgroundColor: themeColor + '15' }}>
-              <th className="py-3 px-4 text-[10px] font-black uppercase tracking-widest transition-colors duration-300 w-[55%]" style={{ color: themeColor }}>{t.desc}</th>
-              <th className="py-3 px-4 text-[10px] font-black uppercase tracking-widest text-center transition-colors duration-300 w-[10%]" style={{ color: themeColor }}>{t.qty}</th>
-              <th className="py-3 px-4 text-[10px] font-black uppercase tracking-widest text-right transition-colors duration-300 w-[17.5%]" style={{ color: themeColor }}>{t.price}</th>
-              <th className="py-3 px-4 text-[10px] font-black uppercase tracking-widest text-right transition-colors duration-300 w-[17.5%]" style={{ color: themeColor }}>{t.total}</th>
+              <th className="py-2.5 px-4 text-[10px] font-black uppercase tracking-widest transition-colors duration-300 w-[55%]" style={{ color: themeColor }}>{t.desc}</th>
+              <th className="py-2.5 px-4 text-[10px] font-black uppercase tracking-widest text-center transition-colors duration-300 w-[10%]" style={{ color: themeColor }}>{t.qty}</th>
+              <th className="py-2.5 px-4 text-[10px] font-black uppercase tracking-widest text-right transition-colors duration-300 w-[17.5%]" style={{ color: themeColor }}>{t.price}</th>
+              <th className="py-2.5 px-4 text-[10px] font-black uppercase tracking-widest text-right transition-colors duration-300 w-[17.5%]" style={{ color: themeColor }}>{t.total}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
@@ -803,9 +800,20 @@ export default function InvoiceTab() {
         @media print {
           @page { size: ${paperSize === 'A4' ? 'A4' : paperSize === 'Letter' ? 'letter' : 'legal'}; margin: 0; }
           body, html { height: auto !important; overflow: visible !important; }
-          body { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-          .print-wrapper { display: block !important; height: auto !important; overflow: visible !important; }
-          .print-scale-reset { transform: scale(1) !important; position: relative !important; width: 100% !important; height: auto !important; margin: 0 !important; box-shadow: none !important; page-break-after: avoid; }
+          body { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; background: white !important; }
+          /* Menyembunyikan elemen website luar */
+          body * { visibility: hidden; }
+          /* Memunculkan khusus elemen di dalam wrapper print */
+          #print-area, #print-area * { visibility: visible; }
+          #print-area { 
+             position: absolute; 
+             left: 0; 
+             top: 0; 
+             width: ${paperDimensionsPx[paperSize].width}px !important;
+             margin: 0 !important; 
+             padding: 0 !important; 
+          }
+          .print-scale-reset { transform: scale(1) !important; position: relative !important; width: 100% !important; height: auto !important; margin: 0 !important; box-shadow: none !important; }
           .break-inside-avoid { break-inside: avoid; page-break-inside: avoid; }
           .page-break-inside-avoid { page-break-inside: avoid; }
         }
@@ -826,7 +834,7 @@ export default function InvoiceTab() {
         </button>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 lg:gap-10 print:block">
+      <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 lg:gap-10">
         
         {/* ======================= */}
         {/* EDITOR PANEL (KIRI)     */}
@@ -901,8 +909,8 @@ export default function InvoiceTab() {
                         { value: 'IDR', label: 'Rupiah (IDR)' },
                         { value: 'USD', label: 'US Dollar (USD)' },
                         { value: 'EUR', label: 'Euro (EUR)' },
-                        { value: 'GBP', label: 'Pound Sterling (GBP)' },
-                        { value: 'SGD', label: 'Singapore Dollar (SGD)' }
+                        { value: 'GBP', label: 'Pound (GBP)' },
+                        { value: 'SGD', label: 'SGD Dollar' }
                       ]} 
                       placeholder="Pilih Mata Uang"
                     />
@@ -1221,27 +1229,23 @@ export default function InvoiceTab() {
               />
             </div>
           </div>
-
-          <button onClick={() => window.print()} className="w-full py-4 bg-gradient-to-r hover:bg-gradient-to-l from-cyan-600 to-blue-500 text-white font-bold rounded-xl shadow-[0_0_20px_rgba(6,182,212,0.3)] hover:shadow-[0_0_25px_rgba(6,182,212,0.5)] hover:-translate-y-1 transition-all flex justify-center items-center gap-2 text-lg">
-            <Icons.Print /> Cetak Dokumen PDF
-          </button>
         </div>
 
         {/* ======================= */}
         {/* PREVIEW PANEL (KANAN)   */}
         {/* ======================= */}
         <div className="xl:col-span-7 print:col-span-12 print:w-full print:m-0 print:p-0 flex justify-center">
-          <div className="sticky top-6 w-full flex justify-center h-fit print:relative print:top-0 print:block print:overflow-visible print:w-full" ref={previewContainerRef}>
+          <div className="sticky top-6 w-full flex justify-center h-fit" id="print-area" ref={previewContainerRef}>
             
             {/* Auto Scale Wrapper: membungkus area render agar scale berjalan mulus tanpa whitespace bug */}
             <div 
-               className="w-full flex justify-center overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] print-wrapper"
+               className="w-full flex justify-center overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)]"
                style={{ 
                   height: paperDimensionsPx[paperSize].height * previewScale 
                }}
             >
               <div 
-                className="relative transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] print-wrapper"
+                className="relative transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)]"
                 style={{ 
                   width: paperDimensionsPx[paperSize].width * previewScale, 
                   height: paperDimensionsPx[paperSize].height * previewScale 
@@ -1252,7 +1256,7 @@ export default function InvoiceTab() {
                   className="bg-white print:bg-transparent shadow-[0_20px_60px_rgba(0,0,0,0.15)] print:shadow-none transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] print-scale-reset absolute top-0 left-0 origin-top-left"
                   style={{ 
                     width: `${paperDimensionsPx[paperSize].width}px`,
-                    height: `${paperDimensionsPx[paperSize].height}px`,
+                    minHeight: `${paperDimensionsPx[paperSize].height}px`,
                     transform: `scale(${previewScale})`
                   }}
                 >
