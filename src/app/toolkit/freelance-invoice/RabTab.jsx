@@ -625,7 +625,7 @@ export default function RabTab() {
     myName: "", myRole: "", myEmail: "", myPhone: "", myTaxId: "",
     clientName: "", clientAddress: "", clientTaxId: "", 
     bankName: "", bankCode: "", accName: "", accNumber: "", 
-    taxRate: "", discount: "", discountType: "fixed", notes: "", signatureName: ""
+    taxRate: "", discount: "", discountType: "fixed", notes: "", signatureName: "", status: "UNPAID", 
   });
 
   useEffect(() => {

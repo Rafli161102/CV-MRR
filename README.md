@@ -13,7 +13,7 @@
 
 <h2>Pembaruan Terbaru</h2>
 <ul>
-<li><img src="https://img.shields.io/badge/Fitur_Baru-0969DA?style=flat-square" alt="New"> <b>Sistem Database CMS Visual:</b> Pemisahan total antara UI dan data. Pembaruan konten kini 100% dilakukan melalui file <code>store.js</code> tanpa menyentuh struktur halaman utama.</li>
+<li><img src="https://img.shields.io/badge/Fitur_Baru-0969DA?style=flat-square" alt="New"> <b>CMS Visual Editor Homepage:</b> Kini tersedia editor UI/UX langsung dari browser. Admin bisa login ke <code>/admin</code>, membuka <code>Open Visual Editor</code>, lalu mengubah warna, teks hero, tombol, dan label section homepage tanpa mengedit kode manual.</li>
 <li><img src="https://img.shields.io/badge/Fitur_Baru-0969DA?style=flat-square" alt="New"> <b>Alat Pembuat CV (Micro-SaaS):</b> Penambahan rute <code>/cv-maker</code> yang menyediakan generator CV standar ATS gratis dengan fitur auto-translate untuk pengunjung.</li>
 <li><img src="https://img.shields.io/badge/Optimasi-238636?style=flat-square" alt="Fix"> <b>Sistem Render Anti-Slider:</b> Detail karya diatur memanjang ke bawah menyerupai presentasi Behance untuk visibilitas detail grafis yang lebih baik.</li>
 </ul>
@@ -112,7 +112,40 @@
 |       |-- /aquanime           -> ( /aquanime ) Tautan ke ekosistem AquaNime
 </code></pre>
 
-<h2>2. Sistem Update Simpel (Buku Panduan store.js)</h2>
+<h2>2. Panduan CMS Visual Editor (Edit UI/UX dari Browser)</h2>
+<p>Sekarang website ini memiliki <b>visual editor</b> untuk homepage. Artinya, perubahan tampilan awal tidak harus lagi dilakukan langsung dari source code. Admin bisa login lalu mengedit beberapa elemen UI/UX langsung dari browser.</p>
+
+<p><b>Fitur yang saat ini bisa diedit dari browser:</b></p>
+<ul>
+<li>Warna utama website (background, surface, accent, muted text, warna tombol WhatsApp).</li>
+<li>Teks hero section (judul, deskripsi, label status, tombol CTA).</li>
+<li>Konten visual card profil (Founder label, Founder name, Experience badge, foto profil).</li>
+<li>Teks section toolkit, portfolio, dan photography.</li>
+<li>Link tombol dan link section utama homepage.</li>
+</ul>
+
+<p><b>Langkah penggunaan CMS Visual Editor:</b></p>
+<ol>
+<li>Jalankan project secara lokal dengan <code>npm install</code> lalu <code>npm run dev</code>.</li>
+<li>Buka halaman admin di <code>/admin</code>.</li>
+<li>Login memakai akun admin. Default saat ini: <code>admin / admin123</code> jika belum diubah.</li>
+<li>Setelah berhasil login, klik tombol <b>Open Visual Editor</b>.</li>
+<li>Halaman homepage akan terbuka dengan mode edit <code>/?edit=1</code>.</li>
+<li>Klik tombol <b>Edit UI Homepage</b> di pojok kanan bawah.</li>
+<li>Ubah isi panel <b>Theme</b>, <b>Hero</b>, atau <b>Sections</b>.</li>
+<li>Klik <b>Save Changes</b> untuk menyimpan ke database SQLite melalui endpoint CMS.</li>
+<li>Perubahan akan dipakai ulang otomatis saat homepage dibuka kembali.</li>
+</ol>
+
+<p><b>Catatan teknis:</b></p>
+<ul>
+<li>Konfigurasi visual homepage disimpan di tabel <code>page_content</code> dengan key <code>homepage-ui</code>.</li>
+<li>Endpoint yang dipakai editor adalah <code>/api/cms/page-content</code>.</li>
+<li>Jika data visual CMS belum ada, homepage akan tetap menggunakan fallback default config.</li>
+<li>Konten proyek dan galeri masih tetap dapat dikelola melalui CMS existing atau fallback data di <code>src/data/store.js</code>.</li>
+</ul>
+
+<h2>3. Sistem Update Simpel (Buku Panduan store.js)</h2>
 <p>Sistem dirancang dengan metode <b>"Drag & Play"</b>. Untuk mengubah konten teks dan gambar di website, modifikasi hanya dilakukan pada file <b><code>src/data/store.js</code></b>.</p>
 
 <p><b>Prosedur Pembaruan <code>store.js</code>:</b></p>
@@ -137,7 +170,7 @@
 <li>Untuk menambahkan proyek baru, salin satu blok objek dari <code>{</code> hingga <code>}</code>, lalu sesuaikan nilai string di dalamnya.</li>
 </ol>
 
-<h2>3. Panduan Mitigasi Error</h2>
+<h2>4. Panduan Mitigasi Error</h2>
 <p>Karena pembaruan sering dilakukan via perangkat seluler, berikut adalah aturan validasi mandiri untuk file <code>store.js</code>:</p>
 
 <ul>
@@ -146,7 +179,7 @@
 <li><b>Penggunaan Tanda Kutip:</b> Untuk menulis kutipan atau dialog di dalam nilai <code>description</code>, gunakan tanda kutip tunggal ('...'). Menulis tanda kutip ganda (") di dalam string akan menyebabkan syntax error.</li>
 </ul>
 
-<h2>4. Eksekusi End-to-End (Pembaruan via Mobile)</h2>
+<h2>5. Eksekusi End-to-End (Pembaruan via Mobile)</h2>
 <p>Karena repositori ini terintegrasi dengan Vercel secara otomatis, proses publikasi karya baru sangat ringkas:</p>
 <ol>
 <li><b>Unggah Visual:</b> Buka repositori GitHub > navigasi ke <code>public/projects/</code> > gunakan fitur <i>Add file/Upload files</i> > unggah gambar.</li>
@@ -155,7 +188,7 @@
 <li><b>Deployment:</b> Vercel akan secara otomatis menarik data terbaru dan menerapkan pembaruan ke <code>mrr.my.id</code> dalam waktu kurang dari satu menit.</li>
 </ol>
 
-<h2>5. Daftar Halaman & Transisi (Multipage SPA)</h2>
+<h2>6. Daftar Halaman & Transisi (Multipage SPA)</h2>
 <p>Sistem navigasi dikembangkan menggunakan teknologi <b>Single Page Application (SPA)</b> dari Next.js. Peralihan antar halaman terjadi secara instan tanpa proses muat ulang (reload) pada peramban.</p>
 <ul>
 <li><b>Beranda (<code>/</code>):</b> Ringkasan profil, keahlian utama, dan sorotan karya.</li>
@@ -166,7 +199,7 @@
 <li><b>Jembatan AquaNime (<code>/aquanime</code>):</b> Rute pengalihan langsung ke ekosistem komunitas.</li>
 </ul>
 
-<h2>6. Keamanan & Performa</h2>
+<h2>7. Keamanan & Performa</h2>
 <ul>
 <li><b>Struktur Statis:</b> Ketiadaan database relasional konvensional meminimalisasi celah injeksi SQL.</li>
 <li><b>Enkripsi:</b> Transmisi data diamankan secara otomatis menggunakan protokol HTTPS melalui Vercel.</li>
