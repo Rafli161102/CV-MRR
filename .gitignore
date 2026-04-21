@@ -1,1 +1,13 @@
 node_modules
+.next
+out
+.env
+.env.local
+.env.*.local
+cms.db
+cms.db-shm
+cms.db-wal
+public/sw.js
+public/swe-worker-*.js
+public/workbox-*.js
+.continue/agents/
