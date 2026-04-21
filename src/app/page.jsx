@@ -108,10 +108,12 @@ function isExternalLink(url) {
 }
 
 // =========================================================================
-// HOOK CUSTOM UNTUK ANIMASI SCROLL
+// HOOK CUSTOM UNTUK ANIMASI SCROLL - Apple Style
 // =========================================================================
-const useScrollReveal = () => {
+const useScrollReveal = (options = {}) => {
+  const { threshold = 0.15, triggerOnce = true } = options;
   const [isVisible, setIsVisible] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
   const ref = useRef(null);
 
   useEffect(() => {
@@ -119,10 +121,14 @@ const useScrollReveal = () => {
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsVisible(true);
-          observer.unobserve(entry.target);
+          if (triggerOnce) {
+            observer.unobserve(entry.target);
+          }
+        } else if (!triggerOnce) {
+          setIsVisible(false);
         }
       },
-      { threshold: 0.1 }
+      { threshold }
     );
 
     const currentRef = ref.current;
@@ -135,9 +141,64 @@ const useScrollReveal = () => {
         observer.unobserve(currentRef);
       }
     };
+  }, [threshold, triggerOnce]);
+
+  // Parallax scroll effect
+  useEffect(() => {
+    const handleScroll = () => {
+      if (ref.current) {
+        const rect = ref.current.getBoundingClientRect();
+        const windowHeight = window.innerHeight;
+        const progress = Math.max(0, Math.min(1, 1 - (rect.top / windowHeight)));
+        setScrollProgress(progress);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  return [ref, isVisible];
+  return [ref, isVisible, scrollProgress];
+};
+
+// Mouse parallax hook for Apple-style depth
+const useMouseParallax = (intensity = 20) => {
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      if (ref.current) {
+        const rect = ref.current.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        const x = ((e.clientX - centerX) / rect.width) * intensity;
+        const y = ((e.clientY - centerY) / rect.height) * intensity;
+        setPosition({ x, y });
+      }
+    };
+
+    const handleMouseLeave = () => {
+      setPosition({ x: 0, y: 0 });
+    };
+
+    const element = ref.current;
+    if (element) {
+      element.addEventListener('mousemove', handleMouseMove);
+      element.addEventListener('mouseleave', handleMouseLeave);
+    }
+
+    return () => {
+      if (element) {
+        element.removeEventListener('mousemove', handleMouseMove);
+        element.removeEventListener('mouseleave', handleMouseLeave);
+      }
+    };
+  }, [intensity]);
+
+  return [ref, position];
 };
 
 // =========================================================================
@@ -176,30 +237,75 @@ const CameraIcon = () => (
 
 function ActionButton({ href, label, variant, theme, children }) {
   const isExternal = isExternalLink(href);
+  const buttonRef = useRef(null);
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleMouseMove = (e) => {
+    if (!buttonRef.current) return;
+    const rect = buttonRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width / 2;
+    const y = e.clientY - rect.top - rect.height / 2;
+    buttonRef.current.style.transform = `translate(${x * 0.15}px, ${y * 0.15}px) scale(1.02)`;
+  };
+
+  const handleMouseLeave = () => {
+    if (buttonRef.current) {
+      buttonRef.current.style.transform = 'translate(0, 0) scale(1)';
+    }
+    setIsHovered(false);
+  };
 
   const baseClassName =
-    'w-full sm:w-auto px-8 py-4 rounded-xl transition-all tracking-wide flex justify-center items-center gap-2 group';
+    'w-full sm:w-auto px-8 py-4 rounded-2xl tracking-wide flex justify-center items-center gap-2 group relative overflow-hidden transition-all duration-300 ease-out';
 
   if (variant === 'primary') {
     const style = {
       backgroundColor: '#ffffff',
       color: theme.pageBg,
-      boxShadow: `0 0 30px ${hexToRgba(theme.accentStrong, 0.28)}`
+      boxShadow: isHovered
+        ? `0 10px 40px ${hexToRgba(theme.accentStrong, 0.4)}, 0 0 60px ${hexToRgba(theme.accentStrong, 0.2)}`
+        : `0 4px 20px ${hexToRgba(theme.accentStrong, 0.28)}`,
+      transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)'
     };
+
+    const ButtonContent = () => (
+      <>
+        {/* Shimmer effect */}
+        <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out" />
+        {children}
+        <span className="relative z-10">{label}</span>
+      </>
+    );
 
     if (isExternal) {
       return (
-        <a href={href} target="_blank" rel="noopener noreferrer" className={`${baseClassName} font-black hover:-translate-y-1`} style={style}>
-          {children}
-          {label}
+        <a
+          ref={buttonRef}
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={`${baseClassName} font-black`}
+          style={style}
+          onMouseMove={handleMouseMove}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={handleMouseLeave}
+        >
+          <ButtonContent />
         </a>
       );
     }
 
     return (
-      <Link href={href} className={`${baseClassName} font-black hover:-translate-y-1`} style={style}>
-        {children}
-        {label}
+      <Link
+        ref={buttonRef}
+        href={href}
+        className={`${baseClassName} font-black`}
+        style={style}
+        onMouseMove={handleMouseMove}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={handleMouseLeave}
+      >
+        <ButtonContent />
       </Link>
     );
   }
@@ -207,13 +313,28 @@ function ActionButton({ href, label, variant, theme, children }) {
   const secondaryStyle = {
     borderColor: hexToRgba(theme.whatsapp, 0.6),
     backgroundColor: hexToRgba(theme.whatsapp, 0.08),
-    color: '#ffffff'
+    color: '#ffffff',
+    boxShadow: isHovered
+      ? `0 10px 30px ${hexToRgba(theme.whatsapp, 0.25)}`
+      : 'none',
+    transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)'
   };
 
   return (
-    <a href={href} target="_blank" rel="noopener noreferrer" className={`${baseClassName} border font-bold hover:-translate-y-1`} style={secondaryStyle}>
+    <a
+      ref={buttonRef}
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={`${baseClassName} border font-bold`}
+      style={secondaryStyle}
+      onMouseMove={handleMouseMove}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={handleMouseLeave}
+    >
+      <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out" />
       {children}
-      {label}
+      <span className="relative z-10">{label}</span>
     </a>
   );
 }
@@ -295,9 +416,10 @@ export default function Home() {
     };
   }, []);
 
-  const [refToolkit, inViewToolkit] = useScrollReveal();
-  const [refPortfolio, inViewPortfolio] = useScrollReveal();
-  const [refCamera, inViewCamera] = useScrollReveal();
+  const [refToolkit, inViewToolkit, scrollProgressToolkit] = useScrollReveal();
+  const [refPortfolio, inViewPortfolio, scrollProgressPortfolio] = useScrollReveal();
+  const [refCamera, inViewCamera, scrollProgressCamera] = useScrollReveal();
+  const [heroParallaxRef, heroMousePos] = useMouseParallax(15);
 
   const theme = uiContent.theme;
   const hero = uiContent.hero;
@@ -312,18 +434,49 @@ export default function Home() {
       }}
     >
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+        {/* Dynamic gradient orbs with mouse parallax */}
         <div
-          className="absolute top-[-10%] left-[-10%] w-[120vw] md:w-[50rem] h-[120vw] md:h-[50rem] rounded-full blur-[100px] md:blur-[120px]"
-          style={{ backgroundColor: hexToRgba(theme.accentStrong, 0.14) }}
+          className="absolute top-[-10%] left-[-10%] w-[120vw] md:w-[50rem] h-[120vw] md:h-[50rem] rounded-full blur-[100px] md:blur-[120px] transition-transform duration-1000 ease-out"
+          style={{
+            backgroundColor: hexToRgba(theme.accentStrong, 0.14),
+            transform: `translate(${heroMousePos.x * 0.5}px, ${heroMousePos.y * 0.5}px)`
+          }}
         />
         <div
-          className="absolute bottom-[-20%] right-[-10%] w-[100vw] md:w-[40rem] h-[100vw] md:h-[40rem] rounded-full blur-[100px] md:blur-[150px]"
-          style={{ backgroundColor: hexToRgba(theme.accentEnd, 0.14) }}
+          className="absolute bottom-[-20%] right-[-10%] w-[100vw] md:w-[40rem] h-[100vw] md:h-[40rem] rounded-full blur-[100px] md:blur-[150px] transition-transform duration-1000 ease-out"
+          style={{
+            backgroundColor: hexToRgba(theme.accentEnd, 0.14),
+            transform: `translate(${-heroMousePos.x * 0.3}px, ${-heroMousePos.y * 0.3}px)`
+          }}
+        />
+        {/* Additional accent orb */}
+        <div
+          className="absolute top-[30%] right-[20%] w-[40vw] md:w-[25rem] h-[40vw] md:h-[25rem] rounded-full blur-[80px] md:blur-[100px] transition-transform duration-1000 ease-out"
+          style={{
+            backgroundColor: hexToRgba(theme.accentMid, 0.08),
+            transform: `translate(${heroMousePos.x * 0.2}px, ${heroMousePos.y * 0.2}px)`
+          }}
         />
 
-        <div className="hidden md:block absolute left-[10%] top-0 bottom-0 w-[1px]" style={{ backgroundColor: 'rgba(255,255,255,0.02)' }} />
-        <div className="hidden md:block absolute left-[50%] top-0 bottom-0 w-[1px]" style={{ backgroundColor: 'rgba(255,255,255,0.02)' }} />
-        <div className="hidden md:block absolute right-[10%] top-0 bottom-0 w-[1px]" style={{ backgroundColor: 'rgba(255,255,255,0.02)' }} />
+        {/* Grid lines with subtle animation */}
+        <div
+          className="hidden md:block absolute left-[10%] top-0 bottom-0 w-[1px] transition-opacity duration-700"
+          style={{
+            background: 'linear-gradient(to bottom, transparent, rgba(255,255,255,0.03) 20%, rgba(255,255,255,0.03) 80%, transparent)'
+          }}
+        />
+        <div
+          className="hidden md:block absolute left-[50%] top-0 bottom-0 w-[1px] transition-opacity duration-700"
+          style={{
+            background: 'linear-gradient(to bottom, transparent, rgba(255,255,255,0.03) 20%, rgba(255,255,255,0.03) 80%, transparent)'
+          }}
+        />
+        <div
+          className="hidden md:block absolute right-[10%] top-0 bottom-0 w-[1px] transition-opacity duration-700"
+          style={{
+            background: 'linear-gradient(to bottom, transparent, rgba(255,255,255,0.03) 20%, rgba(255,255,255,0.03) 80%, transparent)'
+          }}
+        />
       </div>
 
       <div className="relative z-10 pt-24 md:pt-36 pb-24 w-full">
@@ -387,43 +540,64 @@ export default function Home() {
             </div>
 
             <div className="w-full lg:w-[38.2%] flex justify-center lg:justify-end relative z-10">
-              <div className="relative w-full max-w-[260px] sm:max-w-[320px] lg:max-w-[360px] aspect-[4/5] group anim-float mx-auto lg:mx-0">
+              <div
+                ref={heroParallaxRef}
+                className="relative w-full max-w-[260px] sm:max-w-[320px] lg:max-w-[360px] aspect-[4/5] group mx-auto lg:mx-0"
+                style={{
+                  transform: `perspective(1000px) rotateY(${heroMousePos.x * 0.3}deg) rotateX(${-heroMousePos.y * 0.3}deg)`,
+                  transition: 'transform 0.2s ease-out'
+                }}
+              >
+                {/* Animated glow effect */}
                 <div
-                  className="absolute inset-0 rounded-[2rem] rotate-6 group-hover:rotate-12 transition-all duration-700 opacity-30 blur-xl"
+                  className="absolute inset-0 rounded-[2rem] opacity-40 blur-2xl transition-all duration-700 group-hover:opacity-60"
                   style={{
-                    backgroundImage: `linear-gradient(135deg, ${theme.accentStrong}, ${theme.accentEnd})`
+                    background: `linear-gradient(135deg, ${theme.accentStrong}, ${theme.accentMid}, ${theme.accentEnd})`,
+                    transform: `translate(${heroMousePos.x * 0.8}px, ${heroMousePos.y * 0.8}px) rotate(6deg) scale(0.95)`
                   }}
                 />
+                {/* Secondary glow */}
                 <div
-                  className="absolute inset-0 border rounded-[2rem] -rotate-3 group-hover:-rotate-6 transition-all duration-700 z-0"
-                  style={{ borderColor: hexToRgba(theme.accentStrong, 0.5) }}
+                  className="absolute inset-0 rounded-[2rem] opacity-20 blur-xl transition-all duration-700"
+                  style={{
+                    background: `linear-gradient(225deg, ${theme.accent}, ${theme.accentStrong})`,
+                    transform: `translate(${-heroMousePos.x * 0.5}px, ${-heroMousePos.y * 0.5}px) rotate(-3deg) scale(0.9)`
+                  }}
                 />
 
+                {/* Main card with glass effect */}
                 <div
-                  className="absolute inset-0 rounded-[2rem] overflow-hidden shadow-2xl z-10 border"
+                  className="absolute inset-0 rounded-[2rem] overflow-hidden shadow-2xl z-10 border transition-all duration-300"
                   style={{
                     backgroundColor: theme.surface,
-                    borderColor: 'rgba(255,255,255,0.08)'
+                    borderColor: 'rgba(255,255,255,0.1)',
+                    boxShadow: `0 25px 50px -12px rgba(0,0,0,0.5), 0 0 100px ${hexToRgba(theme.accentStrong, 0.1)}`
                   }}
                 >
                   <img
                     src={hero.profileImage}
                     alt="Muhammad Rafli Ramadhan"
-                    className="w-full h-full object-cover object-center grayscale hover:grayscale-0 transition-all duration-700 scale-105 group-hover:scale-100"
+                    className="w-full h-full object-cover object-center grayscale group-hover:grayscale-0 transition-all duration-700 scale-105 group-hover:scale-100"
                     onError={(e) => {
                       e.target.src =
                         'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop';
                     }}
                   />
+                  {/* Glass overlay gradient */}
                   <div className="absolute inset-0 bg-gradient-to-t from-[#030712] via-transparent to-transparent opacity-90" />
+                  {/* Shine effect on hover */}
+                  <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 </div>
 
+                {/* Founder badge with glass effect */}
                 <div
-                  className="absolute -bottom-5 left-[-10px] lg:-left-10 z-20 backdrop-blur-xl p-3 sm:p-5 rounded-2xl border hover:-translate-y-2 transition-transform duration-300"
+                  className="absolute -bottom-5 left-[-10px] lg:-left-10 z-20 p-3 sm:p-5 rounded-2xl border transition-all duration-300 hover:scale-105"
                   style={{
-                    backgroundColor: hexToRgba(theme.surface, 0.92),
-                    borderColor: 'rgba(255,255,255,0.08)',
-                    boxShadow: '0 20px 40px rgba(0,0,0,0.6)'
+                    background: `linear-gradient(135deg, ${hexToRgba(theme.surface, 0.95)}, ${hexToRgba(theme.surface, 0.8)})`,
+                    backdropFilter: 'blur(20px) saturate(180%)',
+                    borderColor: 'rgba(255,255,255,0.1)',
+                    boxShadow: `0 20px 40px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.05)`,
+                    transform: `translate(${heroMousePos.x * 0.2}px, ${heroMousePos.y * 0.2}px)`
                   }}
                 >
                   <div className="text-[8px] sm:text-[10px] font-bold uppercase tracking-[0.2em] mb-1" style={{ color: theme.muted }}>
@@ -435,11 +609,13 @@ export default function Home() {
                   </div>
                 </div>
 
+                {/* Experience badge */}
                 <div
-                  className="absolute -top-5 right-[-10px] lg:-right-8 z-20 p-3 sm:p-4 rounded-2xl hover:scale-105 transition-transform duration-300 flex items-center gap-2 sm:gap-3"
+                  className="absolute -top-5 right-[-10px] lg:-right-8 z-20 p-3 sm:p-4 rounded-2xl transition-all duration-300 hover:scale-105 flex items-center gap-2 sm:gap-3"
                   style={{
-                    backgroundImage: `linear-gradient(135deg, ${theme.accentStrong}, ${theme.accentMid})`,
-                    boxShadow: `0 10px 30px ${hexToRgba(theme.accentStrong, 0.4)}`
+                    background: `linear-gradient(135deg, ${theme.accentStrong}, ${theme.accentMid})`,
+                    boxShadow: `0 10px 30px ${hexToRgba(theme.accentStrong, 0.4)}, 0 0 0 1px rgba(255,255,255,0.1)`,
+                    transform: `translate(${heroMousePos.x * 0.15}px, ${heroMousePos.y * 0.15}px)`
                   }}
                 >
                   <div className="text-xl sm:text-3xl font-black text-white">{hero.experienceValue}</div>
@@ -453,33 +629,46 @@ export default function Home() {
 
           <div
             ref={refToolkit}
-            className={`mt-20 lg:mt-32 w-full transition-all duration-1000 transform ease-in-out ${
+            className={`mt-20 lg:mt-32 w-full transition-all duration-1000 ease-out ${
               inViewToolkit ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
             }`}
+            style={{
+              transform: `translateY(${(1 - scrollProgressToolkit) * 20}px)`
+            }}
           >
             <div
-              className="relative rounded-3xl overflow-hidden border p-6 sm:p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-8 shadow-2xl group"
+              className="relative rounded-3xl overflow-hidden border p-6 sm:p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-8 shadow-2xl group transition-all duration-500 hover:border-opacity-20"
               style={{
                 borderColor: 'rgba(255,255,255,0.08)',
-                backgroundImage: `linear-gradient(90deg, ${hexToRgba(theme.surface, 0.98)}, ${hexToRgba(theme.pageBg, 0.98)})`
+                background: `linear-gradient(135deg, ${hexToRgba(theme.surface, 0.95)}, ${hexToRgba(theme.surface, 0.8)})`,
+                backdropFilter: 'blur(20px) saturate(180%)',
+                boxShadow: `0 25px 50px -12px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05)`
               }}
             >
+              {/* Animated gradient orbs */}
               <div
                 className="absolute top-0 right-0 w-64 h-64 rounded-full blur-[80px] -z-10 group-hover:opacity-100 transition-all duration-700"
-                style={{ backgroundColor: hexToRgba(theme.accentStrong, 0.12) }}
+                style={{
+                  background: `linear-gradient(135deg, ${hexToRgba(theme.accentStrong, 0.2)}, ${hexToRgba(theme.accentMid, 0.1)})`,
+                  transform: `translate(${scrollProgressToolkit * 20}px, ${-scrollProgressToolkit * 10}px)`
+                }}
               />
               <div
                 className="absolute bottom-0 left-0 w-40 h-40 rounded-full blur-[60px] -z-10"
-                style={{ backgroundColor: hexToRgba(theme.accentMid, 0.12) }}
+                style={{
+                  background: `linear-gradient(225deg, ${hexToRgba(theme.accentMid, 0.15)}, ${hexToRgba(theme.accentEnd, 0.1)})`,
+                  transform: `translate(${-scrollProgressToolkit * 15}px, ${scrollProgressToolkit * 5}px)`
+                }}
               />
 
               <div className="flex items-start gap-4 sm:gap-5 z-10 text-center md:text-left w-full md:w-auto flex-col sm:flex-row">
                 <div
-                  className="p-3 border rounded-2xl hidden md:block group-hover:scale-110 transition-transform duration-500 mx-auto sm:mx-0 shrink-0"
+                  className="p-3 border rounded-2xl hidden md:block transition-all duration-500 mx-auto sm:mx-0 shrink-0 group-hover:scale-110 group-hover:rotate-3"
                   style={{
-                    backgroundColor: hexToRgba(theme.accentStrong, 0.14),
-                    borderColor: hexToRgba(theme.accentStrong, 0.26),
-                    color: theme.accent
+                    background: `linear-gradient(135deg, ${hexToRgba(theme.accentStrong, 0.2)}, ${hexToRgba(theme.accentStrong, 0.1)})`,
+                    borderColor: hexToRgba(theme.accentStrong, 0.3),
+                    color: theme.accent,
+                    boxShadow: `0 10px 30px ${hexToRgba(theme.accentStrong, 0.2)}`
                   }}
                 >
                   <ToolsIcon />
@@ -513,15 +702,18 @@ export default function Home() {
 
           <div
             ref={refPortfolio}
-            className={`mt-20 lg:mt-32 pt-16 border-t transition-all duration-1000 transform ease-in-out ${
+            className={`mt-20 lg:mt-32 pt-16 border-t transition-all duration-1000 ease-out ${
               inViewPortfolio ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
             }`}
-            style={{ borderColor: 'rgba(255,255,255,0.05)' }}
+            style={{
+              borderColor: 'rgba(255,255,255,0.05)',
+              transform: `translateY(${(1 - scrollProgressPortfolio) * 15}px)`
+            }}
           >
             <div className="flex flex-col sm:flex-row justify-between items-end mb-12 gap-6 w-full">
               <div className="w-full sm:w-auto">
                 <div className="flex items-center gap-2 mb-3">
-                  <span className="w-3 h-3 sm:w-4 sm:h-4 rounded-sm rotate-45 shrink-0" style={{ backgroundColor: theme.accentStrong }} />
+                  <span className="w-3 h-3 sm:w-4 sm:h-4 rounded-sm rotate-45 shrink-0 animate-pulse" style={{ backgroundColor: theme.accentStrong }} />
                   <span className="font-bold uppercase tracking-widest text-[10px] sm:text-xs" style={{ color: theme.accent }}>
                     {sections.portfolioEyebrow}
                   </span>
@@ -533,11 +725,11 @@ export default function Home() {
               </div>
               <Link
                 href={sections.portfolioLinkHref}
-                className="w-full sm:w-auto font-bold tracking-widest uppercase text-[10px] sm:text-sm group flex items-center justify-between sm:justify-start gap-2 transition-all pb-1 border-b border-transparent"
+                className="w-full sm:w-auto font-bold tracking-widest uppercase text-[10px] sm:text-sm group flex items-center justify-between sm:justify-start gap-2 transition-all duration-300 pb-1 border-b border-transparent hover:border-current"
                 style={{ color: theme.accent }}
               >
-                <span>{sections.portfolioLinkLabel}</span>
-                <span className="bg-white/10 p-1.5 rounded-full transition-colors shrink-0">
+                <span className="group-hover:tracking-wider transition-all duration-300">{sections.portfolioLinkLabel}</span>
+                <span className="bg-white/10 p-1.5 rounded-full transition-all duration-300 group-hover:bg-white/20 group-hover:scale-110 shrink-0">
                   <ArrowRightIcon />
                 </span>
               </Link>
@@ -557,43 +749,54 @@ export default function Home() {
                   <Link
                     href={`/projects/${project.id}`}
                     key={slotIndex}
-                    className={`group relative rounded-3xl sm:rounded-[2rem] overflow-hidden border transition-opacity duration-700 ease-in-out ${
+                    className={`group relative rounded-3xl sm:rounded-[2rem] overflow-hidden border transition-all duration-700 ease-out ${
                       slotIndex === 0 ? 'md:col-span-2 lg:col-span-2' : 'col-span-1'
-                    } ${fadingIndex === slotIndex ? 'opacity-0' : 'opacity-100'}`}
+                    } ${fadingIndex === slotIndex ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}
                     style={{
                       backgroundColor: theme.surface,
-                      borderColor: 'rgba(255,255,255,0.05)'
+                      borderColor: 'rgba(255,255,255,0.05)',
+                      boxShadow: '0 25px 50px -12px rgba(0,0,0,0.4)',
+                      transform: `translateY(${(1 - scrollProgressPortfolio) * (slotIndex * 5)}px)`
                     }}
                   >
+                    {/* Glass overlay on hover */}
+                    <div
+                      className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-all duration-500 z-10 pointer-events-none"
+                      style={{
+                        background: `linear-gradient(135deg, ${hexToRgba(theme.accentStrong, 0.05)}, transparent)`,
+                        backdropFilter: 'blur(2px)'
+                      }}
+                    />
                     <img
                       src={project.image}
                       alt={project.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[1.5s] ease-out opacity-60 group-hover:opacity-100"
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[1.5s] ease-out opacity-70 group-hover:opacity-100"
                       onError={(e) => {
                         e.target.src =
                           'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop';
                       }}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#030712] via-[#030712]/60 to-transparent opacity-90 group-hover:opacity-100 transition-opacity duration-500" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#030712] via-[#030712]/50 to-transparent opacity-90 group-hover:opacity-100 transition-all duration-500" />
 
                     <div
-                      className={`absolute bottom-0 left-0 w-full flex flex-col justify-end transform translate-y-2 sm:translate-y-4 group-hover:translate-y-0 transition-transform duration-500 ${
+                      className={`absolute bottom-0 left-0 w-full flex flex-col justify-end transform translate-y-2 sm:translate-y-4 group-hover:translate-y-0 transition-all duration-500 ${
                         slotIndex === 0 ? 'p-8 sm:p-10' : 'p-6 sm:p-8'
                       }`}
                     >
                       <div
-                        className="inline-flex items-center gap-2 text-[9px] sm:text-[10px] font-bold tracking-[0.2em] uppercase mb-3 backdrop-blur-md border px-3.5 py-1.5 rounded-full w-fit"
+                        className="inline-flex items-center gap-2 text-[9px] sm:text-[10px] font-bold tracking-[0.2em] uppercase mb-3 backdrop-blur-xl border px-3.5 py-1.5 rounded-full w-fit transition-all duration-300 group-hover:scale-105"
                         style={{
                           color: theme.accent,
-                          backgroundColor: hexToRgba(theme.accentStrong, 0.18),
-                          borderColor: hexToRgba(theme.accentStrong, 0.28)
+                          background: `linear-gradient(135deg, ${hexToRgba(theme.accentStrong, 0.25)}, ${hexToRgba(theme.accentStrong, 0.1)})`,
+                          borderColor: hexToRgba(theme.accentStrong, 0.35),
+                          boxShadow: `0 8px 32px ${hexToRgba(theme.accentStrong, 0.15)}`
                         }}
                       >
                         <span className="w-1.5 h-1.5 rounded-full shrink-0 animate-pulse" style={{ backgroundColor: theme.accent }} />
                         {project.category}
                       </div>
                       <h3
-                        className={`font-bold text-white transition-colors tracking-tight line-clamp-2 ${
+                        className={`font-bold text-white transition-all duration-300 tracking-tight line-clamp-2 group-hover:tracking-tight ${
                           slotIndex === 0 ? 'text-2xl sm:text-3xl md:text-4xl lg:text-5xl' : 'text-xl sm:text-2xl lg:text-3xl'
                         }`}
                       >
@@ -608,15 +811,18 @@ export default function Home() {
 
           <div
             ref={refCamera}
-            className={`mt-20 lg:mt-32 pt-16 border-t transition-all duration-1000 transform ease-in-out ${
+            className={`mt-20 lg:mt-32 pt-16 border-t transition-all duration-1000 ease-out ${
               inViewCamera ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
             }`}
-            style={{ borderColor: 'rgba(255,255,255,0.05)' }}
+            style={{
+              borderColor: 'rgba(255,255,255,0.05)',
+              transform: `translateY(${(1 - scrollProgressCamera) * 10}px)`
+            }}
           >
             <div className="flex flex-col sm:flex-row justify-between items-end mb-12 gap-6 w-full">
               <div className="w-full sm:w-auto">
                 <div className="flex items-center gap-2 mb-3">
-                  <span style={{ color: theme.accent }} className="shrink-0">
+                  <span style={{ color: theme.accent }} className="shrink-0 transition-transform duration-300 hover:scale-110">
                     <CameraIcon />
                   </span>
                   <span className="font-bold uppercase tracking-widest text-[10px] sm:text-xs" style={{ color: theme.accent }}>
@@ -630,11 +836,11 @@ export default function Home() {
               </div>
               <Link
                 href={sections.galleryLinkHref}
-                className="w-full sm:w-auto font-bold tracking-widest uppercase text-[10px] sm:text-sm group flex items-center justify-between sm:justify-start gap-2 transition-all pb-1 border-b border-transparent"
+                className="w-full sm:w-auto font-bold tracking-widest uppercase text-[10px] sm:text-sm group flex items-center justify-between sm:justify-start gap-2 transition-all duration-300 pb-1 border-b border-transparent hover:border-current"
                 style={{ color: theme.accent }}
               >
-                <span>{sections.galleryLinkLabel}</span>
-                <span className="bg-white/10 p-1.5 rounded-full transition-colors shrink-0">
+                <span className="group-hover:tracking-wider transition-all duration-300">{sections.galleryLinkLabel}</span>
+                <span className="bg-white/10 p-1.5 rounded-full transition-all duration-300 group-hover:bg-white/20 group-hover:scale-110 shrink-0">
                   <ArrowRightIcon />
                 </span>
               </Link>
@@ -645,25 +851,36 @@ export default function Home() {
                 photoGallery.slice(0, 4).map((photo, i) => (
                   <div
                     key={photo.id || i}
-                    className={`group relative overflow-hidden rounded-2xl border transition-all ${
+                    className={`group relative overflow-hidden rounded-2xl border transition-all duration-500 hover:shadow-2xl ${
                       i === 0 || i === 3 ? 'aspect-[4/5]' : 'aspect-square'
                     }`}
                     style={{
                       backgroundColor: theme.surface,
-                      borderColor: 'rgba(255,255,255,0.05)'
+                      borderColor: 'rgba(255,255,255,0.05)',
+                      boxShadow: '0 10px 30px -10px rgba(0,0,0,0.3)',
+                      transform: `translateY(${(1 - scrollProgressCamera) * (i % 2 === 0 ? 5 : -5)}px)`,
+                      transitionDelay: `${i * 50}ms`
                     }}
                   >
                     <img
                       src={photo.url}
                       alt={photo.title || 'Fotografi'}
-                      className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700"
+                      className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-115 transition-all duration-700"
                       onError={(e) => {
                         e.target.src =
                           'https://images.unsplash.com/photo-1542038784456-1ea8e935640e?q=80&w=800&auto=format&fit=crop';
                       }}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-4 z-10">
-                      <span className="text-white text-xs font-bold translate-y-4 group-hover:translate-y-0 transition-transform duration-300 tracking-wide line-clamp-1">
+                    {/* Glass overlay on hover */}
+                    <div
+                      className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-all duration-500 pointer-events-none"
+                      style={{
+                        background: `linear-gradient(135deg, ${hexToRgba(theme.accent, 0.05)}, transparent)`,
+                        backdropFilter: 'blur(1px)'
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-end p-4 z-10">
+                      <span className="text-white text-xs font-bold translate-y-4 group-hover:translate-y-0 transition-transform duration-300 tracking-wide line-clamp-1 drop-shadow-lg">
                         {photo.title}
                       </span>
                     </div>

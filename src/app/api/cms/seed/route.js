@@ -62,17 +62,17 @@ export async function POST(request) {
       photoStmt.run(photo.url, photo.title);
     });
 
-    // Create default admin user (username: admin, password: admin123)
+    // Create default admin user (username: rafli161102, password: rxzr16art)
     const adminStmt = db.prepare(`
       INSERT INTO admin_users (username, password_hash, email)
       VALUES (?, ?, ?)
     `);
-    
+
     try {
       adminStmt.run(
-        'admin',
-        hashPassword('admin123'),
-        'admin@mrr.local'
+        'rafli161102',
+        hashPassword('rxzr16art'),
+        'rafli@mrr.local'
       );
     } catch (e) {
       // Admin user might already exist

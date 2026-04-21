@@ -1,0 +1,19 @@
+{
+  "js/ts.tsdk.path": "node_modules/typescript/lib",
+  "js/ts.tsdk.promptToUseWorkspaceVersion": true,
+  "search.exclude": {
+    "node_modules": true,
+    ".next": true,
+    "dist": true
+  },
+  "files.exclude": {
+    "**/.git": true,
+    "**/.DS_Store": true
+  },
+  "files.watcherExclude": {
+    "**/node_modules/*/**": true,
+    "**/.next/*/**": true
+  },
+  "typescript.surveys.enabled": false,
+  "js/ts.validate.enabled": false
+}
