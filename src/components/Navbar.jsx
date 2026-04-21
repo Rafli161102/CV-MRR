@@ -1,84 +1,222 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useEffect, useMemo, useState } from 'react';
 
-const BoltIcon = ({ className = "w-4 h-4" }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className={className}>
-    <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
-  </svg>
-);
+const navigationItems = [
+  { label: 'Home', href: '/' },
+  { label: 'Projects', href: '/projects' },
+  { label: 'Photography', href: '/photography' },
+  { label: 'Toolkit', href: '/toolkit' },
+];
+
+function classNames(...classes) {
+  return classes.filter(Boolean).join(' ');
+}
 
 export default function Navbar() {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
-
-  // FIX BUG: Jangan return null. Gunakan display none agar DOM Tree tidak hancur saat pindah halaman.
-  const isStudio = pathname === '/css-studio';
-
-  useEffect(() => {
-    const handleScroll = () => { setIsScrolled(window.scrollY > 20); };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [hasCmsToken, setHasCmsToken] = useState(false);
 
   useEffect(() => {
-    if (isMobileMenuOpen) { document.body.style.overflow = 'hidden'; } 
-    else { document.body.style.overflow = 'unset'; }
-    return () => { document.body.style.overflow = 'unset'; }
-  }, [isMobileMenuOpen]);
+    const syncCmsAccess = () => {
+      if (typeof window === 'undefined') {
+        return;
+      }
 
-  const navLinks = [
-    { name: 'Beranda', href: '/' },
-    { name: 'Portofolio', href: '/projects' },
-    { name: 'Fotografi', href: '/photography' },
-    { name: 'Tentang', href: '/about' },
-  ];
+      setHasCmsToken(Boolean(window.localStorage.getItem('cms_token')));
+    };
+
+    syncCmsAccess();
+    window.addEventListener('storage', syncCmsAccess);
+    window.addEventListener('focus', syncCmsAccess);
+    document.addEventListener('visibilitychange', syncCmsAccess);
+
+    return () => {
+      window.removeEventListener('storage', syncCmsAccess);
+      window.removeEventListener('focus', syncCmsAccess);
+      document.removeEventListener('visibilitychange', syncCmsAccess);
+    };
+  }, [pathname]);
+
+  useEffect(() => {
+    setIsMenuOpen(false);
+  }, [pathname]);
+
+  const cmsEntry = useMemo(
+    () =>
+      hasCmsToken
+        ? {
+            label: 'Open Editor',
+            href: '/?edit=1',
+            secondaryLabel: 'CMS Admin',
+            secondaryHref: '/admin',
+            description: 'Signed in for live homepage editing.',
+          }
+        : {
+            label: 'Admin Access',
+            href: '/admin',
+            secondaryLabel: 'Homepage',
+            secondaryHref: '/',
+            description: 'Sign in to manage the live portfolio.',
+          },
+    [hasCmsToken]
+  );
+
+  const isCmsActive =
+    pathname === '/admin' || (pathname === '/' && cmsEntry.href === '/?edit=1');
 
   return (
-    <div style={{ display: isStudio ? 'none' : 'block' }}>
-      <header className={`fixed top-0 w-full z-[100] transition-all duration-300 ${
-        isScrolled ? 'bg-[#030712]/90 backdrop-blur-md border-b border-white/5 py-3' : 'bg-transparent py-5'
-      }`}>
-        <div className="max-w-[1400px] mx-auto px-6 lg:px-12 flex items-center justify-between">
-          <Link href="/" className="relative z-[110] group flex items-center gap-2">
-            <span className="text-2xl font-black tracking-tighter text-white group-hover:text-cyan-400 transition-colors">
-              MRR<span className="text-cyan-500">.</span>
-            </span>
+    <header className="sticky top-0 z-50 border-b border-white/10 bg-slate-950/80 backdrop-blur-xl">
+      <nav className="mx-auto flex w-full max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+        <div className="flex min-w-0 items-center gap-4">
+          <Link href="/" className="group flex min-w-0 items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.04] text-sm font-semibold tracking-[0.22em] text-white">
+              MR
+            </div>
+            <div className="min-w-0">
+              <p className="truncate text-sm font-semibold uppercase tracking-[0.28em] text-white">
+                Muhammad Rafli
+              </p>
+              <p className="truncate text-xs text-slate-400">
+                Design systems, web experiences, and visual archives
+              </p>
+            </div>
           </Link>
-
-          <nav className="hidden md:flex items-center gap-8">
-            {navLinks.map((link) => (
-              <Link key={link.name} href={link.href} className={`text-sm font-semibold tracking-wide transition-colors ${pathname === link.href ? 'text-cyan-400' : 'text-slate-300 hover:text-white'}`}>
-                {link.name}
-              </Link>
-            ))}
-            <Link href="/toolkit" className="group relative px-5 py-2 rounded-full overflow-hidden">
-              <div className="absolute inset-0 bg-cyan-500/10 border border-cyan-500/30 rounded-full group-hover:bg-cyan-500/20 transition-all duration-300"></div>
-              <span className="relative z-10 flex items-center gap-2 text-sm font-bold text-cyan-400 group-hover:text-cyan-300">
-                <BoltIcon /> Toolkit
-              </span>
-            </Link>
-          </nav>
-
-          <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="md:hidden relative z-[110] p-2 text-slate-300 hover:text-cyan-400 transition-colors">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-              {isMobileMenuOpen ? <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6" /> : <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />}
-            </svg>
-          </button>
         </div>
-      </header>
 
-      <div className={`md:hidden fixed inset-0 z-[95] bg-[#030712] transition-all duration-300 flex flex-col items-center justify-center gap-8 ${isMobileMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible'}`}>
-        {navLinks.map((link) => (
-          <Link key={link.name} href={link.href} onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-bold text-slate-300 hover:text-cyan-400">{link.name}</Link>
-        ))}
-        <Link href="/toolkit" onClick={() => setIsMobileMenuOpen(false)} className="mt-6 px-8 py-4 rounded-full bg-gradient-to-r from-cyan-900/40 to-[#030712] border border-cyan-500/30 text-cyan-400 font-bold text-lg flex items-center gap-3">
-          <BoltIcon className="w-5 h-5" /> Toolkit Ekosistem
-        </Link>
-      </div>
-    </div>
+        <div className="hidden items-center gap-2 lg:flex">
+          {navigationItems.map((item) => {
+            const isActive = pathname === item.href;
+
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={classNames(
+                  'rounded-full px-4 py-2 text-sm transition-colors',
+                  isActive
+                    ? 'bg-white text-slate-950'
+                    : 'text-slate-300 hover:bg-white/5 hover:text-white'
+                )}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
+        </div>
+
+        <div className="hidden items-center gap-3 lg:flex">
+          <div className="hidden max-w-xs text-right xl:block">
+            <p className="text-xs uppercase tracking-[0.26em] text-slate-500">
+              CMS Sync
+            </p>
+            <p className="text-xs text-slate-400">{cmsEntry.description}</p>
+          </div>
+
+          <div className="flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] p-1">
+            <Link
+              href={cmsEntry.href}
+              className={classNames(
+                'rounded-full px-4 py-2 text-sm font-medium transition-colors',
+                isCmsActive
+                  ? 'bg-white text-slate-950'
+                  : 'text-slate-100 hover:bg-white/10'
+              )}
+            >
+              {cmsEntry.label}
+            </Link>
+            <Link
+              href={cmsEntry.secondaryHref}
+              className="rounded-full px-3 py-2 text-sm text-slate-300 transition-colors hover:bg-white/5 hover:text-white"
+            >
+              {cmsEntry.secondaryLabel}
+            </Link>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => setIsMenuOpen((current) => !current)}
+          className="inline-flex items-center justify-center rounded-full border border-white/10 bg-white/[0.04] p-3 text-white transition hover:bg-white/10 lg:hidden"
+          aria-expanded={isMenuOpen}
+          aria-label="Toggle navigation menu"
+        >
+          <span className="relative flex h-4 w-5 flex-col justify-between">
+            <span
+              className={classNames(
+                'block h-0.5 w-full rounded-full bg-current transition',
+                isMenuOpen ? 'translate-y-[7px] rotate-45' : ''
+              )}
+            />
+            <span
+              className={classNames(
+                'block h-0.5 w-full rounded-full bg-current transition',
+                isMenuOpen ? 'opacity-0' : ''
+              )}
+            />
+            <span
+              className={classNames(
+                'block h-0.5 w-full rounded-full bg-current transition',
+                isMenuOpen ? '-translate-y-[7px] -rotate-45' : ''
+              )}
+            />
+          </span>
+        </button>
+      </nav>
+
+      {isMenuOpen ? (
+        <div className="border-t border-white/10 bg-slate-950/95 lg:hidden">
+          <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-4 py-5 sm:px-6">
+            <div className="grid gap-2">
+              {navigationItems.map((item) => {
+                const isActive = pathname === item.href;
+
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={classNames(
+                      'rounded-2xl border px-4 py-3 text-sm transition-colors',
+                      isActive
+                        ? 'border-white/20 bg-white text-slate-950'
+                        : 'border-white/10 bg-white/[0.04] text-slate-100 hover:bg-white/10'
+                    )}
+                  >
+                    {item.label}
+                  </Link>
+                );
+              })}
+            </div>
+
+            <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-4">
+              <div className="mb-4">
+                <p className="text-xs uppercase tracking-[0.28em] text-slate-500">
+                  CMS Access
+                </p>
+                <p className="mt-2 text-sm text-slate-300">{cmsEntry.description}</p>
+              </div>
+
+              <div className="grid gap-2 sm:grid-cols-2">
+                <Link
+                  href={cmsEntry.href}
+                  className="rounded-2xl bg-white px-4 py-3 text-center text-sm font-medium text-slate-950 transition hover:bg-slate-200"
+                >
+                  {cmsEntry.label}
+                </Link>
+                <Link
+                  href={cmsEntry.secondaryHref}
+                  className="rounded-2xl border border-white/10 px-4 py-3 text-center text-sm text-slate-100 transition hover:bg-white/10"
+                >
+                  {cmsEntry.secondaryLabel}
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null}
+    </header>
   );
 }

@@ -1,214 +1,394 @@
-"use client";
-
-import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { PROJECT_LIST } from '../../../data/store';
 import { notFound } from 'next/navigation';
+import { headers } from 'next/headers';
+import { PROJECT_LIST } from '@/data/store';
 
-// =========================================================================
-// IKON SVG PROFESIONAL 
-// =========================================================================
-const ArrowLeftIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4 group-hover:-translate-x-1 transition-transform shrink-0">
-    <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
-  </svg>
-);
+export const dynamic = 'force-dynamic';
 
-const ClientIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 text-cyan-400">
-    <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008z" />
-  </svg>
-);
-
-const RoleIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 text-cyan-400">
-    <path strokeLinecap="round" strokeLinejoin="round" d="M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.827M15.75 12.75l-2.456-2.456M7.102 18.324a3.75 3.75 0 01-5.304 0 3.75 3.75 0 010-5.304l6.187-6.187a3.75 3.75 0 015.304 0l2.455 2.456" />
-  </svg>
-);
-
-const WhatsAppIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 shrink-0">
-    <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.1.824z" />
-  </svg>
-);
-
-export default function ProjectDetail() {
-  const params = useParams();
-  const slug = params?.slug;
-
-  const project = PROJECT_LIST.find((p) => p.id === slug);
-
-  if (!project) {
-    return notFound();
+function parseStringList(value) {
+  if (Array.isArray(value)) {
+    return value;
   }
 
-  const imagesToShow = project.images && project.images.length > 0 ? project.images : [project.image];
+  if (typeof value !== 'string') {
+    return [];
+  }
 
-  // TRIK UI KELAS DUNIA: Memecah judul agar kata terakhir mendapat warna gradient otomatis
-  const titleWords = project.title.split(' ');
-  const highlightWord = titleWords.pop();
-  const normalWords = titleWords.join(' ');
+  try {
+    const parsed = JSON.parse(value);
+    if (Array.isArray(parsed)) {
+      return parsed.map((item) => String(item).trim()).filter(Boolean);
+    }
+  } catch (error) {
+    // Continue to comma-separated parsing.
+  }
+
+  return value
+    .split(',')
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function normalizeProject(project) {
+  if (!project || typeof project !== 'object') {
+    return null;
+  }
+
+  const technologies = parseStringList(project.technologies || project.stack);
+
+  const additionalImages = parseStringList(project.additional_images || project.additionalImages);
+
+  const metrics = Array.isArray(project.metrics)
+    ? project.metrics
+    : Array.isArray(project.highlights)
+    ? project.highlights
+    : [];
+
+  return {
+    ...project,
+    id: project.id ?? project.slug ?? project.title,
+    slug: String(project.slug ?? project.id ?? ''),
+    title: project.title || 'Untitled Project',
+    category: project.category || 'Selected Work',
+    description: project.description || project.summary || 'Project details are being prepared.',
+    image: project.image || project.cover || project.thumbnail || '',
+    year: project.year || project.period || '',
+    client: project.client || '',
+    role: project.role || '',
+    overview: project.overview || project.description || '',
+    challenge: project.challenge || '',
+    solution: project.solution || '',
+    results: project.results || '',
+    metrics,
+    technologies,
+    additionalImages,
+    link: project.link || project.live_url || project.liveUrl || '',
+    github: project.github || project.repository || '',
+  };
+}
+
+function extractProjectPayload(payload) {
+  if (!payload) {
+    return null;
+  }
+
+  if (Array.isArray(payload)) {
+    return normalizeProject(payload[0]);
+  }
+
+  if (payload.project && typeof payload.project === 'object') {
+    return normalizeProject(payload.project);
+  }
+
+  if (payload.data && !Array.isArray(payload.data) && typeof payload.data === 'object') {
+    return normalizeProject(payload.data);
+  }
+
+  if (Array.isArray(payload.projects) && payload.projects.length > 0) {
+    return normalizeProject(payload.projects[0]);
+  }
+
+  if (typeof payload === 'object') {
+    return normalizeProject(payload);
+  }
+
+  return null;
+}
+
+function findFallbackProject(slug) {
+  return normalizeProject(
+    (Array.isArray(PROJECT_LIST) ? PROJECT_LIST : []).find((project) => project.slug === slug)
+  );
+}
+
+function getRequestOrigin() {
+  const headerStore = headers();
+  const host =
+    headerStore.get('x-forwarded-host') ||
+    headerStore.get('host') ||
+    process.env.VERCEL_URL ||
+    '';
+  const protocol = headerStore.get('x-forwarded-proto') || 'http';
+
+  if (!host) {
+    return process.env.NEXT_PUBLIC_SITE_URL || '';
+  }
+
+  if (host.startsWith('http://') || host.startsWith('https://')) {
+    return host;
+  }
+
+  return `${protocol}://${host}`;
+}
+
+async function getLiveProject(slug) {
+  const origin = getRequestOrigin();
+  if (!origin) {
+    return null;
+  }
+
+  try {
+    const baseUrl = origin.replace(/\/$/, '');
+    const response = await fetch(`${baseUrl}/api/cms/projects?id=${encodeURIComponent(slug)}`, {
+      cache: 'no-store',
+    });
+
+    if (!response.ok) {
+      return null;
+    }
+
+    const payload = await response.json();
+    return extractProjectPayload(payload);
+  } catch (error) {
+    console.error(`Project detail fallback to static store for slug "${slug}":`, error);
+    return null;
+  }
+}
+
+function renderMetric(metric, index) {
+  if (typeof metric === 'string') {
+    return {
+      label: `Highlight ${String(index + 1).padStart(2, '0')}`,
+      value: metric,
+    };
+  }
+
+  if (metric && typeof metric === 'object') {
+    return {
+      label: metric.label || metric.title || `Highlight ${String(index + 1).padStart(2, '0')}`,
+      value: metric.value || metric.description || metric.content || '',
+    };
+  }
+
+  return null;
+}
+
+export async function generateMetadata({ params }) {
+  const project = (await getLiveProject(params.slug)) || findFallbackProject(params.slug);
+
+  if (!project) {
+    return {
+      title: 'Project Not Found',
+    };
+  }
+
+  return {
+    title: `${project.title} | Projects`,
+    description: project.description,
+  };
+}
+
+export default async function ProjectDetailPage({ params }) {
+  const liveProject = await getLiveProject(params.slug);
+  const fallbackProject = findFallbackProject(params.slug);
+  const project = liveProject || fallbackProject;
+
+  if (!project) {
+    notFound();
+  }
+
+  const galleryImages = [project.image, ...project.additionalImages].filter(Boolean);
+  const metrics = project.metrics.map(renderMetric).filter(Boolean);
 
   return (
-    // FIX OVERFLOW ABSOLUTE: w-full & overflow-x-hidden mengamankan layar HP dari melar
-    <div className="min-h-screen pt-28 sm:pt-36 pb-24 relative w-full overflow-x-hidden bg-[#030712]">
-      
-      {/* ========================================================= */}
-      {/* BACKGROUND DECOR 100% SINKRON DENGAN BERANDA              */}
-      {/* ========================================================= */}
-      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        <div className="absolute top-[-10%] left-[-10%] w-[120vw] md:w-[50rem] h-[120vw] md:h-[50rem] bg-cyan-600/10 rounded-full blur-[100px] md:blur-[120px]"></div>
-        <div className="absolute bottom-[-20%] right-[-10%] w-[100vw] md:w-[40rem] h-[100vw] md:h-[40rem] bg-indigo-600/10 rounded-full blur-[100px] md:blur-[150px]"></div>
-        
-        {/* Garis Vertikal Halus (Hiasan Desktop) */}
-        <div className="hidden md:block absolute left-[10%] top-0 bottom-0 w-[1px] bg-white/[0.02]"></div>
-        <div className="hidden md:block absolute left-[50%] top-0 bottom-0 w-[1px] bg-white/[0.02]"></div>
-        <div className="hidden md:block absolute right-[10%] top-0 bottom-0 w-[1px] bg-white/[0.02]"></div>
-      </div>
-
-      <div className="max-w-[1400px] mx-auto px-5 sm:px-8 lg:px-12 relative z-10 w-full">
-        
-        {/* ========================================================= */}
-        {/* TOMBOL KEMBALI                                            */}
-        {/* ========================================================= */}
-        <div className="mb-10 sm:mb-12 reveal stagger-1">
-          <Link 
-            href="/projects" 
-            className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-[#0A1329]/80 backdrop-blur-md border border-white/5 text-[10px] sm:text-xs font-bold tracking-widest uppercase text-slate-400 hover:text-cyan-400 hover:border-cyan-500/30 hover:bg-[#0A1329] shadow-lg transition-all duration-300 group w-fit"
+    <main className="min-h-screen bg-slate-950 text-white">
+      <section className="border-b border-white/10">
+        <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
+          <Link
+            href="/projects"
+            className="inline-flex items-center rounded-full border border-white/10 px-4 py-2 text-sm text-slate-300 transition hover:border-white/20 hover:text-white"
           >
-            <ArrowLeftIcon />
-            Kembali ke Galeri
+            Back to projects
           </Link>
-        </div>
 
-        {/* ========================================================= */}
-        {/* HEADER SECTION (GOLDEN RATIO 61.8 : 38.2)                 */}
-        {/* ========================================================= */}
-        <div className="flex flex-col lg:flex-row gap-12 lg:gap-16 items-start mb-16 sm:mb-24">
-          
-          {/* KIRI (61.8%): Konten Narasi */}
-          <div className="w-full lg:w-[61.8%] reveal stagger-2 pr-0 lg:pr-8">
-            
-            {/* Badge Identik dengan Beranda */}
-            <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-[9px] sm:text-[10px] font-bold tracking-widest uppercase mb-6 sm:mb-8 shadow-md">
-              <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-cyan-500 animate-pulse shrink-0"></span>
-              {project.category}
-            </div>
-            
-            {/* TEMA FONT: Text Raksasa dengan Gradient Otomatis pada Kata Terakhir */}
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-[4.5rem] font-black tracking-tighter mb-8 sm:mb-10 leading-[1.1] drop-shadow-lg text-white">
-              {normalWords}{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-br from-cyan-300 via-blue-500 to-indigo-600">
-                {highlightWord}
-              </span>
-            </h1>
-            
-            <div className="space-y-4 sm:space-y-6">
-              <div className="flex items-center gap-4 mb-4">
-                <div className="h-[1px] w-8 sm:w-12 bg-cyan-500 rounded-full"></div>
-                <h3 className="text-xs sm:text-sm font-bold text-white uppercase tracking-widest">
-                  Latar Belakang Proyek
-                </h3>
-              </div>
-              <p className="text-sm sm:text-base md:text-lg text-slate-400 leading-relaxed sm:leading-loose font-medium max-w-2xl">
+          <div className="mt-8 grid gap-10 lg:grid-cols-[1.618fr_1fr] lg:items-end">
+            <div>
+              <p className="text-xs uppercase tracking-[0.3em] text-cyan-300/70">
+                {project.category}
+              </p>
+              <h1 className="mt-5 text-4xl font-semibold tracking-tight text-white sm:text-5xl lg:text-6xl">
+                {project.title}
+              </h1>
+              <p className="mt-6 max-w-3xl text-base leading-7 text-slate-300 sm:text-lg">
                 {project.description}
               </p>
             </div>
-          </div>
 
-          {/* KANAN (38.2%): Metadata Glassmorphism */}
-          <div className="w-full lg:w-[38.2%] reveal stagger-3 mt-4 lg:mt-0">
-            <div className="bg-[#0A1329]/80 backdrop-blur-xl border border-white/5 rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-8 md:p-10 shadow-2xl relative overflow-hidden group hover:border-cyan-500/30 transition-all duration-500">
-              
-              {/* Efek Cahaya Dalam */}
-              <div className="absolute -top-10 -right-10 w-40 h-40 bg-cyan-500/10 rounded-full blur-[40px] group-hover:bg-cyan-500/20 transition-all duration-700"></div>
-              <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-indigo-500/10 rounded-full blur-[40px] group-hover:bg-indigo-500/20 transition-all duration-700"></div>
-              
-              <div className="space-y-8 relative z-10">
-                {/* Klien */}
-                <div className="flex items-center gap-4 sm:gap-5">
-                  <div className="p-3 bg-cyan-950/40 rounded-2xl border border-cyan-500/20 shrink-0 shadow-inner group-hover:bg-cyan-900/50 transition-colors">
-                    <ClientIcon />
-                  </div>
-                  <div>
-                    <p className="text-[9px] sm:text-[10px] text-cyan-400/80 uppercase tracking-widest font-bold mb-1">Client / Company</p>
-                    <p className="text-xs sm:text-sm font-bold text-white tracking-wide">{project.company || "Personal Project"}</p>
-                  </div>
-                </div>
-
-                {/* Role */}
-                <div className="flex items-center gap-4 sm:gap-5">
-                  <div className="p-3 bg-cyan-950/40 rounded-2xl border border-cyan-500/20 shrink-0 shadow-inner group-hover:bg-cyan-900/50 transition-colors">
-                    <RoleIcon />
-                  </div>
-                  <div>
-                    <p className="text-[9px] sm:text-[10px] text-cyan-400/80 uppercase tracking-widest font-bold mb-1">My Role</p>
-                    <p className="text-xs sm:text-sm font-bold text-white tracking-wide">{project.role || "Lead Visual Designer"}</p>
-                  </div>
-                </div>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+              <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-5">
+                <p className="text-xs uppercase tracking-[0.22em] text-slate-500">Year</p>
+                <p className="mt-3 text-lg font-semibold text-white">
+                  {project.year || 'Ongoing'}
+                </p>
               </div>
-
-              <div className="mt-8 pt-6 border-t border-white/5 relative z-10">
-                <p className="text-[10px] sm:text-[11px] text-slate-500 italic leading-relaxed">
-                  Proyek ini dikembangkan dengan pendekatan <strong className="text-slate-400 font-semibold">User-Centered Design</strong> untuk memastikan solusi visual tepat sasaran.
+              <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-5">
+                <p className="text-xs uppercase tracking-[0.22em] text-slate-500">Role</p>
+                <p className="mt-3 text-lg font-semibold text-white">
+                  {project.role || 'Creative and technical direction'}
+                </p>
+              </div>
+              <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-5">
+                <p className="text-xs uppercase tracking-[0.22em] text-slate-500">Client</p>
+                <p className="mt-3 text-lg font-semibold text-white">
+                  {project.client || 'Independent / internal initiative'}
+                </p>
+              </div>
+              <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-5">
+                <p className="text-xs uppercase tracking-[0.22em] text-slate-500">Source</p>
+                <p className="mt-3 text-lg font-semibold text-white">
+                  {liveProject ? 'Live CMS entry' : 'Static fallback entry'}
                 </p>
               </div>
             </div>
           </div>
         </div>
+      </section>
 
-        {/* ========================================================= */}
-        {/* GALLERY AREA: Cinematic & Staggered Hover 3D              */}
-        {/* ========================================================= */}
-        <div className="flex flex-col gap-8 sm:gap-12 lg:gap-16 max-w-5xl mx-auto">
-          {imagesToShow.map((imgUrl, index) => (
-            <div 
-              key={index}
-              className={`reveal stagger-4 w-full rounded-2xl sm:rounded-[2.5rem] overflow-hidden border border-white/5 bg-[#050A14] shadow-[0_20px_50px_rgba(0,0,0,0.5)] transition-all duration-700 hover:shadow-[0_30px_60px_rgba(6,182,212,0.15)] group`}
-            >
-              <img 
-                src={imgUrl} 
-                alt={`${project.title} View ${index + 1}`}
-                className="w-full h-auto object-cover transition-transform duration-[1.5s] ease-out group-hover:scale-[1.03] group-hover:rotate-1 origin-center"
-                onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200&auto=format&fit=crop'; }}
-              />
+      <section className="border-b border-white/10">
+        <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
+          <div className="overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.04]">
+            <div className="aspect-[16/9] bg-slate-900">
+              {project.image ? (
+                <img src={project.image} alt={project.title} className="h-full w-full object-cover" />
+              ) : (
+                <div className="flex h-full items-center justify-center text-sm text-slate-500">
+                  Project visual pending
+                </div>
+              )}
             </div>
-          ))}
+          </div>
         </div>
+      </section>
 
-        {/* ========================================================= */}
-        {/* CTA MEWAH KONSISTEN DENGAN BERANDA                        */}
-        {/* ========================================================= */}
-        <div className="mt-24 sm:mt-32 reveal stagger-5">
-          <div className="relative rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden bg-gradient-to-r from-[#0a152e] to-[#050b1a] border border-white/10 p-8 sm:p-12 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-8 group hover:border-cyan-500/30 transition-colors duration-500">
-            
-            {/* Glow Latar CTA Sama Persis Seperti Beranda */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/10 rounded-full blur-[80px] -z-10 group-hover:bg-cyan-500/20 transition-all duration-700"></div>
-            <div className="absolute bottom-0 left-0 w-40 h-40 bg-blue-500/10 rounded-full blur-[60px] -z-10"></div>
+      <section className="border-b border-white/10">
+        <div className="mx-auto grid max-w-7xl gap-8 px-4 py-12 sm:px-6 lg:grid-cols-[1.618fr_1fr] lg:px-8 lg:py-16">
+          <div className="space-y-8">
+            {project.overview ? (
+              <article className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-6 sm:p-8">
+                <p className="text-xs uppercase tracking-[0.28em] text-slate-500">Overview</p>
+                <p className="mt-4 text-base leading-7 text-slate-300">{project.overview}</p>
+              </article>
+            ) : null}
 
-            <div className="text-center md:text-left z-10 w-full md:w-auto">
-              <h4 className="text-2xl sm:text-3xl font-black text-white mb-3 tracking-tight">Punya Visi Serupa?</h4>
-              <p className="text-sm sm:text-base text-slate-400 max-w-xl leading-relaxed mx-auto md:mx-0">
-                Mari diskusikan dan wujudkan identitas visual yang <span className="text-cyan-400 font-semibold drop-shadow-md">strategis dan berdampak nyata</span> untuk entitas bisnis Anda bersama saya.
+            {project.challenge ? (
+              <article className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-6 sm:p-8">
+                <p className="text-xs uppercase tracking-[0.28em] text-slate-500">Challenge</p>
+                <p className="mt-4 text-base leading-7 text-slate-300">{project.challenge}</p>
+              </article>
+            ) : null}
+
+            {project.solution ? (
+              <article className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-6 sm:p-8">
+                <p className="text-xs uppercase tracking-[0.28em] text-slate-500">Solution</p>
+                <p className="mt-4 text-base leading-7 text-slate-300">{project.solution}</p>
+              </article>
+            ) : null}
+
+            {project.results ? (
+              <article className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-6 sm:p-8">
+                <p className="text-xs uppercase tracking-[0.28em] text-slate-500">Results</p>
+                <p className="mt-4 text-base leading-7 text-slate-300">{project.results}</p>
+              </article>
+            ) : null}
+          </div>
+
+          <aside className="space-y-6">
+            {project.technologies.length > 0 ? (
+              <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-6">
+                <p className="text-xs uppercase tracking-[0.28em] text-slate-500">Toolkit</p>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {project.technologies.map((item) => (
+                    <span
+                      key={`${project.slug}-${item}`}
+                      className="rounded-full border border-white/10 px-3 py-1.5 text-sm text-slate-300"
+                    >
+                      {item}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+
+            {metrics.length > 0 ? (
+              <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-6">
+                <p className="text-xs uppercase tracking-[0.28em] text-slate-500">Highlights</p>
+                <div className="mt-4 grid gap-4">
+                  {metrics.map((metric) => (
+                    <div key={`${project.slug}-${metric.label}`} className="rounded-2xl border border-white/10 p-4">
+                      <p className="text-xs uppercase tracking-[0.22em] text-slate-500">
+                        {metric.label}
+                      </p>
+                      <p className="mt-2 text-sm leading-6 text-slate-300">{metric.value}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+
+            {(project.link || project.github) ? (
+              <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-6">
+                <p className="text-xs uppercase tracking-[0.28em] text-slate-500">Links</p>
+                <div className="mt-4 grid gap-3">
+                  {project.link ? (
+                    <a
+                      href={project.link}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="rounded-2xl bg-white px-4 py-3 text-center text-sm font-medium text-slate-950 transition hover:bg-slate-200"
+                    >
+                      Visit live project
+                    </a>
+                  ) : null}
+                  {project.github ? (
+                    <a
+                      href={project.github}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="rounded-2xl border border-white/10 px-4 py-3 text-center text-sm text-slate-100 transition hover:bg-white/10"
+                    >
+                      View repository
+                    </a>
+                  ) : null}
+                </div>
+              </div>
+            ) : null}
+          </aside>
+        </div>
+      </section>
+
+      {galleryImages.length > 1 ? (
+        <section>
+          <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
+            <div className="mb-8 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+              <div>
+                <p className="text-xs uppercase tracking-[0.28em] text-slate-500">Gallery</p>
+                <h2 className="mt-2 text-2xl font-semibold text-white">Supporting visuals</h2>
+              </div>
+              <p className="max-w-2xl text-sm leading-6 text-slate-400">
+                Additional imagery stays in sync with the CMS when available and gracefully falls
+                back to the portfolio store when needed.
               </p>
             </div>
 
-            <div className="z-10 w-full md:w-auto flex justify-center shrink-0 mt-4 md:mt-0">
-              <a 
-                href={`https://wa.me/6285155020363?text=${encodeURIComponent(`Halo Rafli, saya tertarik berdiskusi mengenai proyek ${project.title}.`)}`}
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="w-full sm:w-auto px-8 py-4 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-black text-sm sm:text-base transition-all shadow-[0_0_20px_rgba(6,182,212,0.3)] hover:shadow-[0_0_40px_rgba(6,182,212,0.5)] flex items-center justify-center gap-3 hover:-translate-y-1 whitespace-nowrap"
-              >
-                Mulai Diskusi
-                <WhatsAppIcon />
-              </a>
+            <div className="grid gap-6 md:grid-cols-2">
+              {galleryImages.map((image, index) => (
+                <div
+                  key={`${project.slug}-gallery-${index}`}
+                  className="overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.04]"
+                >
+                  <div className="aspect-[4/3] bg-slate-900">
+                    <img
+                      src={image}
+                      alt={`${project.title} visual ${index + 1}`}
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                </div>
+              ))}
             </div>
-
           </div>
-        </div>
-
-      </div>
-    </div>
+        </section>
+      ) : null}
+    </main>
   );
 }

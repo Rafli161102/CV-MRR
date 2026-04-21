@@ -1,9 +1,17 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { 
+  Plus, 
+  Pencil, 
+  Trash2, 
+  AlertCircle, 
+  Loader2,
+  Image as ImageIcon
+} from 'lucide-react';
 import ProjectForm from './ProjectForm';
 
-export default function ProjectsManager({ token }) {
+export default function ProjectsManager({ token, previewOpen, setPreviewOpen }) {
   const [projects, setProjects] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -71,7 +79,11 @@ export default function ProjectsManager({ token }) {
       if (response.ok) {
         setShowForm(false);
         setSelectedProject(null);
-        fetchProjects();
+        await fetchProjects();
+        // Auto-open preview on mobile after save
+        if (window.innerWidth < 1024 && setPreviewOpen) {
+          setPreviewOpen(true);
+        }
       } else {
         const error = await response.json();
         setError(error.error || 'Failed to save project');
@@ -85,67 +97,92 @@ export default function ProjectsManager({ token }) {
   return (
     <div className="space-y-6">
       {error && (
-        <div className="bg-red-900 border border-red-700 text-red-200 px-4 py-3 rounded">
+        <div className="flex items-center gap-2 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
+          <AlertCircle className="w-5 h-5 shrink-0" />
           {error}
         </div>
       )}
 
       {!showForm ? (
         <div>
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-white">Manage Projects</h2>
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/40 mb-1">
+                Total: {projects.length} projects
+              </p>
+            </div>
             <button
               onClick={handleAddNew}
-              className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition duration-200"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 
+                       bg-gradient-to-r from-cyan-500/20 to-violet-500/20
+                       hover:from-cyan-500/30 hover:to-violet-500/30
+                       border border-cyan-500/30 text-cyan-400 
+                       rounded-xl transition-all duration-300 font-medium text-sm"
             >
-              + Add Project
+              <Plus className="w-4 h-4" />
+              Add Project
             </button>
           </div>
 
           {isLoading ? (
-            <div className="text-gray-400">Loading projects...</div>
+            <div className="flex items-center justify-center py-12 text-white/40">
+              <Loader2 className="w-6 h-6 animate-spin mr-2" />
+              Loading projects...
+            </div>
           ) : (
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-1 2xl:grid-cols-2">
               {projects.map((project) => (
                 <div
                   key={project.id}
-                  className="bg-gray-800 rounded-lg overflow-hidden hover:shadow-lg transition duration-200"
+                  className="group bg-white/[0.03] border border-white/10 rounded-2xl overflow-hidden 
+                           hover:border-white/20 hover:bg-white/[0.05] transition-all duration-300"
                 >
-                  <div className="aspect-video bg-gray-700 relative">
-                    {project.image && (
-                      // eslint-disable-next-line @next/next/no-img-element
+                  <div className="aspect-video bg-white/5 relative overflow-hidden">
+                    {project.image ? (
                       <img
                         src={project.image}
                         alt={project.title}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         onError={(e) => {
                           e.target.style.display = 'none';
+                          e.target.nextSibling.style.display = 'flex';
                         }}
                       />
-                    )}
+                    ) : null}
+                    <div className={`absolute inset-0 items-center justify-center ${project.image ? 'hidden' : 'flex'}`}>
+                      <ImageIcon className="w-12 h-12 text-white/20" />
+                    </div>
                   </div>
-                  <div className="p-4">
-                    <h3 className="text-lg font-semibold text-white mb-1">
+                  <div className="p-5">
+                    <h3 className="font-semibold text-white mb-1 truncate">
                       {project.title}
                     </h3>
-                    <p className="text-gray-400 text-sm mb-2">
+                    <p className="text-white/50 text-sm mb-1">
                       {project.company}
                     </p>
-                    <p className="text-blue-400 text-xs mb-4">
+                    <p className="text-cyan-400/80 text-xs font-medium mb-4">
                       {project.category}
                     </p>
                     <div className="flex gap-2">
                       <button
                         onClick={() => handleEdit(project)}
-                        className="flex-1 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded transition duration-200 text-sm"
+                        className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 
+                                 bg-white/5 hover:bg-white/10 border border-white/10
+                                 text-white/80 hover:text-white rounded-xl 
+                                 transition-all duration-200 text-sm font-medium"
                       >
+                        <Pencil className="w-3.5 h-3.5" />
                         Edit
                       </button>
                       <button
                         onClick={() => handleDelete(project.id)}
-                        className="flex-1 px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded transition duration-200 text-sm"
+                        className="flex items-center justify-center px-4 py-2.5 
+                                 bg-red-500/10 hover:bg-red-500/20 
+                                 border border-red-500/20 hover:border-red-500/30
+                                 text-red-400 hover:text-red-300
+                                 rounded-xl transition-all duration-200"
                       >
-                        Delete
+                        <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
                   </div>

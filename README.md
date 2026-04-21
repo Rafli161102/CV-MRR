@@ -13,6 +13,9 @@
 
 <h2>Pembaruan Terbaru</h2>
 <ul>
+<li><img src="https://img.shields.io/badge/Fitur_Baru-0969DA?style=flat-square" alt="New"> <b>Halaman Login Golden Ratio:</b> Login CMS kini menggunakan layout Golden Ratio (1:1.618) yang responsif di mobile dan desktop dengan ikon Lucide modern (tanpa emoji).</li>
+<li><img src="https://img.shields.io/badge/Fitur_Baru-0969DA?style=flat-square" alt="New"> <b>CMS Admin Responsive dengan Golden Ratio:</b> Dashboard admin menggunakan proporsi Golden Ratio (sidebar 38.2%, konten 61.8%) dengan desain dark theme yang konsisten.</li>
+<li><img src="https://img.shields.io/badge/Fitur_Baru-0969DA?style=flat-square" alt="New"> <b>Real-Time Preview Sinkronisasi:</b> Panel preview live (38.2% width) menampilkan website secara real-time saat mengedit konten dari browser.</li>
 <li><img src="https://img.shields.io/badge/Fitur_Baru-0969DA?style=flat-square" alt="New"> <b>CMS Visual Editor Homepage:</b> Kini tersedia editor UI/UX langsung dari browser. Admin bisa login ke <code>/admin</code>, membuka <code>Open Visual Editor</code>, lalu mengubah warna, teks hero, tombol, dan label section homepage tanpa mengedit kode manual.</li>
 <li><img src="https://img.shields.io/badge/Fitur_Baru-0969DA?style=flat-square" alt="New"> <b>Alat Pembuat CV (Micro-SaaS):</b> Penambahan rute <code>/cv-maker</code> yang menyediakan generator CV standar ATS gratis dengan fitur auto-translate untuk pengunjung.</li>
 <li><img src="https://img.shields.io/badge/Optimasi-238636?style=flat-square" alt="Fix"> <b>Sistem Render Anti-Slider:</b> Detail karya diatur memanjang ke bawah menyerupai presentasi Behance untuk visibilitas detail grafis yang lebih baik.</li>
@@ -71,6 +74,16 @@
 <td>Merapikan file pusat data supaya mudah update web dari perangkat seluler.</td>
 </tr>
 <tr>
+<td align="center"><img src="https://img.shields.io/badge/Selesai-238636?style=flat-square" alt="Selesai"></td>
+<td><b>Fase 4b: CMS Admin Golden Ratio</b><br><code>src/app/admin/</code></td>
+<td>Dashboard admin dengan layout Golden Ratio (1:1.618), real-time preview, dan ikon Lucide.</td>
+</tr>
+<tr>
+<td align="center"><img src="https://img.shields.io/badge/Selesai-238636?style=flat-square" alt="Selesai"></td>
+<td><b>Fase 4c: Toolkit Database Lengkap</b><br><code>src/data/toolkitDB.jsx</code></td>
+<td>Metadata lengkap untuk setiap tool: versi, estimasi waktu, kompleksitas, requirements, roadmap.</td>
+</tr>
+<tr>
 <td align="center"><img src="https://img.shields.io/badge/Proses-D29922?style=flat-square" alt="Proses"></td>
 <td><b>Fase 5: Eksekusi Detail Karya</b><br><code>app/projects/[slug]/page.jsx</code></td>
 <td>Membuat halaman khusus yang memanjang ke bawah saat gambar proyek diklik.</td>
@@ -105,6 +118,8 @@
 |   |-- /app                    [ROUTING HALAMAN]
 |       |-- layout.jsx          -> Konfigurasi dasar (Font, Header, Footer)
 |       |-- page.jsx            -> ( / ) Beranda utama
+|       |-- /login              -> ( /login ) Halaman login CMS dengan Golden Ratio design
+|       |-- /admin              -> ( /admin ) Dashboard CMS dengan real-time preview
 |       |-- /about              -> ( /about ) Halaman CV dan profil
 |       |-- /projects           -> ( /projects ) Galeri portofolio
 |       |-- /projects/[slug]    -> ( /projects/detail ) Halaman detail proyek
@@ -127,14 +142,14 @@
 <p><b>Langkah penggunaan CMS Visual Editor:</b></p>
 <ol>
 <li>Jalankan project secara lokal dengan <code>npm install</code> lalu <code>npm run dev</code>.</li>
-<li>Buka halaman admin di <code>/admin</code>.</li>
+<li>Buka halaman login di <code>/login</code> (desain Golden Ratio responsif).</li>
 <li>Login memakai akun admin. Default saat ini: <code>admin / admin123</code> jika belum diubah.</li>
-<li>Setelah berhasil login, klik tombol <b>Open Visual Editor</b>.</li>
-<li>Halaman homepage akan terbuka dengan mode edit <code>/?edit=1</code>.</li>
-<li>Klik tombol <b>Edit UI Homepage</b> di pojok kanan bawah.</li>
-<li>Ubah isi panel <b>Theme</b>, <b>Hero</b>, atau <b>Sections</b>.</li>
-<li>Klik <b>Save Changes</b> untuk menyimpan ke database SQLite melalui endpoint CMS.</li>
-<li>Perubahan akan dipakai ulang otomatis saat homepage dibuka kembali.</li>
+<li>Setelah berhasil login, Anda akan diarahkan ke <code>/admin</code> dashboard.</li>
+<li>Pilih tab konten yang ingin dikelola: <b>Projects</b>, <b>Work Experience</b>, <b>Education</b>, atau <b>Photo Gallery</b>.</li>
+<li>Edit data langsung di panel kiri (61.8% width). Panel kanan (38.2% width) menampilkan <b>Live Preview</b> yang sinkron secara real-time.</li>
+<li>Atau klik tombol <b>Open Visual Editor</b> untuk mengubah UI Homepage (warna, teks hero, tombol, dll).</li>
+<li>Klik <b>Save</b> untuk menyimpan ke database SQLite melalui endpoint CMS.</li>
+<li>Perubahan akan tersinkronisasi otomatis ke preview dan website.</li>
 </ol>
 
 <p><b>Catatan teknis:</b></p>
@@ -143,6 +158,9 @@
 <li>Endpoint yang dipakai editor adalah <code>/api/cms/page-content</code>.</li>
 <li>Jika data visual CMS belum ada, homepage akan tetap menggunakan fallback default config.</li>
 <li>Konten proyek dan galeri masih tetap dapat dikelola melalui CMS existing atau fallback data di <code>src/data/store.js</code>.</li>
+<li><b>Golden Ratio Layout:</b> CMS menggunakan proporsi 1:1.618 (sidebar 38.2%, konten 61.8%, preview 38.2%).</li>
+<li><b>Lucide Icons:</b> Semua ikon menggunakan library Lucide React (tanpa emoji) untuk tampilan profesional.</li>
+<li><b>Toolkit Database:</b> Setiap tool di <code>src/data/toolkitDB.jsx</code> dilengkapi metadata: versi, estimasi waktu, kompleksitas, requirements, dan roadmap.</li>
 </ul>
 
 <h2>3. Sistem Update Simpel (Buku Panduan store.js)</h2>
@@ -192,6 +210,8 @@
 <p>Sistem navigasi dikembangkan menggunakan teknologi <b>Single Page Application (SPA)</b> dari Next.js. Peralihan antar halaman terjadi secara instan tanpa proses muat ulang (reload) pada peramban.</p>
 <ul>
 <li><b>Beranda (<code>/</code>):</b> Ringkasan profil, keahlian utama, dan sorotan karya.</li>
+<li><b>Login CMS (<code>/login</code>):</b> Halaman autentikasi dengan desain Golden Ratio responsif.</li>
+<li><b>Admin Dashboard (<code>/admin</code>):</b> CMS lengkap dengan real-time preview untuk mengelola konten.</li>
 <li><b>Portofolio (<code>/projects</code>):</b> Indeks lengkap proyek grafis.</li>
 <li><b>Detail Proyek (<code>/projects/[nama]</code>):</b> Studi kasus, penyelesaian masalah desain, dan hasil visualisasi akhir.</li>
 <li><b>Tentang Saya (<code>/about</code>):</b> Riwayat profesional, daftar klien, dan legalitas sertifikasi.</li>

@@ -1,8 +1,18 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { 
+  Plus, 
+  Pencil, 
+  Trash2, 
+  AlertCircle, 
+  Loader2,
+  Calendar,
+  Building2,
+  Briefcase
+} from 'lucide-react';
 
-export default function ExperienceManager({ token }) {
+export default function ExperienceManager({ token, previewOpen, setPreviewOpen }) {
   const [items, setItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -81,7 +91,10 @@ export default function ExperienceManager({ token }) {
 
       if (response.ok) {
         setShowForm(false);
-        fetchItems();
+        await fetchItems();
+        if (window.innerWidth < 1024 && setPreviewOpen) {
+          setPreviewOpen(true);
+        }
       } else {
         const error = await response.json();
         setError(error.error || 'Failed to save');
@@ -95,66 +108,94 @@ export default function ExperienceManager({ token }) {
   return (
     <div className="space-y-6">
       {error && (
-        <div className="bg-red-900 border border-red-700 text-red-200 px-4 py-3 rounded">
+        <div className="flex items-center gap-2 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
+          <AlertCircle className="w-5 h-5 shrink-0" />
           {error}
         </div>
       )}
 
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-white">Work Experience</h2>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/40 mb-1">
+            Total: {items.length} entries
+          </p>
+        </div>
         <button
           onClick={handleAddNew}
-          className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition duration-200"
+          className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 
+                   bg-gradient-to-r from-violet-500/20 to-purple-500/20
+                   hover:from-violet-500/30 hover:to-purple-500/30
+                   border border-violet-500/30 text-violet-400 
+                   rounded-xl transition-all duration-300 font-medium text-sm"
         >
-          + Add Experience
+          <Plus className="w-4 h-4" />
+          Add Experience
         </button>
       </div>
 
       {showForm && (
-        <div className="bg-gray-800 rounded-lg p-6">
-          <h3 className="text-xl font-bold text-white mb-4">
+        <div className="bg-white/[0.03] border border-white/10 rounded-2xl p-6">
+          <h3 className="text-lg font-semibold text-white mb-6 flex items-center gap-2">
+            <Briefcase className="w-5 h-5 text-violet-400" />
             {selectedItem ? 'Edit Experience' : 'Add Experience'}
           </h3>
           <form onSubmit={handleSubmit} className="space-y-4">
-            <input
-              type="text"
-              placeholder="Year/Period (e.g., Sep 2024 - Sep 2025)"
-              value={formData.year}
-              onChange={(e) => setFormData({ ...formData, year: e.target.value })}
-              className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white"
-            />
-            <input
-              type="text"
-              placeholder="Position/Role"
-              value={formData.role}
-              onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-              className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white"
-            />
-            <input
-              type="text"
-              placeholder="Company Name"
-              value={formData.company}
-              onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-              className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white"
-            />
+            <div className="relative">
+              <Calendar className="absolute left-4 top-3.5 w-5 h-5 text-white/30" />
+              <input
+                type="text"
+                placeholder="Year/Period (e.g., Sep 2024 - Sep 2025)"
+                value={formData.year}
+                onChange={(e) => setFormData({ ...formData, year: e.target.value })}
+                className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white
+                         placeholder:text-white/30 focus:border-violet-500/50 focus:outline-none transition-colors"
+              />
+            </div>
+            <div className="relative">
+              <Briefcase className="absolute left-4 top-3.5 w-5 h-5 text-white/30" />
+              <input
+                type="text"
+                placeholder="Position/Role"
+                value={formData.role}
+                onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white
+                         placeholder:text-white/30 focus:border-violet-500/50 focus:outline-none transition-colors"
+              />
+            </div>
+            <div className="relative">
+              <Building2 className="absolute left-4 top-3.5 w-5 h-5 text-white/30" />
+              <input
+                type="text"
+                placeholder="Company Name"
+                value={formData.company}
+                onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+                className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white
+                         placeholder:text-white/30 focus:border-violet-500/50 focus:outline-none transition-colors"
+              />
+            </div>
             <textarea
               placeholder="Description"
               rows="4"
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white"
+              className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white
+                       placeholder:text-white/30 focus:border-violet-500/50 focus:outline-none transition-colors resize-none"
             />
-            <div className="flex gap-4">
+            <div className="flex gap-3">
               <button
                 type="submit"
-                className="flex-1 px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition duration-200"
+                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 
+                         bg-violet-500 hover:bg-violet-400 text-white rounded-xl 
+                         transition-all duration-200 font-medium"
               >
+                <Plus className="w-4 h-4" />
                 Save
               </button>
               <button
                 type="button"
                 onClick={() => setShowForm(false)}
-                className="flex-1 px-6 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition duration-200"
+                className="flex-1 px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10
+                         text-white/70 hover:text-white rounded-xl transition-all duration-200"
               >
                 Cancel
               </button>
@@ -164,33 +205,49 @@ export default function ExperienceManager({ token }) {
       )}
 
       {isLoading ? (
-        <div className="text-gray-400">Loading...</div>
+        <div className="flex items-center justify-center py-12 text-white/40">
+          <Loader2 className="w-6 h-6 animate-spin mr-2" />
+          Loading experience...
+        </div>
       ) : (
         <div className="space-y-4">
           {items.map((item) => (
             <div
               key={item.id}
-              className="bg-gray-800 rounded-lg p-4 hover:bg-gray-750 transition duration-200"
+              className="group bg-white/[0.03] border border-white/10 rounded-2xl p-5 
+                       hover:border-white/20 hover:bg-white/[0.05] transition-all duration-300"
             >
-              <div className="flex justify-between items-start">
-                <div>
-                  <p className="text-gray-400 text-sm">{item.year}</p>
-                  <h3 className="text-lg font-semibold text-white">{item.role}</h3>
-                  <p className="text-blue-400">{item.company}</p>
-                  <p className="text-gray-300 mt-2 text-sm">{item.description}</p>
+              <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 text-white/40 text-sm mb-1">
+                    <Calendar className="w-3.5 h-3.5" />
+                    {item.year}
+                  </div>
+                  <h3 className="font-semibold text-white text-lg">{item.role}</h3>
+                  <p className="text-violet-400/80 text-sm font-medium flex items-center gap-1.5 mt-1">
+                    <Building2 className="w-3.5 h-3.5" />
+                    {item.company}
+                  </p>
+                  <p className="text-white/60 mt-3 text-sm leading-relaxed">{item.description}</p>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-2 shrink-0">
                   <button
                     onClick={() => handleEdit(item)}
-                    className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded transition duration-200 text-sm"
+                    className="flex items-center gap-1.5 px-4 py-2 bg-white/5 hover:bg-white/10 
+                             border border-white/10 text-white/80 hover:text-white rounded-xl 
+                             transition-all duration-200 text-sm font-medium"
                   >
+                    <Pencil className="w-3.5 h-3.5" />
                     Edit
                   </button>
                   <button
                     onClick={() => handleDelete(item.id)}
-                    className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white rounded transition duration-200 text-sm"
+                    className="flex items-center justify-center px-4 py-2 
+                             bg-red-500/10 hover:bg-red-500/20 
+                             border border-red-500/20 hover:border-red-500/30
+                             text-red-400 hover:text-red-300 rounded-xl transition-all duration-200"
                   >
-                    Delete
+                    <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
               </div>

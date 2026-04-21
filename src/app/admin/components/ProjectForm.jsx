@@ -1,6 +1,19 @@
 'use client';
 
 import { useState } from 'react';
+import { 
+  Plus, 
+  Save, 
+  X, 
+  AlertCircle,
+  FolderOpen,
+  Building2,
+  Tag,
+  FileText,
+  Image as ImageIcon,
+  Trash2,
+  Link as LinkIcon
+} from 'lucide-react';
 
 export default function ProjectForm({ project, onSave, onCancel }) {
   const [formData, setFormData] = useState(project || {
@@ -52,20 +65,22 @@ export default function ProjectForm({ project, onSave, onCancel }) {
   };
 
   return (
-    <div className="bg-gray-800 rounded-lg p-6">
-      <h2 className="text-2xl font-bold text-white mb-6">
+    <div className="bg-white/[0.03] border border-white/10 rounded-2xl p-6">
+      <h2 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
+        <FolderOpen className="w-5 h-5 text-cyan-400" />
         {project ? 'Edit Project' : 'Add New Project'}
       </h2>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         {error && (
-          <div className="bg-red-900 border border-red-700 text-red-200 px-4 py-3 rounded">
+          <div className="flex items-center gap-2 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
+            <AlertCircle className="w-5 h-5 shrink-0" />
             {error}
           </div>
         )}
 
-        <div>
-          <label className="block text-sm font-medium text-gray-300 mb-2">
+        <div className="relative">
+          <label className="block text-xs font-semibold uppercase tracking-[0.2em] text-white/40 mb-2">
             Project ID *
           </label>
           <input
@@ -74,13 +89,15 @@ export default function ProjectForm({ project, onSave, onCancel }) {
             value={formData.id}
             onChange={handleChange}
             disabled={!!project}
-            className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white disabled:bg-gray-600"
+            className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white 
+                     placeholder:text-white/30 focus:border-cyan-500/50 focus:outline-none transition-colors
+                     disabled:opacity-50"
             placeholder="e.g., logo-best"
           />
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-300 mb-2">
+        <div className="relative">
+          <label className="block text-xs font-semibold uppercase tracking-[0.2em] text-white/40 mb-2">
             Title *
           </label>
           <input
@@ -88,79 +105,99 @@ export default function ProjectForm({ project, onSave, onCancel }) {
             name="title"
             value={formData.title}
             onChange={handleChange}
-            className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
+            className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white 
+                     placeholder:text-white/30 focus:border-cyan-500/50 focus:outline-none transition-colors"
             placeholder="Project title"
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="relative">
+            <label className="block text-xs font-semibold uppercase tracking-[0.2em] text-white/40 mb-2">
               Company
             </label>
-            <input
-              type="text"
-              name="company"
-              value={formData.company}
-              onChange={handleChange}
-              className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
-              placeholder="Company name"
-            />
+            <div className="relative">
+              <Building2 className="absolute left-4 top-3.5 w-5 h-5 text-white/30" />
+              <input
+                type="text"
+                name="company"
+                value={formData.company}
+                onChange={handleChange}
+                className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white 
+                         placeholder:text-white/30 focus:border-cyan-500/50 focus:outline-none transition-colors"
+                placeholder="Company name"
+              />
+            </div>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+          <div className="relative">
+            <label className="block text-xs font-semibold uppercase tracking-[0.2em] text-white/40 mb-2">
               Category
             </label>
-            <input
-              type="text"
-              name="category"
-              value={formData.category}
+            <div className="relative">
+              <Tag className="absolute left-4 top-3.5 w-5 h-5 text-white/30" />
+              <input
+                type="text"
+                name="category"
+                value={formData.category}
+                onChange={handleChange}
+                className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white 
+                         placeholder:text-white/30 focus:border-cyan-500/50 focus:outline-none transition-colors"
+                placeholder="e.g., Brand Identity"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-xs font-semibold uppercase tracking-[0.2em] text-white/40 mb-2">
+            Description
+          </label>
+          <div className="relative">
+            <FileText className="absolute left-4 top-3.5 w-5 h-5 text-white/30" />
+            <textarea
+              name="description"
+              value={formData.description}
               onChange={handleChange}
-              className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
-              placeholder="e.g., Brand Identity"
+              rows="4"
+              className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white 
+                       placeholder:text-white/30 focus:border-cyan-500/50 focus:outline-none transition-colors resize-none"
+              placeholder="Project description"
             />
           </div>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-2">
-            Description
-          </label>
-          <textarea
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            rows="4"
-            className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
-            placeholder="Project description"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-300 mb-2">
+          <label className="block text-xs font-semibold uppercase tracking-[0.2em] text-white/40 mb-2">
             Main Image URL
           </label>
-          <input
-            type="url"
-            name="image"
-            value={formData.image}
-            onChange={handleChange}
-            className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
-            placeholder="https://example.com/image.jpg"
-          />
+          <div className="relative">
+            <ImageIcon className="absolute left-4 top-3.5 w-5 h-5 text-white/30" />
+            <input
+              type="url"
+              name="image"
+              value={formData.image}
+              onChange={handleChange}
+              className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white 
+                       placeholder:text-white/30 focus:border-cyan-500/50 focus:outline-none transition-colors"
+              placeholder="https://example.com/image.jpg"
+            />
+          </div>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-2">
+          <label className="block text-xs font-semibold uppercase tracking-[0.2em] text-white/40 mb-2">
             Additional Images
           </label>
           <button
             type="button"
             onClick={addImageUrl}
-            className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded transition duration-200 mb-2"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-3 
+                     bg-white/5 hover:bg-white/10 border border-white/10 border-dashed
+                     text-white/60 hover:text-white rounded-xl transition-all duration-200 mb-3"
           >
-            + Add Image URL
+            <Plus className="w-4 h-4" />
+            Add Image URL
           </button>
 
           {formData.images && formData.images.length > 0 && (
@@ -168,15 +205,18 @@ export default function ProjectForm({ project, onSave, onCancel }) {
               {formData.images.map((img, idx) => (
                 <div
                   key={idx}
-                  className="flex items-center justify-between bg-gray-700 p-2 rounded"
+                  className="flex items-center justify-between bg-white/5 border border-white/10 p-3 rounded-xl"
                 >
-                  <span className="text-gray-300 text-sm truncate">{img}</span>
+                  <div className="flex items-center gap-2 min-w-0">
+                    <LinkIcon className="w-4 h-4 text-white/30 shrink-0" />
+                    <span className="text-white/70 text-sm truncate">{img}</span>
+                  </div>
                   <button
                     type="button"
                     onClick={() => removeImageUrl(idx)}
-                    className="text-red-400 hover:text-red-300"
+                    className="p-1.5 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors"
                   >
-                    ✕
+                    <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
               ))}
@@ -184,18 +224,24 @@ export default function ProjectForm({ project, onSave, onCancel }) {
           )}
         </div>
 
-        <div className="flex gap-4 pt-6">
+        <div className="flex gap-3 pt-6">
           <button
             type="submit"
-            className="flex-1 px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition duration-200"
+            className="flex-1 flex items-center justify-center gap-2 px-6 py-3 
+                     bg-cyan-500 hover:bg-cyan-400 text-white rounded-xl 
+                     transition-all duration-200 font-medium"
           >
+            <Save className="w-4 h-4" />
             Save Project
           </button>
           <button
             type="button"
             onClick={onCancel}
-            className="flex-1 px-6 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition duration-200"
+            className="flex-1 flex items-center justify-center gap-2 px-6 py-3 
+                     bg-white/5 hover:bg-white/10 border border-white/10
+                     text-white/70 hover:text-white rounded-xl transition-all duration-200"
           >
+            <X className="w-4 h-4" />
             Cancel
           </button>
         </div>

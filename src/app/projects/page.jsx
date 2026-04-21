@@ -1,205 +1,322 @@
-"use client";
+'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
-import { PROJECT_LIST } from '../../data/store';
+import { useEffect, useMemo, useState } from 'react';
+import { PROJECT_LIST } from '@/data/store';
 
-// =========================================================================
-// IKON SVG PROFESIONAL (Kategori & UI Utama)
-// =========================================================================
-const FolderIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-cyan-400">
-    <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z" />
-  </svg>
-);
+const FALLBACK_PROJECTS = Array.isArray(PROJECT_LIST) ? PROJECT_LIST : [];
 
-const SparklesIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 text-cyan-400 shrink-0">
-    <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09l2.846.813-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
-  </svg>
-);
-
-// Fungsi Pemetaan Ikon Kategori Dinamis
-const getCategoryIcon = (categoryName) => {
-  const baseClass = "w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0"; 
-  switch (categoryName) {
-    case 'All':
-      return <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className={baseClass}><path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" /></svg>;
-    case 'Brand Identity':
-      return <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className={baseClass}><path strokeLinecap="round" strokeLinejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" /></svg>;
-    case 'Packaging Design':
-      return <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className={baseClass}><path strokeLinecap="round" strokeLinejoin="round" d="M21 7.5l-9-5.25L3 7.5m18 0l-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9" /></svg>;
-    case 'Print Design':
-      return <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className={baseClass}><path strokeLinecap="round" strokeLinejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0110.56 0m-10.56 0L6.34 18m10.92-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0l.229 2.523a1.125 1.125 0 01-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0021 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 00-1.913-.247M6.34 18H5.25A2.25 2.25 0 013 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.041 48.041 0 011.913-.247m10.5 0a48.536 48.536 0 00-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18 10.5h.008v.008H18V10.5zm-3 0h.008v.008H15V10.5z" /></svg>;
-    case 'Social Media Design':
-      return <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className={baseClass}><path strokeLinecap="round" strokeLinejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3" /></svg>;
-    case 'Community Design':
-      return <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className={baseClass}><path strokeLinecap="round" strokeLinejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" /></svg>;
-    default:
-      return <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className={baseClass}><path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg>;
+function parseStringList(value) {
+  if (Array.isArray(value)) {
+    return value;
   }
-};
+
+  if (typeof value !== 'string') {
+    return [];
+  }
+
+  try {
+    const parsed = JSON.parse(value);
+    if (Array.isArray(parsed)) {
+      return parsed.map((item) => String(item).trim()).filter(Boolean);
+    }
+  } catch (error) {
+    // Continue to comma-separated parsing.
+  }
+
+  return value
+    .split(',')
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function normalizeProject(project, index = 0) {
+  if (!project || typeof project !== 'object') {
+    return null;
+  }
+
+  const slugSource = project.slug || project.id || project.title || `project-${index}`;
+  const technologies = parseStringList(project.technologies || project.stack);
+
+  return {
+    ...project,
+    id: project.id ?? slugSource,
+    slug: String(slugSource),
+    title: project.title || 'Untitled Project',
+    category: project.category || 'Selected Work',
+    description: project.description || project.summary || 'Project details are being prepared.',
+    image: project.image || project.cover || project.thumbnail || '',
+    year: project.year || project.period || project.timeline || '',
+    technologies,
+    featured: Boolean(project.featured),
+  };
+}
+
+function normalizeProjectCollection(payload) {
+  const candidates = [
+    payload,
+    payload?.projects,
+    payload?.data,
+    payload?.items,
+  ].find(Array.isArray);
+
+  if (!Array.isArray(candidates)) {
+    return [];
+  }
+
+  return candidates.map(normalizeProject).filter(Boolean);
+}
+
+function formatProjectCount(count) {
+  return count.toString().padStart(2, '0');
+}
 
 export default function ProjectsPage() {
-  const [activeCategory, setActiveCategory] = useState('All');
+  const [projects, setProjects] = useState(FALLBACK_PROJECTS.map(normalizeProject).filter(Boolean));
+  const [isLoading, setIsLoading] = useState(true);
 
-  const categories = ['All', ...new Set(PROJECT_LIST.map(project => project.category))];
+  useEffect(() => {
+    let isMounted = true;
 
-  const filteredProjects = activeCategory === 'All' 
-    ? PROJECT_LIST 
-    : PROJECT_LIST.filter(project => project.category === activeCategory);
+    async function loadProjects() {
+      try {
+        const response = await fetch('/api/cms/projects', { cache: 'no-store' });
+        if (!response.ok) {
+          throw new Error('Failed to load CMS projects');
+        }
+
+        const payload = await response.json();
+        const liveProjects = normalizeProjectCollection(payload);
+
+        if (isMounted && liveProjects.length > 0) {
+          setProjects(liveProjects);
+        }
+      } catch (error) {
+        console.error('Projects page fallback to static store:', error);
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    }
+
+    loadProjects();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const categories = useMemo(() => {
+    const values = new Set(projects.map((project) => project.category).filter(Boolean));
+    return Array.from(values);
+  }, [projects]);
+
+  const featuredProjects = useMemo(
+    () => projects.filter((project) => project.featured).slice(0, 2),
+    [projects]
+  );
 
   return (
-    <div className="min-h-screen pt-32 pb-24 relative w-full overflow-x-hidden bg-[#030712]">
-      
-      {/* Background Decor */}
-      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        <div className="absolute top-[-10%] right-[-10%] w-[300px] sm:w-[500px] lg:w-[600px] h-[300px] sm:h-[500px] lg:h-[600px] bg-cyan-900/20 rounded-full blur-[100px] lg:blur-[140px]"></div>
-        <div className="absolute bottom-[-10%] left-[-10%] w-[300px] sm:w-[500px] lg:w-[600px] h-[300px] sm:h-[500px] lg:h-[600px] bg-indigo-900/20 rounded-full blur-[100px] lg:blur-[140px]"></div>
-      </div>
-
-      <div className="max-w-[1400px] mx-auto px-5 sm:px-8 lg:px-12 relative z-10 w-full">
-        
-        {/* ========================================================= */}
-        {/* HEADER SECTION (GOLDEN RATIO 61.8 : 38.2)                 */}
-        {/* ========================================================= */}
-        <div className="flex flex-col lg:flex-row gap-10 lg:gap-16 mb-16 sm:mb-20 items-start">
-          
-          <div className="w-full lg:w-[61.8%] reveal stagger-1">
-            <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-[9px] sm:text-[10px] font-bold tracking-widest uppercase mb-5 sm:mb-6">
-              <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-cyan-500 animate-pulse"></span>
-              Galeri Mahakarya
-            </div>
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-white tracking-tighter mb-4 sm:mb-6 leading-[1.1]">
-              Eksplorasi <br/> 
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500">Visual & Identitas.</span>
+    <main className="min-h-screen bg-slate-950 text-white">
+      <section className="border-b border-white/10">
+        <div className="mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[1.618fr_1fr] lg:items-end lg:px-8 lg:py-24">
+          <div className="max-w-3xl">
+            <p className="text-xs uppercase tracking-[0.32em] text-cyan-300/70">
+              Portfolio Archive
+            </p>
+            <h1 className="mt-5 text-4xl font-semibold tracking-tight text-white sm:text-5xl lg:text-6xl">
+              Live-selected projects, synced from the CMS and ready to review.
             </h1>
-            <p className="text-slate-400 text-sm sm:text-base md:text-lg leading-relaxed max-w-xl font-medium">
-              Kumpulan arsip proyek desain komersial dan komunitas. Setiap karya dirancang dengan pendekatan strategis untuk memecahkan masalah komunikasi visual.
+            <p className="mt-6 max-w-2xl text-base leading-7 text-slate-300 sm:text-lg">
+              This archive now reads from the portfolio CMS at runtime, so every published
+              update can flow directly into the public project index while preserving static
+              fallbacks for resilience.
             </p>
           </div>
 
-          <div className="w-full lg:w-[38.2%] reveal stagger-2 mt-4 lg:mt-0">
-            <div className="bg-gradient-to-br from-[#0A1329] to-[#030712] border border-white/10 rounded-3xl sm:rounded-[2rem] p-6 sm:p-8 shadow-2xl relative overflow-hidden group">
-              <div className="absolute -top-10 -right-10 w-32 h-32 sm:w-40 sm:h-40 bg-cyan-500/10 rounded-full blur-[40px] group-hover:bg-cyan-500/20 transition-all duration-700"></div>
-              
-              <div className="flex items-center gap-4 mb-5">
-                <div className="p-3 sm:p-4 bg-cyan-500/10 rounded-xl sm:rounded-2xl border border-cyan-500/20 shadow-lg shadow-cyan-500/5 shrink-0">
-                  <FolderIcon />
-                </div>
-                <div>
-                  <h3 className="text-white font-black text-2xl sm:text-3xl lg:text-4xl">{PROJECT_LIST.length}</h3>
-                  <p className="text-slate-400 text-[9px] sm:text-[10px] font-bold uppercase tracking-widest">Total Arsip</p>
-                </div>
-              </div>
+          <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
+            <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-5">
+              <p className="text-xs uppercase tracking-[0.26em] text-slate-500">Archive</p>
+              <p className="mt-3 text-3xl font-semibold text-white">
+                {formatProjectCount(projects.length)}
+              </p>
+              <p className="mt-2 text-sm text-slate-400">Runtime project entries available.</p>
+            </div>
+            <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-5">
+              <p className="text-xs uppercase tracking-[0.26em] text-slate-500">Categories</p>
+              <p className="mt-3 text-3xl font-semibold text-white">
+                {formatProjectCount(categories.length)}
+              </p>
+              <p className="mt-2 text-sm text-slate-400">Distinct disciplines in the archive.</p>
+            </div>
+            <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-5">
+              <p className="text-xs uppercase tracking-[0.26em] text-slate-500">Source</p>
+              <p className="mt-3 text-lg font-semibold text-white">
+                {isLoading ? 'Syncing CMS' : 'Live + Fallback Ready'}
+              </p>
+              <p className="mt-2 text-sm text-slate-400">
+                If the API is unavailable, the static store remains available.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
 
-              <div className="pt-4 sm:pt-5 border-t border-white/5 flex items-start gap-3">
-                <div className="mt-0.5"><SparklesIcon /></div>
-                <p className="text-[11px] sm:text-xs md:text-sm text-slate-400 leading-relaxed italic">
-                  "Desain yang baik tidak hanya terlihat indah, tetapi harus mampu berbicara dan menyelesaikan masalah."
+      {featuredProjects.length > 0 ? (
+        <section className="border-b border-white/10">
+          <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
+            <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+              <div>
+                <p className="text-xs uppercase tracking-[0.28em] text-slate-500">
+                  Featured Selection
                 </p>
+                <h2 className="mt-2 text-2xl font-semibold text-white sm:text-3xl">
+                  Current highlights from the portfolio system
+                </h2>
               </div>
+              <p className="max-w-xl text-sm leading-6 text-slate-400">
+                These projects are surfaced first when marked as featured in the CMS, helping
+                the homepage and archive stay aligned.
+              </p>
             </div>
-          </div>
-        </div>
 
-        {/* ========================================================= */}
-        {/* FILTER KATEGORI SWIPEABLE                                 */}
-        {/* ========================================================= */}
-        <div className="mb-10 sm:mb-12 reveal stagger-3 relative z-10 w-full">
-          <div className="flex items-center gap-4 mb-4 sm:mb-6 hidden sm:flex">
-            <h3 className="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-[0.2em]">Filter Kategori</h3>
-            <div className="h-[1px] flex-grow bg-gradient-to-r from-white/10 to-transparent"></div>
-          </div>
-
-          <div className="relative -mx-5 px-5 sm:mx-0 sm:px-0">
-            <div className="absolute top-0 right-0 bottom-0 w-8 sm:w-12 bg-gradient-to-l from-[#030712] to-transparent pointer-events-none z-10 sm:hidden"></div>
-
-            <div className="flex overflow-x-auto gap-2.5 sm:gap-3 pb-4 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-              {categories.map((category) => (
-                <button
-                  key={category}
-                  onClick={() => setActiveCategory(category)}
-                  className={`group flex items-center justify-center gap-2 shrink-0 px-4 py-2.5 sm:px-6 sm:py-3 rounded-full text-[10px] sm:text-[11px] md:text-xs font-bold tracking-wide uppercase transition-all duration-300 snap-center border ${
-                    activeCategory === category
-                      ? 'bg-cyan-500 text-[#030712] border-cyan-500 shadow-[0_0_15px_rgba(6,182,212,0.4)] scale-105'
-                      : 'bg-[#0A1329]/50 text-slate-400 border-white/5 hover:border-cyan-500/30 hover:bg-[#0A1329]'
-                  }`}
+            <div className="grid gap-6 lg:grid-cols-2">
+              {featuredProjects.map((project) => (
+                <Link
+                  key={`featured-${project.slug}`}
+                  href={`/projects/${project.slug}`}
+                  className="group overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.04] transition hover:border-white/20 hover:bg-white/[0.06]"
                 >
-                  <span className={`${activeCategory === category ? 'text-[#030712]' : 'text-cyan-500 group-hover:text-cyan-400'} transition-colors`}>
-                    {getCategoryIcon(category)}
-                  </span>
-                  <span className="whitespace-nowrap mt-[1px]">
-                    {category === 'All' ? 'Semua Karya' : category}
-                  </span>
-                </button>
+                  <div className="aspect-[16/10] overflow-hidden bg-slate-900">
+                    {project.image ? (
+                      <img
+                        src={project.image}
+                        alt={project.title}
+                        className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.03]"
+                      />
+                    ) : (
+                      <div className="flex h-full items-center justify-center text-sm text-slate-500">
+                        Project cover pending
+                      </div>
+                    )}
+                  </div>
+                  <div className="grid gap-4 p-6 md:grid-cols-[1.618fr_1fr] md:items-start">
+                    <div>
+                      <div className="flex flex-wrap items-center gap-3 text-xs uppercase tracking-[0.22em] text-slate-500">
+                        <span>{project.category}</span>
+                        {project.year ? <span>{project.year}</span> : null}
+                      </div>
+                      <h3 className="mt-3 text-2xl font-semibold text-white">{project.title}</h3>
+                      <p className="mt-3 text-sm leading-6 text-slate-300">
+                        {project.description}
+                      </p>
+                    </div>
+                    <div className="flex flex-wrap gap-2 md:justify-end">
+                      {project.technologies.slice(0, 4).map((item) => (
+                        <span
+                          key={`${project.slug}-${item}`}
+                          className="rounded-full border border-white/10 px-3 py-1 text-xs text-slate-300"
+                        >
+                          {item}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </Link>
               ))}
-              <div className="w-4 shrink-0 sm:hidden"></div>
             </div>
           </div>
-        </div>
+        </section>
+      ) : null}
 
-        {/* ========================================================= */}
-        {/* GRID PORTOFOLIO (GOLDEN RATIO ASPECT)                     */}
-        {/* ========================================================= */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-          {filteredProjects.map((project, index) => {
-            const staggerDelay = index < 5 ? `stagger-${index + 4}` : 'stagger-7';
-            
-            return (
-              <Link 
-                href={`/projects/${project.id}`} 
-                key={project.id} 
-                // Border radius dikecilkan khusus untuk HP agar tidak terlihat terlalu bulat raksasa
-                className={`reveal ${staggerDelay} group relative rounded-3xl sm:rounded-[2rem] overflow-hidden bg-[#0A1329] border border-white/5 hover:border-cyan-500/40 transition-all duration-500 shadow-lg hover:shadow-[0_20px_50px_rgba(6,182,212,0.15)] flex flex-col h-full`}
+      <section>
+        <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
+          <div className="mb-8 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+            <div>
+              <p className="text-xs uppercase tracking-[0.28em] text-slate-500">All Projects</p>
+              <h2 className="mt-2 text-2xl font-semibold text-white sm:text-3xl">
+                Runtime archive with graceful fallback support
+              </h2>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {categories.map((category) => (
+                <span
+                  key={category}
+                  className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-xs uppercase tracking-[0.18em] text-slate-300"
+                >
+                  {category}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+            {projects.map((project, index) => (
+              <Link
+                key={project.slug || project.id || index}
+                href={`/projects/${project.slug}`}
+                className="group flex h-full flex-col overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.04] transition hover:-translate-y-1 hover:border-white/20 hover:bg-white/[0.06]"
               >
-                {/* PENERAPAN GOLDEN RATIO: aspect-[1.618/1] membuat gambar lebih sinematik dan tidak terlalu tinggi di HP */}
-                <div className="relative w-full aspect-[1.618/1] overflow-hidden bg-[#050A14]">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img 
-                    src={project.image} 
-                    alt={project.title} 
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[1.5s] ease-out opacity-80 group-hover:opacity-100"
-                    onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800&auto=format&fit=crop'; }} 
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0A1329] via-transparent to-transparent opacity-90"></div>
-                </div>
-                
-                {/* PADDING DINAMIS: p-5 di HP, p-7 di Tablet/Desktop */}
-                <div className="p-5 sm:p-7 flex flex-col flex-grow relative z-10 -mt-6 sm:-mt-8">
-                  <div className="inline-flex items-center gap-1.5 sm:gap-2 text-[8px] sm:text-[9px] font-bold tracking-[0.2em] text-cyan-400 uppercase mb-2.5 sm:mb-3 bg-[#0A1329] border border-cyan-500/20 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full w-fit shadow-md">
-                    <span className="w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-cyan-400 shrink-0"></span>
-                    {project.category}
-                  </div>
-                  
-                  {/* FONT DINAMIS: text-lg di HP agar tidak terlalu raksasa */}
-                  <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-white group-hover:text-cyan-300 transition-colors tracking-tight mb-1.5 sm:mb-2 leading-snug">
-                    {project.title}
-                  </h3>
-                  
-                  {project.client && (
-                    <p className="text-[9px] sm:text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-3 sm:mb-4">
-                      Klien: {project.client}
-                    </p>
+                <div className="aspect-[5/4] overflow-hidden bg-slate-900">
+                  {project.image ? (
+                    <img
+                      src={project.image}
+                      alt={project.title}
+                      className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.04]"
+                    />
+                  ) : (
+                    <div className="flex h-full items-center justify-center text-sm text-slate-500">
+                      Project cover pending
+                    </div>
                   )}
-                  
-                  {/* FONT DINAMIS: text-xs di HP */}
-                  <p className="text-xs sm:text-sm text-slate-400 leading-relaxed line-clamp-2 mt-auto">
+                </div>
+
+                <div className="flex flex-1 flex-col p-6">
+                  <div className="flex flex-wrap items-center justify-between gap-3 text-xs uppercase tracking-[0.2em] text-slate-500">
+                    <span>{project.category}</span>
+                    <span>{project.year || `Archive ${String(index + 1).padStart(2, '0')}`}</span>
+                  </div>
+
+                  <h3 className="mt-4 text-2xl font-semibold text-white">{project.title}</h3>
+                  <p className="mt-3 flex-1 text-sm leading-6 text-slate-300">
                     {project.description}
                   </p>
+
+                  {project.technologies.length > 0 ? (
+                    <div className="mt-5 flex flex-wrap gap-2">
+                      {project.technologies.slice(0, 4).map((item) => (
+                        <span
+                          key={`${project.slug}-${item}`}
+                          className="rounded-full border border-white/10 px-3 py-1 text-xs text-slate-300"
+                        >
+                          {item}
+                        </span>
+                      ))}
+                    </div>
+                  ) : null}
+
+                  <div className="mt-6 flex items-center justify-between text-sm">
+                    <span className="text-slate-400">Open case study</span>
+                    <span className="font-medium text-white transition group-hover:translate-x-1">
+                      View project
+                    </span>
+                  </div>
                 </div>
               </Link>
-            );
-          })}
-        </div>
-
-        {filteredProjects.length === 0 && (
-          <div className="text-center py-20 reveal stagger-4">
-            <p className="text-slate-500 text-sm sm:text-base">Belum ada karya di kategori ini.</p>
+            ))}
           </div>
-        )}
 
-      </div>
-    </div>
+          {!isLoading && projects.length === 0 ? (
+            <div className="mt-8 rounded-[2rem] border border-dashed border-white/10 bg-white/[0.03] p-8 text-center">
+              <p className="text-lg font-medium text-white">No projects available right now.</p>
+              <p className="mt-2 text-sm text-slate-400">
+                Publish a project in the CMS to have it appear here automatically.
+              </p>
+            </div>
+          ) : null}
+        </div>
+      </section>
+    </main>
   );
 }

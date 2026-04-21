@@ -1,151 +1,317 @@
-// DATABASE DAFTAR TOOLKIT / MICRO-SAAS (MRR ECOSYSTEM)
-// Semua data aplikasi gratis (aktif & coming soon) diatur dari file ini.
-
-import React from 'react';
-
-// ============================================================================
-// KUMPULAN IKON SVG PREMIUM (Minimalist & Professional)
-// ============================================================================
-const Icons = {
-  Document: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" /></svg>,
-  Network: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" /></svg>,
-  Palette: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.876-5.814a1.151 1.151 0 00-1.597-1.597L14.146 6.32a15.996 15.996 0 00-4.649 4.763m3.42 3.42a6.776 6.776 0 00-3.42-3.42" /></svg>,
-  Signature: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" /></svg>,
-  Grid: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" /></svg>,
-  Receipt: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m6.75 12l-3-3m0 0l-3 3m3-3v6m-1.5-15H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" /></svg>,
-  Ratio: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M7.5 14.25v2.25m3-4.5v4.5m3-6.75v6.75m3-9v9M6 20.25h12A2.25 2.25 0 0020.25 18V6A2.25 2.25 0 0018 3.75H6A2.25 2.25 0 003.75 6v12A2.25 2.25 0 006 20.25z" /></svg>,
-  Badge: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M15 11.25l1.5 1.5.75-.75V8.758l2.276-.61a3 3 0 10-3.675-3.675l-.61 2.277H12l-.75.75 1.5 1.5M15 11.25l-8.47 8.47c-.34.34-.8.53-1.28.53s-.94-.19-1.28-.53l-.97-.97c-.34-.34-.53-.8-.53-1.28s.19-.94.53-1.28l8.47-8.47m0 0l2.5-2.5" /></svg>,
-  Transform: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" /></svg>,
-  Typography: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M10.5 21l5.25-11.25L21 21m-9-3h7.5M3 5.621a48.474 48.474 0 016-.371m0 0c1.12 0 2.233.038 3.334.114M9 5.25V3m3.334 2.364C11.176 10.658 7.69 15.08 3 17.502m9.334-12.138c.896.061 1.785.147 2.666.257m-4.589 8.495a18.023 18.023 0 01-3.827-5.802" /></svg>,
-  Studio: () => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M14.25 9.75L16.5 12l-2.25 2.25m-4.5 0L7.5 12l2.25-2.25M6 20.25h12A2.25 2.25 0 0020.25 18V6A2.25 2.25 0 0018 3.75H6A2.25 2.25 0 003.75 6v12A2.25 2.25 0 006 20.25z" /></svg>
-};
-
-// ============================================================================
-// DATA MASTER TOOLKIT
-// ============================================================================
-export const toolkits = [
-  // --- FASE 1: PONDASI UTAMA ---
+export const TOOLKIT_DB = [
   {
     id: "cv-maker",
-    title: "ATS CV & Cover Letter",
-    description: "Buat Curriculum Vitae dan Surat Lamaran Kerja standar mesin HRD (ATS Friendly) secara instan. Drag & Play, aman tanpa simpan data di server.",
-    icon: <Icons.Document />, 
-    link: "/cv-maker", 
+    title: "CV Maker",
+    description:
+      "Build a polished curriculum vitae with clear structure, modern spacing, and export-ready content blocks.",
+    link: "/cv-maker",
     status: "active",
-    category: "Career & Freelance",
-    tags: ["ATS", "Resume", "Cover Letter"]
+    category: "Career",
+    headline: "Shape a premium CV in minutes without losing your personal voice.",
+    detail:
+      "CV Maker is designed for professionals who need a structured resume workflow that feels clean, fast, and practical. It helps you move from raw information to a presentable CV layout with sections that stay readable for recruiters, collaborators, and clients.",
+    features: [
+      "Structured profile, experience, and education sections",
+      "Clean visual hierarchy for professional presentation",
+      "Fast editing workflow for quick revisions before applying",
+      "Ready-to-use formatting for digital sharing and review",
+      "Focused interface that keeps attention on content quality",
+      "ATS-friendly format for better application tracking",
+      "Export to PDF with professional typography",
+    ],
+    idealFor: [
+      "Job seekers preparing tailored applications",
+      "Freelancers who need a credible profile document",
+      "Students building their first professional CV",
+      "Professionals updating their career portfolio",
+    ],
+    outputs: [
+      "Professional CV content layout",
+      "Refined personal profile summary",
+      "Application-ready resume structure",
+      "PDF export for job applications",
+      "Print-ready document format",
+    ],
+    availabilityLabel: "Available now",
+    ctaLabel: "Open CV Maker",
+    theme: {
+      accent: "from-sky-500/30 via-cyan-400/10 to-transparent",
+      surface: "border-sky-400/20 bg-sky-500/10",
+      glow: "shadow-[0_24px_80px_-40px_rgba(56,189,248,0.55)]",
+    },
+    iconName: "document",
+    version: "1.2.0",
+    lastUpdated: "2024-04-15",
+    complexity: "Beginner",
+    estimatedTime: "15-30 minutes",
+    requirements: ["Basic personal information", "Work history details", "Education background"],
   },
-  
-  // --- CSS VISUAL STUDIO (The Monster) ---
   {
-    id: 'css-studio',
-    title: 'Dev Visual Studio',
-    description: 'Laboratorium desain berbasis AI untuk membangun komponen UI, tipografi interaktif, dan pixel art secara instan tanpa koding manual.',
-    icon: <Icons.Studio />,
-    category: 'Design Utility',
-    link: '/css-studio',
+    id: "css-studio",
+    title: "CSS Studio",
+    description:
+      "Explore visual styling ideas with a focused interface for gradients, layout direction, and polished front-end details.",
+    link: "/css-studio",
     status: "active",
-    isNew: true,
-    isPremium: true,
-    badge: 'AI Hybrid',
-    tags: ["AI", "CSS", "Design Engine"]
-  },
-
-  // --- FASE 2: QUICK WINS & KOMUNITAS ---
-  {
-    id: "wa-generator",
-    title: "Premium WA & QR Link",
-    description: "Buat tautan otomatis WhatsApp (wa.me) dan ubah menjadi desain QR Code resolusi tinggi siap cetak untuk keperluan poster atau event.",
-    icon: <Icons.Network />,
-    link: "/wa-generator",
-    status: "coming_soon",
-    category: "Community Tool",
-    tags: ["WhatsApp", "QR Code", "Event"]
-  },
-  {
-    id: "color-extractor",
-    title: "Brand Color Extractor",
-    description: "Unggah gambar referensi dan biarkan sistem kami mengekstrak 5 palet warna dominan beserta kode HEX secara real-time.",
-    icon: <Icons.Palette />,
-    link: "/color-extractor",
-    status: "coming_soon",
-    category: "Design Utility",
-    tags: ["Color", "Branding", "UI/UX"]
-  },
-
-  // --- FASE 3: ALAT PERANG FREELANCER ---
-  {
-    id: "email-signature",
-    title: "Email Signature Builder",
-    description: "Rakit desain tanda tangan email HTML profesional yang elegan, lengkap dengan foto profil dan tautan portofolio.",
-    icon: <Icons.Signature />,
-    link: "/email-signature",
-    status: "coming_soon",
-    category: "Career & Freelance",
-    tags: ["Email", "HTML", "Branding"]
-  },
-  {
-    id: "ig-splitter",
-    title: "Seamless IG Splitter",
-    description: "Potong gambar panorama memanjang menjadi 2-10 kotak presisi untuk desain feed carousel Instagram yang menyambung sempurna.",
-    icon: <Icons.Grid />,
-    link: "/ig-splitter",
-    status: "coming_soon",
-    category: "Design Utility",
-    tags: ["Instagram", "Social Media", "Crop"]
+    category: "Design",
+    headline: "Prototype visual direction faster with a studio built for front-end refinement.",
+    detail:
+      "CSS Studio helps designers and developers test visual combinations without breaking momentum. It is positioned as a practical playground for experimenting with gradients, surfaces, spacing rhythm, and interface polish before moving into production styling.",
+    features: [
+      "Visual controls for exploring style direction",
+      "Fast experimentation for gradients and surface treatment",
+      "Useful for UI concepting and portfolio presentation work",
+      "Reduces friction between idea, preview, and refinement",
+    ],
+    idealFor: [
+      "Front-end developers refining presentation layers",
+      "Designers testing interface directions",
+      "Portfolio builders who want a stronger visual finish",
+    ],
+    outputs: [
+      "Reusable styling direction",
+      "Sharper UI surface concepts",
+      "Presentation-ready visual references",
+    ],
+    availabilityLabel: "Available now",
+    ctaLabel: "Launch CSS Studio",
+    theme: {
+      accent: "from-violet-500/30 via-fuchsia-400/10 to-transparent",
+      surface: "border-violet-400/20 bg-violet-500/10",
+      glow: "shadow-[0_24px_80px_-40px_rgba(168,85,247,0.55)]",
+    },
+    iconName: "palette",
+    version: "1.0.0",
+    lastUpdated: "2024-03-20",
+    complexity: "Intermediate",
+    estimatedTime: "Varies by project",
+    requirements: ["Basic CSS knowledge", "Design references or inspiration"],
   },
   {
     id: "freelance-invoice",
-    title: "Freelance Rate & Invoice",
-    description: "Kalkulator pintar untuk menentukan harga per-jam, sekaligus generator dokumen Invoice (Tagihan) PDF untuk dikirim ke klien.",
-    icon: <Icons.Receipt />,
-    link: "/toolkit/freelance-invoice", // Perbaikan link agar sesuai struktur
+    title: "Freelance Invoice",
+    description:
+      "Generate clear invoice details for client billing with better structure, credibility, and delivery readiness.",
+    link: "/toolkit/freelance-invoice",
     status: "active",
-    category: "Career & Freelance",
-    tags: ["Invoice", "Pricing", "PDF"]
-  },
-
-  // --- FASE 4: TANTANGAN TEKNIS (UI/UX) ---
-  {
-    id: "golden-ratio",
-    title: "Golden Ratio Calculator",
-    description: "Masukkan dimensi awal, dan dapatkan pembagian proporsi matematis (1:1.618) untuk merancang layout website atau logo yang sempurna.",
-    icon: <Icons.Ratio />,
-    link: "/golden-ratio",
-    status: "coming_soon",
-    category: "Design Utility",
-    tags: ["Layout", "Math", "Proportion"]
-  },
-  {
-    id: "event-ticket",
-    title: "Event Badge Generator",
-    description: "Masukkan daftar nama peserta dan render otomatis menjadi desain Name Badge (ID Card) atau Tiket siap cetak untuk event AquaNime.",
-    icon: <Icons.Badge />,
-    link: "/event-ticket",
-    status: "coming_soon",
-    category: "Community Tool",
-    tags: ["Print", "ID Card", "Management"]
-  },
-
-  // --- BONUS: EXTRA TOOLS ---
-  {
-    id: "image-converter",
-    title: "Fast Image to WebP",
-    description: "Kompres dan ubah format gambar (JPG/PNG) menjadi WebP generasi terbaru langsung di browser tanpa perlu upload ke server.",
-    icon: <Icons.Transform />,
-    link: "/image-converter",
-    status: "coming_soon",
-    category: "Web Developer",
-    tags: ["Converter", "WebP", "Optimization"]
+    category: "Business",
+    headline: "Turn project scope into a confident invoice draft that feels organized and client-ready.",
+    detail:
+      "Freelance Invoice is built for independent professionals who need a cleaner billing workflow. The tool helps frame service details, payment information, and invoice structure so the final result feels more trustworthy and easier for clients to review.",
+    features: [
+      "Clear invoice fields for client, scope, and totals",
+      "Professional structure that improves billing clarity",
+      "Useful for one-off projects and recurring work",
+      "Quick generation flow for faster project administration",
+    ],
+    idealFor: [
+      "Freelancers sending invoices to direct clients",
+      "Independent designers and developers",
+      "Consultants who need a simple billing workflow",
+    ],
+    outputs: [
+      "Structured invoice draft",
+      "Clear client billing summary",
+      "Shareable payment-ready document content",
+    ],
+    availabilityLabel: "Available now",
+    ctaLabel: "Create invoice",
+    theme: {
+      accent: "from-emerald-500/30 via-lime-400/10 to-transparent",
+      surface: "border-emerald-400/20 bg-emerald-500/10",
+      glow: "shadow-[0_24px_80px_-40px_rgba(16,185,129,0.55)]",
+    },
+    iconName: "receipt",
+    version: "1.1.0",
+    lastUpdated: "2024-04-10",
+    complexity: "Beginner",
+    estimatedTime: "10-20 minutes",
+    requirements: ["Client details", "Service descriptions", "Payment terms"],
   },
   {
-    id: "type-scale",
-    title: "Typographic Scale",
-    description: "Tentukan satu ukuran font dasar, dan dapatkan hirarki ukuran font (H1, H2, Paragraf) yang harmonis secara visual.",
-    icon: <Icons.Typography />,
-    link: "/type-scale",
-    status: "coming_soon",
-    category: "Design Utility",
-    tags: ["Typography", "Font", "Hierarchy"]
-  }
+    id: "proposal-canvas",
+    title: "Proposal Canvas",
+    description:
+      "Draft persuasive service proposals with a tighter narrative around scope, value, deliverables, and next steps.",
+    link: "/toolkit/proposal-canvas",
+    status: "coming-soon",
+    category: "Business",
+    headline: "Translate client goals into a concise proposal structure with stronger business clarity.",
+    detail:
+      "Proposal Canvas is planned as a focused framework for turning discovery notes into a more persuasive proposal. It will help organize challenges, strategic response, deliverables, timeline, and commercial terms into a sequence that feels intentional rather than improvised.",
+    features: [
+      "Guided proposal sections from problem to solution",
+      "Value framing for services and deliverables",
+      "Clear sequencing for timeline, pricing, and approval",
+      "Sharper presentation for freelance and studio work",
+    ],
+    idealFor: [
+      "Freelancers preparing proposals after discovery calls",
+      "Studios handling tailored client offers",
+      "Consultants packaging services more clearly",
+    ],
+    outputs: [
+      "Proposal structure draft",
+      "Scope and deliverables summary",
+      "Client-facing approval-ready narrative",
+    ],
+    availabilityLabel: "In roadmap",
+    ctaLabel: "Preview roadmap",
+    theme: {
+      accent: "from-amber-500/30 via-orange-400/10 to-transparent",
+      surface: "border-amber-400/20 bg-amber-500/10",
+      glow: "shadow-[0_24px_80px_-40px_rgba(245,158,11,0.5)]",
+    },
+    iconName: "briefcase",
+    version: "0.9.0",
+    lastUpdated: "2024-04-01",
+    complexity: "Intermediate",
+    estimatedTime: "30-45 minutes",
+    requirements: ["Discovery call notes", "Client requirements", "Service offerings", "Pricing strategy"],
+    roadmap: ["Q2 2024: Beta testing", "Q3 2024: Public release"],
+  },
+  {
+    id: "content-brief-lab",
+    title: "Content Brief Lab",
+    description:
+      "Map content goals, audience intent, structure, and production notes before writing or publishing.",
+    link: "/toolkit/content-brief-lab",
+    status: "coming-soon",
+    category: "Content",
+    headline: "Create content briefs that align message, audience, and production direction from the start.",
+    detail:
+      "Content Brief Lab is envisioned as a planning tool for creators and teams who want cleaner handoffs before content production begins. The experience will help translate campaign goals into a brief covering message angle, audience, structure, assets, and review notes.",
+    features: [
+      "Brief templates for topic, angle, and audience intent",
+      "Production notes for assets, channels, and review flow",
+      "Structure planning before copywriting starts",
+      "Useful for solo creators and collaborative teams",
+    ],
+    idealFor: [
+      "Content strategists and copywriters",
+      "Creative teams planning campaigns",
+      "Freelancers handling content production end to end",
+    ],
+    outputs: [
+      "Content brief draft",
+      "Audience and message alignment notes",
+      "Production-ready planning document",
+    ],
+    availabilityLabel: "In roadmap",
+    ctaLabel: "View upcoming details",
+    theme: {
+      accent: "from-rose-500/30 via-pink-400/10 to-transparent",
+      surface: "border-rose-400/20 bg-rose-500/10",
+      glow: "shadow-[0_24px_80px_-40px_rgba(244,63,94,0.48)]",
+    },
+    iconName: "layers",
+    version: "0.8.0",
+    lastUpdated: "2024-03-15",
+    complexity: "Intermediate",
+    estimatedTime: "20-40 minutes",
+    requirements: ["Campaign goals", "Target audience data", "Content angle ideas"],
+    roadmap: ["Q2 2024: Template library", "Q3 2024: Team collaboration"],
+  },
+  {
+    id: "shot-planner",
+    title: "Shot Planner",
+    description:
+      "Plan photography direction with scene notes, subject intent, visual references, and production checklists.",
+    link: "/toolkit/shot-planner",
+    status: "coming-soon",
+    category: "Photography",
+    headline: "Organize visual sessions with a clearer bridge between concept, execution, and output.",
+    detail:
+      "Shot Planner is a future toolkit for photographers and visual creators who need a compact pre-production workflow. It is intended to capture scene concepts, subject notes, reference direction, shot priorities, and logistics so sessions move with less friction.",
+    features: [
+      "Shot list planning with creative priorities",
+      "Reference and production note organization",
+      "Useful for portraits, editorial, and product sessions",
+      "Keeps concept and logistics in one place",
+    ],
+    idealFor: [
+      "Photographers preparing client shoots",
+      "Creative directors building shot direction",
+      "Visual teams managing compact productions",
+    ],
+    outputs: [
+      "Session shot list",
+      "Concept and reference summary",
+      "Pre-production checklist",
+    ],
+    availabilityLabel: "In roadmap",
+    ctaLabel: "Track release plan",
+    theme: {
+      accent: "from-cyan-500/30 via-blue-400/10 to-transparent",
+      surface: "border-cyan-400/20 bg-cyan-500/10",
+      glow: "shadow-[0_24px_80px_-40px_rgba(34,211,238,0.5)]",
+    },
+    iconName: "camera",
+    version: "0.7.0",
+    lastUpdated: "2024-03-10",
+    complexity: "Intermediate",
+    estimatedTime: "45-60 minutes",
+    requirements: ["Shot list references", "Location details", "Equipment list", "Model/subject info"],
+    roadmap: ["Q2 2024: Mobile app preview", "Q3 2024: Full release"],
+  },
+  {
+    id: "portfolio-copy-lab",
+    title: "Portfolio Copy Lab",
+    description:
+      "Refine portfolio messaging with stronger project framing, clearer service language, and sharper positioning.",
+    link: "/toolkit/portfolio-copy-lab",
+    status: "coming-soon",
+    category: "Career",
+    headline: "Upgrade how your work reads, not just how it looks.",
+    detail:
+      "Portfolio Copy Lab is planned to help creatives clarify what they did, why it mattered, and how the work should be understood by recruiters or clients. It focuses on the narrative layer that often makes a portfolio feel more strategic and credible.",
+    features: [
+      "Guided copy prompts for project context and impact",
+      "Sharper service and capability positioning",
+      "Useful for portfolios, case studies, and profile pages",
+      "Supports stronger storytelling around outcomes",
+    ],
+    idealFor: [
+      "Designers and developers improving case studies",
+      "Freelancers refining service positioning",
+      "Job seekers strengthening project narratives",
+    ],
+    outputs: [
+      "Project story draft",
+      "Positioning and service copy",
+      "Stronger portfolio content outline",
+    ],
+    availabilityLabel: "In roadmap",
+    ctaLabel: "See roadmap value",
+    theme: {
+      accent: "from-indigo-500/30 via-blue-400/10 to-transparent",
+      surface: "border-indigo-400/20 bg-indigo-500/10",
+      glow: "shadow-[0_24px_80px_-40px_rgba(99,102,241,0.5)]",
+    },
+    iconName: "spark-grid",
+    version: "0.6.0",
+    lastUpdated: "2024-02-28",
+    complexity: "Beginner",
+    estimatedTime: "20-30 minutes",
+    requirements: ["Project details", "Outcome metrics", "Client testimonials"],
+    roadmap: ["Q3 2024: AI-assisted copy suggestions", "Q4 2024: Integration with portfolio templates"],
+  },
 ];
+
+export const TOOLKIT_CATEGORIES = [
+  "All",
+  ...Array.from(new Set(TOOLKIT_DB.map((toolkit) => toolkit.category))),
+];
+
+export const TOOLKIT_STATUS_LABELS = {
+  active: "Available now",
+  "coming-soon": "Coming soon",
+};
+
+export const toolkitDB = TOOLKIT_DB;
+export const toolkits = TOOLKIT_DB;
+export const toolkitCategories = TOOLKIT_CATEGORIES;
+export const toolkitStatusLabels = TOOLKIT_STATUS_LABELS;
+export const getToolkitById = (id) => TOOLKIT_DB.find((toolkit) => toolkit.id === id) || null;
+
+export default TOOLKIT_DB;
