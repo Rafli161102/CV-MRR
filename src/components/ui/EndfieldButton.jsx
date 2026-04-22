@@ -1,11 +1,14 @@
 /**
  * ============================================================================
- * EndfieldButton Component
+ * EndfieldButton - Sci-Fi Brutalist Button
  * ============================================================================
- * Button dengan gaya Sci-Fi Brutalist - Flat, Sharp, Glow on hover
- * No rounded corners, flat design with tactical accent border
+ * Flat, sharp button dengan glow effect.
  * ============================================================================
  */
+
+'use client';
+
+import React from 'react';
 
 export default function EndfieldButton({
   children,

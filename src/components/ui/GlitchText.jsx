@@ -7,6 +7,8 @@
  * ============================================================================
  */
 
+'use client';
+
 export default function GlitchText({
   text,
   as: Component = 'span',
