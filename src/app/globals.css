@@ -5,268 +5,389 @@
 /* stylelint-enable at-rule-no-unknown */
 
 /* ==========================================================================
-   1. CUSTOM UTILITIES - Apple Style Dynamic Animations
+   ENDFIELD BRUTALIST - SCI-FI INDUSTRIAL THEME
+   Arknights Endfield Style - Flat, Sharp, Technical
    ========================================================================== */
-@layer utilities {
-  /* Apple-style spring animations */
-  .anim-fade-in-up, .reveal {
-    animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    opacity: 0;
-  }
 
-  /* Smooth floating animation */
-  .anim-float {
-    animation: float 6s ease-in-out infinite;
-  }
+/* ==========================================================================
+   1. CSS VARIABLES (DYNAMIC THEME FOR VISUAL CMS)
+   ========================================================================== */
+:root {
+  /* Core Backgrounds */
+  --color-bg: #050505;
+  --color-surface: #0a0a0a;
+  --color-panel: #121212;
+  --color-elevated: #1a1a1a;
+  --color-overlay: rgba(5, 5, 5, 0.95);
+  
+  /* Accent - Tactical Orange (Changeable via CMS) */
+  --color-accent: #ff4500;
+  --color-accent-hover: #ff6b35;
+  --color-accent-glow: rgba(255, 69, 0, 0.4);
+  
+  /* Text Colors */
+  --color-text: #ffffff;
+  --color-text-muted: #a0a0a0;
+  --color-text-dark: #6b6b6b;
+  
+  /* Borders */
+  --color-border: #2a2a2a;
+  --color-border-active: #3a3a3a;
+  --color-hud-line: rgba(255, 69, 0, 0.3);
+  
+  /* Status */
+  --color-success: #22c55e;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  --color-info: #3b82f6;
+  
+  /* Typography Scale */
+  --font-sans: 'Space Grotesk', 'Orbitron', 'Inter', system-ui, sans-serif;
+  --font-display: 'Orbitron', 'Space Grotesk', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Chivo Mono', 'Fira Code', monospace;
+  --font-hud: 'Chivo Mono', 'JetBrains Mono', monospace;
+  
+  /* Spacing */
+  --panel-padding: 1.5rem;
+  --panel-padding-sm: 1rem;
+  --panel-padding-lg: 2rem;
+  --hud-gap: 0.5rem;
+  
+  /* Transitions */
+  --transition-fast: 150ms ease-out;
+  --transition-base: 250ms ease-out;
+  --transition-slow: 400ms ease-out;
+}
 
-  /* Apple-style scale spring */
-  .anim-scale-spring {
-    animation: scaleSpring 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+/* ==========================================================================
+   2. BASE STYLES
+   ========================================================================== */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-sans);
   }
-
-  /* Smooth blur fade in */
-  .anim-blur-in {
-    animation: blurIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    font-feature-settings: "liga" 1, "calt" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    
+    /* Technical grid overlay */
+    background-image: 
+      linear-gradient(rgba(255, 69, 0, 0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 69, 0, 0.02) 1px, transparent 1px);
+    background-size: 50px 50px;
   }
-
-  /* Slide in from left */
-  .anim-slide-left {
-    animation: slideLeft 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    opacity: 0;
+  
+  /* Selection - High contrast accent */
+  ::selection {
+    background-color: var(--color-accent);
+    color: var(--color-bg);
   }
-
-  /* Slide in from right */
-  .anim-slide-right {
-    animation: slideRight 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    opacity: 0;
+  
+  /* Scrollbar - Technical narrow style */
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
   }
-
-  /* Elastic bounce for interactive elements */
-  .anim-bounce-soft {
-    animation: bounceSoft 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+  
+  ::-webkit-scrollbar-track {
+    background: var(--color-surface);
   }
-
-  /* Shimmer gradient effect */
-  .anim-shimmer {
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-    background-size: 200% 100%;
-    animation: shimmer 2s infinite;
+  
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 0;
   }
-
-  /* Pulse glow for accents */
-  .anim-pulse-glow {
-    animation: pulseGlow 2s ease-in-out infinite;
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-accent);
   }
-
-  /* Typing cursor effect */
-  .anim-type {
-    animation: typing 0.8s steps(20) forwards;
-    overflow: hidden;
-    white-space: nowrap;
-  }
-
-  /* Stagger delays - Apple style timing */
-  .anim-delay-100, .stagger-1 { animation-delay: 100ms; }
-  .anim-delay-200, .stagger-2 { animation-delay: 200ms; }
-  .anim-delay-300, .stagger-3 { animation-delay: 300ms; }
-  .anim-delay-400, .stagger-4 { animation-delay: 400ms; }
-  .anim-delay-500, .stagger-5 { animation-delay: 500ms; }
-  .stagger-6 { animation-delay: 600ms; }
-  .stagger-7 { animation-delay: 700ms; }
-  .stagger-8 { animation-delay: 800ms; }
-
-  /* Glass morphism utilities */
-  .glass {
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-  }
-
-  .glass-strong {
-    background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(30px) saturate(200%);
-    -webkit-backdrop-filter: blur(30px) saturate(200%);
-  }
-
-  /* Apple-style hover lift */
-  .hover-lift {
-    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
-  }
-  .hover-lift:hover {
-    transform: translateY(-4px);
-  }
-
-  /* Smooth scrollbar */
-  .scrollbar-smooth {
-    scrollbar-width: thin;
-    scrollbar-color: rgba(255,255,255,0.2) transparent;
-  }
-  .scrollbar-smooth::-webkit-scrollbar {
-    width: 6px;
-  }
-  .scrollbar-smooth::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  .scrollbar-smooth::-webkit-scrollbar-thumb {
-    background: rgba(255,255,255,0.2);
-    border-radius: 3px;
+  
+  /* Focus styles - Sharp outline */
+  :focus-visible {
+    outline: 1px solid var(--color-accent);
+    outline-offset: 2px;
   }
 }
 
 /* ==========================================================================
-   2. KEYFRAMES (Rumus Pergerakan Matematika Animasi)
+   3. ENDFIELD UTILITY CLASSES
    ========================================================================== */
-@keyframes fadeInUp {
-  0% {
-    opacity: 0;
-    transform: translateY(30px) scale(0.95);
-    filter: blur(4px);
+@layer utilities {
+  
+  /* ============================================
+     CLIP-PATH BEVELED (Panel HUD Effect)
+     ============================================ */
+  .clip-beveled {
+    clip-path: polygon(
+      10px 0, 
+      100% 0, 
+      100% calc(100% - 10px), 
+      calc(100% - 10px) 100%, 
+      0 100%, 
+      0 10px
+    );
   }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-    filter: blur(0);
+  
+  .clip-beveled-sm {
+    clip-path: polygon(
+      5px 0, 
+      100% 0, 
+      100% calc(100% - 5px), 
+      calc(100% - 5px) 100%, 
+      0 100%, 
+      0 5px
+    );
+  }
+  
+  .clip-beveled-lg {
+    clip-path: polygon(
+      20px 0, 
+      100% 0, 
+      100% calc(100% - 20px), 
+      calc(100% - 20px) 100%, 
+      0 100%, 
+      0 20px
+    );
+  }
+  
+  /* Inverse bevel (top-right and bottom-left) */
+  .clip-beveled-inverse {
+    clip-path: polygon(
+      0 0, 
+      calc(100% - 10px) 0, 
+      100% 10px, 
+      100% 100%, 
+      10px 100%, 
+      0 calc(100% - 10px)
+    );
+  }
+  
+  /* ============================================
+     HUD BORDERS
+     ============================================ */
+  .border-hud {
+    border: 1px solid var(--color-border);
+  }
+  
+  .border-hud-accent {
+    border: 1px solid var(--color-accent);
+  }
+  
+  .border-hud-left {
+    border-left: 2px solid var(--color-accent);
+  }
+  
+  .border-hud-bottom {
+    border-bottom: 1px solid var(--color-border);
+  }
+  
+  /* Technical corner markers */
+  .corner-brackets {
+    position: relative;
+  }
+  
+  .corner-brackets::before,
+  .corner-brackets::after {
+    content: '';
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-color: var(--color-accent);
+    border-style: solid;
+    transition: all var(--transition-fast);
+  }
+  
+  .corner-brackets::before {
+    top: 0;
+    left: 0;
+    border-width: 2px 0 0 2px;
+  }
+  
+  .corner-brackets::after {
+    bottom: 0;
+    right: 0;
+    border-width: 0 2px 2px 0;
+  }
+  
+  /* ============================================
+     TEXT STYLES
+     ============================================ */
+  .text-hud {
+    font-family: var(--font-hud);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  
+  .text-tech {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+  }
+  
+  .text-display {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  
+  /* Scanline text effect */
+  .text-scanline {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .text-scanline::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      var(--color-accent),
+      transparent
+    );
+    animation: scanlineMove 3s ease-in-out infinite;
+  }
+  
+  /* ============================================
+     GLOW EFFECTS (Flat - No Shadows)
+     ============================================ */
+  .glow-accent {
+    box-shadow: 0 0 0 1px var(--color-accent-glow);
+  }
+  
+  .glow-accent-hover:hover {
+    box-shadow: 0 0 0 1px var(--color-accent), 0 0 20px var(--color-accent-glow);
+  }
+  
+  .glow-text {
+    text-shadow: 0 0 10px var(--color-accent-glow);
+  }
+  
+  /* ============================================
+     TECHNICAL BACKGROUNDS
+     ============================================ */
+  .bg-panel {
+    background-color: var(--color-panel);
+  }
+  
+  .bg-surface {
+    background-color: var(--color-surface);
+  }
+  
+  .bg-grid {
+    background-image: 
+      linear-gradient(rgba(255, 69, 0, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 69, 0, 0.03) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+  
+  .bg-scanlines {
+    background-image: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 0, 0, 0.1) 2px,
+      rgba(0, 0, 0, 0.1) 4px
+    );
+  }
+  
+  /* ============================================
+     STATUS INDICATORS
+     ============================================ */
+  .status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 0;
+    display: inline-block;
+  }
+  
+  .status-dot::before {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 100%;
+    background-color: currentColor;
+    animation: pulseHud 2s ease-in-out infinite;
+  }
+  
+  /* ============================================
+     ANIMATIONS
+     ============================================ */
+  .anim-glitch {
+    animation: glitch 0.3s ease-in-out;
+  }
+  
+  .anim-flicker {
+    animation: flicker 3s linear infinite;
+  }
+  
+  .anim-scan {
+    animation: scan 4s linear infinite;
+  }
+  
+  .anim-pulse-hud {
+    animation: pulseHud 2s ease-in-out infinite;
   }
 }
 
-@keyframes float {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  25% { transform: translateY(-8px) rotate(0.5deg); }
-  50% { transform: translateY(-15px) rotate(0deg); }
-  75% { transform: translateY(-8px) rotate(-0.5deg); }
+/* ==========================================================================
+   4. KEYFRAMES
+   ========================================================================== */
+@keyframes glitch {
+  0%, 100% { transform: translate(0); }
+  20% { transform: translate(-2px, 2px); }
+  40% { transform: translate(-2px, -2px); }
+  60% { transform: translate(2px, 2px); }
+  80% { transform: translate(2px, -2px); }
 }
 
-@keyframes scaleSpring {
-  0% {
-    opacity: 0;
-    transform: scale(0.8);
-  }
-  60% {
-    transform: scale(1.02);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+  52% { opacity: 0.4; }
+  54% { opacity: 1; }
 }
 
-@keyframes blurIn {
-  0% {
-    opacity: 0;
-    filter: blur(20px);
-    transform: scale(1.1);
-  }
-  100% {
-    opacity: 1;
-    filter: blur(0);
-    transform: scale(1);
-  }
+@keyframes scan {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
 }
 
-@keyframes slideLeft {
-  0% {
-    opacity: 0;
-    transform: translateX(-50px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateX(0);
-  }
+@keyframes pulseHud {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
 }
 
-@keyframes slideRight {
-  0% {
-    opacity: 0;
-    transform: translateX(50px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateX(0);
-  }
+@keyframes scanlineMove {
+  0%, 100% { top: 0; opacity: 0; }
+  50% { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
 }
 
-@keyframes bounceSoft {
-  0% { transform: scale(1); }
-  30% { transform: scale(0.95); }
-  50% { transform: scale(1.02); }
-  70% { transform: scale(0.98); }
-  100% { transform: scale(1); }
-}
-
-@keyframes shimmer {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
-}
-
-@keyframes pulseGlow {
-  0%, 100% {
-    box-shadow: 0 0 20px rgba(103, 232, 249, 0.3);
-  }
-  50% {
-    box-shadow: 0 0 40px rgba(103, 232, 249, 0.5);
-  }
-}
-
-@keyframes typing {
-  from { width: 0; }
-  to { width: 100%; }
-}
-
-/* Magnetic button effect */
-@keyframes magnetic {
-  0% { transform: translate(0, 0); }
-  25% { transform: translate(2px, -2px); }
-  50% { transform: translate(-2px, 2px); }
-  75% { transform: translate(2px, 2px); }
-  100% { transform: translate(0, 0); }
-}
-
-/* ========================================================= */
-/* 3. PWA NATIVE APP DETECTOR (CLIENT-SIDE) */
-/* ========================================================= */
-
-/* Secara bawaan (di Browser web), sembunyikan semua elemen khusus PWA/Aplikasi */
+/* ==========================================================================
+   5. PWA NATIVE APP DETECTOR
+   ========================================================================== */
 .show-in-pwa {
   display: none !important;
 }
 
-/* Jika dibuka dari ikon Aplikasi di Layar HP (Mode Standalone) */
 @media (display-mode: standalone) {
-  
-  /* Sembunyikan elemen bawaan web (seperti Navbar Atas & Footer Portofolio Besar) */
   .hide-in-pwa {
     display: none !important;
   }
   
-  /* Munculkan elemen khusus aplikasi (seperti Bottom Navigasi Mobile) */
-  /* MENGGUNAKAN BLOCK AGAR TIDAK GEPENG */
   .show-in-pwa {
     display: block !important;
   }
-}
-
-/* ========================================================= */
-/* 4. ANIMASI ESTETIK ALA APLIKASI NATIVE (CUSTOM TAILWIND) */
-/* ========================================================= */
-
-/* Animasi Slide Up saat Navigasi Terbuka (Slide dari Bawah) */
-@keyframes navSlideUp {
-  0% { transform: translateY(100%); opacity: 0; }
-  100% { transform: translateY(0); opacity: 1; }
-}
-
-/* Animasi Pulse Glow (Denyut) untuk Tombol Tengah Utama */
-@keyframes navPulseGlow {
-  0% { transform: scale(1); opacity: 0.15; filter: blur(20px); }
-  50% { transform: scale(1.1); opacity: 0.25; filter: blur(25px); }
-  100% { transform: scale(1); opacity: 0.15; filter: blur(20px); }
-}
-
-/* Terapkan animasi di Tailwind utilities */
-.animate-nav-slide-up {
-  animation: navSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-.animate-nav-pulse {
-  animation: navPulseGlow 2.5s ease-in-out infinite;
 }

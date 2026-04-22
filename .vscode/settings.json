@@ -15,5 +15,9 @@
     "**/.next/*/**": true
   },
   "typescript.surveys.enabled": false,
-  "js/ts.validate.enabled": false
+  "js/ts.validate.enabled": false,
+  
+  "css.validate": false,
+  "scss.validate": false,
+  "less.validate": false
 }
