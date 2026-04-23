@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { signIn } from 'next-auth/react';
 import { 
   Lock, 
   User, 
@@ -16,6 +17,7 @@ import {
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [username, setUsername] = useState('');
@@ -23,11 +25,12 @@ export default function LoginPage() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    const savedToken = localStorage.getItem('cms_token');
-    if (savedToken) {
-      router.push('/admin');
+    // Check for error in URL (from NextAuth)
+    const errorParam = searchParams.get('error');
+    if (errorParam) {
+      setError(errorParam === 'CredentialsSignin' ? 'Invalid username or password' : 'Authentication failed');
     }
-  }, [router]);
+  }, [searchParams]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -35,23 +38,23 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      const response = await fetch('/api/cms/auth', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'login', username, password })
+      const result = await signIn('credentials', {
+        username,
+        password,
+        redirect: false,
+        callbackUrl: '/admin'
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        setError(data.error || 'Login failed');
+      if (result?.error) {
+        setError('Invalid username or password');
         setIsLoading(false);
         return;
       }
 
-      localStorage.setItem('cms_token', data.token);
-      localStorage.setItem('cms_user', data.user.username);
-      router.push('/admin');
+      if (result?.ok) {
+        router.push('/admin');
+        router.refresh();
+      }
     } catch (err) {
       setError('An error occurred during login');
       setIsLoading(false);
