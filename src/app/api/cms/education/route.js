@@ -1,4 +1,5 @@
-const { getDB } = require('@/lib/db');
+// DEPRECATED: Migrated to MongoDB. This route is disabled.
+// const { getDB } = require('@/lib/db');
 const { getTokenFromHeaders, verifyToken } = require('@/lib/auth');
 
 function requireAuth(headers) {
@@ -8,13 +9,10 @@ function requireAuth(headers) {
 }
 
 export async function GET() {
-  try {
-    const db = getDB();
-    const items = db.prepare('SELECT * FROM education ORDER BY rowid DESC').all();
-    return Response.json(items);
-  } catch (error) {
-    return Response.json({ error: error.message }, { status: 500 });
-  }
+  return Response.json({ 
+    error: 'Deprecated: Use /api/seed or MongoDB routes',
+    redirect: '/api/seed'
+  }, { status: 410 });
 }
 
 export async function POST(request) {
