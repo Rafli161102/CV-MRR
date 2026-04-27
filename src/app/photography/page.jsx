@@ -96,11 +96,11 @@ export default function PhotographyPage() {
   const remainingPhotos = Math.max(photos.length - visiblePhotos.length, 0);
 
   return (
-    <main className="min-h-screen bg-slate-950 text-white">
+    <main className="min-h-screen bg-black text-white">
       <section className="border-b border-white/10">
         <div className="mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[1.618fr_1fr] lg:items-end lg:px-8 lg:py-24">
           <div className="max-w-3xl">
-            <p className="text-xs uppercase tracking-[0.32em] text-cyan-300/70">
+            <p className="text-xs uppercase tracking-[0.32em] text-[#fffa00]/70">
               Photography Archive
             </p>
             <h1 className="mt-5 text-4xl font-semibold tracking-tight text-white sm:text-5xl lg:text-6xl">

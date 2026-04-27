@@ -65,18 +65,18 @@ export default function LoginPage() {
   const inputClasses = `
     w-full px-4 py-3.5 bg-white/5 border border-white/10 rounded-xl
     text-white placeholder-white/30 
-    focus:outline-none focus:border-cyan-500/50 focus:bg-white/10
-    focus:ring-2 focus:ring-cyan-500/20
+    focus:outline-none focus:border-[#fffa00]/50 focus:bg-white/10
+    focus:ring-2 focus:ring-[#fffa00]/20
     transition-all duration-300
   `;
 
   return (
-    <div className="min-h-screen bg-[#050816] flex items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen bg-black flex items-center justify-center p-4 relative overflow-hidden">
       {/* Background Effects */}
       <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-[-20%] left-[-10%] w-[60vw] h-[60vw] rounded-full bg-gradient-to-br from-cyan-500/10 to-blue-600/5 blur-[120px]" />
-        <div className="absolute bottom-[-20%] right-[-10%] w-[50vw] h-[50vw] rounded-full bg-gradient-to-br from-violet-500/10 to-fuchsia-500/5 blur-[120px]" />
-        <div className="absolute top-[40%] left-[30%] w-[30vw] h-[30vw] rounded-full bg-gradient-to-br from-emerald-500/5 to-cyan-500/5 blur-[100px]" />
+        <div className="absolute top-[-20%] left-[-10%] w-[60vw] h-[60vw] bg-[#fffa00]/5 blur-[120px]" />
+        <div className="absolute bottom-[-20%] right-[-10%] w-[50vw] h-[50vw] bg-[#fffa00]/5 blur-[120px]" />
+        <div className="absolute top-[40%] left-[30%] w-[30vw] h-[30vw] bg-white/5 blur-[100px]" />
       </div>
 
       {/* Grid Pattern */}
@@ -93,15 +93,15 @@ export default function LoginPage() {
         {/* Card with Golden Ratio proportions */}
         <div className="relative">
           {/* Glow Effect */}
-          <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500/20 via-violet-500/20 to-cyan-500/20 rounded-[2rem] blur-xl opacity-60" />
-          
+          <div className="absolute -inset-1 bg-[#fffa00]/10 rounded-[2rem] blur-xl opacity-60" />
+
           <div className="relative bg-gradient-to-b from-white/[0.08] to-white/[0.02] backdrop-blur-2xl rounded-[2rem] border border-white/10 overflow-hidden">
             {/* Header Section - Golden Ratio: 61.8% content, 38.2% visual */}
             <div className="p-8 pb-6">
               <div className="flex items-center gap-3 mb-8">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-violet-500/20 
+                <div className="w-12 h-12 rounded-2xl bg-[#fffa00]/10
                                 border border-white/10 flex items-center justify-center">
-                  <Shield className="w-6 h-6 text-cyan-400" />
+                  <Shield className="w-6 h-6 text-[#fffa00]" />
                 </div>
                 <div>
                   <h1 className="text-2xl font-bold text-white">MRR CMS</h1>
@@ -167,10 +167,10 @@ export default function LoginPage() {
                   type="submit"
                   disabled={isLoading}
                   className="w-full mt-8 group relative overflow-hidden rounded-xl 
-                           bg-gradient-to-r from-cyan-500 to-violet-500
-                           px-6 py-4 font-semibold text-white
-                           transition-all duration-300 
-                           hover:shadow-[0_0_40px_-10px_rgba(6,182,212,0.5)]
+                           bg-[#fffa00]
+                           px-6 py-4 font-semibold text-black
+                           transition-all duration-300
+                           hover:shadow-[0_0_40px_-10px_rgba(255,250,0,0.5)]
                            disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <span className="relative z-10 flex items-center justify-center gap-2">
@@ -186,7 +186,7 @@ export default function LoginPage() {
                       </>
                     )}
                   </span>
-                  <div className="absolute inset-0 bg-gradient-to-r from-violet-500 to-cyan-500 
+                  <div className="absolute inset-0 bg-[#fff500]
                                 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 </button>
               </form>
@@ -197,7 +197,7 @@ export default function LoginPage() {
               <div className="flex items-center justify-between text-xs">
                 <Link 
                   href="/"
-                  className="text-white/40 hover:text-cyan-400 transition-colors flex items-center gap-1"
+                  className="text-white/40 hover:text-[#fffa00] transition-colors flex items-center gap-1"
                 >
                   <ArrowRight className="w-3 h-3 rotate-180" />
                   Back to Home

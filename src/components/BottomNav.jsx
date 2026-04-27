@@ -9,14 +9,14 @@ export default function BottomNav() {
 
   const getIconClass = (href) => {
     return pathname === href
-      ? "text-cyan-400 scale-110 transition-transform duration-300 drop-shadow-[0_0_8px_rgba(6,182,212,0.8)]"
-      : "text-slate-500 group-hover:text-white transition-all duration-300";
+      ? "text-[#fffa00] scale-110 transition-transform duration-300 drop-shadow-[0_0_8px_rgba(255,250,0,0.8)]"
+      : "text-[#666] group-hover:text-white transition-all duration-300";
   };
 
   const getLabelClass = (href) => {
     return pathname === href
-      ? "text-[9px] font-black tracking-[0.2em] uppercase text-cyan-400 mt-1.5 transition-all"
-      : "text-[9px] font-bold tracking-[0.2em] uppercase text-slate-600 mt-1.5 group-hover:text-slate-300 transition-all";
+      ? "text-[9px] font-black tracking-[0.2em] uppercase text-[#fffa00] mt-1.5 transition-all"
+      : "text-[9px] font-bold tracking-[0.2em] uppercase text-[#444] mt-1.5 group-hover:text-[#888] transition-all";
   };
 
   return (
@@ -27,7 +27,7 @@ export default function BottomNav() {
       <div className="w-full bg-[#03060a]/95 backdrop-blur-2xl border-t border-white/10 pb-[env(safe-area-inset-bottom)] shadow-[0_-15px_40px_rgba(0,0,0,0.8)] relative">
         
         {/* Decorative Top Accent */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-[1px] bg-gradient-to-r from-transparent via-cyan-400 to-transparent"></div>
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-[1px] bg-gradient-to-r from-transparent via-[#fffa00] to-transparent"></div>
 
         {/* FIX 2: justify-center + w-full untuk menjamin semua elemen tertata rata tengah */}
         <div className="flex w-full justify-center items-end h-[68px] max-w-md mx-auto pb-1.5 px-2">
@@ -42,20 +42,20 @@ export default function BottomNav() {
           <Link href="/css-studio" className="group flex-1 flex flex-col items-center justify-end h-full relative scale-100 active:scale-95 transition-all duration-300 touch-manipulation">
             
             {/* FIX 3: Tambahkan left-1/2 -translate-x-1/2 agar posisinya PASTI tepat di tengah mutlak! */}
-            <div className={`absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full blur-[15px] w-12 h-12 -z-10 transition-opacity duration-500 ${pathname === '/css-studio' ? 'bg-cyan-500 opacity-30 animate-pulse' : 'bg-transparent opacity-0'}`}></div>
+            <div className={`absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full blur-[15px] w-12 h-12 -z-10 transition-opacity duration-500 ${pathname === '/css-studio' ? 'bg-[#fffa00] opacity-30 animate-pulse' : 'bg-transparent opacity-0'}`}></div>
 
             {/* FIX 3: Tambahkan left-1/2 -translate-x-1/2 di sini juga */}
             <div className={`flex items-center justify-center w-[52px] h-[52px] absolute bottom-6 left-1/2 -translate-x-1/2 z-10 transition-all duration-300 ${
-              pathname === '/css-studio' 
-              ? 'bg-cyan-400 text-black shadow-[0_0_20px_rgba(6,182,212,0.5)]' 
-              : 'bg-[#0f172a] text-cyan-400 border border-cyan-500/50 group-hover:bg-cyan-950'
+              pathname === '/css-studio'
+              ? 'bg-[#fffa00] text-black shadow-[0_0_20px_rgba(255,250,0,0.5)]'
+              : 'bg-[#0a0a0a] text-[#fffa00] border border-[#fffa00]/50 group-hover:bg-[#121212]'
             }`}
             style={{ clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)' }}
             >
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M14.25 9.75L16.5 12l-2.25 2.25m-4.5 0L7.5 12l2.25-2.25M6 20.25h12A2.25 2.25 0 0020.25 18V6A2.25 2.25 0 0018 3.75H6A2.25 2.25 0 003.75 6v12A2.25 2.25 0 006 20.25z" /></svg>
             </div>
             
-            <span className={pathname === "/css-studio" ? "text-[10px] font-black tracking-[0.2em] uppercase text-cyan-400 mt-2 z-10" : "text-[9px] font-bold tracking-[0.2em] uppercase text-slate-500 mt-2 z-10 group-hover:text-cyan-400"}>
+            <span className={pathname === "/css-studio" ? "text-[10px] font-black tracking-[0.2em] uppercase text-[#fffa00] mt-2 z-10" : "text-[9px] font-bold tracking-[0.2em] uppercase text-[#666] mt-2 z-10 group-hover:text-[#fffa00]"}>
               ENGINE
             </span>
           </Link>

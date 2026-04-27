@@ -41,7 +41,7 @@ export default function EndfieldButton({
       border-endfieldAccent
       hover:bg-endfieldAccent
       hover:text-endfieldBg
-      hover:shadow-[0_0_15px_rgba(255,69,0,0.5)]
+      hover:shadow-[0_0_15px_rgba(255,250,0,0.5)]
       active:bg-endfieldAccentHover
     `,
     secondary: `
