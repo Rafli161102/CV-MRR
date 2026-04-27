@@ -166,112 +166,126 @@ function TerminalBoot() {
 }
 
 // ============================================================================
-// HERO SECTION
+// HERO SECTION - Endfield Style
 // ============================================================================
 function HeroSection() {
   return (
-    <section className="min-h-screen flex flex-col justify-center items-center relative px-4 py-32">
+    <section className="min-h-screen flex flex-col justify-center items-center relative px-4 py-32 overflow-hidden">
       {/* Background Grid Effect */}
-      <div className="absolute inset-0 bg-grid opacity-30 pointer-events-none" />
-      
-      {/* Terminal Boot Sequence */}
-      <div className="mb-12">
-        <TerminalBoot />
+      <div className="absolute inset-0 bg-grid opacity-20 pointer-events-none" />
+
+      {/* Decorative Lines - Endfield Style */}
+      <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+      <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#fffa00]/30 to-transparent" />
+
+      {/* Main Title - Large Bold Endfield Style */}
+      <div className="text-center mb-8 relative z-10">
+        <h1 className="text-7xl md:text-9xl lg:text-[12rem] font-black text-white tracking-tighter leading-none uppercase">
+          RAFLI
+        </h1>
+        <div className="h-4" />
+        <div className="flex items-center justify-center gap-4">
+          <div className="w-12 h-[2px] bg-[#fffa00]" />
+          <h2 className="font-mono text-sm md:text-base text-[#888] tracking-[0.3em] uppercase">
+            {OWNER_DATA.title}
+          </h2>
+          <div className="w-12 h-[2px] bg-[#fffa00]" />
+        </div>
       </div>
-      
-      {/* Main Title with Glitch Effect */}
-      <div className="text-center mb-8">
-        <GlitchText 
-          text="RAFLI" 
-          className="text-6xl md:text-8xl lg:text-9xl tracking-tighter"
-        />
-        <div className="h-2" />
-        <h2 className="font-mono text-lg md:text-xl text-endfieldTextMuted tracking-widest">
-          {OWNER_DATA.title}
-        </h2>
-      </div>
-      
-      {/* Accent Line */}
-      <div className="w-32 h-[2px] bg-endfieldAccent mb-12" />
-      
+
+      {/* Accent Bar - Endfield Style */}
+      <div className="w-64 h-1 bg-[#fffa00] mb-12" />
+
+      {/* Subtitle */}
+      <p className="text-center text-[#888] text-sm md:text-base max-w-lg mb-12 font-mono uppercase tracking-wider">
+        Graphic Designer & Community Founder
+        <br />
+        <span className="text-[#fffa00]">Melintasi Perbatasan, ke Garis Depan</span>
+      </p>
+
       {/* Action Buttons */}
       <div className="flex flex-col sm:flex-row gap-4">
         <Link href="/projects">
           <EndfieldButton variant="primary" size="lg">
-            // VIEW_ARSENAL
+            VIEW ARSENAL
           </EndfieldButton>
         </Link>
         <Link href="/contact">
           <EndfieldButton variant="secondary" size="lg">
-            // INITIATE_CONTACT
+            INITIATE CONTACT
           </EndfieldButton>
         </Link>
       </div>
-      
-      {/* Scroll Indicator */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 font-mono text-xs text-endfieldTextMuted animate-pulse">
-        <span className="block text-center mb-2">[ SCROLL ]</span>
-        <div className="w-[1px] h-8 bg-endfieldBorder mx-auto" />
+
+      {/* Scroll Indicator - Endfield Style */}
+      <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
+        <span className="font-mono text-[10px] text-[#666] tracking-[0.3em] uppercase">Scroll</span>
+        <div className="w-[1px] h-8 bg-gradient-to-b from-[#fffa00] to-transparent" />
       </div>
     </section>
   );
 }
 
 // ============================================================================
-// BIOGRAPHY SECTION
+// BIOGRAPHY SECTION - Endfield Style
 // ============================================================================
 function BiographySection() {
   return (
     <section className="py-32 px-4 md:px-8 lg:px-16">
       <div className="max-w-4xl mx-auto">
-        {/* Section Header */}
-        <div className="mb-12">
-          <span className="font-mono text-xs text-endfieldAccent tracking-widest">
-            // BIOGRAPHY_LOG
+        {/* Section Header - Endfield Bold */}
+        <div className="mb-16">
+          <div className="flex items-center gap-4 mb-4">
+            <div className="w-2 h-12 bg-[#fffa00]" />
+            <h2 className="text-4xl md:text-5xl font-black text-white uppercase tracking-tight">
+              Biography
+            </h2>
+          </div>
+          <span className="font-mono text-xs text-[#fffa00] tracking-[0.3em] uppercase">
+            BIOGRAPHY_LOG // CLASSIFICATION: PUBLIC
           </span>
-          <div className="w-16 h-[1px] bg-endfieldAccent mt-2" />
         </div>
-        
+
         {/* Bio Content in EndfieldCard */}
         <EndfieldCard variant="elevated" className="relative">
           {/* Timestamp Header */}
-          <div className="flex items-center gap-4 mb-6 pb-4 border-b border-endfieldBorder">
-            <span className="font-mono text-xs text-endfieldTextMuted">
+          <div className="flex items-center gap-4 mb-6 pb-4 border-b border-[#2a2a2a]">
+            <span className="font-mono text-xs text-[#888]">
               TIMESTAMP: {new Date().toISOString().split('T')[0]}
             </span>
-            <span className="font-mono text-xs text-endfieldAccent">
+            <span className="font-mono text-xs text-[#fffa00]">
               CLASSIFICATION: PUBLIC
             </span>
           </div>
-          
+
           {/* Bio Text */}
-          <div className="font-sans text-lg leading-relaxed text-endfieldText whitespace-pre-line mb-8">
+          <div className="font-sans text-lg leading-relaxed text-white whitespace-pre-line mb-8">
             {OWNER_DATA.bio}
           </div>
-          
+
           {/* Arsenal Lists */}
-          <div className="grid md:grid-cols-2 gap-6 pt-6 border-t border-endfieldBorder">
+          <div className="grid md:grid-cols-2 gap-6 pt-6 border-t border-[#2a2a2a]">
             <div>
-              <h4 className="font-mono text-xs text-endfieldAccent mb-3 tracking-widest">
-                // DESIGN_ARSENAL
+              <h4 className="font-mono text-xs text-[#fffa00] mb-3 tracking-[0.3em] uppercase">
+                DESIGN ARSENAL
               </h4>
               <ul className="space-y-1">
                 {OWNER_DATA.designArsenal.map((tool, index) => (
-                  <li key={index} className="font-mono text-sm text-endfieldTextMuted flex items-center gap-2">
-                    <span className="text-endfieldAccent">›</span>
+                  <li key={index} className="font-mono text-sm text-[#888] flex items-center gap-2">
+                    <span className="text-[#fffa00]">›</span>
                     {tool}
                   </li>
                 ))}
               </ul>
             </div>
             <div>
-              <h4 className="font-mono text-xs text-endfieldAccent mb-3 tracking-widest">
-                // COMMUNITY_ARSENAL
+              <h4 className="font-mono text-xs text-[#fffa00] mb-3 tracking-[0.3em] uppercase">
+                COMMUNITY ARSENAL
               </h4>
               <ul className="space-y-1">
                 {OWNER_DATA.communityArsenal.map((skill, index) => (
-                  <li key={index} className="font-mono text-sm text-endfieldTextMuted flex items-center gap-2">
-                    <span className="text-endfieldAccent">›</span>
+                  <li key={index} className="font-mono text-sm text-[#888] flex items-center gap-2">
+                    <span className="text-[#fffa00]">›</span>
                     {skill}
                   </li>
                 ))}
@@ -285,64 +299,69 @@ function BiographySection() {
 }
 
 // ============================================================================
-// CAREER TIMELINE SECTION
+// CAREER TIMELINE SECTION - Endfield Style
 // ============================================================================
 function CareerSection() {
   return (
-    <section className="py-32 px-4 md:px-8 lg:px-16 bg-endfieldSurface">
+    <section className="py-32 px-4 md:px-8 lg:px-16 bg-[#0a0a0a]">
       <div className="max-w-4xl mx-auto">
-        {/* Section Header */}
+        {/* Section Header - Endfield Bold */}
         <div className="mb-16">
-          <span className="font-mono text-xs text-endfieldAccent tracking-widest">
-            // OPERATION_HISTORY
+          <div className="flex items-center gap-4 mb-4">
+            <div className="w-2 h-12 bg-[#fffa00]" />
+            <h2 className="text-4xl md:text-5xl font-black text-white uppercase tracking-tight">
+              Operation History
+            </h2>
+          </div>
+          <span className="font-mono text-xs text-[#fffa00] tracking-[0.3em] uppercase">
+            OPERATION_HISTORY // CAREER TIMELINE
           </span>
-          <div className="w-16 h-[1px] bg-endfieldAccent mt-2" />
         </div>
-        
+
         {/* Timeline */}
         <div className="relative">
           {/* Vertical Timeline Line */}
-          <div className="absolute left-0 md:left-8 top-0 bottom-0 w-[2px] bg-endfieldBorder" />
-          
+          <div className="absolute left-0 md:left-8 top-0 bottom-0 w-[2px] bg-[#2a2a2a]" />
+
           {/* Career Items */}
           <div className="space-y-12">
-            {OWNER_DATA.careerHistory.map((job, index) => (
+            {OWNER_DATA.careerHistory.map((job) => (
               <div key={job.id} className="relative pl-8 md:pl-20">
                 {/* Timeline Node */}
                 <div className={`
-                  absolute left-0 md:left-8 top-0 
+                  absolute left-0 md:left-8 top-0
                   w-3 h-3 -translate-x-[5px]
-                  ${job.isCurrent ? 'bg-endfieldAccent' : 'bg-endfieldBorder'}
+                  ${job.isCurrent ? 'bg-[#fffa00]' : 'bg-[#2a2a2a]'}
                   clip-beveled-sm
                 `} />
-                
+
                 {/* Job Card */}
                 <EndfieldCard variant={job.isCurrent ? 'elevated' : 'default'}>
                   {/* Job Meta */}
                   <div className="flex flex-wrap items-center gap-4 mb-4 text-xs font-mono">
-                    <span className="text-endfieldAccent tracking-wider">
+                    <span className="text-[#fffa00] tracking-wider">
                       {job.period}
                     </span>
-                    <span className="px-2 py-0.5 bg-endfieldSurface text-endfieldTextMuted border border-endfieldBorder">
+                    <span className="px-2 py-0.5 bg-[#0a0a0a] text-[#888] border border-[#2a2a2a]">
                       {job.type}
                     </span>
                     {job.isCurrent && (
-                      <span className="px-2 py-0.5 bg-endfieldAccent/10 text-endfieldAccent border border-endfieldAccent/30">
+                      <span className="px-2 py-0.5 bg-[#fffa00]/10 text-[#fffa00] border border-[#fffa00]/30">
                         ACTIVE
                       </span>
                     )}
                   </div>
-                  
+
                   {/* Job Title */}
-                  <h3 className="font-display text-xl text-endfieldText mb-1">
+                  <h3 className="font-display text-xl text-white mb-1">
                     {job.company}
                   </h3>
-                  <p className="font-mono text-sm text-endfieldAccent mb-3">
+                  <p className="font-mono text-sm text-[#fffa00] mb-3">
                     {job.role}
                   </p>
-                  
+
                   {/* Job Description */}
-                  <p className="font-sans text-sm text-endfieldTextMuted leading-relaxed">
+                  <p className="font-sans text-sm text-[#888] leading-relaxed">
                     {job.description}
                   </p>
                 </EndfieldCard>
@@ -412,76 +431,47 @@ function ProjectGrid({ projects, categoryLabel }) {
 }
 
 // ============================================================================
-// PORTFOLIO SECTION
+// PORTFOLIO SECTION - Endfield Style
 // ============================================================================
 function PortfolioSection() {
   return (
     <section className="py-32 px-4 md:px-8 lg:px-16">
       <div className="max-w-6xl mx-auto">
-        {/* Section Header */}
+        {/* Section Header - Endfield Bold */}
         <div className="mb-16">
-          <span className="font-mono text-xs text-endfieldAccent tracking-widest">
-            // DEPLOYED_PROJECTS
+          <div className="flex items-center gap-4 mb-4">
+            <div className="w-2 h-12 bg-[#fffa00]" />
+            <h2 className="text-4xl md:text-5xl font-black text-white uppercase tracking-tight">
+              Deployed Projects
+            </h2>
+          </div>
+          <span className="font-mono text-xs text-[#fffa00] tracking-[0.3em] uppercase">
+            DEPLOYED_PROJECTS // VISUAL ARCHIVES
           </span>
-          <div className="w-16 h-[1px] bg-endfieldAccent mt-2" />
         </div>
-        
+
         {/* Visual Identity Category */}
-        <ProjectGrid 
-          projects={PROJECTS_VISUAL_IDENTITY} 
-          categoryLabel="VISUAL_IDENTITY / BRANDING"
+        <ProjectGrid
+          projects={PROJECTS_VISUAL_IDENTITY}
+          categoryLabel="VISUAL IDENTITY / BRANDING"
         />
-        
+
         {/* Separator */}
         <div className="my-20 flex items-center gap-4">
-          <div className="flex-1 h-[1px] bg-endfieldBorder" />
-          <span className="font-mono text-xs text-endfieldTextMuted">
-            // CATEGORY_SEPARATION
+          <div className="flex-1 h-[1px] bg-[#2a2a2a]" />
+          <span className="font-mono text-xs text-[#666]">
+            CATEGORY_SEPARATION
           </span>
-          <div className="flex-1 h-[1px] bg-endfieldBorder" />
+          <div className="flex-1 h-[1px] bg-[#2a2a2a]" />
         </div>
-        
+
         {/* UI/UX Category */}
-        <ProjectGrid 
-          projects={PROJECTS_UIUX_DIGITAL} 
-          categoryLabel="UI/UX & DIGITAL_PRODUCT"
+        <ProjectGrid
+          projects={PROJECTS_UIUX_DIGITAL}
+          categoryLabel="UI/UX & DIGITAL PRODUCT"
         />
       </div>
     </section>
-  );
-}
-
-// ============================================================================
-// FOOTER SECTION
-// ============================================================================
-function FooterSection() {
-  return (
-    <footer className="py-16 px-4 md:px-8 lg:px-16 border-t border-endfieldBorder bg-endfieldSurface">
-      <div className="max-w-4xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
-        <div className="font-mono text-xs text-endfieldTextMuted">
-          <span className="text-endfieldAccent">SYSTEM:</span> MRR.PORTFOLIO.v3.0
-        </div>
-        
-        <div className="flex gap-6 font-mono text-xs">
-          <Link href="/about" className="text-endfieldTextMuted hover:text-endfieldAccent transition-colors">
-            // ABOUT
-          </Link>
-          <Link href="/projects" className="text-endfieldTextMuted hover:text-endfieldAccent transition-colors">
-            // PROJECTS
-          </Link>
-          <Link href="/toolkit" className="text-endfieldTextMuted hover:text-endfieldAccent transition-colors">
-            // TOOLKIT
-          </Link>
-          <Link href="/contact" className="text-endfieldTextMuted hover:text-endfieldAccent transition-colors">
-            // CONTACT
-          </Link>
-        </div>
-        
-        <div className="font-mono text-xs text-endfieldTextMuted">
-          © 2024 <span className="text-endfieldText">RAFLI</span>
-        </div>
-      </div>
-    </footer>
   );
 }
 
@@ -490,12 +480,11 @@ function FooterSection() {
 // ============================================================================
 export default function HomePage() {
   return (
-    <main className="min-h-screen bg-endfieldBg text-endfieldText overflow-x-hidden">
+    <main className="min-h-screen bg-black text-white overflow-x-hidden">
       <HeroSection />
       <BiographySection />
       <CareerSection />
       <PortfolioSection />
-      <FooterSection />
     </main>
   );
 }

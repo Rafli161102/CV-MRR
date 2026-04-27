@@ -18,25 +18,27 @@ module.exports = {
         endfieldElevated: '#1a1a1a',
         endfieldOverlay: 'rgba(5, 5, 5, 0.95)',
         
-        // Accent Colors (Tactical Orange - Cyberpunk Industrial)
-        endfieldAccent: '#ff4500',
-        endfieldAccentHover: '#ff6b35',
-        endfieldAccentGlow: 'rgba(255, 69, 0, 0.4)',
+        // Accent Colors (Endfield Yellow - Gryphline Style)
+        endfieldAccent: '#fffa00',
+        endfieldAccentHover: '#fff500',
+        endfieldAccentGlow: 'rgba(255, 250, 0, 0.4)',
         
-        // Alternative Accent Options (commented - can be switched)
-        // endfieldAccent: '#f59e0b', // Yellow Neon
-        // endfieldAccent: '#06b6d4', // Ice Blue
-        // endfieldAccent: '#10b981', // Matrix Green
+        // Secondary Accents (Endfield Style)
+        endfieldPink: '#ff1aac',
+        endfieldTeal: '#00ffa2',
+        endfieldPinkGlow: 'rgba(255, 26, 172, 0.4)',
+        endfieldTealGlow: 'rgba(0, 255, 162, 0.4)',
         
-        // Text Colors (High Contrast)
+        // Text Colors (Endfield Light Theme)
         endfieldText: '#ffffff',
-        endfieldTextMuted: '#a0a0a0',
-        endfieldTextDark: '#6b6b6b',
+        endfieldTextMuted: '#888888',
+        endfieldTextDark: '#6e6e6e',
+        endfieldTextLight: '#f0f0f0',
         
         // Border & HUD Colors
         endfieldBorder: '#2a2a2a',
         endfieldBorderActive: '#3a3a3a',
-        endfieldHudLine: 'rgba(255, 69, 0, 0.3)',
+        endfieldHudLine: 'rgba(255, 250, 0, 0.3)',
         
         // Status Colors
         endfieldSuccess: '#22c55e',
@@ -85,12 +87,14 @@ module.exports = {
       // ============================================
       boxShadow: {
         'none': 'none',
-        'hud': '0 0 0 1px rgba(255, 69, 0, 0.3)',
-        'hud-hover': '0 0 0 1px rgba(255, 69, 0, 0.6), 0 0 20px rgba(255, 69, 0, 0.2)',
+        'hud': '0 0 0 1px rgba(255, 250, 0, 0.3)',
+        'hud-hover': '0 0 0 1px rgba(255, 250, 0, 0.6), 0 0 20px rgba(255, 250, 0, 0.2)',
         'panel': '0 0 0 1px #2a2a2a',
-        'panel-active': '0 0 0 1px #3a3a3a, inset 0 0 20px rgba(255, 69, 0, 0.05)',
-        'glow': '0 0 30px rgba(255, 69, 0, 0.3)',
-        'glow-sm': '0 0 10px rgba(255, 69, 0, 0.3)',
+        'panel-active': '0 0 0 1px #3a3a3a, inset 0 0 20px rgba(255, 250, 0, 0.05)',
+        'glow': '0 0 30px rgba(255, 250, 0, 0.3)',
+        'glow-sm': '0 0 10px rgba(255, 250, 0, 0.3)',
+        'glow-pink': '0 0 30px rgba(255, 26, 172, 0.3)',
+        'glow-teal': '0 0 30px rgba(0, 255, 162, 0.3)',
       },
       
       // ============================================

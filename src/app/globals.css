@@ -20,20 +20,20 @@
   --color-elevated: #1a1a1a;
   --color-overlay: rgba(5, 5, 5, 0.95);
   
-  /* Accent - Tactical Orange (Changeable via CMS) */
-  --color-accent: #ff4500;
-  --color-accent-hover: #ff6b35;
-  --color-accent-glow: rgba(255, 69, 0, 0.4);
+  /* Accent - Endfield Yellow (Gryphline Style) */
+  --color-accent: #fffa00;
+  --color-accent-hover: #fff500;
+  --color-accent-glow: rgba(255, 250, 0, 0.4);
   
   /* Text Colors */
   --color-text: #ffffff;
-  --color-text-muted: #a0a0a0;
-  --color-text-dark: #6b6b6b;
+  --color-text-muted: #888888;
+  --color-text-dark: #6e6e6e;
   
   /* Borders */
   --color-border: #2a2a2a;
   --color-border-active: #3a3a3a;
-  --color-hud-line: rgba(255, 69, 0, 0.3);
+  --color-hud-line: rgba(255, 250, 0, 0.3);
   
   /* Status */
   --color-success: #22c55e;
@@ -78,10 +78,10 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     
-    /* Technical grid overlay */
+    /* Technical grid overlay - Endfield yellow tint */
     background-image: 
-      linear-gradient(rgba(255, 69, 0, 0.02) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255, 69, 0, 0.02) 1px, transparent 1px);
+      linear-gradient(rgba(255, 250, 0, 0.015) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 250, 0, 0.015) 1px, transparent 1px);
     background-size: 50px 50px;
   }
   
@@ -287,8 +287,8 @@
   
   .bg-grid {
     background-image: 
-      linear-gradient(rgba(255, 69, 0, 0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255, 69, 0, 0.03) 1px, transparent 1px);
+      linear-gradient(rgba(255, 250, 0, 0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 250, 0, 0.02) 1px, transparent 1px);
     background-size: 20px 20px;
   }
   
